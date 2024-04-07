@@ -1,45 +1,58 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trainers_stopwatch/bloc/stopwatch_state.dart';
+
+import '../../../bloc/stopwatch_bloc.dart';
+import '../../../bloc/stopwatch_events.dart';
+import '../common/custon_icon_button.dart';
 
 class PreciseTimer extends StatefulWidget {
-  const PreciseTimer({super.key});
+  final StopwatchBloc stopwatchBloc;
+  const PreciseTimer({
+    super.key,
+    required this.stopwatchBloc,
+  });
 
   @override
   State<PreciseTimer> createState() => _PreciseTimerState();
 }
 
 class _PreciseTimerState extends State<PreciseTimer> {
-  Timer? _timer;
-  DateTime? _startTime;
-  final _elapsed = ValueNotifier<Duration>(const Duration());
+  late StopwatchBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = widget.stopwatchBloc;
+  }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    bloc.dispose();
     super.dispose();
   }
 
   void _startTimer() {
-    if (_timer != null && _timer!.isActive) return;
-
-    _startTime = DateTime.now();
-
-    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      final now = DateTime.now();
-
-      _elapsed.value = now.difference(_startTime!);
-    });
+    bloc.add(StopwatchEventRun());
   }
 
   void _stopTimer() {
-    _timer?.cancel();
+    bloc.add(StopwatchEventPause());
   }
 
   void _resetTimer() {
-    _timer?.cancel();
-    _elapsed.value = const Duration();
+    bloc.add(StopwatchEventReset());
   }
+
+  void _incrementeCounter() {
+    bloc.add(StopwatchEventCounterIncrement());
+  }
+
+  void _decrementCounter() {
+    bloc.add(StopwatchEventCounterDecrement());
+  }
+
+  void _snapshotTimer() {}
 
   String _formatTimer(String duration) {
     final point = duration.indexOf('.');
@@ -48,13 +61,20 @@ class _PreciseTimerState extends State<PreciseTimer> {
 
   @override
   Widget build(BuildContext context) {
+    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
+
     return Card(
       elevation: 5,
       margin: EdgeInsets.zero,
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 0,
+              top: 8,
+              bottom: 8,
+            ),
             child: Column(
               children: [
                 SizedBox(
@@ -68,15 +88,39 @@ class _PreciseTimerState extends State<PreciseTimer> {
               ],
             ),
           ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: _incrementeCounter,
+                icon: const Icon(Icons.add_circle),
+              ),
+              ListenableBuilder(
+                listenable: bloc.counter,
+                builder: (context, _) {
+                  return Text(
+                    bloc.counter.value.toString(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                onPressed: _decrementCounter,
+                icon: const Icon(Icons.remove_circle),
+              ),
+            ],
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ListenableBuilder(
-                    listenable: _elapsed,
+                    listenable: bloc.elapsed,
                     builder: (context, _) {
                       return Text(
-                        _formatTimer(_elapsed.value.toString()),
+                        _formatTimer(bloc.elapsed.value.toString()),
                         style: const TextStyle(
                           fontSize: 30,
                           fontFamily: 'IBMPlexMono',
@@ -86,17 +130,50 @@ class _PreciseTimerState extends State<PreciseTimer> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton.filled(
-                      onPressed: _startTimer,
-                      icon: const Icon(Icons.start),
+                    BlocConsumer<StopwatchBloc, StopwatchState>(
+                      bloc: bloc,
+                      builder: (context, state) {
+                        if (bloc.state is! StopwatchStateRunning) {
+                          return CustomIconButton(
+                            onPressed: _startTimer,
+                            icon: Icon(
+                              Icons.play_circle,
+                              color: onSurfaceVariant,
+                            ),
+                          );
+                        } else {
+                          return CustomIconButton(
+                            onPressed: _snapshotTimer,
+                            icon: Icon(
+                              Icons.stars_sharp,
+                              color: onSurfaceVariant,
+                            ),
+                          );
+                        }
+                      },
+                      listener: (context, state) {},
                     ),
-                    IconButton.filled(
+                    // if (bloc.state is! StopwatchStateRunning)
+                    //   CustomIconButton(
+                    //     onPressed: _startTimer,
+                    //     icon: Icon(
+                    //       Icons.play_circle,
+                    //       color: onSurfaceVariant,
+                    //     ),
+                    //   ),
+                    CustomIconButton(
                       onPressed: _stopTimer,
-                      icon: const Icon(Icons.stop),
+                      icon: Icon(
+                        Icons.pause_circle,
+                        color: onSurfaceVariant,
+                      ),
                     ),
-                    IconButton.filled(
-                      onPressed: _resetTimer,
-                      icon: const Icon(Icons.restore),
+                    CustomIconButton(
+                      onLongPressed: _resetTimer,
+                      icon: Icon(
+                        Icons.restart_alt,
+                        color: onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),

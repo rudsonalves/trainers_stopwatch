@@ -1,7 +1,7 @@
-name: stopwatch
+name: trainers_stopwatch
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 0.1.0+1
 
 environment:
   sdk: '>=3.3.2 <4.0.0'
@@ -11,12 +11,14 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.6
+  flutter_bloc: ^8.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  bloc_test: ^9.1.7
   flutter_lints: ^3.0.0
+
 
 flutter:
 
