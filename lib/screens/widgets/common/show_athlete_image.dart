@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
 
-// FIXME: adicionar a outros elementos de imagem do app
 class ShowAthleteImage extends StatelessWidget {
   final String image;
 
