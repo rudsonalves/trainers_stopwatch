@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:signals/signals_flutter.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
 import '../../../bloc/stopwatch_events.dart';
 import '../../../bloc/stopwatch_state.dart';
 import '../../../common/constants.dart';
 import '../../../common/icons/stopwatch_icons_icons.dart';
+import '../../../common/theme/app_font_style.dart';
 import '../../../models/athlete_model.dart';
 import '../common/custon_icon_button.dart';
 import '../common/show_athlete_image.dart';
 
-class PreciseTimer extends StatefulWidget {
+class PreciseStopwatch extends StatefulWidget {
   final StopwatchBloc stopwatchBloc;
   final AthleteModel? athlete;
 
-  const PreciseTimer({
+  const PreciseStopwatch({
     super.key,
     required this.stopwatchBloc,
     this.athlete,
   });
 
   @override
-  State<PreciseTimer> createState() => _PreciseTimerState();
+  State<PreciseStopwatch> createState() => _PreciseStopwatchState();
 }
 
-class _PreciseTimerState extends State<PreciseTimer> {
+class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late StopwatchBloc bloc;
   String name = 'Name';
   String image = defaultPhotoImage;
@@ -104,17 +106,9 @@ class _PreciseTimerState extends State<PreciseTimer> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ListenableBuilder(
-                listenable: bloc.counter,
-                builder: (context, _) {
-                  return Text(
-                    bloc.counter.value.toString(),
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontFamily: 'IBMPlexMono',
-                    ),
-                  );
-                },
+              Text(
+                bloc.counter.watch(context).toString(),
+                style: AppFontStyle.ibm30,
               ),
               CustomIconButton(
                 onPressed: _incrementeLap,
@@ -130,17 +124,10 @@ class _PreciseTimerState extends State<PreciseTimer> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ListenableBuilder(
-                    listenable: bloc.elapsedDuration,
-                    builder: (context, _) {
-                      return Text(
-                        _formatTimer(bloc.elapsedDuration.value.toString()),
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontFamily: 'IBMPlexMono',
-                        ),
-                      );
-                    }),
+                Text(
+                  _formatTimer(bloc.elapsedDuration.watch(context).toString()),
+                  style: AppFontStyle.ibm30,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -165,16 +152,16 @@ class _PreciseTimerState extends State<PreciseTimer> {
                                 label: 'Reset',
                                 icon: Icon(
                                   StopwatchIcons.reset,
-                                  color: onSurfaceVariant,
+                                  color: onSurfaceVariant.withRed(130),
                                 ),
                               ),
                               if (bloc.state is StopwatchStatePaused)
                                 CustomIconButton(
-                                  onPressed: _stopTimer,
+                                  onLongPressed: _stopTimer,
                                   label: 'Finish',
                                   icon: Icon(
                                     StopwatchIcons.stop,
-                                    color: onSurfaceVariant,
+                                    color: onSurfaceVariant.withRed(130),
                                   ),
                                 ),
                             ],

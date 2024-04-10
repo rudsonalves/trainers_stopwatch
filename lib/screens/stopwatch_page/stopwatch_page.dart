@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
 
-import '../../bloc/stopwatch_bloc.dart';
 import '../athletes_page/athletes_page.dart';
-import '../widgets/precise_timer/precise_timer.dart';
+import '../widgets/common/dismissible_backgrounds.dart';
 import 'stopwatch_page_controller.dart';
 
 class StopWatchPage extends StatefulWidget {
@@ -16,28 +16,10 @@ class StopWatchPage extends StatefulWidget {
 
 class _StopWatchPageState extends State<StopWatchPage> {
   final _controller = StopwatchPageController.instance;
-  final List<Widget> _stopwatch = [];
-
-  // void _addPreciseTimer() {
-  //   setState(() {
-  //     _stopwatch.add(PreciseTimer(
-  //       key: GlobalKey(),
-  //       stopwatchBloc: StopwatchBloc(),
-  //     ));
-  //   });
-  // }
 
   Future<void> _addAthletes() async {
     await Navigator.pushNamed(context, AthletesPage.routeName).then((_) {
-      for (final athlete in _controller.newAthletes) {
-        _stopwatch.add(PreciseTimer(
-          key: GlobalKey(),
-          stopwatchBloc: StopwatchBloc(),
-          athlete: athlete,
-        ));
-      }
-      _controller.mergeAthleteLists();
-      setState(() {});
+      _controller.addStopwatch();
     });
   }
 
@@ -54,43 +36,20 @@ class _StopWatchPageState extends State<StopWatchPage> {
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         child: Center(
           child: ListView.builder(
-            itemCount: _stopwatch.length,
+            itemCount: _controller.stopwatchLenght.watch(context),
             itemBuilder: (context, index) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Dismissible(
-                background: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.green.withOpacity(0.3),
-                  ),
-                ),
-                secondaryBackground: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.red.withOpacity(0.3),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Remove',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(Icons.remove_circle),
-                      ],
-                    ),
-                  ),
+                background:
+                    DismissibleContainers.background(context, enable: false),
+                secondaryBackground: DismissibleContainers.secondaryBackground(
+                  context,
                 ),
                 key: GlobalKey(),
-                child: _stopwatch[index],
+                child: _controller.stopwatch[index],
                 confirmDismiss: (direction) async {
                   if (direction == DismissDirection.endToStart) {
-                    setState(() {
-                      _stopwatch.removeAt(index);
-                    });
+                    _controller.removeStopwatch(index);
                     return true;
                   }
                   return false;

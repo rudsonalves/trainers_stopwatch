@@ -20,6 +20,38 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024-04-10 - version: 0.4.2+5
+
+Significant enhancements and refinements have been implemented in the Trainers Stopwatch app:
+
+- **StopwatchBloc Enhancements**:
+  - Transitioned from `ValueNotifier` to `Signal` for a more streamlined and elegant approach.
+  - Removed `splitDuration` and `counterDuration` as they were deemed unnecessary.
+  - The `_stopEvent` method has been optimized and simplified, ensuring accurate stop timing and lap counter adjustments.
+  - Updated the display time in the `_pauseEvent` method for a more precise presentation of the pause moment.
+
+- **Font Style Consolidation**:
+  - All font styles are now centralized within the `AppFontStyle` class, promoting consistency and ease of maintenance.
+
+- **Athlete Dialog and Tile Updates**:
+  - Athlete images are now handled through `Signal`, enhancing the reactivity and update efficiency.
+  - Athlete images are displayed using the `ShowAthleteImage` class, standardizing image presentation.
+  - Modified `DismissibleAthleteTile` to use a `Signal` for athlete selection (`isChecked` signal).
+
+- **Stopwatch Page and Controller Logic**:
+  - Relocated PreciseTimer allocation logic for athletes to `StopwatchPageController`, streamlining the control mechanism.
+
+- **Dismissible Background Enhancements**:
+  - `DismissibleContainers` now accept `context`, `label`, `iconData`, and `color` parameters, offering customizable backgrounds.
+  - Implemented an `enable` property for conditional rendering and interaction.
+
+- **Precise Stopwatch Adjustments**:
+  - Adapted the component to utilize `Signal` instead of `ValueNotifier`, refining the reactive functionality.
+  - Renamed `PreciseTimer` to `PreciseStopwatch`, aligning the naming with its specific functionality.
+
+These updates mark a significant improvement in the app’s functionality and user experience, introducing a more responsive and user-friendly interface, and refining the stopwatch logic for better performance and accuracy.
+
+
 ## 2024-04-09 - version: 0.4.1+3
 
 Significant updates and enhancements have been made in the Trainers Stopwatch app, moving closer to a comprehensive professional solution for trainers. Here's a rundown of the latest improvements:

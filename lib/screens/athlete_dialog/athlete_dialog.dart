@@ -1,13 +1,12 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trainers_stopwatch/screens/athlete_dialog/validator.dart';
+import 'package:signals/signals_flutter.dart';
 
-import '../../common/constants.dart';
+import '../../common/theme/app_font_style.dart';
 import '../../models/athlete_model.dart';
+import '../widgets/common/show_athlete_image.dart';
 import 'athlete_controller.dart';
+import 'validator.dart';
 import 'widgets/custom_text_field.dart';
 
 class AthleteDialog extends StatefulWidget {
@@ -84,7 +83,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
     final athlete = AthleteModel(
       name: _controller.name.text,
       email: _controller.email.text,
-      photo: _controller.image.value,
+      photo: _controller.image(),
       phone: _controller.phone.text,
     );
 
@@ -109,26 +108,14 @@ class _AthleteDialogState extends State<AthleteDialog> {
                 Center(
                   child: Text(
                     isAddAthlete ? 'Add new Athlete' : 'Edit Athlete',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppFontStyle.roboto18Bold,
                   ),
                 ),
                 const SizedBox(height: 12),
-                ListenableBuilder(
-                  listenable: _controller.image,
-                  builder: (context, _) => SizedBox(
-                    height: photoImageSize,
-                    width: photoImageSize,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: _photoImageOnTap,
-                      child: _controller.image.value == ''
-                          ? Image.asset(defaultPhotoImage)
-                          : Image.file(File(_controller.image.value)),
-                    ),
-                  ),
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: _photoImageOnTap,
+                  child: ShowAthleteImage(_controller.image.watch(context)),
                 ),
                 CustomTextField(
                   controller: _controller.name,

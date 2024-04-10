@@ -29,8 +29,8 @@ class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
     final secondary = Theme.of(context).colorScheme.secondary;
 
     return Dismissible(
-      background: DismissibleContainers.background(),
-      secondaryBackground: DismissibleContainers.secondaryBackground(),
+      background: DismissibleContainers.background(context),
+      secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: GlobalKey(),
       child: Card(
         elevation: 10,
@@ -46,9 +46,9 @@ class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
           ),
           trailing: IconButton(
             onPressed: () {
-              isChecked.value = !isChecked.value;
+              isChecked.value = !isChecked();
               if (widget.selectAthlete != null) {
-                widget.selectAthlete!(isChecked.value, widget.athlete);
+                widget.selectAthlete!(isChecked(), widget.athlete);
               }
             },
             icon: Icon(

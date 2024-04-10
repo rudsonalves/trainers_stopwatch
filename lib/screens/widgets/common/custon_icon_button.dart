@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
+import '../../../common/theme/app_font_style.dart';
+
 class CustomIconButton extends StatelessWidget {
   final void Function()? onPressed;
   final void Function()? onLongPressed;
@@ -38,9 +40,7 @@ class CustomIconButton extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           label!,
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
+                          style: AppFontStyle.roboto12,
                         ),
                       ],
                     )

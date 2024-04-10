@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
 
-// FIXME: add to StopwatchWidgets dismissibles
+import '../../../common/theme/app_font_style.dart';
+
 class DismissibleContainers {
   DismissibleContainers._();
 
-  static Container background([
+  static Container background(
+    BuildContext context, {
     bool enable = true,
-  ]) {
+    String label = 'Edit',
+    IconData iconData = Icons.edit,
+    Color color = Colors.green,
+  }) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.green.withOpacity(0.3),
+        color: color.withOpacity(0.3),
       ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(Icons.edit),
-            SizedBox(width: 8),
+            Icon(
+              iconData,
+              color: enable ? null : primary.withOpacity(0.3),
+            ),
+            const SizedBox(width: 8),
             Text(
-              'Edit',
-              style: TextStyle(fontSize: 16),
+              label,
+              style: AppFontStyle.roboto16.copyWith(
+                color: enable ? null : primary.withOpacity(0.3),
+              ),
             ),
           ],
         ),
@@ -29,25 +41,36 @@ class DismissibleContainers {
     );
   }
 
-  static Container secondaryBackground([
+  static Container secondaryBackground(
+    BuildContext context, {
     bool enable = true,
-  ]) {
+    String label = 'Delete',
+    IconData iconData = Icons.remove_circle,
+    Color color = Colors.red,
+  }) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.red.withOpacity(0.3),
+        color: color.withOpacity(0.3),
       ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              'Delete',
-              style: TextStyle(fontSize: 16),
+              label,
+              style: AppFontStyle.roboto16.copyWith(
+                color: enable ? null : primary.withOpacity(0.3),
+              ),
             ),
-            SizedBox(width: 8),
-            Icon(Icons.remove_circle),
+            const SizedBox(width: 8),
+            Icon(
+              iconData,
+              color: enable ? null : primary.withOpacity(0.3),
+            ),
           ],
         ),
       ),
