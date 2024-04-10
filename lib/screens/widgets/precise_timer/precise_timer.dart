@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trainers_stopwatch/bloc/stopwatch_state.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
 import '../../../bloc/stopwatch_events.dart';
+import '../../../bloc/stopwatch_state.dart';
+import '../../../common/constants.dart';
+import '../../../common/icons/stopwatch_icons_icons.dart';
+import '../../../models/athlete_model.dart';
 import '../common/custon_icon_button.dart';
+import '../common/show_athlete_image.dart';
 
 class PreciseTimer extends StatefulWidget {
   final StopwatchBloc stopwatchBloc;
+  final AthleteModel? athlete;
+
   const PreciseTimer({
     super.key,
     required this.stopwatchBloc,
+    this.athlete,
   });
 
   @override
@@ -19,11 +26,18 @@ class PreciseTimer extends StatefulWidget {
 
 class _PreciseTimerState extends State<PreciseTimer> {
   late StopwatchBloc bloc;
+  String name = 'Name';
+  String image = defaultPhotoImage;
 
   @override
   void initState() {
     super.initState();
     bloc = widget.stopwatchBloc;
+
+    if (widget.athlete != null) {
+      name = widget.athlete!.name;
+      image = widget.athlete!.photo ?? defaultPhotoImage;
+    }
   }
 
   @override
@@ -36,7 +50,7 @@ class _PreciseTimerState extends State<PreciseTimer> {
     bloc.add(StopwatchEventRun());
   }
 
-  void _stopTimer() {
+  void _pauseTimer() {
     bloc.add(StopwatchEventPause());
   }
 
@@ -44,15 +58,17 @@ class _PreciseTimerState extends State<PreciseTimer> {
     bloc.add(StopwatchEventReset());
   }
 
-  void _incrementeCounter() {
-    bloc.add(StopwatchEventCounterIncrement());
+  void _incrementeLap() {
+    bloc.add(StopwatchEventLap());
   }
 
-  void _decrementCounter() {
-    bloc.add(StopwatchEventCounterDecrement());
+  void _splitTimer() {
+    bloc.add(StopwatchEventSplit());
   }
 
-  void _snapshotTimer() {}
+  void _stopTimer() {
+    bloc.add(StopwatchEventStop());
+  }
 
   String _formatTimer(String duration) {
     final point = duration.indexOf('.');
@@ -61,7 +77,9 @@ class _PreciseTimerState extends State<PreciseTimer> {
 
   @override
   Widget build(BuildContext context) {
-    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
+    final colorScheme = Theme.of(context).colorScheme;
+    final onSurfaceVariant = colorScheme.onSurfaceVariant;
+    // final outlineVariant = colorScheme.outlineVariant;
 
     return Card(
       elevation: 5,
@@ -77,38 +95,34 @@ class _PreciseTimerState extends State<PreciseTimer> {
             ),
             child: Column(
               children: [
-                SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: Image.asset(
-                    'assets/images/person.png',
-                  ),
-                ),
-                const Text('Name'),
+                ShowAthleteImage(image),
+                const SizedBox(height: 4),
+                Text(name),
               ],
             ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                onPressed: _incrementeCounter,
-                icon: const Icon(Icons.add_circle),
-              ),
               ListenableBuilder(
                 listenable: bloc.counter,
                 builder: (context, _) {
                   return Text(
                     bloc.counter.value.toString(),
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 30,
+                      fontFamily: 'IBMPlexMono',
                     ),
                   );
                 },
               ),
-              IconButton(
-                onPressed: _decrementCounter,
-                icon: const Icon(Icons.remove_circle),
+              CustomIconButton(
+                onPressed: _incrementeLap,
+                label: 'Laps',
+                icon: Icon(
+                  StopwatchIcons.lap1,
+                  color: onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -117,10 +131,10 @@ class _PreciseTimerState extends State<PreciseTimer> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ListenableBuilder(
-                    listenable: bloc.elapsed,
+                    listenable: bloc.elapsedDuration,
                     builder: (context, _) {
                       return Text(
-                        _formatTimer(bloc.elapsed.value.toString()),
+                        _formatTimer(bloc.elapsedDuration.value.toString()),
                         style: const TextStyle(
                           fontSize: 30,
                           fontFamily: 'IBMPlexMono',
@@ -134,46 +148,61 @@ class _PreciseTimerState extends State<PreciseTimer> {
                       bloc: bloc,
                       builder: (context, state) {
                         if (bloc.state is! StopwatchStateRunning) {
-                          return CustomIconButton(
-                            onPressed: _startTimer,
-                            icon: Icon(
-                              Icons.play_circle,
-                              color: onSurfaceVariant,
-                            ),
+                          return ButtonBar(
+                            children: [
+                              CustomIconButton(
+                                onPressed: _startTimer,
+                                label: bloc.state is StopwatchStatePaused
+                                    ? 'Cont.'
+                                    : 'Start',
+                                icon: Icon(
+                                  StopwatchIcons.start,
+                                  color: onSurfaceVariant,
+                                ),
+                              ),
+                              CustomIconButton(
+                                onLongPressed: _resetTimer,
+                                label: 'Reset',
+                                icon: Icon(
+                                  StopwatchIcons.reset,
+                                  color: onSurfaceVariant,
+                                ),
+                              ),
+                              if (bloc.state is StopwatchStatePaused)
+                                CustomIconButton(
+                                  onPressed: _stopTimer,
+                                  label: 'Finish',
+                                  icon: Icon(
+                                    StopwatchIcons.stop,
+                                    color: onSurfaceVariant,
+                                  ),
+                                ),
+                            ],
                           );
                         } else {
-                          return CustomIconButton(
-                            onPressed: _snapshotTimer,
-                            icon: Icon(
-                              Icons.stars_sharp,
-                              color: onSurfaceVariant,
-                            ),
+                          return ButtonBar(
+                            children: [
+                              CustomIconButton(
+                                onPressed: _splitTimer,
+                                label: 'Split',
+                                icon: Icon(
+                                  StopwatchIcons.partial,
+                                  color: onSurfaceVariant,
+                                ),
+                              ),
+                              CustomIconButton(
+                                onPressed: _pauseTimer,
+                                label: 'Pause',
+                                icon: Icon(
+                                  StopwatchIcons.pause,
+                                  color: onSurfaceVariant,
+                                ),
+                              ),
+                            ],
                           );
                         }
                       },
                       listener: (context, state) {},
-                    ),
-                    // if (bloc.state is! StopwatchStateRunning)
-                    //   CustomIconButton(
-                    //     onPressed: _startTimer,
-                    //     icon: Icon(
-                    //       Icons.play_circle,
-                    //       color: onSurfaceVariant,
-                    //     ),
-                    //   ),
-                    CustomIconButton(
-                      onPressed: _stopTimer,
-                      icon: Icon(
-                        Icons.pause_circle,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                    CustomIconButton(
-                      onLongPressed: _resetTimer,
-                      icon: Icon(
-                        Icons.restart_alt,
-                        color: onSurfaceVariant,
-                      ),
                     ),
                   ],
                 ),

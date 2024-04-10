@@ -1,0 +1,54 @@
+import 'dart:async';
+
+import '../models/athlete_model.dart';
+import '../repositories/athlete_repository/athlete_repository.dart';
+
+class AthleteManager {
+  final _repository = AthleteRepository();
+  final List<AthleteModel> _athletes = [];
+
+  List<AthleteModel> get athletes => _athletes;
+
+  Future<void> init() async {}
+
+  Future<void> insert(AthleteModel athlete) async {
+    if (athlete.id != null) {
+      throw Exception('Sorry, There is a logical error.');
+    }
+    await _repository.insert(athlete);
+    await getAllAthletes();
+  }
+
+  Future<void> getAllAthletes() async {
+    athletes.clear();
+    final newsAthletes = await _repository.queryAll();
+    athletes.addAll(newsAthletes);
+  }
+
+  Future<void> update(AthleteModel athlete) async {
+    int index = findAthleteIndex(athlete.id!);
+    if (index < 0) {
+      throw Exception(
+        'Sorry, There is some inconsistency in the registration of athletes.',
+      );
+    }
+    _repository.update(athlete);
+    _athletes[index] = athlete;
+  }
+
+  Future<void> delete(AthleteModel athlete) async {
+    int index = findAthleteIndex(athlete.id!);
+    if (index < 0) {
+      throw Exception(
+        'Sorry, There is some inconsistency in the registration of athletes.',
+      );
+    }
+    await _repository.delete(athlete);
+    _athletes.removeAt(index);
+  }
+
+  int findAthleteIndex(int id) {
+    int findIndex = _athletes.indexWhere((athlete) => athlete.id == id);
+    return findIndex;
+  }
+}

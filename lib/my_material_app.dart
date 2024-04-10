@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'common/theme/color_schemes.g.dart';
+import 'screens/athletes_page/athletes_page.dart';
 import 'screens/stopwatch_page/stopwatch_page.dart';
 
 class MyMaterialApp extends StatelessWidget {
@@ -19,7 +20,11 @@ class MyMaterialApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
-      home: const StopWatchPage(),
+      initialRoute: StopWatchPage.routeName,
+      routes: {
+        StopWatchPage.routeName: (context) => const StopWatchPage(),
+        AthletesPage.routeName: (context) => const AthletesPage(),
+      },
     );
   }
 }
