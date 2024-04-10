@@ -1,29 +1,43 @@
 import 'package:flutter/material.dart';
 
 import '../../bloc/stopwatch_bloc.dart';
+import '../athletes_page/athletes_page.dart';
 import '../widgets/precise_timer/precise_timer.dart';
+import 'stopwatch_page_controller.dart';
 
 class StopWatchPage extends StatefulWidget {
   const StopWatchPage({super.key});
+
+  static const routeName = '/stopwatchs';
 
   @override
   State<StopWatchPage> createState() => _StopWatchPageState();
 }
 
 class _StopWatchPageState extends State<StopWatchPage> {
-  final List<Widget> _stopwatch = [
-    PreciseTimer(
-      key: GlobalKey(),
-      stopwatchBloc: StopwatchBloc(),
-    )
-  ];
+  final _controller = StopwatchPageController.instance;
+  final List<Widget> _stopwatch = [];
 
-  void _addPreciseTimer() {
-    setState(() {
-      _stopwatch.add(PreciseTimer(
-        key: GlobalKey(),
-        stopwatchBloc: StopwatchBloc(),
-      ));
+  // void _addPreciseTimer() {
+  //   setState(() {
+  //     _stopwatch.add(PreciseTimer(
+  //       key: GlobalKey(),
+  //       stopwatchBloc: StopwatchBloc(),
+  //     ));
+  //   });
+  // }
+
+  Future<void> _addAthletes() async {
+    await Navigator.pushNamed(context, AthletesPage.routeName).then((_) {
+      for (final athlete in _controller.newAthletes) {
+        _stopwatch.add(PreciseTimer(
+          key: GlobalKey(),
+          stopwatchBloc: StopwatchBloc(),
+          athlete: athlete,
+        ));
+      }
+      _controller.mergeAthleteLists();
+      setState(() {});
     });
   }
 
@@ -33,15 +47,8 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        elevation: 5,
         title: const Text('Trainer\'s Stopwatch'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addPreciseTimer,
-        child: Icon(
-          Icons.add,
-          color: primary.withOpacity(.5),
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
@@ -91,6 +98,13 @@ class _StopWatchPageState extends State<StopWatchPage> {
               ),
             ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addAthletes,
+        child: Icon(
+          Icons.group_add,
+          color: primary.withOpacity(.5),
         ),
       ),
     );

@@ -6,8 +6,8 @@ class StopwatchEventPause extends StopwatchEvents {}
 
 class StopwatchEventReset extends StopwatchEvents {}
 
-class StopwatchEventCounterIncrement extends StopwatchEvents {}
+class StopwatchEventSplit extends StopwatchEvents {}
 
-class StopwatchEventCounterDecrement extends StopwatchEvents {}
+class StopwatchEventLap extends StopwatchEvents {}
 
-class StopwatchEventCounterReset extends StopwatchEvents {}
+class StopwatchEventStop extends StopwatchEvents {}
