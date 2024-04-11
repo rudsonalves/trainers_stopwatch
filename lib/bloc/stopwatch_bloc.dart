@@ -1,23 +1,21 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signals/signals_flutter.dart';
 
+import '../common/singletons/app_settings.dart';
 import 'stopwatch_events.dart';
 import 'stopwatch_state.dart';
 
 class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
-  static int millisecondRefresh = 66;
   Timer? _timer;
   DateTime? _startTime;
-  DateTime? _lastSplitTime;
-  DateTime? _lastLapTime;
   DateTime? _pausedTime;
-  final _elapsedDuration = signal<Duration>(const Duration());
+
+  final _durationTrainingSignal = signal<Duration>(const Duration());
   final _counter = signal<int>(0);
 
-  Signal<Duration> get elapsedDuration => _elapsedDuration;
+  Signal<Duration> get durationTraining => _durationTrainingSignal;
   Signal<int> get counter => _counter;
 
   StopwatchBloc() : super(StopwatchStateInitial()) {
@@ -29,11 +27,9 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     on<StopwatchEventStop>(_stopEvent);
   }
 
-  void init() {}
-
   void dispose() {
     _timer?.cancel();
-    _elapsedDuration.dispose();
+    _durationTrainingSignal.dispose();
     _counter.dispose();
   }
 
@@ -46,22 +42,18 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     if (state is StopwatchStatePaused) {
       final pausedDuration = DateTime.now().difference(_pausedTime!);
       _startTime = _startTime!.add(pausedDuration);
-      _lastSplitTime = _lastSplitTime!.add(pausedDuration);
-      _lastLapTime = _lastLapTime!.add(pausedDuration);
       _pausedTime = null;
     } else {
       _startTime = DateTime.now();
-      _lastSplitTime = _startTime;
-      _lastLapTime = _startTime;
       _counter.value = 0;
     }
 
     _timer = Timer.periodic(
         Duration(
-          milliseconds: millisecondRefresh,
+          milliseconds: AppSettings.instance.millisecondRefresh,
         ), (timer) {
       final now = DateTime.now();
-      _elapsedDuration.value = now.difference(_startTime!);
+      _durationTrainingSignal.value = now.difference(_startTime!);
     });
     emit(StopwatchStateRunning());
   }
@@ -71,7 +63,7 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     _pausedTime = DateTime.now();
-    _elapsedDuration.value = _pausedTime!.difference(_startTime!);
+    _durationTrainingSignal.value = _pausedTime!.difference(_startTime!);
 
     _timer?.cancel();
     emit(StopwatchStatePaused());
@@ -82,9 +74,9 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     _timer?.cancel();
-    _elapsedDuration.value = const Duration();
+    _durationTrainingSignal.value = const Duration();
     _counter.value = 0;
-    _lastSplitTime = null;
+
     emit(StopwatchStateReset());
   }
 
@@ -93,11 +85,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (state is! StopwatchStateRunning) return;
-    final now = DateTime.now();
     _counter.value++;
-    final lapTime = now.difference(_lastLapTime!);
-    _lastLapTime = now;
-    log('Lap (${_counter()}): ${lapTime.toString()}');
+
     emit(StopwatchStateRunning());
   }
 
@@ -105,10 +94,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     StopwatchEventSplit event,
     Emitter<StopwatchState> emit,
   ) async {
-    final now = DateTime.now();
-    final split = now.difference(_lastSplitTime!);
-    _lastSplitTime = now;
-    log('Split: ${split.toString()}');
+    if (state is! StopwatchStateRunning) return;
+
     emit(StopwatchStateRunning());
   }
 
@@ -117,18 +104,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (state is! StopwatchStatePaused) return;
-    final split = _pausedTime!.difference(_lastSplitTime!);
-    final lapTime = _pausedTime!.difference(_lastLapTime!);
-    final totalTime = _pausedTime!.difference(_startTime!);
 
-    log('Last Lap (${counter() + 1}): ${lapTime.toString()}');
-    log('Last Split: ${split.toString()}');
-    log('Total Time: ${totalTime.toString()}');
-
-    _lastSplitTime = null;
-    _lastLapTime = null;
     _counter.value++;
-    _lastSplitTime = null;
     emit(StopwatchStateInitial());
   }
 }

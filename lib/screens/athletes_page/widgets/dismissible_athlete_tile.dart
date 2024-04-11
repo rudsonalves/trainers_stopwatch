@@ -1,20 +1,23 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/athlete_model.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
+import '../../widgets/common/show_athlete_image.dart';
 
 class DismissibleAthleteTile extends StatefulWidget {
   final AthleteModel athlete;
   final void Function(bool, AthleteModel)? selectAthlete;
+  final Future<bool> Function(AthleteModel)? editFunction;
+  final Future<bool> Function(AthleteModel)? deleteFunction;
 
   const DismissibleAthleteTile({
     super.key,
     required this.athlete,
     this.selectAthlete,
+    this.editFunction,
+    this.deleteFunction,
   });
 
   @override
@@ -42,7 +45,7 @@ class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
           leading: SizedBox(
             width: photoImageSize,
             height: photoImageSize,
-            child: Image.file(File(widget.athlete.photo!)),
+            child: ShowAthleteImage(widget.athlete.photo!, size: 40),
           ),
           trailing: IconButton(
             onPressed: () {
@@ -59,6 +62,15 @@ class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
         ),
       ),
       confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd &&
+            widget.editFunction != null) {
+          await widget.editFunction!(widget.athlete);
+          return false;
+        } else if (direction == DismissDirection.endToStart &&
+            widget.deleteFunction != null) {
+          bool action = await widget.deleteFunction!(widget.athlete);
+          return action;
+        }
         return false;
       },
     );

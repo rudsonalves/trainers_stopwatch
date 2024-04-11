@@ -15,6 +15,8 @@ const trainingId = 'id';
 const trainingAthleteId = 'athleteId';
 const trainingDate = 'date';
 const trainingComments = 'comments';
+const trainingSplitLength = 'splitLength';
+const trainingLapLength = 'lapLength';
 
 const historyTable = 'historyTable';
 const historyTrainingIndex = 'historyTrainingIndex';

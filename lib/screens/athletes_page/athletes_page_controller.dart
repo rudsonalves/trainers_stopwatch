@@ -44,7 +44,29 @@ class AthletesPageController extends ChangeNotifier {
       await _manager.insert(athlete);
       _changeState(AthletesPageStateSuccess());
     } catch (err) {
-      log('AthletesPageState.getAllAthletes: $err');
+      log('AthletesPageState.addAthlete: $err');
+      _changeState(AthletesPageStateError());
+    }
+  }
+
+  Future<void> updateAthlete(AthleteModel athlete) async {
+    try {
+      _changeState(AthletesPageStateLoading());
+      await _manager.update(athlete);
+      _changeState(AthletesPageStateSuccess());
+    } catch (err) {
+      log('AthletesPageState.updateAthlete: $err');
+      _changeState(AthletesPageStateError());
+    }
+  }
+
+  Future<void> deleteAthlete(AthleteModel athlete) async {
+    try {
+      _changeState(AthletesPageStateLoading());
+      await _manager.delete(athlete);
+      _changeState(AthletesPageStateSuccess());
+    } catch (err) {
+      log('AthletesPageState.updateAthlete: $err');
       _changeState(AthletesPageStateError());
     }
   }

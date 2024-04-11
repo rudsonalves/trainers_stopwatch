@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/athlete_model.dart';
 import '../athlete_dialog/athlete_dialog.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
+import '../widgets/common/generic_dialog.dart';
 import 'athletes_page_controller.dart';
 import 'athletes_page_state.dart';
 import 'widgets/dismissible_athlete_tile.dart';
@@ -31,7 +32,7 @@ class _AthletesPageState extends State<AthletesPage> {
   void _addNewAthlete() {
     AthleteDialog.open(
       context,
-      addAthlete: _controller.addAthlete,
+      sueAthlete: _controller.addAthlete,
     );
   }
 
@@ -44,6 +45,32 @@ class _AthletesPageState extends State<AthletesPage> {
       _selectedAthletes.add(athlete);
     } else {
       _selectedAthletes.removeWhere((item) => item.id == athlete.id);
+    }
+  }
+
+  Future<bool> editAthlete(AthleteModel athlete) async {
+    final result = await AthleteDialog.open(
+          context,
+          athlete: athlete,
+          sueAthlete: _controller.updateAthlete,
+        ) ??
+        false;
+    return result;
+  }
+
+  Future<bool> deleteAthlete(AthleteModel athlete) async {
+    final result = await GenericDialog.callDialog(
+      context,
+      title: 'Delete Athlete',
+      message: 'When removing an athlete all their training data will be lost.'
+          '\n\nDo you confirm the removal?',
+      actions: DialogActions.yesNo,
+    );
+    if (result) {
+      _controller.deleteAthlete(athlete);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -90,6 +117,8 @@ class _AthletesPageState extends State<AthletesPage> {
                               DismissibleAthleteTile(
                             athlete: athletes[index],
                             selectAthlete: selectAthlete,
+                            editFunction: editAthlete,
+                            deleteFunction: deleteAthlete,
                           ),
                         ),
                       );
@@ -112,12 +141,12 @@ class _AthletesPageState extends State<AthletesPage> {
                 color: primary.withOpacity(.5),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 18),
             FloatingActionButton(
               heroTag: 'fab2',
               onPressed: _addNewAthlete,
               child: Icon(
-                Icons.add,
+                Icons.person_add,
                 color: primary.withOpacity(.5),
               ),
             ),
