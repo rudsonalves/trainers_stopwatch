@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
 
+import '../../../common/singletons/app_settings.dart';
 import '../../../common/theme/app_font_style.dart';
 
 class CustomIconButton extends StatelessWidget {
@@ -19,32 +21,43 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = AppSettings.instance;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(5),
-        child: InkWell(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+      child: Card(
+        elevation: 2,
+        margin: EdgeInsets.zero,
+        color: settings.themeMode.watch(context) == ThemeMode.light
+            ? colorScheme.onPrimary.withOpacity(0.3)
+            : colorScheme.primary.withOpacity(0.2),
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(5),
-          onLongPress: onLongPressed,
-          onTap: onPressed,
-          child: SizedBox(
-            width: 38,
-            height: label == null ? 42 : 47,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 3),
-              child: label != null
-                  ? Column(
-                      children: [
-                        icon,
-                        const SizedBox(height: 2),
-                        Text(
-                          label!,
-                          style: AppFontStyle.roboto12,
-                        ),
-                      ],
-                    )
-                  : icon,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(5),
+            onLongPress: onLongPressed,
+            onTap: onPressed,
+            child: SizedBox(
+              width: 48,
+              height: label == null ? 48 : 54,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: label != null
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          icon,
+                          const SizedBox(height: 2),
+                          Text(
+                            label!,
+                            style: AppFontStyle.roboto12,
+                          ),
+                        ],
+                      )
+                    : icon,
+              ),
             ),
           ),
         ),

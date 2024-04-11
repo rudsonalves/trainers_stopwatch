@@ -26,10 +26,10 @@ class AthleteManager {
   }
 
   Future<void> update(AthleteModel athlete) async {
-    int index = findAthleteIndex(athlete.id!);
+    int index = findIndex(athlete.id!);
     if (index < 0) {
       throw Exception(
-        'Sorry, There is some inconsistency in the registration of athletes.',
+        'AthleteManager.update: Error!',
       );
     }
     _repository.update(athlete);
@@ -37,17 +37,17 @@ class AthleteManager {
   }
 
   Future<void> delete(AthleteModel athlete) async {
-    int index = findAthleteIndex(athlete.id!);
+    int index = findIndex(athlete.id!);
     if (index < 0) {
       throw Exception(
-        'Sorry, There is some inconsistency in the registration of athletes.',
+        'AthleteManager.delete: Error!',
       );
     }
     await _repository.delete(athlete);
     _athletes.removeAt(index);
   }
 
-  int findAthleteIndex(int id) {
+  int findIndex(int id) {
     int findIndex = _athletes.indexWhere((athlete) => athlete.id == id);
     return findIndex;
   }

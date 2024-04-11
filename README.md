@@ -20,6 +20,71 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024-04-11 - version: 0.7.0+6:
+
+This update introduces a series of enhancements and structural changes across the Trainers Stopwatch app to improve functionality and user experience:
+
+- **StopwatchBloc Updates**:
+  - Removed time interval calculation elements from `StopwatchBloc`. These are now handled by a new controller designed to manage the Stopwatch widget, streamlining the bloc's responsibilities.
+
+- **App Settings Enhancements**:
+  - Introduced `millisecondRefresh` control within the app settings to allow for configuration adjustments.
+  - Added theme mode controls for `ThemeMode.light` and `ThemeMode.dark`, enhancing user customization options.
+
+- **Font Style Additions**:
+  - New styles have been added to `AppFontStyle` to support diverse UI requirements.
+
+- **Manager Updates**:
+  - Standardized error messages within `AthleteManager`.
+  - Launched `HistoryManager` to oversee training history models.
+  - Introduced `TrainingManager` to manage athlete training models.
+
+- **Model Enhancements**:
+  - `TrainingModel` now includes attributes to store the lengths of splits and laps, adding detailed tracking capabilities.
+
+- **MyMaterialApp**:
+  - Implemented theme selection support within the app for enhanced user personalization.
+
+- **Athlete Dialog Adjustments**:
+  - Modified the athlete dialog for both adding and updating athlete details, improving usability.
+
+- **Athletes Page Enhancements**:
+  - Added editing and removal capabilities for athletes on the `AthletesPage`, enhancing management efficiency.
+
+- **Athletes Page Controller**:
+  - Integrated methods to update and delete athletes, supporting robust athlete management.
+
+- **Dismissible Athlete Tile**:
+  - Introduced `editFunction` and `deleteFunction` callbacks to facilitate athlete management directly from the UI.
+
+- **Stopwatch Page Updates**:
+  - Added an `IconButton` for theme switching and another for setup (the latter is not yet implemented), improving accessibility and customization.
+
+- **CustomIconButton Enhancements**:
+  - `CustomIconButton` is now theme-reactive, adjusting its color scheme to better highlight its features and align with Android standards.
+
+- **Generic Dialog Introduction**:
+  - Deployed a generic dialog with predefined properties for various dialog actions (yesNo, addCancel, close, none), simplifying UI interactions.
+
+- **Numeric Field Widget**:
+  - Introduced `NumericField`, a widget similar to `TextField` but only accepts valid numbers, ensuring input accuracy.
+
+- **Set Distance Dialog**:
+  - Added a specialized dialog for setting distances for a split and lap, aiding in precise training setup.
+
+- **Show Athlete Image Updates**:
+  - Modified to accept an optional window size parameter, enhancing flexibility in image presentation.
+
+- **Precise Stopwatch Updates**:
+  - Removed `StopwatchBloc` from `PreciseStopwatch`. The bloc is now instantiated in the `PreciseStopwatchController`, centralizing all stopwatch control logic in the controller.
+  - Adjusted layout to accommodate a text line displaying information on splits and laps when recorded.
+
+- **Precise Stopwatch Controller**:
+  - Created `PreciseStopwatchController` to handle business logic for `PreciseStopwatch`, encompassing all control logic previously in `StopwatchBloc` and adding split and lap record management.
+
+These updates significantly enhance the app's configurability, user interaction, and overall efficiency, providing a more tailored and professional experience for trainers managing multiple athletes.
+
+
 ## 2024-04-10 - version: 0.4.2+5
 
 Significant enhancements and refinements have been implemented in the Trainers Stopwatch app:

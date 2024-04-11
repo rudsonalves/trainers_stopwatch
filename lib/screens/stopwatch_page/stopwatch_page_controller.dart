@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-import '../../bloc/stopwatch_bloc.dart';
 import '../../models/athlete_model.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 
@@ -42,11 +41,12 @@ class StopwatchPageController {
 
   void addStopwatch() {
     for (final athlete in newAthletes) {
-      _stopwatch.add(PreciseStopwatch(
-        key: GlobalKey(),
-        stopwatchBloc: StopwatchBloc(),
-        athlete: athlete,
-      ));
+      _stopwatch.add(
+        PreciseStopwatch(
+          key: GlobalKey(),
+          athlete: athlete,
+        ),
+      );
     }
     mergeAthleteLists();
 
@@ -54,7 +54,7 @@ class StopwatchPageController {
   }
 
   void removeStopwatch(int index) {
-    final id = _stopwatch[index].athlete!.id!;
+    final id = _stopwatch[index].athlete.id!;
 
     _selectedAthletes.removeWhere((item) => item.id == id);
     _stopwatch.removeAt(index);

@@ -6,12 +6,16 @@ class TrainingModel {
   int athleteId;
   DateTime date;
   String? comments;
+  double? splitLength;
+  double? lapLength;
 
   TrainingModel({
     this.id,
     required this.athleteId,
     required this.date,
     this.comments,
+    this.splitLength,
+    this.lapLength,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +24,8 @@ class TrainingModel {
       'athleteId': athleteId,
       'date': date.millisecondsSinceEpoch,
       'comments': comments,
+      'splitLength': splitLength,
+      'lapLength': lapLength,
     };
   }
 
@@ -29,6 +35,8 @@ class TrainingModel {
       athleteId: map['athleteId'] as int,
       date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
       comments: map['comments'] as String?,
+      splitLength: map['splitLength'] as double?,
+      lapLength: map['lapLength'] as double?,
     );
   }
 
@@ -43,6 +51,8 @@ class TrainingModel {
         ' athleteId:'
         ' $athleteId,'
         ' date: $date,'
-        ' comments: $comments)';
+        ' comments: $comments)'
+        ' splitLength: $splitLength'
+        ' lapLength: $lapLength';
   }
 }

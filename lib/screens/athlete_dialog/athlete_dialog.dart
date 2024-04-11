@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:signals/signals_flutter.dart';
 
+import '../../common/constants.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../models/athlete_model.dart';
 import '../widgets/common/show_athlete_image.dart';
@@ -11,24 +12,24 @@ import 'widgets/custom_text_field.dart';
 
 class AthleteDialog extends StatefulWidget {
   final AthleteModel? athlete;
-  final void Function(AthleteModel)? addAthlete;
+  final void Function(AthleteModel)? sueAthlete;
 
   const AthleteDialog({
     super.key,
     this.athlete,
-    this.addAthlete,
+    this.sueAthlete,
   });
 
   static Future<bool?> open(
     BuildContext context, {
     AthleteModel? athlete,
-    void Function(AthleteModel)? addAthlete,
+    void Function(AthleteModel)? sueAthlete,
   }) async {
     final bool result = await showDialog<bool?>(
           context: context,
           builder: (context) => AthleteDialog(
             athlete: athlete,
-            addAthlete: addAthlete,
+            sueAthlete: sueAthlete,
           ),
         ) ??
         false;
@@ -50,6 +51,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
     super.initState();
     if (widget.athlete != null) {
       isAddAthlete = false;
+      _controller.init(widget.athlete);
     } else {
       isAddAthlete = true;
     }
@@ -64,8 +66,8 @@ class _AthleteDialogState extends State<AthleteDialog> {
   Future<void> _photoImageOnTap() async {
     final ImagePicker picker = ImagePicker();
     final XFile? xfile = await picker.pickImage(
-      maxHeight: 200,
-      maxWidth: 200,
+      maxHeight: photoImageSize * 1.2,
+      maxWidth: photoImageSize,
       source: ImageSource.camera,
     );
 
@@ -80,15 +82,18 @@ class _AthleteDialogState extends State<AthleteDialog> {
 
     if (valit) Navigator.pop(context, true);
 
+    final id = isAddAthlete ? null : widget.athlete!.id;
+
     final athlete = AthleteModel(
+      id: id,
       name: _controller.name.text,
       email: _controller.email.text,
       photo: _controller.image(),
       phone: _controller.phone.text,
     );
 
-    if (widget.addAthlete != null) {
-      widget.addAthlete!(athlete);
+    if (widget.sueAthlete != null) {
+      widget.sueAthlete!(athlete);
     }
   }
 
@@ -137,7 +142,9 @@ class _AthleteDialogState extends State<AthleteDialog> {
                   children: [
                     FilledButton(
                       onPressed: _okButton,
-                      child: const Text('Add'),
+                      child: Text(
+                        isAddAthlete ? 'Add' : 'Update',
+                      ),
                     ),
                     FilledButton(
                       onPressed: _cancelButton,
