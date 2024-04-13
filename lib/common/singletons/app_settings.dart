@@ -12,6 +12,8 @@ class AppSettings {
   late final String _imagePath;
   late final Directory _appDocDir;
   int millisecondRefresh = 66;
+  double splitLength = 200;
+  double lapLength = 1000;
   final _themeMode = signal<ThemeMode>(ThemeMode.dark);
 
   String get imagePath => _imagePath;

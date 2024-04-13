@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
 import '../../common/singletons/app_settings.dart';
 import '../athletes_page/athletes_page.dart';
+import '../personal_training_page/personal_training_page.dart';
 import '../widgets/common/dismissible_backgrounds.dart';
 import 'stopwatch_page_controller.dart';
 
@@ -18,13 +21,101 @@ class StopWatchPage extends StatefulWidget {
 class _StopWatchPageState extends State<StopWatchPage> {
   final _controller = StopwatchPageController.instance;
   final _settings = AppSettings.instance;
+  final _listMessages = <String>[];
+  Timer? _snackBarTimer;
+  SnackBar? _currentSnackBar;
+  bool enableSnackBar = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (mounted) {
+        _controller.snackBarMessage.listen(
+          context,
+          () => showSnackBar(_controller.snackBarMessage.value),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _snackBarTimer?.cancel();
+    super.dispose();
+  }
 
   Future<void> _addStopwatchs() async {
-    await Navigator.pushNamed(context, AthletesPage.routeName).then(
-      (_) {
-        _controller.addStopwatch();
+    await Navigator.pushNamed(context, AthletesPage.routeName);
+    _controller.addStopwatch();
+  }
+
+  void showSnackBar(String? message) {
+    if (!enableSnackBar) return;
+    if (message != null && message.isNotEmpty) {
+      _listMessages.add(message);
+      if (_listMessages.length > 5) {
+        _listMessages.removeAt(0);
+      }
+
+      _updateSnackBar();
+
+      _snackBarTimer?.cancel();
+      _snackBarTimer = Timer(const Duration(seconds: 5), () {
+        _listMessages.clear();
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      });
+    }
+  }
+
+  void _updateSnackBar() {
+    _currentSnackBar = SnackBar(
+      content: Column(
+        children: _listMessages.reversed
+            .map(
+              (msg) => Text(msg),
+            )
+            .toList(),
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      duration: const Duration(days: 1),
+    );
+
+    ScaffoldMessenger.of(context)
+        .removeCurrentSnackBar(reason: SnackBarClosedReason.remove);
+    ScaffoldMessenger.of(context).showSnackBar(_currentSnackBar!);
+  }
+
+  Future<bool> _removeStopwatch(int index) async {
+    _controller.removeStopwatch(index);
+    return true;
+  }
+
+  Future<void> _managerStopwatch(int index) async {
+    _snackBarTimer?.cancel();
+    _snackBarTimer = Timer(const Duration(milliseconds: 200), () {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    });
+
+    enableSnackBar = false;
+    if (!context.mounted) return;
+    await Navigator.pushNamed(
+      context,
+      PersonalTrainingPage.routeName,
+      arguments: {
+        'stopwatch': _controller.stopwatchList[index],
       },
     );
+    enableSnackBar = true;
   }
 
   @override
@@ -44,33 +135,32 @@ class _StopWatchPageState extends State<StopWatchPage> {
             ),
             onPressed: _settings.toggleThemeMode,
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
-          ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Center(
           child: ListView.builder(
             itemCount: _controller.stopwatchLenght.watch(context),
             itemBuilder: (context, index) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Dismissible(
-                background:
-                    DismissibleContainers.background(context, enable: false),
-                secondaryBackground: DismissibleContainers.secondaryBackground(
-                  context,
-                ),
+                background: DismissibleContainers.background(context,
+                    label: 'Manage Training...',
+                    iconData: Icons.manage_accounts),
+                secondaryBackground:
+                    DismissibleContainers.secondaryBackground(context),
                 key: GlobalKey(),
-                child: _controller.stopwatch[index],
+                child: _controller.stopwatchList[index],
                 confirmDismiss: (direction) async {
+                  bool result = false;
                   if (direction == DismissDirection.endToStart) {
-                    _controller.removeStopwatch(index);
-                    return true;
+                    result = await _removeStopwatch(index);
                   }
-                  return false;
+                  if (direction == DismissDirection.startToEnd) {
+                    _managerStopwatch(index);
+                  }
+                  return result;
                 },
               ),
             ),
