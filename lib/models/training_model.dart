@@ -6,16 +6,20 @@ class TrainingModel {
   int athleteId;
   DateTime date;
   String? comments;
-  double? splitLength;
-  double? lapLength;
+  double splitLength;
+  double lapLength;
+  String distanceUnit;
+  String speedUnit;
 
   TrainingModel({
     this.id,
     required this.athleteId,
     required this.date,
     this.comments,
-    this.splitLength,
-    this.lapLength,
+    this.splitLength = 200,
+    this.lapLength = 1000,
+    this.distanceUnit = 'm',
+    this.speedUnit = 'm/s',
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +30,8 @@ class TrainingModel {
       'comments': comments,
       'splitLength': splitLength,
       'lapLength': lapLength,
+      'distanceUnit': distanceUnit,
+      'speedUnit': speedUnit,
     };
   }
 
@@ -35,8 +41,10 @@ class TrainingModel {
       athleteId: map['athleteId'] as int,
       date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
       comments: map['comments'] as String?,
-      splitLength: map['splitLength'] as double?,
-      lapLength: map['lapLength'] as double?,
+      splitLength: map['splitLength'] as double,
+      lapLength: map['lapLength'] as double,
+      distanceUnit: map['distanceUnit'] as String,
+      speedUnit: map['speedUnit'] as String,
     );
   }
 
@@ -53,6 +61,8 @@ class TrainingModel {
         ' date: $date,'
         ' comments: $comments)'
         ' splitLength: $splitLength'
-        ' lapLength: $lapLength';
+        ' lapLength: $lapLength'
+        ' distanceUnit: $distanceUnit'
+        ' speedUnit: $speedUnit';
   }
 }

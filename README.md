@@ -20,6 +20,58 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/03/13 - version: 0.7.1+7:
+
+This release introduces several enhancements and new features aimed at refining the functionality and user experience of the Trainers Stopwatch app.
+
+- **App Settings**:
+  - Default values for `splitLength` and `lapLength` added to `AppSettings`.
+
+- **Training Model Updates**:
+  - `splitLength` and `lapLength` attributes are now non-nullable.
+  - Introduced `distanceUnit` and `speedUnit` attributes to store units for distance and speed respectively.
+  - Default values set for `splitLength` and `lapLength` are 200 and 1000, respectively.
+
+- **Navigation and Routing**:
+  - Routing added for `PersonalTrainingPage` using the method `PersonalTrainingPage.fromContext(context)`.
+
+- **New Page: PersonalTrainingPage**:
+  - This new page receives a clone of the selected stopwatch and displays current training records.
+
+- **Stopwatch Page Enhancements**:
+  - Implemented a temporary solution using `showSnackBar` to display ongoing training results; further refinement is needed.
+  - Configured `DismissDirection.startToEnd` to launch `PersonalTrainingPage`, identified a bug with stopwatch restart that needs assessment.
+
+- **Stopwatch Page Controller**:
+  - Renamed `_selectedAthletes` to `_stopwatchList` and introduced `_stopwatchControllers`.
+  - Added method `sendSnackBarMessage` to relay messages via `Signal<String> snackBarMessage`.
+
+- **Set Distance Dialog Enhancement**:
+  - Enhanced `SetDistancesDialog` to enable editing of `distanceUnit` and `speedUnit`.
+
+- **Precise Stopwatch Modifications**:
+  - `PreciseStopwatch` now takes `PreciseStopwatchController` as a parameter to facilitate cloning on `PersonalTrainingPage`.
+  - Added `isNotClone` attribute to determine if the instance is a clone, affecting initialization and disposal behaviors.
+  - Removed the bottom message line, transitioning to use `SnackBar` for messages.
+
+- **Precise Stopwatch Controller Enhancements**:
+  - Introduced `splitLength` and `lapLength` attributes.
+  - Added `_actionOnPress` as a `ValueNotifier<bool>` (to be converted to `Signal<bool>` after resolving pending issues).
+  - Implemented disposal for `ValueNotifier` and `Signal` objects: `counter`, `durationTraining`, and `_actionOnPress`.
+  - Added `_toggleActionOnPress` method to toggle the state of `_actionOnPress`, used for activating the refresh of history on `PersonalTrainingPage`.
+  - Method added for updating `splitLength` and `lapLength`.
+  - Implemented `speedCalc` method to calculate speed in m/s and convert it to the unit selected by the user.
+
+- **Database Schema Updates**:
+  - Declared constants `trainingDistanceUnit` and `trainingSpeedUnit` for new columns in the `trainingsTable`.
+  - Updated SQL script `createTrainingTableSQL` to make `trainingSplitLength` and `trainingLapLength` columns non-nullable and add new columns `trainingDistanceUnit` and `trainingSpeedUnit` (both CHAR(5)).
+
+- **Dependencies**:
+  - Added `intl` package for date formatting.
+
+This update aims to streamline the user experience by integrating more precise controls and settings, enhancing the training management capabilities of the app.
+
+
 ## 2024-04-11 - version: 0.7.0+6:
 
 This update introduces a series of enhancements and structural changes across the Trainers Stopwatch app to improve functionality and user experience:

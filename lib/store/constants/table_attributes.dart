@@ -17,6 +17,8 @@ const trainingDate = 'date';
 const trainingComments = 'comments';
 const trainingSplitLength = 'splitLength';
 const trainingLapLength = 'lapLength';
+const trainingDistanceUnit = 'distanceUnit';
+const trainingSpeedUnit = 'speedUnit';
 
 const historyTable = 'historyTable';
 const historyTrainingIndex = 'historyTrainingIndex';

@@ -15,10 +15,14 @@ import 'precise_stopwatch_controller.dart';
 
 class PreciseStopwatch extends StatefulWidget {
   final AthleteModel athlete;
+  final PreciseStopwatchController controller;
+  final bool isNotClone;
 
   const PreciseStopwatch({
     super.key,
     required this.athlete,
+    required this.controller,
+    this.isNotClone = true,
   });
 
   @override
@@ -26,14 +30,19 @@ class PreciseStopwatch extends StatefulWidget {
 }
 
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
-  final _controller = PreciseStopwatchController();
+  late final PreciseStopwatchController _controller;
+  // final _controller = PreciseStopwatchController();
+
   String name = 'Name';
   String image = defaultPhotoImage;
 
   @override
   void initState() {
     super.initState();
-    _controller.init(widget.athlete);
+    _controller = widget.controller;
+    if (widget.isNotClone) {
+      _controller.init(widget.athlete);
+    }
 
     name = widget.athlete.name;
     image = widget.athlete.photo ?? defaultPhotoImage;
@@ -41,15 +50,20 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.isNotClone) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _setTraining() async {
     await SetDistancesDialog.open(
       context,
-      _controller.training,
+      athleteName: _controller.athlete.name,
+      training: _controller.training,
     );
+
+    _controller.updateSplitLapLength();
   }
 
   @override
@@ -91,7 +105,8 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                 Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 8, left: 8),
+                      padding:
+                          const EdgeInsets.only(top: 8, left: 8, bottom: 8),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -153,6 +168,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                             children: [
                               BlocConsumer<StopwatchBloc, StopwatchState>(
                                 bloc: _controller.bloc,
+                                listener: (context, state) {},
                                 builder: (context, state) {
                                   switch (_controller.state) {
                                     case StopwatchStateInitial():
@@ -264,43 +280,10 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                       );
                                   }
                                 },
-                                listener: (context, state) {},
                               ),
                             ],
                           ),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 8,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 0,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: _controller.message.value.isEmpty
-                                ? null
-                                : colorScheme.onPrimary.withOpacity(0.8),
-                          ),
-                          child: Center(
-                            child: Text(
-                              _controller.message.watch(context),
-                              style: AppFontStyle.roboto12Bold.copyWith(
-                                color: colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
                       ),
                     ),
                   ],
