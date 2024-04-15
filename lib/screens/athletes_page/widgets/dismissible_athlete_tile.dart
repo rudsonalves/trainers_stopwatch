@@ -11,6 +11,8 @@ class DismissibleAthleteTile extends StatefulWidget {
   final void Function(bool, AthleteModel)? selectAthlete;
   final Future<bool> Function(AthleteModel)? editFunction;
   final Future<bool> Function(AthleteModel)? deleteFunction;
+  final bool isChecked;
+  final List<int> blockedAthleteIds;
 
   const DismissibleAthleteTile({
     super.key,
@@ -18,6 +20,8 @@ class DismissibleAthleteTile extends StatefulWidget {
     this.selectAthlete,
     this.editFunction,
     this.deleteFunction,
+    required this.isChecked,
+    required this.blockedAthleteIds,
   });
 
   @override
@@ -25,41 +29,50 @@ class DismissibleAthleteTile extends StatefulWidget {
 }
 
 class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
-  final isChecked = signal(false);
+  late final Signal<bool> isChecked;
+
+  @override
+  void initState() {
+    isChecked = signal(widget.isChecked);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    isChecked.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final secondary = Theme.of(context).colorScheme.secondary;
-
     return Dismissible(
       background: DismissibleContainers.background(context),
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: GlobalKey(),
-      child: Card(
-        elevation: 10,
-        child: ListTile(
-          title: Text(widget.athlete.name),
-          subtitle: Text(
-            '${widget.athlete.email}\n${widget.athlete.phone}',
-          ),
-          leading: SizedBox(
-            width: photoImageSize,
-            height: photoImageSize,
-            child: ShowAthleteImage(widget.athlete.photo!, size: 40),
-          ),
-          trailing: IconButton(
-            onPressed: () {
-              isChecked.value = !isChecked();
-              if (widget.selectAthlete != null) {
-                widget.selectAthlete!(isChecked(), widget.athlete);
-              }
-            },
-            icon: Icon(
-              isChecked.watch(context) ? Icons.task_alt : Icons.circle_outlined,
-              color: isChecked.value ? Colors.green : secondary,
+      child: InkWell(
+        child: Card(
+          elevation: isChecked.watch(context) ? 5 : 1,
+          child: ListTile(
+            title: Text(widget.athlete.name),
+            subtitle: Text(
+              '${widget.athlete.email}\n${widget.athlete.phone}',
+            ),
+            leading: SizedBox(
+              width: photoImageSize,
+              height: photoImageSize,
+              child: ShowAthleteImage(widget.athlete.photo!, size: 40),
             ),
           ),
         ),
+        onTap: () {
+          if (!widget.blockedAthleteIds.contains(widget.athlete.id!)) {
+            isChecked.value = !isChecked();
+            if (widget.selectAthlete != null) {
+              widget.selectAthlete!(isChecked(), widget.athlete);
+            }
+          }
+        },
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd &&

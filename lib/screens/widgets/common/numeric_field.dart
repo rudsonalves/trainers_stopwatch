@@ -33,38 +33,40 @@ class _NumericFieldState extends State<NumericField> {
     oldValue = widget.value != null ? widget.value.toString() : '0';
     widget.controller.text = oldValue;
 
-    widget.controller.addListener(() {
-      String newValue = widget.controller.text;
+    widget.controller.addListener(_validadeNumber);
+  }
 
-      // Remove spaces
-      if (newValue != newValue.trim()) {
-        _setControllerText();
-        return;
-      }
+  void _validadeNumber() {
+    String newValue = widget.controller.text;
 
-      // Replace empty string by '0'
-      if (newValue.isEmpty) {
-        oldValue = '0';
-        _setControllerText();
-        return;
-      }
+    // Remove spaces
+    if (newValue != newValue.trim()) {
+      _setControllerText();
+      return;
+    }
 
-      // Remove zeros of start of number ('02' -> '2')
-      if (reInitZeroNumber.hasMatch(newValue)) {
-        oldValue = newValue.substring(1);
-        _setControllerText();
-        return;
-      }
+    // Replace empty string by '0'
+    if (newValue.isEmpty) {
+      oldValue = '0';
+      _setControllerText();
+      return;
+    }
 
-      // Check if is a valid number
-      final result = double.tryParse(newValue);
-      if (result == null) {
-        _setControllerText();
-        return;
-      }
+    // Remove zeros of start of number ('02' -> '2')
+    if (reInitZeroNumber.hasMatch(newValue)) {
+      oldValue = newValue.substring(1);
+      _setControllerText();
+      return;
+    }
 
-      oldValue = newValue;
-    });
+    // Check if is a valid number
+    final result = double.tryParse(newValue);
+    if (result == null) {
+      _setControllerText();
+      return;
+    }
+
+    oldValue = newValue;
   }
 
   void _setControllerText() {

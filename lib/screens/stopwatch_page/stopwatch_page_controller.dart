@@ -12,7 +12,7 @@ class StopwatchPageController {
 
   final List<PreciseStopwatch> _stopwatchList = [];
   final _stopwatchLength = signal<int>(0);
-  final snackBarMessage = signal<String>('');
+  final _historyMessage = signal<String>('');
   final List<AthleteModel> _athletesList = [];
   final List<PreciseStopwatchController> _stopwatchControllers = [];
   final List<AthleteModel> _newAthletes = [];
@@ -22,11 +22,12 @@ class StopwatchPageController {
   List<PreciseStopwatch> get stopwatchList => _stopwatchList;
   List<PreciseStopwatchController> get stopwatchControllers =>
       _stopwatchControllers;
-  Signal<int> get stopwatchLenght => _stopwatchLength;
+  Signal<int> get stopwatchLength => _stopwatchLength;
+  Signal<String> get historyMessage => _historyMessage;
 
   void dispose() {
     _stopwatchLength.dispose();
-    snackBarMessage.dispose();
+    _historyMessage.dispose();
   }
 
   void addNewAthletes(List<AthleteModel> newSelectedAthletes) {
@@ -37,8 +38,8 @@ class StopwatchPageController {
     }
   }
 
-  void sendSnackBarMessage(String message) {
-    snackBarMessage.value = message;
+  void sendHistoryMessage(String message) {
+    _historyMessage.value = message;
   }
 
   void mergeAthleteLists() {
@@ -70,11 +71,10 @@ class StopwatchPageController {
     _stopwatchLength.value = _stopwatchList.length;
   }
 
-  void removeStopwatch(int index) {
-    final id = _stopwatchList[index].athlete.id!;
-
-    _athletesList.removeWhere((item) => item.id == id);
-    _stopwatchList.removeAt(index);
+  void removeStopwatch(int athleteId) {
+    _athletesList.removeWhere((item) => item.id == athleteId);
+    _stopwatchList
+        .removeWhere((stopwatch) => stopwatch.athlete.id == athleteId);
 
     _stopwatchLength.value = _stopwatchList.length;
   }

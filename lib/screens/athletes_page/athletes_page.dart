@@ -22,11 +22,22 @@ class AthletesPage extends StatefulWidget {
 class _AthletesPageState extends State<AthletesPage> {
   final _controller = AthletesPageController();
   final List<AthleteModel> _selectedAthletes = [];
+  final List<int> _preSelectedAthleteIds = [];
 
   @override
   void initState() {
     super.initState();
     _controller.init();
+
+    final athletesList = StopwatchPageController.instance.athletesList;
+
+    _preSelectedAthleteIds.addAll(
+      athletesList.map(
+        (athlete) => athlete.id!,
+      ),
+    );
+
+    _selectedAthletes.addAll(athletesList);
   }
 
   void _addNewAthlete() {
@@ -119,6 +130,10 @@ class _AthletesPageState extends State<AthletesPage> {
                             selectAthlete: selectAthlete,
                             editFunction: editAthlete,
                             deleteFunction: deleteAthlete,
+                            blockedAthleteIds: _preSelectedAthleteIds,
+                            isChecked: _preSelectedAthleteIds.contains(
+                              athletes[index].id!,
+                            ),
                           ),
                         ),
                       );

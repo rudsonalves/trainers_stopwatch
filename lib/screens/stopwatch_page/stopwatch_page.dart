@@ -6,8 +6,11 @@ import 'package:signals/signals_flutter.dart';
 import '../../common/singletons/app_settings.dart';
 import '../athletes_page/athletes_page.dart';
 import '../personal_training_page/personal_training_page.dart';
-import '../widgets/common/dismissible_backgrounds.dart';
 import 'stopwatch_page_controller.dart';
+import 'widgets/message_row.dart';
+import 'widgets/stopwatch_dismissible.dart';
+
+const double stopWatchHeight = 134;
 
 class StopWatchPage extends StatefulWidget {
   const StopWatchPage({super.key});
@@ -21,101 +24,77 @@ class StopWatchPage extends StatefulWidget {
 class _StopWatchPageState extends State<StopWatchPage> {
   final _controller = StopwatchPageController.instance;
   final _settings = AppSettings.instance;
-  final _listMessages = <String>[];
-  Timer? _snackBarTimer;
-  SnackBar? _currentSnackBar;
-  bool enableSnackBar = true;
+  final _messageList = <String>[];
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (mounted) {
-        _controller.snackBarMessage.listen(
-          context,
-          () => showSnackBar(_controller.snackBarMessage.value),
-        );
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      effect(() {
+        final message = _controller.historyMessage.value;
+        if (message.isNotEmpty &&
+            !_messageList.contains(message) &&
+            message != 'none') {
+          _messageList.add(message);
+        }
+      });
     });
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _snackBarTimer?.cancel();
     super.dispose();
   }
 
   Future<void> _addStopwatchs() async {
     await Navigator.pushNamed(context, AthletesPage.routeName);
     _controller.addStopwatch();
+    setState(() {});
   }
 
-  void showSnackBar(String? message) {
-    if (!enableSnackBar) return;
-    if (message != null && message.isNotEmpty) {
-      _listMessages.add(message);
-      if (_listMessages.length > 5) {
-        _listMessages.removeAt(0);
-      }
-
-      _updateSnackBar();
-
-      _snackBarTimer?.cancel();
-      _snackBarTimer = Timer(const Duration(seconds: 5), () {
-        _listMessages.clear();
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      });
-    }
-  }
-
-  void _updateSnackBar() {
-    _currentSnackBar = SnackBar(
-      content: Column(
-        children: _listMessages.reversed
-            .map(
-              (msg) => Text(msg),
-            )
-            .toList(),
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      duration: const Duration(days: 1),
-    );
-
-    ScaffoldMessenger.of(context)
-        .removeCurrentSnackBar(reason: SnackBarClosedReason.remove);
-    ScaffoldMessenger.of(context).showSnackBar(_currentSnackBar!);
-  }
-
-  Future<bool> _removeStopwatch(int index) async {
-    _controller.removeStopwatch(index);
+  Future<bool> _removeStopwatch(int athleteId) async {
+    _controller.removeStopwatch(athleteId);
+    setState(() {});
     return true;
   }
 
-  Future<void> _managerStopwatch(int index) async {
-    _snackBarTimer?.cancel();
-    _snackBarTimer = Timer(const Duration(milliseconds: 200), () {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      }
-    });
-
-    enableSnackBar = false;
+  Future<void> _managerStopwatch(int athleteId) async {
+    final stopwatch = _controller.stopwatchList.firstWhere(
+      (stopwatch) => stopwatch.athlete.id == athleteId,
+    );
     if (!context.mounted) return;
     await Navigator.pushNamed(
       context,
       PersonalTrainingPage.routeName,
       arguments: {
-        'stopwatch': _controller.stopwatchList[index],
+        'stopwatch': stopwatch,
       },
     );
-    enableSnackBar = true;
+  }
+
+  Widget _stopWatchListView() {
+    final listViewBuilder = ListView.builder(
+      itemCount: _controller.stopwatchLength(),
+      itemBuilder: (context, index) => StopwatDismissible(
+        stopwatch: _controller.stopwatchList[index],
+        removeStopwatch: _removeStopwatch,
+        managerStopwatch: _managerStopwatch,
+      ),
+    );
+
+    return SizedBox(
+      height: _sizedBoxHeigth(),
+      child: listViewBuilder,
+    );
+  }
+
+  double _sizedBoxHeigth() {
+    int length = _controller.stopwatchLength();
+    length = length == 0 ? 1 : length;
+    length = length > 4 ? 4 : length;
+    return length * stopWatchHeight;
   }
 
   @override
@@ -139,32 +118,35 @@ class _StopWatchPageState extends State<StopWatchPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Center(
-          child: ListView.builder(
-            itemCount: _controller.stopwatchLenght.watch(context),
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Dismissible(
-                background: DismissibleContainers.background(context,
-                    label: 'Manage Training...',
-                    iconData: Icons.manage_accounts),
-                secondaryBackground:
-                    DismissibleContainers.secondaryBackground(context),
-                key: GlobalKey(),
-                child: _controller.stopwatchList[index],
-                confirmDismiss: (direction) async {
-                  bool result = false;
-                  if (direction == DismissDirection.endToStart) {
-                    result = await _removeStopwatch(index);
-                  }
-                  if (direction == DismissDirection.startToEnd) {
-                    _managerStopwatch(index);
-                  }
-                  return result;
-                },
+        child: Column(
+          children: [
+            _stopWatchListView(),
+            Expanded(
+              child: Card(
+                margin: EdgeInsets.zero,
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: ListenableBuilder(
+                    listenable: _controller.historyMessage.toValueListenable(),
+                    builder: (context, _) {
+                      final int lastIndex = _messageList.length - 1;
+
+                      return ListView.builder(
+                        itemCount: _messageList.length,
+                        itemBuilder: (context, index) => MessageRow(
+                          _messageList[lastIndex - index],
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

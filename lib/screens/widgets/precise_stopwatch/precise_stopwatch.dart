@@ -31,7 +31,6 @@ class PreciseStopwatch extends StatefulWidget {
 
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late final PreciseStopwatchController _controller;
-  // final _controller = PreciseStopwatchController();
 
   String name = 'Name';
   String image = defaultPhotoImage;
@@ -101,190 +100,159 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
           ),
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1,
+                        color: colorScheme.primary.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Text(
+                      _controller.formatCs(
+                          _controller.durationTraining.watch(context)),
+                      style: AppFontStyle.ibm26.copyWith(
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 8, left: 8, bottom: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: colorScheme.primary.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              _controller.counter.watch(context).toString(),
-                              style: AppFontStyle.ibm26,
-                            ),
-                            ButtonBar(
+                    BlocConsumer<StopwatchBloc, StopwatchState>(
+                      bloc: _controller.bloc,
+                      listener: (context, state) {},
+                      builder: (context, state) {
+                        switch (_controller.state) {
+                          case StopwatchStateInitial():
+                            return ButtonBar(
                               children: [
                                 CustomIconButton(
-                                  onPressed: _controller.blocNextLap,
-                                  label: 'Laps',
+                                  onPressed: _controller.blocStartTimer,
+                                  label: 'Start',
                                   icon: Icon(
-                                    StopwatchIcons.lap1,
+                                    StopwatchIcons.start,
+                                    color: onSurfaceVariant,
+                                  ),
+                                ),
+                                CustomIconButton(
+                                  onPressed: _setTraining,
+                                  label: 'Sets',
+                                  icon: Icon(
+                                    Icons.settings,
                                     color: onSurfaceVariant,
                                   ),
                                 ),
                               ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  width: 1,
-                                  color: colorScheme.primary.withOpacity(0.2),
+                            );
+                          case StopwatchStateRunning():
+                            return ButtonBar(
+                              children: [
+                                (_controller.bloc.splitCounter.watch(context) ==
+                                        _controller.bloc.splitCounterMax - 1)
+                                    ? Badge(
+                                        label: Text(
+                                          _controller.bloc.lapCounter
+                                              .watch(context)
+                                              .toString(),
+                                        ),
+                                        child: CustomIconButton(
+                                          onPressed: _controller.blocLapTimer,
+                                          label: 'Laps',
+                                          icon: Icon(
+                                            StopwatchIcons.lap1,
+                                            color: onSurfaceVariant,
+                                          ),
+                                        ),
+                                      )
+                                    : Badge(
+                                        label: Text(
+                                          _controller.bloc
+                                              .splitCounter()
+                                              .toString(),
+                                        ),
+                                        child: CustomIconButton(
+                                          onPressed: _controller.blocSplitTimer,
+                                          label: 'Split',
+                                          icon: Icon(
+                                            StopwatchIcons.partial,
+                                            color: onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ),
+                                CustomIconButton(
+                                  onPressed: _controller.blocPauseTimer,
+                                  label: 'Pause',
+                                  icon: Icon(
+                                    StopwatchIcons.pause,
+                                    color: onSurfaceVariant,
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                _controller.formatCs(_controller
-                                    .durationTraining
-                                    .watch(context)),
-                                style: AppFontStyle.ibm26.copyWith(
-                                  color: colorScheme.primary,
+                              ],
+                            );
+                          case StopwatchStatePaused():
+                            return ButtonBar(
+                              children: [
+                                CustomIconButton(
+                                  onPressed: _controller.blocStartTimer,
+                                  label: 'Cont.',
+                                  icon: Icon(
+                                    StopwatchIcons.start,
+                                    color: onSurfaceVariant,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              BlocConsumer<StopwatchBloc, StopwatchState>(
-                                bloc: _controller.bloc,
-                                listener: (context, state) {},
-                                builder: (context, state) {
-                                  switch (_controller.state) {
-                                    case StopwatchStateInitial():
-                                      return ButtonBar(
-                                        children: [
-                                          CustomIconButton(
-                                            onPressed:
-                                                _controller.blocStartTimer,
-                                            label: 'Start',
-                                            icon: Icon(
-                                              StopwatchIcons.start,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                          CustomIconButton(
-                                            onPressed: _setTraining,
-                                            label: 'Sets',
-                                            icon: Icon(
-                                              Icons.settings,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    case StopwatchStateRunning():
-                                      return ButtonBar(
-                                        children: [
-                                          CustomIconButton(
-                                            onPressed:
-                                                _controller.blocSplitTimer,
-                                            label: 'Split',
-                                            icon: Icon(
-                                              StopwatchIcons.partial,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                          CustomIconButton(
-                                            onPressed:
-                                                _controller.blocPauseTimer,
-                                            label: 'Pause',
-                                            icon: Icon(
-                                              StopwatchIcons.pause,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    case StopwatchStatePaused():
-                                      return ButtonBar(
-                                        children: [
-                                          CustomIconButton(
-                                            onPressed:
-                                                _controller.blocStartTimer,
-                                            label: 'Cont.',
-                                            icon: Icon(
-                                              StopwatchIcons.start,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                          CustomIconButton(
-                                            onLongPressed:
-                                                _controller.blocResetTimer,
-                                            label: 'Reset',
-                                            icon: Icon(
-                                              StopwatchIcons.reset,
-                                              color:
-                                                  onSurfaceVariant.withRed(130),
-                                            ),
-                                          ),
-                                          CustomIconButton(
-                                            onLongPressed:
-                                                _controller.blocStopTimer,
-                                            label: 'Finish',
-                                            icon: Icon(
-                                              StopwatchIcons.stop,
-                                              color:
-                                                  onSurfaceVariant.withRed(130),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    case StopwatchStateReset():
-                                      return ButtonBar(
-                                        children: [
-                                          CustomIconButton(
-                                            onPressed:
-                                                _controller.blocStartTimer,
-                                            label: 'Start',
-                                            icon: Icon(
-                                              StopwatchIcons.start,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    default:
-                                      return ButtonBar(
-                                        children: [
-                                          CustomIconButton(
-                                            onPressed:
-                                                _controller.blocStartTimer,
-                                            label: 'Start',
-                                            icon: Icon(
-                                              StopwatchIcons.start,
-                                              color: onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                                CustomIconButton(
+                                  onLongPressed: _controller.blocResetTimer,
+                                  label: 'Reset',
+                                  icon: Icon(
+                                    StopwatchIcons.reset,
+                                    color: onSurfaceVariant.withRed(130),
+                                  ),
+                                ),
+                                CustomIconButton(
+                                  onLongPressed: _controller.blocStopTimer,
+                                  label: 'Finish',
+                                  icon: Icon(
+                                    StopwatchIcons.stop,
+                                    color: onSurfaceVariant.withRed(130),
+                                  ),
+                                ),
+                              ],
+                            );
+                          case StopwatchStateReset():
+                            return ButtonBar(
+                              children: [
+                                CustomIconButton(
+                                  onPressed: _controller.blocStartTimer,
+                                  label: 'Start',
+                                  icon: Icon(
+                                    StopwatchIcons.start,
+                                    color: onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            );
+                          default:
+                            return ButtonBar(
+                              children: [
+                                CustomIconButton(
+                                  onPressed: _controller.blocStartTimer,
+                                  label: 'Start',
+                                  icon: Icon(
+                                    StopwatchIcons.start,
+                                    color: onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            );
+                        }
+                      },
                     ),
                   ],
                 ),

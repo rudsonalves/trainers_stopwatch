@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
 
-import '../../common/icons/stopwatch_icons_icons.dart';
+import '../../common/theme/app_font_style.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch_controller.dart';
+import 'widgets/dismissible_personal_training.dart';
 
 class PersonalTrainingPage extends StatefulWidget {
   final PreciseStopwatch stopwatch;
@@ -37,16 +37,6 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
   void initState() {
     super.initState();
     _controller = widget.stopwatch.controller;
-  }
-
-  String formatTime(Duration duration) {
-    String time = duration.toString();
-    while (time[0] == '0' || time[0] == ':') {
-      time = time.substring(1);
-    }
-    if (time[0] == '.') time = '0$time';
-
-    return time.substring(0, time.length - 3);
   }
 
   @override
@@ -85,43 +75,16 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
               child: ListenableBuilder(
                 listenable: _controller.actionOnPress,
                 builder: (context, _) {
+                  final histories = _controller.histories.reversed.toList();
+
                   return ListView.builder(
                     itemCount: _controller.histories.length,
-                    itemBuilder: (context, index) {
-                      final rindex = _controller.histories.length - 1 - index;
-                      final history = _controller.histories[rindex];
-                      final training = _controller.training;
-
-                      String title = history.lap != null
-                          ? 'Lap [${history.lap}] time: '
-                          : 'Split time: ';
-                      title += formatTime(history.duration);
-
-                      String speed = _controller.speedCalc(
-                        duration: history.duration,
-                        distante: history.lap != null
-                            ? training.splitLength
-                            : training.lapLength,
-                        distanceUnit: training.distanceUnit,
-                        speedUnit: training.speedUnit,
-                      );
-                      String subtitle = 'Speed: $speed';
-
-                      return Dismissible(
-                        key: GlobalKey(),
-                        child: Card(
-                          child: ListTile(
-                            title: Text(title),
-                            subtitle: Text(subtitle),
-                            leading: Icon(
-                              history.lap != null
-                                  ? StopwatchIcons.lap
-                                  : StopwatchIcons.partial,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    itemBuilder: (context, index) =>
+                        DismissiblePersonalTraining(
+                      history: histories[index],
+                      training: _controller.training,
+                      speedCalc: _controller.speedCalc,
+                    ),
                   );
                 },
               ),
