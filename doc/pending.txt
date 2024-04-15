@@ -1,0 +1,5 @@
+1 - Juntar os botões de Lap e Split. O motivo é simples, cada n split resulta em uma lap
+2 - Remover bug de reemissão da última mensagem ao se mudar de página. Algo está dobrando a última mensagem.
+3 - Adicionar a edição da mensagem no treinamento e nos históricos.
+4 - verificar os disposes das páginas.
+- SetDistancesDialog é o diálogo para a edição do trainingModel ativo. Adicionar a edição de comentários e trocar para um nome mais adequado.

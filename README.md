@@ -20,6 +20,52 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/03/15 - version: 0.7.1+8:
+
+This release focuses on improving functionality and user interface enhancements across various components of the Trainers Stopwatch app.
+
+- **Stopwatch Bloc Enhancements**:
+  - Renamed `_counter` to `_lapCounter` to better reflect its purpose.
+  - Introduced `_splitCounter` for counting splits.
+  - Simplified the increment process for splits to fix a counting bug.
+
+- **Model Updates**:
+  - In `HistoryModel`, added an `int split` attribute to directly record splits instead of calculating them.
+
+- **Athletes Page Enhancements**:
+  - Introduced a list of pre-selected athlete IDs, `_preSelectedAthleteIds.addAll`, which locks the selected athletes from being deselected on the `AthletesPage`. This ensures athletes with active stopwatches are not accidentally deselected.
+  - In `DismissibleAthleteTile`, athlete lock control is managed, and the checkbox for athlete selection has been replaced with a card elevation of 5, enhancing the aesthetic appeal.
+
+- **Personal Training Page Refactoring**:
+  - Refactored to remove `Dismissible` into a dedicated class `DismissiblePersonalTraining`.
+
+- **Stopwatch Page Improvements**:
+  - Removed `SnackBar` from `StopwatchPage`. Currently testing a `ListView.builder` for displaying messages in a reserved area at the bottom of the `StopwatchPage`.
+  - Added an effect function (from `Signal`) to enhance reactivity for adding new messages to `_messageList` as they are generated.
+  - Implemented `setState` in `_addStopwatches` and `_removeStopwatch` due to changes in page update dynamics.
+  - Extracted `listViewBuilder` construction into a dedicated function for improved code readability.
+  - Simplified the presentation of stopwatch commands on `StopwatchPage`, removing several rows and columns for a cleaner layout.
+
+- **Additional Component Updates**:
+  - Created `MessageRow` to construct log entries for the stopwatch.
+  - Introduced `StopwatchDismissible` to isolate `Dismissible` behavior specifically for the `StopwatchPage`.
+  - Enhanced `NumericField` to allow only valid numbers.
+  - Adjusted focus management in `SetDistanceDialog` to better navigate its elements.
+  - Merged Split and Lap buttons in `PreciseStopwatch` since the end of a Lap also signifies the end of a Split. These buttons now share the same position, with the Lap button displayed at the end of a Lap and the Split button visible during other operations.
+
+- **Precise Stopwatch Controller Adjustments**:
+  - Added `isPaused` to manage stopwatch pauses.
+  - Streamlined the injection of new Splits and Laps to a more simplistic model.
+  - Replaced the generic `_createMessage` method with specific methods: `_sendSplitMessage`, `_sendLapMessage`, `_sendFinishMessage`, and `_sendStartedMessage`.
+  - Simplified `speedCalc` method to require fewer parameters.
+
+- **Database Schema Updates**:
+  - Added `historySplit` constant to name the split column in the `historyTable`.
+  - Modified SQL to include the `split` column in the `historyTable`.
+
+This update aims to streamline the app's functionality while enhancing the user experience with more intuitive controls and clearer information display.
+
+
 ## 2024/03/13 - version: 0.7.1+7:
 
 This release introduces several enhancements and new features aimed at refining the functionality and user experience of the Trainers Stopwatch app.

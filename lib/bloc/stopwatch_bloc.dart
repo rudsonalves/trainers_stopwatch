@@ -13,10 +13,13 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   DateTime? _pausedTime;
 
   final _durationTrainingSignal = signal<Duration>(const Duration());
-  final _counter = signal<int>(0);
+  final _lapCounter = signal<int>(0);
+  final _splitCounter = signal<int>(0);
+  int splitCounterMax = 99;
 
   Signal<Duration> get durationTraining => _durationTrainingSignal;
-  Signal<int> get counter => _counter;
+  Signal<int> get lapCounter => _lapCounter;
+  Signal<int> get splitCounter => _splitCounter;
 
   StopwatchBloc() : super(StopwatchStateInitial()) {
     on<StopwatchEventRun>(_startEvent);
@@ -30,7 +33,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   void dispose() {
     _timer?.cancel();
     _durationTrainingSignal.dispose();
-    _counter.dispose();
+    _lapCounter.dispose();
+    _splitCounter.dispose();
   }
 
   FutureOr<void> _startEvent(
@@ -42,11 +46,12 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     if (state is StopwatchStatePaused) {
       final pausedDuration = DateTime.now().difference(_pausedTime!);
       _startTime = _startTime!.add(pausedDuration);
-      _pausedTime = null;
     } else {
       _startTime = DateTime.now();
-      _counter.value = 0;
+      _lapCounter.value = 0;
+      _splitCounter.value = 0;
     }
+    _pausedTime = null;
 
     _timer = Timer.periodic(
         Duration(
@@ -75,7 +80,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   ) async {
     _timer?.cancel();
     _durationTrainingSignal.value = const Duration();
-    _counter.value = 0;
+    _lapCounter.value = 0;
+    _splitCounter.value = 0;
 
     emit(StopwatchStateReset());
   }
@@ -85,7 +91,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (state is! StopwatchStateRunning) return;
-    _counter.value++;
+    _lapCounter.value++;
+    _splitCounter.value = 0;
 
     emit(StopwatchStateRunning());
   }
@@ -95,6 +102,7 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (state is! StopwatchStateRunning) return;
+    _splitCounter.value++;
 
     emit(StopwatchStateRunning());
   }
@@ -105,7 +113,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   ) async {
     if (state is! StopwatchStatePaused) return;
 
-    _counter.value++;
+    _lapCounter.value++;
+    _splitCounter.value++;
     emit(StopwatchStateInitial());
   }
 }

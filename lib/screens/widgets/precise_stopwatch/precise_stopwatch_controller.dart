@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
@@ -21,6 +22,7 @@ class PreciseStopwatchController {
   int _lastLapMS = 0;
   int _lastSplitMS = 0;
   bool _trainingStarted = false;
+  bool isPaused = false;
   late double splitLength;
   late double lapLength;
   final _actionOnPress = ValueNotifier<bool>(false);
@@ -29,7 +31,8 @@ class PreciseStopwatchController {
 
   StopwatchBloc get bloc => _bloc;
   StopwatchState get state => _bloc.state;
-  Signal<int> get counter => _bloc.counter;
+  Signal<int> get lapCounter => _bloc.lapCounter;
+  Signal<int> get splitCounter => _bloc.splitCounter;
   Signal<Duration> get durationTraining => _bloc.durationTraining;
   AthleteModel get athlete => _athlete;
   List<TrainingModel> get trainings => _trainingManager.trainings;
@@ -41,6 +44,7 @@ class PreciseStopwatchController {
     _athlete = athlete;
     splitLength = AppSettings.instance.splitLength;
     lapLength = AppSettings.instance.lapLength;
+    _bloc.splitCounterMax = lapLength ~/ splitLength;
     _trainingManager.init(_athlete.id!);
     _createNewTraining();
   }
@@ -48,7 +52,7 @@ class PreciseStopwatchController {
   void dispose() {
     _bloc.dispose();
     _actionOnPress.dispose();
-    counter.dispose();
+    lapCounter.dispose();
     durationTraining.dispose();
   }
 
@@ -76,20 +80,39 @@ class PreciseStopwatchController {
     if (lapLength != _training.lapLength) {
       lapLength = training.lapLength;
     }
+
+    _bloc.splitCounterMax = lapLength ~/ splitLength;
   }
 
   Future<void> blocStartTimer() async {
     _bloc.add(StopwatchEventRun());
 
+    if (isPaused) {
+      isPaused = false;
+      return;
+    }
+
     if (!_trainingStarted) {
       await _createNewTraining();
-      _toggleActionOnPress();
     }
+
+    HistoryModel history = HistoryModel(
+      trainingId: _training.id!,
+      duration: const Duration(milliseconds: 0),
+      lap: 0,
+      split: 0,
+    );
+    _lastLapMS = 0;
+    _lastSplitMS = 0;
+
+    await _historyManager.insert(history);
+    _toggleActionOnPress();
+    _sendStartedMessage();
   }
 
   void blocPauseTimer() {
     _bloc.add(StopwatchEventPause());
-    _toggleActionOnPress();
+    isPaused = true;
   }
 
   void blocResetTimer() {
@@ -97,88 +120,77 @@ class PreciseStopwatchController {
     _toggleActionOnPress();
   }
 
-  Future<void> blocNextLap() async {
+  Future<void> blocLapTimer() async {
     if (_bloc.state is! StopwatchStateRunning) return;
     _bloc.add(StopwatchEventLap());
 
-    if (!_trainingStarted) return;
-
-    await Future.delayed(const Duration(milliseconds: 50));
-
-    int lapMs;
-    double speed;
-    (lapMs, speed) = _calculateLapTimeSpeed();
-
-    HistoryModel history = HistoryModel(
-      trainingId: _training.id!,
-      duration: Duration(milliseconds: lapMs),
-      lap: counter(),
-    );
-
-    _createMassage(history.duration, speed, history.lap);
-    await _historyManager.insert(history);
-    _toggleActionOnPress();
+    await _generateSplitRegister(bloc.splitCounterMax);
+    await _generateLapRegister();
   }
 
   Future<void> blocSplitTimer() async {
     if (_bloc.state is! StopwatchStateRunning) return;
     _bloc.add(StopwatchEventSplit());
 
+    await _generateSplitRegister();
+  }
+
+  Future<void> blocStopTimer() async {
+    _bloc.add(StopwatchEventStop());
+    isPaused = false;
+
+    await _generateSplitRegister();
+
+    await _generateLapRegister();
+
+    _trainingStarted = false;
+
+    _sendFinishMessage();
+    _toggleActionOnPress();
+  }
+
+  Future<void> _generateSplitRegister([int? split]) async {
     if (!_trainingStarted) return;
 
     await Future.delayed(const Duration(milliseconds: 50));
 
     int splitMs;
-    double speed;
+    String speed;
     (splitMs, speed) = _calculateSplitTimeSpeed();
 
     HistoryModel history = HistoryModel(
       trainingId: _training.id!,
       duration: Duration(milliseconds: splitMs),
+      split: split ?? _bloc.splitCounter(),
     );
 
-    _createMassage(history.duration, speed);
-
     await _historyManager.insert(history);
+    _sendSplitMessage(history.duration, speed, split);
     _toggleActionOnPress();
   }
 
-  Future<void> blocStopTimer() async {
-    _bloc.add(StopwatchEventStop());
-    _trainingStarted = false;
+  Future<void> _generateLapRegister() async {
+    if (!_trainingStarted) return;
 
     await Future.delayed(const Duration(milliseconds: 50));
 
     int lapMs;
-    double speed;
+    String speed;
     (lapMs, speed) = _calculateLapTimeSpeed();
 
-    HistoryModel historyLap = HistoryModel(
+    HistoryModel history = HistoryModel(
       trainingId: _training.id!,
       duration: Duration(milliseconds: lapMs),
-      lap: counter(),
+      lap: lapCounter(),
+      split: _bloc.splitCounter(),
     );
 
-    _createMassage(historyLap.duration, speed, historyLap.lap);
-
-    await Future.delayed(const Duration(milliseconds: 1500));
-
-    int splitMs;
-    (splitMs, speed) = _calculateSplitTimeSpeed();
-
-    HistoryModel historySpli = HistoryModel(
-      trainingId: _training.id!,
-      duration: Duration(milliseconds: splitMs),
-    );
-
-    _createMassage(historySpli.duration, speed);
-
-    await _historyManager.insert(historyLap);
-    await _historyManager.insert(historySpli);
+    await _historyManager.insert(history);
+    _sendLapMessage(history.duration, speed, history.lap!);
     _toggleActionOnPress();
   }
 
-  String formatMs(Duration duration) {
+  String _formatMs(Duration duration) {
     final durationStr = duration.toString();
     final point = durationStr.indexOf('.');
     return durationStr.substring(0, point + 4);
@@ -190,52 +202,62 @@ class PreciseStopwatchController {
     return durationStr.substring(0, point + 3);
   }
 
-  void _createMassage(
-    Duration time,
-    double speed, [
-    int? lap,
-  ]) {
-    String message = '';
-    if (lap != null) {
-      message = speed != 0
-          ? 'Lap [$lap]: ${formatMs(time)}'
-              ' speed: ${speed.toStringAsFixed(2)} m/s'
-          : 'Lap [$lap]: ${formatMs(time)}';
-    } else {
-      message = speed != 0
-          ? 'Split: ${formatMs(time)}'
-              ' speed: ${speed.toStringAsFixed(2)} m/s'
-          : 'Split: ${formatMs(time)}';
-    }
-    _stopwatchController.sendSnackBarMessage(message);
+  void _sendStartedMessage() {
+    final message = '${athlete.name}\n'
+        'Started training at ${DateFormat.Hms().format(DateTime.now())}';
+    _stopwatchController.sendHistoryMessage(message);
   }
 
-  (int, double) _calculateLapTimeSpeed() {
+  void _sendSplitMessage(
+    Duration time,
+    String speed, [
+    int? split,
+  ]) {
+    final message = '${athlete.name}\n'
+        'Split [${split ?? splitCounter()}]: ${_formatMs(time)}'
+        ' speed: $speed';
+    _stopwatchController.sendHistoryMessage(message);
+  }
+
+  void _sendLapMessage(
+    Duration time,
+    String speed,
+    int lap,
+  ) {
+    final message = '${athlete.name}\n'
+        'Lap [$lap]: ${_formatMs(time)}'
+        ' speed: $speed';
+    _stopwatchController.sendHistoryMessage(message);
+  }
+
+  void _sendFinishMessage() {
+    final message = '${athlete.name}\n'
+        'Fininshed training at ${DateFormat.Hms().format(DateTime.now())}';
+    _stopwatchController.sendHistoryMessage(message);
+  }
+
+  (int, String) _calculateLapTimeSpeed() {
     final lapMS = durationTraining().inMilliseconds - _lastLapMS;
     _lastLapMS = durationTraining().inMilliseconds;
 
-    final speed = 1000 * _training.lapLength / lapMS;
+    final String speed = speedCalc(training.lapLength, lapMS / 1000);
+
     return (lapMS, speed);
   }
 
-  (int, double) _calculateSplitTimeSpeed() {
+  (int, String) _calculateSplitTimeSpeed() {
     final splitMS = durationTraining().inMilliseconds - _lastSplitMS;
     _lastSplitMS = durationTraining().inMilliseconds;
 
-    final speed = 1000 * _training.splitLength / splitMS;
+    final speed = speedCalc(training.splitLength, splitMS / 1000);
     return (splitMS, speed);
   }
 
-  String speedCalc({
-    required Duration duration,
-    required double distante,
-    required String distanceUnit,
-    required String speedUnit,
-  }) {
-    final double time = duration.inMilliseconds / 1000;
-
-    double length = distante;
-    switch (distanceUnit) {
+  String speedCalc(
+    double length,
+    double time,
+  ) {
+    switch (training.distanceUnit) {
       case 'km':
         length *= 1000;
         break;
@@ -248,7 +270,7 @@ class PreciseStopwatchController {
     }
 
     double speed = length / time;
-    switch (speedUnit) {
+    switch (training.speedUnit) {
       case 'yd/s':
         speed *= 1.09361;
         break;
@@ -260,6 +282,6 @@ class PreciseStopwatchController {
         break;
     }
 
-    return '${speed.toStringAsFixed(2)} $speedUnit';
+    return '${speed.toStringAsFixed(2)} ${training.speedUnit}';
   }
 }

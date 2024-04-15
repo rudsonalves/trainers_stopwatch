@@ -40,7 +40,7 @@ class SetDistancesDialog extends StatefulWidget {
 class _SetDistancesDialogState extends State<SetDistancesDialog> {
   final splitController = TextEditingController(text: '');
   final lapController = TextEditingController(text: '');
-  final splitFocusnode = FocusNode();
+  final splitFocusNode = FocusNode();
   final lapFocusNode = FocusNode();
   final selectedDistUnit = signal<String>('m');
   List<String> distanceUnits = ['m', 'km', 'yd', 'mi'];
@@ -57,9 +57,15 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      FocusScope.of(context).requestFocus(splitFocusnode);
-      splitController.text = widget.training.splitLength.toString();
-      lapController.text = widget.training.lapLength.toString();
+      FocusScope.of(context).requestFocus(splitFocusNode);
+      final splitLength = widget.training.splitLength.toString();
+      final lapLength = widget.training.lapLength.toString();
+      splitController.text = splitLength;
+      splitController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: splitLength.length,
+      );
+      lapController.text = lapLength;
       selectedDistUnit.value = widget.training.distanceUnit;
       selectedSpeedUnit.value = widget.training.speedUnit;
     });
@@ -82,6 +88,14 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
     widget.training.distanceUnit = selectedDistUnit();
     widget.training.speedUnit = selectedSpeedUnit();
     Navigator.pop(context, true);
+  }
+
+  void _onsubmittedSplit(String value) {
+    FocusScope.of(context).requestFocus(lapFocusNode);
+    lapController.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: lapController.text.length,
+    );
   }
 
   @override
@@ -167,11 +181,11 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
           ],
         ),
         NumericField(
-          focusNode: splitFocusnode,
+          focusNode: splitFocusNode,
           label: 'Split Distance (${selectedDistUnit.watch(context)})',
           controller: splitController,
           value: widget.training.splitLength,
-          onSubmitted: (_) => FocusScope.of(context).requestFocus(lapFocusNode),
+          onSubmitted: _onsubmittedSplit,
         ),
         NumericField(
           focusNode: lapFocusNode,
