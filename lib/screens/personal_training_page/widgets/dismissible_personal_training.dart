@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../common/icons/stopwatch_icons_icons.dart';
 import '../../../models/history_model.dart';
 import '../../../models/training_model.dart';
+import '../../widgets/common/dismissible_backgrounds.dart';
+import 'edit_history_dialog/edit_history_dialog.dart';
 
-class DismissiblePersonalTraining extends StatelessWidget {
+class DismissiblePersonalTraining extends StatefulWidget {
   final HistoryModel history;
   final TrainingModel training;
   final String Function(double length, double time) speedCalc;
@@ -16,22 +18,36 @@ class DismissiblePersonalTraining extends StatelessWidget {
     required this.speedCalc,
   });
 
+  @override
+  State<DismissiblePersonalTraining> createState() =>
+      _DismissiblePersonalTrainingState();
+}
+
+class _DismissiblePersonalTrainingState
+    extends State<DismissiblePersonalTraining> {
+  late String title;
+
   (String, String, bool) _generateTitles() {
-    String title = formatTime(history.duration);
+    String title = formatTime(widget.history.duration);
     double length;
-    double time = history.duration.inMilliseconds / 1000;
-    if (history.lap != null) {
-      title = 'Lap [${history.lap}] time: $title';
-      length = training.lapLength;
+    double time = widget.history.duration.inMilliseconds / 1000;
+    if (widget.history.lap != null) {
+      title = 'Lap [${widget.history.lap}] time: $title';
+      length = widget.training.lapLength;
     } else {
-      title = 'Split [${history.split}] time: $title';
-      length = training.splitLength;
+      title = 'Split [${widget.history.split}] time: $title';
+      length = widget.training.splitLength;
     }
 
-    String speed = speedCalc(length, time);
-    String subtitle = 'Speed: $speed';
+    String subtitle = widget.history.comments ?? '';
+    if (subtitle.isEmpty) {
+      final speed = widget.speedCalc(length, time);
+      subtitle = 'Speed: $speed';
+    }
 
-    return (title, subtitle, history.lap != null);
+    this.title = title;
+
+    return (title, subtitle, widget.history.lap != null);
   }
 
   String formatTime(Duration duration) {
@@ -44,6 +60,14 @@ class DismissiblePersonalTraining extends StatelessWidget {
     return time.substring(0, time.length - 3);
   }
 
+  Future<void> _editHistoty(BuildContext context) async {
+    await EditHistoryDialog.open(
+      context,
+      title: title,
+      history: widget.history,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String title;
@@ -53,6 +77,13 @@ class DismissiblePersonalTraining extends StatelessWidget {
     (title, subtitle, isLap) = _generateTitles();
 
     return Dismissible(
+      background: DismissibleContainers.background(
+        context,
+      ),
+      secondaryBackground: DismissibleContainers.secondaryBackground(
+        context,
+        enable: false,
+      ),
       key: GlobalKey(),
       child: Card(
         child: ListTile(
@@ -63,7 +94,15 @@ class DismissiblePersonalTraining extends StatelessWidget {
           ),
         ),
       ),
-      confirmDismiss: (direction) async => false,
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          await _editHistoty(context);
+          return false;
+        } else if (direction == DismissDirection.endToStart) {
+          return false;
+        }
+        return false;
+      },
     );
   }
 }

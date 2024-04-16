@@ -162,6 +162,7 @@ class PreciseStopwatchController {
       trainingId: _training.id!,
       duration: Duration(milliseconds: splitMs),
       split: split ?? _bloc.splitCounter(),
+      comments: 'Speed: $speed',
     );
 
     await _historyManager.insert(history);
@@ -183,6 +184,7 @@ class PreciseStopwatchController {
       duration: Duration(milliseconds: lapMs),
       lap: lapCounter(),
       split: _bloc.splitCounter(),
+      comments: 'Speed: $speed',
     );
 
     await _historyManager.insert(history);
@@ -240,7 +242,7 @@ class PreciseStopwatchController {
     final lapMS = durationTraining().inMilliseconds - _lastLapMS;
     _lastLapMS = durationTraining().inMilliseconds;
 
-    final String speed = speedCalc(training.lapLength, lapMS / 1000);
+    final speed = speedCalc(training.lapLength, lapMS / 1000);
 
     return (lapMS, speed);
   }

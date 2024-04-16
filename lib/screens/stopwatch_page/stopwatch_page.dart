@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
 
 import '../../common/singletons/app_settings.dart';
 import '../athletes_page/athletes_page.dart';
 import '../personal_training_page/personal_training_page.dart';
+import '../settings/settings_page.dart';
+import '../trainings_page/trainings_page.dart';
+import '../widgets/common/generic_dialog.dart';
 import 'stopwatch_page_controller.dart';
 import 'widgets/message_row.dart';
 import 'widgets/stopwatch_dismissible.dart';
@@ -45,6 +49,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   @override
   void dispose() {
     _controller.dispose();
+    _settings.dispose();
     super.dispose();
   }
 
@@ -55,9 +60,27 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   Future<bool> _removeStopwatch(int athleteId) async {
-    _controller.removeStopwatch(athleteId);
-    setState(() {});
-    return true;
+    final result = await GenericDialog.open(context,
+        title: 'Remove Training',
+        message:
+            'Training records will be removed from the log but will still be'
+            ' stored in the athlete\'s training file.',
+        actions: DialogActions.yesNo);
+    if (result) {
+      final athleteName = _controller.athletesList
+          .firstWhere(
+            (athlete) => athlete.id == athleteId,
+          )
+          .name;
+      _removeAthleteFromLogs(athleteName);
+      _controller.removeStopwatch(athleteId);
+      setState(() {});
+    }
+    return result;
+  }
+
+  void _removeAthleteFromLogs(String athleteName) {
+    _messageList.removeWhere((message) => message.contains(athleteName));
   }
 
   Future<void> _managerStopwatch(int athleteId) async {
@@ -92,14 +115,15 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
   double _sizedBoxHeigth() {
     int length = _controller.stopwatchLength();
-    length = length == 0 ? 1 : length;
+    length = length < 2 ? 2 : length;
     length = length > 4 ? 4 : length;
     return length * stopWatchHeight;
   }
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final primary = colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
@@ -115,6 +139,46 @@ class _StopWatchPageState extends State<StopWatchPage> {
             onPressed: _settings.toggleThemeMode,
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: colorScheme.onPrimary,
+              ),
+              child: const Text(
+                'Training\'s Stopwatch Menu',
+                style: AppFontStyle.roboto20SemiBold,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.people_alt_rounded),
+              title: const Text('Athletes'),
+              onTap: () async {
+                Navigator.pop(context);
+                _addStopwatchs();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.directions_run),
+              title: const Text('Trainings'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, TrainingsPage.routeName);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, SettingsPage.routeName);
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

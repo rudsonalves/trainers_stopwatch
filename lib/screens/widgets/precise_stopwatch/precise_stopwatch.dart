@@ -9,7 +9,7 @@ import '../../../common/icons/stopwatch_icons_icons.dart';
 import '../../../common/theme/app_font_style.dart';
 import '../../../models/athlete_model.dart';
 import '../common/custon_icon_button.dart';
-import '../common/set_distance_dialog.dart';
+import '../edit_training_dialog/edit_training_dialog.dart';
 import '../common/show_athlete_image.dart';
 import 'precise_stopwatch_controller.dart';
 
@@ -56,7 +56,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
   }
 
   Future<void> _setTraining() async {
-    await SetDistancesDialog.open(
+    await EditTrainingDialog.open(
       context,
       athleteName: _controller.athlete.name,
       training: _controller.training,

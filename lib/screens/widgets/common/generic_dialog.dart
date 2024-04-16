@@ -19,7 +19,7 @@ class GenericDialog extends StatelessWidget {
     this.actions,
   });
 
-  static Future<bool> callDialog(
+  static Future<bool> open(
     BuildContext context, {
     required String title,
     required String message,

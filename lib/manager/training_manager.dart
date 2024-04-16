@@ -2,14 +2,25 @@ import '../models/training_model.dart';
 import '../repositories/training_repository/training_repository.dart';
 
 class TrainingManager {
+  TrainingManager();
+
   final _repository = TrainingRepository();
   late final int _athleteId;
   final List<TrainingModel> _trainings = [];
+  bool _started = false;
 
   int get athleteId => _athleteId;
   List<TrainingModel> get trainings => _trainings;
 
+  static Future<TrainingManager> byAthleteId(int id) async {
+    final trainingManager = TrainingManager();
+    await trainingManager.init(id);
+    return trainingManager;
+  }
+
   Future<void> init(int athleteId) async {
+    if (_started) return;
+    _started = true;
     _athleteId = athleteId;
     await getTrainings();
   }
