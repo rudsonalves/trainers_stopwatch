@@ -4,12 +4,22 @@ import '../models/athlete_model.dart';
 import '../repositories/athlete_repository/athlete_repository.dart';
 
 class AthleteManager {
+  AthleteManager._();
+  static final AthleteManager _instance = AthleteManager._();
+  static AthleteManager get instance => _instance;
+  bool _started = false;
+
   final _repository = AthleteRepository();
   final List<AthleteModel> _athletes = [];
 
   List<AthleteModel> get athletes => _athletes;
 
-  Future<void> init() async {}
+  Future<void> init() async {
+    if (!_started) {
+      await getAllAthletes();
+      _started = true;
+    }
+  }
 
   Future<void> insert(AthleteModel athlete) async {
     if (athlete.id != null) {

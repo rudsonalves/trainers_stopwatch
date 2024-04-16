@@ -27,7 +27,11 @@ class _AthletesPageState extends State<AthletesPage> {
   @override
   void initState() {
     super.initState();
-    _controller.init();
+    _startingPage();
+  }
+
+  Future<void> _startingPage() async {
+    await _controller.init();
 
     final athletesList = StopwatchPageController.instance.athletesList;
 
@@ -70,7 +74,7 @@ class _AthletesPageState extends State<AthletesPage> {
   }
 
   Future<bool> deleteAthlete(AthleteModel athlete) async {
-    final result = await GenericDialog.callDialog(
+    final result = await GenericDialog.open(
       context,
       title: 'Delete Athlete',
       message: 'When removing an athlete all their training data will be lost.'
@@ -138,7 +142,7 @@ class _AthletesPageState extends State<AthletesPage> {
                         ),
                       );
                     default:
-                      return const Text('Error!');
+                      return const Center(child: Text('Error!'));
                   }
                 },
               ),

@@ -20,6 +20,62 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/03/16 - version: 0.7.2+9:
+
+* doc/pending.txt:
+  - Removed outdated tasks and streamlined the document with new priorities including athlete message editing and disposal checks.
+  - Added initialization of a default athlete on app start if none exists.
+
+* lib/common/singletons/app_settings.dart:
+  - Added a dispose method to clean up the theme mode listener.
+
+* lib/common/theme/app_font_style.dart:
+  - Updated font styles to include semi-bold instead of bold and added new size variants for better text clarity.
+
+* lib/manager/athlete_manager.dart:
+  - Converted AthleteManager into a singleton and added initialization checks to prevent multiple instances.
+  - Added methods to ensure that all athletes are loaded when the manager is first accessed.
+
+* lib/manager/training_manager.dart:
+  - Added a flag to prevent reinitialization of the training manager.
+  - Enabled creation of a training manager by athlete ID, which initializes training sessions specific to an athlete.
+
+* lib/my_material_app.dart:
+  - Expanded routing to include new pages for settings, training and about, enhancing navigation options within the app.
+
+* lib/screens/about_page/about_page.dart:
+  - Added a new About page with basic placeholder content.
+
+* lib/screens/athlete_dialog/athlete_dialog.dart:
+  - Adjusted the athlete dialog to reflect changes in font style from bold to semi-bold.
+
+* lib/screens/athletes_page/athletes_page.dart:
+  - Added initial loading logic to pre-select athletes who are already engaged in activities to prevent their deselection.
+
+* lib/screens/personal_training_page/personal_training_page.dart:
+  - Refactored to use a dedicated dismissible widget class for better modularity and maintenance.
+
+* lib/screens/personal_training_page/widgets/dismissible_personal_training.dart:
+  - Created a new stateful widget for dismissible elements in the personal training page to handle specific training session interactions like editing and deleting.
+
+* lib/screens/settings/settings_page.dart:
+  - Introduced a settings page to the application for better user configuration management.
+
+* lib/screens/stopwatch_page/stopwatch_page.dart:
+  - Refined message handling in the stopwatch page to prevent duplicate messages and improved UI updates through state management.
+
+* lib/screens/trainings_page/trainings_page.dart:
+  - Added a training page that handles the display and management of athlete-specific training sessions.
+
+* lib/screens/widgets/common/generic_dialog.dart:
+  - Renamed method from callDialog to open for clarity and consistency in usage.
+
+* lib/screens/widgets/common/set_distance_dialog.dart:
+  - Renamed SetDistanceDialog to EditTrainingDialog and expanded its functionality to include editing comments on training sessions.
+
+This commit introduces several structural improvements, new features, and user interface enhancements to enhance the functionality and usability of the app.
+
+
 ## 2024/03/15 - version: 0.7.1+8:
 
 This release focuses on improving functionality and user interface enhancements across various components of the Trainers Stopwatch app.

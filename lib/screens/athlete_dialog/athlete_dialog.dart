@@ -113,7 +113,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
                 Center(
                   child: Text(
                     isAddAthlete ? 'Add new Athlete' : 'Edit Athlete',
-                    style: AppFontStyle.roboto18Bold,
+                    style: AppFontStyle.roboto18SemiBold,
                   ),
                 ),
                 const SizedBox(height: 12),

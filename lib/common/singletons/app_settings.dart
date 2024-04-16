@@ -33,4 +33,8 @@ class AppSettings {
     _themeMode.value =
         _themeMode.value == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
   }
+
+  void dispose() {
+    _themeMode.dispose();
+  }
 }

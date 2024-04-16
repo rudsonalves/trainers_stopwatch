@@ -4,13 +4,15 @@ import 'package:signals/signals_flutter.dart';
 
 import '../../../common/theme/app_font_style.dart';
 import '../../../models/training_model.dart';
-import 'numeric_field.dart';
+import '../common/numeric_field.dart';
+import 'widgets/distance_unit_row.dart';
+import 'widgets/speed_unit_row.dart';
 
-class SetDistancesDialog extends StatefulWidget {
+class EditTrainingDialog extends StatefulWidget {
   final String athleteName;
   final TrainingModel training;
 
-  const SetDistancesDialog({
+  const EditTrainingDialog({
     super.key,
     required this.athleteName,
     required this.training,
@@ -23,7 +25,7 @@ class SetDistancesDialog extends StatefulWidget {
   }) async {
     final bool result = await showDialog<bool?>(
           context: context,
-          builder: (context) => SetDistancesDialog(
+          builder: (context) => EditTrainingDialog(
             athleteName: athleteName,
             training: training,
           ),
@@ -34,14 +36,16 @@ class SetDistancesDialog extends StatefulWidget {
   }
 
   @override
-  State<SetDistancesDialog> createState() => _SetDistancesDialogState();
+  State<EditTrainingDialog> createState() => _EditTrainingDialogState();
 }
 
-class _SetDistancesDialogState extends State<SetDistancesDialog> {
+class _EditTrainingDialogState extends State<EditTrainingDialog> {
   final splitController = TextEditingController(text: '');
   final lapController = TextEditingController(text: '');
+  final commentsController = TextEditingController(text: '');
   final splitFocusNode = FocusNode();
   final lapFocusNode = FocusNode();
+  final commentsFocusNode = FocusNode();
   final selectedDistUnit = signal<String>('m');
   List<String> distanceUnits = ['m', 'km', 'yd', 'mi'];
   final selectedSpeedUnit = signal<String>('m/s');
@@ -49,7 +53,7 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
   final speedAllowedValues = {
     'm': ['m/s', 'km/h'],
     'km': ['m/s', 'km/h'],
-    'yd': ['yd/s', 'mph'],
+    'yd': ['yd/s', 'm/s', 'mph'],
     'mi': ['yd/s', 'm/s', 'mph'],
   };
 
@@ -68,6 +72,7 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
       lapController.text = lapLength;
       selectedDistUnit.value = widget.training.distanceUnit;
       selectedSpeedUnit.value = widget.training.speedUnit;
+      commentsController.text = widget.training.comments ?? '';
     });
   }
 
@@ -75,6 +80,12 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
   void dispose() {
     splitController.dispose();
     lapController.dispose();
+    commentsController.dispose();
+    selectedSpeedUnit.dispose();
+    selectedDistUnit.dispose();
+    splitFocusNode.dispose();
+    lapFocusNode.dispose();
+    commentsFocusNode.dispose();
     super.dispose();
   }
 
@@ -87,6 +98,7 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
         lap.isNotEmpty && lap != '0' ? double.parse(lap) : 1000;
     widget.training.distanceUnit = selectedDistUnit();
     widget.training.speedUnit = selectedSpeedUnit();
+    widget.training.comments = commentsController.text;
     Navigator.pop(context, true);
   }
 
@@ -98,10 +110,16 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
     );
   }
 
+  void _onsubmittedLap(String value) {
+    FocusScope.of(context).requestFocus(commentsFocusNode);
+    commentsController.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: commentsController.text.length,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final colorscheme = Theme.of(context).colorScheme;
-
     return SimpleDialog(
       title: const Center(child: Text('Training Settings')),
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -110,7 +128,7 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
         Center(
           child: Text(
             widget.athleteName,
-            style: AppFontStyle.roboto18Bold,
+            style: AppFontStyle.roboto18SemiBold,
           ),
         ),
         Center(
@@ -121,64 +139,19 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
           ),
         ),
         const Divider(),
-        Row(
-          children: [
-            const Text('Distance Unit:'),
-            const SizedBox(width: 8),
-            DropdownButton<String>(
-              value: selectedDistUnit(),
-              items: distanceUnits
-                  .map(
-                    (item) => DropdownMenuItem(
-                      value: item,
-                      child: Text(item),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  selectedDistUnit.value = value;
-                  if (!speedAllowedValues[value]!
-                      .contains(selectedSpeedUnit())) {
-                    selectedSpeedUnit.value = speedAllowedValues[value]!.first;
-                  }
-                }
-              },
-            ),
-          ],
+        DistanceUnitRow(
+          label: 'Distance Unit:',
+          selectedUnit: selectedDistUnit,
+          distanceUnits: distanceUnits,
+          speedAllowedValues: speedAllowedValues,
+          selectedSpeedUnit: selectedSpeedUnit,
         ),
-        Row(
-          children: [
-            const Text('Speed Unit:'),
-            const SizedBox(width: 8),
-            DropdownButton<String>(
-              value: selectedSpeedUnit(),
-              items: speedUnits.map(
-                (item) {
-                  final enable =
-                      speedAllowedValues[selectedDistUnit.watch(context)]!
-                          .contains(item);
-                  return DropdownMenuItem(
-                    enabled: enable,
-                    value: item,
-                    child: Text(
-                      item,
-                      style: TextStyle(
-                        color: enable
-                            ? colorscheme.onSurface
-                            : colorscheme.onSurface.withOpacity(0.3),
-                      ),
-                    ),
-                  );
-                },
-              ).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  selectedSpeedUnit.value = value;
-                }
-              },
-            ),
-          ],
+        SpeedUnitRow(
+          label: 'Speed Unit:',
+          selectedSpeedUnit: selectedSpeedUnit,
+          speedUnits: speedUnits,
+          speedAllowedValues: speedAllowedValues,
+          selectedDistUnit: selectedDistUnit,
         ),
         NumericField(
           focusNode: splitFocusNode,
@@ -192,6 +165,14 @@ class _SetDistancesDialogState extends State<SetDistancesDialog> {
           label: 'Lap Distance (${selectedDistUnit.watch(context)})',
           controller: lapController,
           value: widget.training.lapLength,
+          onSubmitted: _onsubmittedLap,
+        ),
+        TextField(
+          focusNode: commentsFocusNode,
+          controller: commentsController,
+          decoration: const InputDecoration(
+            label: Text('Comments'),
+          ),
         ),
         const SizedBox(height: 12),
         ButtonBar(

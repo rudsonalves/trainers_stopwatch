@@ -7,13 +7,11 @@ import '../../models/athlete_model.dart';
 import 'athletes_page_state.dart';
 
 class AthletesPageController extends ChangeNotifier {
-  final _manager = AthleteManager();
+  final _athletesManager = AthleteManager.instance;
   AthletesPageState _state = AthletesPageStateInitial();
-  bool _started = false;
 
   AthletesPageState get state => _state;
-  bool get started => _started;
-  List<AthleteModel> get athletes => _manager.athletes;
+  List<AthleteModel> get athletes => _athletesManager.athletes;
 
   void _changeState(AthletesPageState newState) {
     _state = newState;
@@ -21,16 +19,14 @@ class AthletesPageController extends ChangeNotifier {
   }
 
   Future<void> init() async {
-    if (started) return;
-    _started = true;
-    await _manager.init();
+    await _athletesManager.init();
     getAllAthletes();
   }
 
   Future<void> getAllAthletes() async {
     try {
       _changeState(AthletesPageStateLoading());
-      await _manager.getAllAthletes();
+      await _athletesManager.getAllAthletes();
       _changeState(AthletesPageStateSuccess());
     } catch (err) {
       log('AthletesPageState.getAllAthletes: $err');
@@ -41,7 +37,7 @@ class AthletesPageController extends ChangeNotifier {
   Future<void> addAthlete(AthleteModel athlete) async {
     try {
       _changeState(AthletesPageStateLoading());
-      await _manager.insert(athlete);
+      await _athletesManager.insert(athlete);
       _changeState(AthletesPageStateSuccess());
     } catch (err) {
       log('AthletesPageState.addAthlete: $err');
@@ -52,7 +48,7 @@ class AthletesPageController extends ChangeNotifier {
   Future<void> updateAthlete(AthleteModel athlete) async {
     try {
       _changeState(AthletesPageStateLoading());
-      await _manager.update(athlete);
+      await _athletesManager.update(athlete);
       _changeState(AthletesPageStateSuccess());
     } catch (err) {
       log('AthletesPageState.updateAthlete: $err');
@@ -63,7 +59,7 @@ class AthletesPageController extends ChangeNotifier {
   Future<void> deleteAthlete(AthleteModel athlete) async {
     try {
       _changeState(AthletesPageStateLoading());
-      await _manager.delete(athlete);
+      await _athletesManager.delete(athlete);
       _changeState(AthletesPageStateSuccess());
     } catch (err) {
       log('AthletesPageState.updateAthlete: $err');

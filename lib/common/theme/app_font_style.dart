@@ -24,12 +24,22 @@ class AppFontStyle {
     // fontFamily: 'Roboto',
   );
 
-  static const roboto18Bold = TextStyle(
+  static const roboto18SemiBold = TextStyle(
     fontSize: 18,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const roboto20SemiBold = TextStyle(
+    fontSize: 20,
     fontWeight: FontWeight.w600,
   );
 
   static const roboto16 = TextStyle(
     fontSize: 16,
+  );
+
+  static const roboto16SemiBold = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
   );
 }
