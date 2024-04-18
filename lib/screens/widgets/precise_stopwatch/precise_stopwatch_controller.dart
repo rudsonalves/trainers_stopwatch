@@ -24,6 +24,7 @@ class PreciseStopwatchController {
   late double splitLength;
   late double lapLength;
   final _actionOnPress = ValueNotifier<bool>(false);
+  bool _isCreatedTraining = false;
 
   final _stopwatchController = StopwatchPageController.instance;
 
@@ -58,22 +59,23 @@ class PreciseStopwatchController {
     _actionOnPress.value = !_actionOnPress.value;
   }
 
-  Future<void> _createNewTraining() async {
+  void _createNewTraining() {
     _training = TrainingModel(
       athleteId: _athlete.id!,
       date: DateTime.now(),
       splitLength: splitLength,
       lapLength: lapLength,
     );
-
-    await _trainingManager.insert(_training!);
-    _historyManager.setTrainingId(_training!.id!);
+    _isCreatedTraining = true;
   }
 
-  Future<void> _updateTrainingDate() async {
+  Future<void> _insertTraining() async {
+    if (training.id != null) {
+      throw Exception('Error!!!');
+    }
     _training!.date = bloc.startTime;
-
-    await _trainingManager.update(training);
+    await _trainingManager.insert(_training!);
+    _historyManager.init(_training!.id!);
   }
 
   void updateSplitLapLength() {
@@ -96,7 +98,10 @@ class PreciseStopwatchController {
       return;
     }
 
-    await _updateTrainingDate();
+    if (!_isCreatedTraining) {
+      _createNewTraining();
+    }
+    await _insertTraining();
 
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
@@ -142,6 +147,7 @@ class PreciseStopwatchController {
     await Future.delayed(const Duration(milliseconds: 100));
 
     isPaused = false;
+    _isCreatedTraining = false;
 
     await _generateSplitRegister();
     await _generateLapRegister();

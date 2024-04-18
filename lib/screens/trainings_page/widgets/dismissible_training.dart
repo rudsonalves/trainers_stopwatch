@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../common/constants.dart';
 import '../../../models/training_model.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 
@@ -40,6 +41,7 @@ class DismissibleTraining extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorSheme = Theme.of(context).colorScheme;
     String title;
     String subtitle;
 
@@ -50,7 +52,8 @@ class DismissibleTraining extends StatelessWidget {
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: GlobalKey(),
       child: Card(
-        elevation: selected ? 5 : 0,
+        color: colorSheme.surface,
+        elevation: selected ? elevationEnable : elevationDisable,
         child: ListTile(
           title: Text(
             title,

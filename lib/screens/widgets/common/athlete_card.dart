@@ -19,7 +19,7 @@ class AthleteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: isChecked ? 2 : 0,
+      elevation: isChecked ? elevationEnable : elevationDisable,
       child: ListTile(
         title: Text(athlete.name),
         subtitle: Text(

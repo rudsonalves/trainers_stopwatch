@@ -15,7 +15,7 @@ class PersonalTrainingPage extends StatefulWidget {
 
   static const routeName = '/training';
 
-  static Widget fromContext(BuildContext context) {
+  static PersonalTrainingPage fromContext(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 

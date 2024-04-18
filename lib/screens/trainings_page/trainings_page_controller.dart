@@ -32,6 +32,13 @@ class TrainingsPageController extends ChangeNotifier {
   List<TrainingModel> get trainings => _trainingsManager?.trainings ?? [];
   int? get athleteId => _athlete?.id;
   AthleteModel? get athlete => _athlete;
+  bool get haveTrainingSelected {
+    if (selectedTraining.isEmpty) return false;
+
+    final items = selectedTraining.where((item) => item.selected).toList();
+
+    return items.isNotEmpty;
+  }
 
   void _changeState(TrainingsPageState newState) {
     _state = newState;

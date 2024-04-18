@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../common/theme/app_font_style.dart';
-import '../../models/athlete_model.dart';
 import '../../models/training_model.dart';
+import '../history_page/history_page.dart';
 import '../widgets/common/athlete_card.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'trainings_page_controller.dart';
 import 'trainings_page_state.dart';
 import 'widgets/dismissible_training.dart';
-import 'widgets/edit_training_dialog.dart';
 
 class TrainingsPage extends StatefulWidget {
   const TrainingsPage({super.key});
@@ -21,7 +20,6 @@ class TrainingsPage extends StatefulWidget {
 
 class _TrainingsPageState extends State<TrainingsPage> {
   final _controller = TrainingsPageController();
-  AthleteModel? athlete;
   bool _allSelected = false;
 
   List<TrainingModel> get trainings => _controller.trainings;
@@ -33,10 +31,14 @@ class _TrainingsPageState extends State<TrainingsPage> {
   }
 
   Future<void> _editTraining(TrainingModel training) async {
-    final result = await EditTrainingDialog.open(context, training);
-    if (result) {
-      _controller.updateTraining(training);
-    }
+    Navigator.pushNamed(
+      context,
+      HistoryPage.routeName,
+      arguments: {
+        'athlete': _controller.athlete,
+        'training': training,
+      },
+    );
   }
 
   Future<bool> _removeTraining(TrainingModel training) async {
@@ -48,9 +50,22 @@ class _TrainingsPageState extends State<TrainingsPage> {
     );
 
     if (result) {
-      _controller.removeTraining(training);
+      await _controller.removeTraining(training);
     }
     return result;
+  }
+
+  Future<void> _removeSelected() async {
+    final result = await GenericDialog.open(
+      context,
+      title: 'Delete Training',
+      message: 'Do you want to delete all selected trainings?',
+      actions: DialogActions.yesNo,
+    );
+
+    if (result) {
+      await _controller.removeSelected();
+    }
   }
 
   void _selectAllTraining() {
@@ -65,6 +80,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trainings'),
@@ -110,9 +127,39 @@ class _TrainingsPageState extends State<TrainingsPage> {
                         isChecked: true,
                         athlete: _controller.athlete!,
                       ),
-                    const SizedBox(height: 12),
+                    ButtonBar(
+                      alignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: _controller.haveTrainingSelected
+                              ? _removeSelected
+                              : null,
+                          label: const Text('Remove'),
+                          icon: const Icon(Icons.delete),
+                        ),
+                        _allSelected
+                            ? OutlinedButton.icon(
+                                onPressed: _controller.haveTrainingSelected
+                                    ? _deselectAllTraining
+                                    : null,
+                                label: const Text('Deselect All'),
+                                icon: const Icon(Icons.deselect),
+                              )
+                            : OutlinedButton.icon(
+                                onPressed: _selectAllTraining,
+                                label: const Text('Select All'),
+                                icon: const Icon(Icons.select_all),
+                              ),
+                      ],
+                    ),
                     Expanded(
-                      child: Card(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: colorScheme.primary,
+                          ),
+                        ),
                         child: Column(
                           children: [
                             const Padding(
@@ -121,27 +168,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
                                 'Trainings',
                                 style: AppFontStyle.roboto18SemiBold,
                               ),
-                            ),
-                            ButtonBar(
-                              alignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: _controller.removeSelected,
-                                  label: const Text('Remove'),
-                                  icon: const Icon(Icons.delete),
-                                ),
-                                _allSelected
-                                    ? OutlinedButton.icon(
-                                        onPressed: _deselectAllTraining,
-                                        label: const Text('Deselect'),
-                                        icon: const Icon(Icons.deselect),
-                                      )
-                                    : OutlinedButton.icon(
-                                        onPressed: _selectAllTraining,
-                                        label: const Text('Select'),
-                                        icon: const Icon(Icons.select_all),
-                                      ),
-                              ],
                             ),
                             Expanded(
                               child: Padding(
