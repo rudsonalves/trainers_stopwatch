@@ -20,6 +20,34 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/03/18 - version: 0.7.3+10:
+
+This release introduces a series of functionality improvements and interface updates to enhance user interaction and system efficiency within the Trainers Stopwatch app.
+
+- **Stopwatch Bloc Enhancements:**
+  - Added attributes `_endTime`, `_lastLapTime`, `_lastSplitTime`, `_lapDuration`, and `_splitDuration` to StopwatchBloc for better control over recorded times. This change allowed for the removal of some controls from `PreciseStopwatchController` directly into StopwatchBloc.
+  - Events were reformulated to accommodate new responsibilities related to time management.
+  - Created methods `_updatePausedTimes`, `_restartTimesAndCounters`, `_updateLap`, and `_updateSplit` to better separate responsibilities and facilitate code reusability.
+
+- **Utility Functions and Bug Fixes:**
+  - Introduced `StopwatchFunctions` class to package common app functions, initially including `speedCalc`.
+  - Fixed a bug in `TrainingManager` that incorrectly handled zero-index checks, ensuring more robust data handling.
+
+- **UI Components and Dialog Enhancements:**
+  - Removed the Card from `DismissibleAthleteTile` and incorporated it into a new `AthleteCard` class for better code reusability and streamlined design.
+  - In `PersonalTrainingPage` and related widgets, speed calculation now utilizes `StopwatchFunctions.speedCalc` for enhanced performance metrics.
+  - `TrainingsPage` now includes new commands such as `_editTraining`, `_removeTraining`, `_selectAllTraining`, and `_deselectAllTraining`, with added widgets to facilitate these actions.
+  - Separated `DismissibleTraining` class into its own file to clean up the codebase and improve maintainability.
+  - Added `TrainingItem` class in `TrainingsPageController` to simplify the management of training selections and operations.
+  - Introduced `EditTrainingDialog` class for editing training details directly from the UI.
+
+- **Precise Stopwatch Controller Adjustments:**
+  - Shifted the control of Laps and Splits from `PreciseStopwatchController` to StopwatchBloc, centralizing time control.
+  - Added `_getSplit` method to return corrected split times, enhancing the accuracy of performance tracking.
+
+This update aims to streamline the app's operations and enhance the user experience with clearer controls and improved data management.
+
+
 ## 2024/03/16 - version: 0.7.2+9:
 
 * doc/pending.txt:

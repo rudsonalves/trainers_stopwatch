@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../common/theme/app_font_style.dart';
+import '../../models/athlete_model.dart';
 import '../../models/training_model.dart';
-import '../widgets/common/dismissible_backgrounds.dart';
+import '../widgets/common/athlete_card.dart';
+import '../widgets/common/generic_dialog.dart';
 import 'trainings_page_controller.dart';
 import 'trainings_page_state.dart';
+import 'widgets/dismissible_training.dart';
+import 'widgets/edit_training_dialog.dart';
 
 class TrainingsPage extends StatefulWidget {
   const TrainingsPage({super.key});
@@ -18,7 +21,10 @@ class TrainingsPage extends StatefulWidget {
 
 class _TrainingsPageState extends State<TrainingsPage> {
   final _controller = TrainingsPageController();
-  int? athleteId;
+  AthleteModel? athlete;
+  bool _allSelected = false;
+
+  List<TrainingModel> get trainings => _controller.trainings;
 
   @override
   void initState() {
@@ -27,12 +33,34 @@ class _TrainingsPageState extends State<TrainingsPage> {
   }
 
   Future<void> _editTraining(TrainingModel training) async {
-    print('Edit....');
+    final result = await EditTrainingDialog.open(context, training);
+    if (result) {
+      _controller.updateTraining(training);
+    }
   }
 
   Future<bool> _removeTraining(TrainingModel training) async {
-    _controller.removeTraining(training);
-    return false;
+    final result = await GenericDialog.open(
+      context,
+      title: 'Delete Training',
+      message: 'Do you want to delete this training?',
+      actions: DialogActions.yesNo,
+    );
+
+    if (result) {
+      _controller.removeTraining(training);
+    }
+    return result;
+  }
+
+  void _selectAllTraining() {
+    _allSelected = true;
+    _controller.selectAllTraining();
+  }
+
+  void _deselectAllTraining() {
+    _allSelected = false;
+    _controller.deselectAllTraining();
   }
 
   @override
@@ -59,7 +87,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
                     Row(
                       children: [
                         const Text(
-                          'Athlete:',
+                          'Select Athlete:',
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
@@ -77,6 +105,11 @@ class _TrainingsPageState extends State<TrainingsPage> {
                         ),
                       ],
                     ),
+                    if (_controller.athlete != null)
+                      AthleteCard(
+                        isChecked: true,
+                        athlete: _controller.athlete!,
+                      ),
                     const SizedBox(height: 12),
                     Expanded(
                       child: Card(
@@ -85,9 +118,30 @@ class _TrainingsPageState extends State<TrainingsPage> {
                             const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                'Tranings',
+                                'Trainings',
                                 style: AppFontStyle.roboto18SemiBold,
                               ),
+                            ),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: _controller.removeSelected,
+                                  label: const Text('Remove'),
+                                  icon: const Icon(Icons.delete),
+                                ),
+                                _allSelected
+                                    ? OutlinedButton.icon(
+                                        onPressed: _deselectAllTraining,
+                                        label: const Text('Deselect'),
+                                        icon: const Icon(Icons.deselect),
+                                      )
+                                    : OutlinedButton.icon(
+                                        onPressed: _selectAllTraining,
+                                        label: const Text('Select'),
+                                        icon: const Icon(Icons.select_all),
+                                      ),
+                              ],
                             ),
                             Expanded(
                               child: Padding(
@@ -95,10 +149,15 @@ class _TrainingsPageState extends State<TrainingsPage> {
                                 child: ListView.builder(
                                   itemCount: _controller.trainings.length,
                                   itemBuilder: (context, index) {
+                                    final revIndex =
+                                        trainings.length - index - 1;
                                     return DismissibleTraining(
-                                      training: _controller.trainings[index],
+                                      training: trainings[revIndex],
                                       editTraining: _editTraining,
                                       removeTraining: _removeTraining,
+                                      onTapSelect: _controller.selectTraining,
+                                      selected: _controller
+                                          .selectedTraining[revIndex].selected,
                                     );
                                   },
                                 ),
@@ -119,64 +178,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
           },
         ),
       ),
-    );
-  }
-}
-
-class DismissibleTraining extends StatelessWidget {
-  final TrainingModel training;
-  final Future<void> Function(TrainingModel training) editTraining;
-  final Future<bool> Function(TrainingModel training) removeTraining;
-
-  const DismissibleTraining({
-    super.key,
-    required this.training,
-    required this.editTraining,
-    required this.removeTraining,
-  });
-
-  (String title, String subtitle) _mountListTile(TrainingModel training) {
-    final date = training.date;
-    String title = '${DateFormat.yMMMEd().format(date)} - '
-        '${DateFormat.Hm().format(date)}';
-    String subtitle = training.comments ?? '';
-    if (subtitle.isEmpty) {
-      subtitle =
-          'Distances: Lap ${training.lapLength} ${training.distanceUnit}  '
-          'Split ${training.splitLength} ${training.distanceUnit}';
-    }
-
-    return (title, subtitle);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String title;
-    String subtitle;
-
-    (title, subtitle) = _mountListTile(training);
-
-    return Dismissible(
-      background: DismissibleContainers.background(context),
-      secondaryBackground: DismissibleContainers.secondaryBackground(context),
-      key: GlobalKey(),
-      child: Card(
-        elevation: 5,
-        child: ListTile(
-          title: Text(
-            title,
-          ),
-          subtitle: Text(subtitle),
-        ),
-      ),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          await editTraining(training);
-        } else if (direction == DismissDirection.endToStart) {
-          await removeTraining(training);
-        }
-        return false;
-      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../common/functions/stopwatch_functions.dart';
 import '../../../common/icons/stopwatch_icons_icons.dart';
 import '../../../models/history_model.dart';
 import '../../../models/training_model.dart';
@@ -9,13 +10,11 @@ import 'edit_history_dialog/edit_history_dialog.dart';
 class DismissiblePersonalTraining extends StatefulWidget {
   final HistoryModel history;
   final TrainingModel training;
-  final String Function(double length, double time) speedCalc;
 
   const DismissiblePersonalTraining({
     super.key,
     required this.history,
     required this.training,
-    required this.speedCalc,
   });
 
   @override
@@ -41,7 +40,11 @@ class _DismissiblePersonalTrainingState
 
     String subtitle = widget.history.comments ?? '';
     if (subtitle.isEmpty) {
-      final speed = widget.speedCalc(length, time);
+      final speed = StopwatchFunctions.speedCalc(
+        length: length,
+        time: time,
+        training: widget.training,
+      );
       subtitle = 'Speed: $speed';
     }
 

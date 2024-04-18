@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-import '../../../common/constants.dart';
 import '../../../models/athlete_model.dart';
+import '../../widgets/common/athlete_card.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
-import '../../widgets/common/show_athlete_image.dart';
 
 class DismissibleAthleteTile extends StatefulWidget {
   final AthleteModel athlete;
@@ -44,35 +43,25 @@ class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
     super.dispose();
   }
 
+  void _onTap() {
+    if (!widget.blockedAthleteIds.contains(widget.athlete.id!)) {
+      isChecked.value = !isChecked();
+      if (widget.selectAthlete != null) {
+        widget.selectAthlete!(isChecked(), widget.athlete);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
       background: DismissibleContainers.background(context),
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: GlobalKey(),
-      child: InkWell(
-        child: Card(
-          elevation: isChecked.watch(context) ? 5 : 1,
-          child: ListTile(
-            title: Text(widget.athlete.name),
-            subtitle: Text(
-              '${widget.athlete.email}\n${widget.athlete.phone}',
-            ),
-            leading: SizedBox(
-              width: photoImageSize,
-              height: photoImageSize,
-              child: ShowAthleteImage(widget.athlete.photo!, size: 40),
-            ),
-          ),
-        ),
-        onTap: () {
-          if (!widget.blockedAthleteIds.contains(widget.athlete.id!)) {
-            isChecked.value = !isChecked();
-            if (widget.selectAthlete != null) {
-              widget.selectAthlete!(isChecked(), widget.athlete);
-            }
-          }
-        },
+      child: AthleteCard(
+        isChecked: isChecked.watch(context),
+        athlete: widget.athlete,
+        onTap: _onTap,
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd &&

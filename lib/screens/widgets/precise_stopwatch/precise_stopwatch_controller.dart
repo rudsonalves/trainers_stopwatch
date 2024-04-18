@@ -5,6 +5,7 @@ import 'package:signals/signals_flutter.dart';
 import '../../../bloc/stopwatch_bloc.dart';
 import '../../../bloc/stopwatch_events.dart';
 import '../../../bloc/stopwatch_state.dart';
+import '../../../common/functions/stopwatch_functions.dart';
 import '../../../common/singletons/app_settings.dart';
 import '../../../manager/history_manager.dart';
 import '../../../manager/training_manager.dart';
@@ -18,10 +19,7 @@ class PreciseStopwatchController {
   final _trainingManager = TrainingManager();
   final _historyManager = HistoryManager();
   late final AthleteModel _athlete;
-  late TrainingModel _training;
-  int _lastLapMS = 0;
-  int _lastSplitMS = 0;
-  bool _trainingStarted = false;
+  TrainingModel? _training;
   bool isPaused = false;
   late double splitLength;
   late double lapLength;
@@ -37,7 +35,7 @@ class PreciseStopwatchController {
   AthleteModel get athlete => _athlete;
   List<TrainingModel> get trainings => _trainingManager.trainings;
   List<HistoryModel> get histories => _historyManager.histories;
-  TrainingModel get training => _training;
+  TrainingModel get training => _training!;
   ValueNotifier<bool> get actionOnPress => _actionOnPress;
 
   Future<void> init(AthleteModel athlete) async {
@@ -68,16 +66,21 @@ class PreciseStopwatchController {
       lapLength: lapLength,
     );
 
-    await _trainingManager.insert(_training);
-    _historyManager.setTrainingId(_training.id!);
-    _trainingStarted = true;
+    await _trainingManager.insert(_training!);
+    _historyManager.setTrainingId(_training!.id!);
+  }
+
+  Future<void> _updateTrainingDate() async {
+    _training!.date = bloc.startTime;
+
+    await _trainingManager.update(training);
   }
 
   void updateSplitLapLength() {
-    if (splitLength != _training.splitLength) {
+    if (splitLength != _training!.splitLength) {
       splitLength = training.splitLength;
     }
-    if (lapLength != _training.lapLength) {
+    if (lapLength != _training!.lapLength) {
       lapLength = training.lapLength;
     }
 
@@ -86,82 +89,79 @@ class PreciseStopwatchController {
 
   Future<void> blocStartTimer() async {
     _bloc.add(StopwatchEventRun());
+    await Future.delayed(const Duration(milliseconds: 100));
 
     if (isPaused) {
       isPaused = false;
       return;
     }
 
-    if (!_trainingStarted) {
-      await _createNewTraining();
-    }
+    await _updateTrainingDate();
 
     HistoryModel history = HistoryModel(
-      trainingId: _training.id!,
+      trainingId: _training!.id!,
       duration: const Duration(milliseconds: 0),
       lap: 0,
       split: 0,
     );
-    _lastLapMS = 0;
-    _lastSplitMS = 0;
 
     await _historyManager.insert(history);
     _toggleActionOnPress();
     _sendStartedMessage();
   }
 
-  void blocPauseTimer() {
+  Future<void> blocPauseTimer() async {
     _bloc.add(StopwatchEventPause());
+    await Future.delayed(const Duration(milliseconds: 100));
     isPaused = true;
   }
 
-  void blocResetTimer() {
+  Future<void> blocResetTimer() async {
     _bloc.add(StopwatchEventReset());
+    await Future.delayed(const Duration(milliseconds: 100));
     _toggleActionOnPress();
   }
 
   Future<void> blocLapTimer() async {
-    if (_bloc.state is! StopwatchStateRunning) return;
     _bloc.add(StopwatchEventLap());
+    await Future.delayed(const Duration(milliseconds: 100));
 
-    await _generateSplitRegister(bloc.splitCounterMax);
+    await _generateSplitRegister();
     await _generateLapRegister();
   }
 
   Future<void> blocSplitTimer() async {
-    if (_bloc.state is! StopwatchStateRunning) return;
     _bloc.add(StopwatchEventSplit());
+    await Future.delayed(const Duration(milliseconds: 100));
 
     await _generateSplitRegister();
   }
 
   Future<void> blocStopTimer() async {
     _bloc.add(StopwatchEventStop());
+    await Future.delayed(const Duration(milliseconds: 100));
+
     isPaused = false;
 
     await _generateSplitRegister();
-
     await _generateLapRegister();
-
-    _trainingStarted = false;
 
     _sendFinishMessage();
     _toggleActionOnPress();
+    _createNewTraining();
   }
 
-  Future<void> _generateSplitRegister([int? split]) async {
-    if (!_trainingStarted) return;
-
-    await Future.delayed(const Duration(milliseconds: 50));
-
+  Future<void> _generateSplitRegister() async {
     int splitMs;
     String speed;
     (splitMs, speed) = _calculateSplitTimeSpeed();
 
+    int split = _getSplit();
+
     HistoryModel history = HistoryModel(
-      trainingId: _training.id!,
+      trainingId: _training!.id!,
       duration: Duration(milliseconds: splitMs),
-      split: split ?? _bloc.splitCounter(),
+      split: split,
       comments: 'Speed: $speed',
     );
 
@@ -171,25 +171,26 @@ class PreciseStopwatchController {
   }
 
   Future<void> _generateLapRegister() async {
-    if (!_trainingStarted) return;
-
-    await Future.delayed(const Duration(milliseconds: 50));
-
     int lapMs;
     String speed;
     (lapMs, speed) = _calculateLapTimeSpeed();
 
     HistoryModel history = HistoryModel(
-      trainingId: _training.id!,
+      trainingId: _training!.id!,
       duration: Duration(milliseconds: lapMs),
       lap: lapCounter(),
-      split: _bloc.splitCounter(),
+      split: _getSplit(),
       comments: 'Speed: $speed',
     );
 
     await _historyManager.insert(history);
     _sendLapMessage(history.duration, speed, history.lap!);
     _toggleActionOnPress();
+  }
+
+  int _getSplit() {
+    int split = splitCounter();
+    return split == 0 ? bloc.splitCounterMax : split;
   }
 
   String _formatMs(Duration duration) {
@@ -206,17 +207,17 @@ class PreciseStopwatchController {
 
   void _sendStartedMessage() {
     final message = '${athlete.name}\n'
-        'Started training at ${DateFormat.Hms().format(DateTime.now())}';
+        'Started training at ${DateFormat.Hms().format(_bloc.startTime)}';
     _stopwatchController.sendHistoryMessage(message);
   }
 
   void _sendSplitMessage(
     Duration time,
-    String speed, [
-    int? split,
-  ]) {
+    String speed,
+    int split,
+  ) {
     final message = '${athlete.name}\n'
-        'Split [${split ?? splitCounter()}]: ${_formatMs(time)}'
+        'Split [$split]: ${_formatMs(time)}'
         ' speed: $speed';
     _stopwatchController.sendHistoryMessage(message);
   }
@@ -239,51 +240,25 @@ class PreciseStopwatchController {
   }
 
   (int, String) _calculateLapTimeSpeed() {
-    final lapMS = durationTraining().inMilliseconds - _lastLapMS;
-    _lastLapMS = durationTraining().inMilliseconds;
+    final lapMS = bloc.lapDuration.inMilliseconds;
 
-    final speed = speedCalc(training.lapLength, lapMS / 1000);
+    final speed = StopwatchFunctions.speedCalc(
+      length: training.lapLength,
+      time: lapMS / 1000,
+      training: training,
+    );
 
     return (lapMS, speed);
   }
 
   (int, String) _calculateSplitTimeSpeed() {
-    final splitMS = durationTraining().inMilliseconds - _lastSplitMS;
-    _lastSplitMS = durationTraining().inMilliseconds;
+    final splitMS = bloc.splitDuration.inMilliseconds;
 
-    final speed = speedCalc(training.splitLength, splitMS / 1000);
+    final speed = StopwatchFunctions.speedCalc(
+      length: training.splitLength,
+      time: splitMS / 1000,
+      training: training,
+    );
     return (splitMS, speed);
-  }
-
-  String speedCalc(
-    double length,
-    double time,
-  ) {
-    switch (training.distanceUnit) {
-      case 'km':
-        length *= 1000;
-        break;
-      case 'yd':
-        length *= 0.9144;
-        break;
-      case 'mi':
-        length *= 1609.34;
-        break;
-    }
-
-    double speed = length / time;
-    switch (training.speedUnit) {
-      case 'yd/s':
-        speed *= 1.09361;
-        break;
-      case 'km/h':
-        speed *= 3.6;
-        break;
-      case 'mph':
-        speed *= 2.23694;
-        break;
-    }
-
-    return '${speed.toStringAsFixed(2)} ${training.speedUnit}';
   }
 }

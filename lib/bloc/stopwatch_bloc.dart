@@ -10,7 +10,13 @@ import 'stopwatch_state.dart';
 class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   Timer? _timer;
   DateTime? _startTime;
+  DateTime? _endTime;
+  DateTime? _lastLapTime;
+  DateTime? _lastSplitTime;
   DateTime? _pausedTime;
+
+  Duration _lapDuration = const Duration();
+  Duration _splitDuration = const Duration();
 
   final _durationTrainingSignal = signal<Duration>(const Duration());
   final _lapCounter = signal<int>(0);
@@ -20,6 +26,10 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   Signal<Duration> get durationTraining => _durationTrainingSignal;
   Signal<int> get lapCounter => _lapCounter;
   Signal<int> get splitCounter => _splitCounter;
+  DateTime get startTime => _startTime!;
+  DateTime get endTime => _endTime!;
+  Duration get lapDuration => _lapDuration;
+  Duration get splitDuration => _splitDuration;
 
   StopwatchBloc() : super(StopwatchStateInitial()) {
     on<StopwatchEventRun>(_startEvent);
@@ -42,14 +52,15 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (_timer != null && _timer!.isActive) return;
+    final dateTimeNow = DateTime.now();
 
     if (state is StopwatchStatePaused) {
-      final pausedDuration = DateTime.now().difference(_pausedTime!);
-      _startTime = _startTime!.add(pausedDuration);
+      // Is Paused Time
+      final pausedDuration = dateTimeNow.difference(_pausedTime!);
+      _updatePausedTimes(pausedDuration);
     } else {
-      _startTime = DateTime.now();
-      _lapCounter.value = 0;
-      _splitCounter.value = 0;
+      // Starting Time
+      _restartTimesAndCounters(dateTimeNow);
     }
     _pausedTime = null;
 
@@ -57,17 +68,32 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
         Duration(
           milliseconds: AppSettings.instance.millisecondRefresh,
         ), (timer) {
-      final now = DateTime.now();
-      _durationTrainingSignal.value = now.difference(_startTime!);
+      _durationTrainingSignal.value = DateTime.now().difference(_startTime!);
     });
     emit(StopwatchStateRunning());
+  }
+
+  _updatePausedTimes(Duration pausedDuration) {
+    _startTime = _startTime!.add(pausedDuration);
+    _lastLapTime = _lastLapTime!.add(pausedDuration);
+    _lastSplitTime = _lastSplitTime!.add(pausedDuration);
+  }
+
+  _restartTimesAndCounters(DateTime time) {
+    _startTime = time;
+    _endTime = null;
+    _lastLapTime = time;
+    _lastSplitTime = time;
+    _lapCounter.value = 0;
+    _splitCounter.value = 0;
   }
 
   FutureOr<void> _pauseEvent(
     StopwatchEventPause event,
     Emitter<StopwatchState> emit,
   ) async {
-    _pausedTime = DateTime.now();
+    final dateTimeNow = DateTime.now();
+    _pausedTime = dateTimeNow;
     _durationTrainingSignal.value = _pausedTime!.difference(_startTime!);
 
     _timer?.cancel();
@@ -91,8 +117,9 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (state is! StopwatchStateRunning) return;
-    _lapCounter.value++;
-    _splitCounter.value = 0;
+    final now = DateTime.now();
+    _updateLap(now);
+    _updateSplit(now);
 
     emit(StopwatchStateRunning());
   }
@@ -102,7 +129,8 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     Emitter<StopwatchState> emit,
   ) async {
     if (state is! StopwatchStateRunning) return;
-    _splitCounter.value++;
+    final now = DateTime.now();
+    _updateSplit(now);
 
     emit(StopwatchStateRunning());
   }
@@ -111,10 +139,30 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     StopwatchEventStop event,
     Emitter<StopwatchState> emit,
   ) async {
-    if (state is! StopwatchStatePaused) return;
+    final now = DateTime.now();
+    _endTime = now;
+    final pausedDuration = now.difference(_pausedTime!);
+    _updatePausedTimes(pausedDuration);
+    _updateLap(now);
+    _updateSplit(now);
 
-    _lapCounter.value++;
-    _splitCounter.value++;
     emit(StopwatchStateInitial());
+  }
+
+  _updateLap(DateTime now) {
+    _lapDuration = now.difference(_lastLapTime!);
+    _lastLapTime = now;
+    _lapCounter.value++;
+  }
+
+  _updateSplit(DateTime now) {
+    _splitDuration = now.difference(_lastSplitTime!);
+    _lastSplitTime = now;
+
+    if (_splitCounter() == splitCounterMax - 1) {
+      _splitCounter.value = 0;
+    } else {
+      _splitCounter.value++;
+    }
   }
 }
