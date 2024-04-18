@@ -51,7 +51,7 @@ class TrainingManager {
     if (result > 0) {
       final index = findIndex(training.id!);
 
-      if (index < 1) {
+      if (index < 0) {
         throw Exception('TrainingManager.delete: Error!');
       }
       _trainings.removeAt(index);

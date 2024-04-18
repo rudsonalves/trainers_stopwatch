@@ -83,7 +83,6 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
                         DismissiblePersonalTraining(
                       history: histories[index],
                       training: _controller.training,
-                      speedCalc: _controller.speedCalc,
                     ),
                   );
                 },
