@@ -5,6 +5,7 @@ import 'common/singletons/app_settings.dart';
 import 'common/theme/color_schemes.g.dart';
 import 'screens/about_page/about_page.dart';
 import 'screens/athletes_page/athletes_page.dart';
+import 'screens/history_page/history_page.dart';
 import 'screens/settings/settings_page.dart';
 import 'screens/stopwatch_page/stopwatch_page.dart';
 import 'screens/personal_training_page/personal_training_page.dart';
@@ -37,6 +38,7 @@ class MyMaterialApp extends StatelessWidget {
         TrainingsPage.routeName: (context) => const TrainingsPage(),
         SettingsPage.routeName: (context) => const SettingsPage(),
         AboutPage.routeName: (context) => const AboutPage(),
+        HistoryPage.routeName: (context) => HistoryPage.fromContext(context),
       },
     );
   }

@@ -9,9 +9,9 @@ class HistoryManager {
   int get trainingId => _trainingId;
   List<HistoryModel> get histories => _histories;
 
-  Future<void> setTrainingId(int trainingId) async {
+  Future<void> init(int trainingId) async {
     _trainingId = trainingId;
-    await getHistory();
+    // await getHistory();
   }
 
   Future<void> getHistory() async {
