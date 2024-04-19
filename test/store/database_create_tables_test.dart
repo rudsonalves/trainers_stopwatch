@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:trainers_stopwatch/store/constants/table_sql_scripts.dart';
-import 'package:trainers_stopwatch/store/database_create_tables.dart';
+import 'package:trainers_stopwatch/store/database/database_create_tables.dart';
 
 class MockBatch extends Mock implements Batch {}
 

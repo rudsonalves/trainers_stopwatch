@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/icons/stopwatch_icons_icons.dart';
@@ -20,7 +21,7 @@ class CardHistory extends StatefulWidget {
 class _CardHistoryState extends State<CardHistory> {
   String get title {
     if (widget.history.duration == const Duration()) {
-      return 'Training Starting';
+      return 'HPCTrainingStarting'.tr();
     }
 
     String time = widget.history.duration.toString();
@@ -30,10 +31,16 @@ class _CardHistoryState extends State<CardHistory> {
     time = time.substring(0, time.length - 4);
 
     if (widget.history.lap != null) {
-      return 'Lap[${widget.history.lap}] time: ${time}s';
+      return 'HPCLapTime'.tr(args: [
+        widget.history.lap.toString(),
+        time,
+      ]);
     }
 
-    return 'Split[${widget.history.split}] time: ${time}s';
+    return 'HPCSplitTime'.tr(args: [
+      widget.history.split.toString(),
+      time,
+    ]);
   }
 
   IconData get iconData {

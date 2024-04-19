@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/theme/app_font_style.dart';
@@ -8,11 +9,12 @@ class DismissibleContainers {
   static Container background(
     BuildContext context, {
     bool enable = true,
-    String label = 'Edit',
+    String? label,
     IconData iconData = Icons.edit,
     Color color = Colors.green,
   }) {
     final primary = Theme.of(context).colorScheme.primary;
+    label = label ?? 'GenericEdit'.tr();
 
     return Container(
       decoration: BoxDecoration(
@@ -44,11 +46,12 @@ class DismissibleContainers {
   static Container secondaryBackground(
     BuildContext context, {
     bool enable = true,
-    String label = 'Delete',
+    String? label,
     IconData iconData = Icons.remove_circle,
     Color color = Colors.red,
   }) {
     final primary = Theme.of(context).colorScheme.primary;
+    label = label ?? 'GenericDelete'.tr();
 
     return Container(
       decoration: BoxDecoration(

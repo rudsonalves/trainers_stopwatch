@@ -1,9 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 
-import 'constants/table_sql_scripts.dart';
+import '../constants/table_sql_scripts.dart';
 
 sealed class DatabaseCreateTable {
   DatabaseCreateTable._();
+
+  static void settingsTable(Batch batch) {
+    batch.execute(createSettingsSQL);
+  }
 
   static void athleteTable(Batch batch) {
     batch.execute(createAthleteTableSQL);

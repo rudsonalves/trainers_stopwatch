@@ -1,5 +1,5 @@
 import '../../models/athlete_model.dart';
-import '../../store/athlete_store.dart';
+import '../../store/stores/athlete_store.dart';
 import 'abstract_athlete_repository.dart';
 
 class AthleteRepository implements AbstractAthleteRepository {

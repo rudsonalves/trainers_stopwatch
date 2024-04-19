@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:signals/signals_flutter.dart';
@@ -112,7 +113,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
               children: [
                 Center(
                   child: Text(
-                    isAddAthlete ? 'Add new Athlete' : 'Edit Athlete',
+                    isAddAthlete ? 'ADNew'.tr() : 'ADEdit'.tr(),
                     style: AppFontStyle.roboto18SemiBold,
                   ),
                 ),
@@ -125,16 +126,16 @@ class _AthleteDialogState extends State<AthleteDialog> {
                 CustomTextField(
                   controller: _controller.name,
                   validator: Validador.name,
-                  label: 'Name',
+                  label: 'ADName'.tr(),
                 ),
                 CustomTextField(
                   controller: _controller.email,
                   validator: Validador.email,
-                  label: 'Email',
+                  label: 'ADEmail'.tr(),
                 ),
                 CustomTextField(
                   controller: _controller.phone,
-                  label: 'Phone Number',
+                  label: 'ADPhone'.tr(),
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 12),
@@ -143,7 +144,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
                     FilledButton(
                       onPressed: _okButton,
                       child: Text(
-                        isAddAthlete ? 'Add' : 'Update',
+                        isAddAthlete ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
                       ),
                     ),
                     FilledButton(

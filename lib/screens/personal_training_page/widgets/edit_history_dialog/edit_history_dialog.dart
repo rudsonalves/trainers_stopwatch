@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../common/theme/app_font_style.dart';
@@ -66,7 +67,7 @@ class _EditHistoryDialogState extends State<EditHistoryDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Center(child: Text('Training Settings')),
+      title: Center(child: Text('ETDTitle'.tr())),
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       children: [
         const Divider(),
@@ -80,8 +81,8 @@ class _EditHistoryDialogState extends State<EditHistoryDialog> {
         TextField(
           focusNode: commentsFocusNode,
           controller: commentsController,
-          decoration: const InputDecoration(
-            label: Text('Comments'),
+          decoration: InputDecoration(
+            label: Text('ETDComments'.tr()),
           ),
         ),
         const SizedBox(height: 12),
@@ -89,11 +90,11 @@ class _EditHistoryDialogState extends State<EditHistoryDialog> {
           children: [
             ElevatedButton(
               onPressed: _applyButton,
-              child: const Text('Apply'),
+              child: Text('GenericApply'.tr()),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text('GenericCancel'.tr()),
             ),
           ],
         ),

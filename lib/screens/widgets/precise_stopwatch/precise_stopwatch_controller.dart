@@ -1,5 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
@@ -168,7 +168,7 @@ class PreciseStopwatchController {
       trainingId: _training!.id!,
       duration: Duration(milliseconds: splitMs),
       split: split,
-      comments: 'Speed: $speed',
+      comments: 'PSCHistoryComments'.tr(args: [speed]),
     );
 
     await _historyManager.insert(history);
@@ -186,7 +186,7 @@ class PreciseStopwatchController {
       duration: Duration(milliseconds: lapMs),
       lap: lapCounter(),
       split: _getSplit(),
-      comments: 'Speed: $speed',
+      comments: 'PSCHistoryComments'.tr(args: [speed]),
     );
 
     await _historyManager.insert(history);
@@ -212,8 +212,10 @@ class PreciseStopwatchController {
   }
 
   void _sendStartedMessage() {
-    final message = '${athlete.name}\n'
-        'Started training at ${DateFormat.Hms().format(_bloc.startTime)}';
+    final message = 'PSCStartedMessage'.tr(args: [
+      athlete.name,
+      DateFormat.Hms().format(_bloc.startTime),
+    ]);
     _stopwatchController.sendHistoryMessage(message);
   }
 
@@ -222,9 +224,13 @@ class PreciseStopwatchController {
     String speed,
     int split,
   ) {
-    final message = '${athlete.name}\n'
-        'Split [$split]: ${_formatMs(time)}'
-        ' speed: $speed';
+    final message = 'PSCSplitMessage'.tr(args: [
+      athlete.name,
+      split.toString(),
+      _formatMs(time),
+      speed,
+    ]);
+
     _stopwatchController.sendHistoryMessage(message);
   }
 
@@ -233,15 +239,22 @@ class PreciseStopwatchController {
     String speed,
     int lap,
   ) {
-    final message = '${athlete.name}\n'
-        'Lap [$lap]: ${_formatMs(time)}'
-        ' speed: $speed';
+    final message = 'PSCLapMessage'.tr(args: [
+      athlete.name,
+      lap.toString(),
+      _formatMs(time),
+      speed,
+    ]);
+
     _stopwatchController.sendHistoryMessage(message);
   }
 
   void _sendFinishMessage() {
-    final message = '${athlete.name}\n'
-        'Fininshed training at ${DateFormat.Hms().format(DateTime.now())}';
+    final message = 'PSCFinishMessage'.tr(args: [
+      athlete.name,
+      DateFormat.Hms().format(DateTime.now()),
+    ]);
+
     _stopwatchController.sendHistoryMessage(message);
   }
 

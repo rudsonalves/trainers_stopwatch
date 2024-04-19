@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/theme/app_font_style.dart';
@@ -69,8 +70,8 @@ class _HistoryPageState extends State<HistoryPage> {
               ),
             ),
             const Divider(),
-            const Text(
-              'Training Distances',
+            Text(
+              'HPTrainingDistances'.tr(),
               style: AppFontStyle.roboto16SemiBold,
             ),
             Text(lapMessage),
@@ -87,7 +88,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History Page'),
+        title: Text('HPTile'.tr()),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -101,7 +102,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   children: [
                     OutlinedButton.icon(
                       icon: const Icon(Icons.share),
-                      label: const Text('Share'),
+                      label: Text('HPShare'.tr()),
                       onPressed: () {},
                     ),
                   ],
@@ -138,8 +139,8 @@ class _HistoryPageState extends State<HistoryPage> {
                           },
                         );
                       default:
-                        return const Center(
-                          child: Text('Error!'),
+                        return Center(
+                          child: Text('TPError'.tr()),
                         );
                     }
                   },

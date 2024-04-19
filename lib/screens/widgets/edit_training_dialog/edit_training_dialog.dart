@@ -1,5 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
 
 import '../../../common/theme/app_font_style.dart';
@@ -121,7 +121,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Center(child: Text('Training Settings')),
+      title: Center(child: Text('ETDTitle'.tr())),
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       children: [
         const Divider(),
@@ -140,14 +140,14 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         ),
         const Divider(),
         DistanceUnitRow(
-          label: 'Distance Unit:',
+          label: 'ETDDistanceUnit'.tr(),
           selectedUnit: selectedDistUnit,
           distanceUnits: distanceUnits,
           speedAllowedValues: speedAllowedValues,
           selectedSpeedUnit: selectedSpeedUnit,
         ),
         SpeedUnitRow(
-          label: 'Speed Unit:',
+          label: 'ETDSpeedUnit'.tr(),
           selectedSpeedUnit: selectedSpeedUnit,
           speedUnits: speedUnits,
           speedAllowedValues: speedAllowedValues,
@@ -155,14 +155,14 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         ),
         NumericField(
           focusNode: splitFocusNode,
-          label: 'Split Distance (${selectedDistUnit.watch(context)})',
+          label: 'ETDSplitDistance'.tr(args: [selectedDistUnit.watch(context)]),
           controller: splitController,
           value: widget.training.splitLength,
           onSubmitted: _onsubmittedSplit,
         ),
         NumericField(
           focusNode: lapFocusNode,
-          label: 'Lap Distance (${selectedDistUnit.watch(context)})',
+          label: 'ETDLapDistance'.tr(args: [selectedDistUnit.watch(context)]),
           controller: lapController,
           value: widget.training.lapLength,
           onSubmitted: _onsubmittedLap,
@@ -170,8 +170,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         TextField(
           focusNode: commentsFocusNode,
           controller: commentsController,
-          decoration: const InputDecoration(
-            label: Text('Comments'),
+          decoration: InputDecoration(
+            label: Text('ETDComments'.tr()),
           ),
         ),
         const SizedBox(height: 12),
@@ -179,11 +179,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           children: [
             ElevatedButton(
               onPressed: _applyButton,
-              child: const Text('Apply'),
+              child: Text('GenericApply'.tr()),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text('GenericCancel'.tr()),
             ),
           ],
         ),

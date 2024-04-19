@@ -60,14 +60,14 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                'Split Distance: ${training.splitLength} ${training.speedUnit}',
+                'Split: ${training.splitLength} ${training.speedUnit}',
                 style: AppFontStyle.roboto16,
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(
-                'Lap Distance: ${training.lapLength} ${training.distanceUnit}',
+                'Lap: ${training.lapLength} ${training.distanceUnit}',
                 style: AppFontStyle.roboto16,
               ),
             ),

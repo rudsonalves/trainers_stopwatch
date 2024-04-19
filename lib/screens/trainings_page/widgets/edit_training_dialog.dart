@@ -1,5 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../models/training_model.dart';
 
@@ -54,7 +54,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         '${DateFormat.Hm().format(date)}';
 
     return AlertDialog(
-      title: const Text('Edit Training'),
+      title: Text('ETD2Title'.tr()),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -64,8 +64,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           Text('Split: ${training.splitLength} ${training.distanceUnit}'),
           TextField(
             controller: commantsController,
-            decoration: const InputDecoration(
-              label: Text('Comments'),
+            decoration: InputDecoration(
+              label: Text('ETDComments'.tr()),
             ),
           ),
           const SizedBox(height: 12),
@@ -74,11 +74,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
       actions: [
         ElevatedButton(
           onPressed: _applyChanges,
-          child: const Text('Apply'),
+          child: Text('GenericApply'.tr()),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text('GenericCancel'.tr()),
         ),
       ],
     );

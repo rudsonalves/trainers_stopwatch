@@ -1,5 +1,5 @@
 import '../../models/history_model.dart';
-import '../../store/history_store.dart';
+import '../../store/stores/history_store.dart';
 import 'abstract_history_repository.dart';
 
 class HistoryRepository implements AbstractHistoryRepository {

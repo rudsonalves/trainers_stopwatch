@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 enum DialogActions {
@@ -32,13 +33,13 @@ class GenericDialog extends StatelessWidget {
         listActions.add(
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Yes'),
+            child: Text('GenericYes'.tr()),
           ),
         );
         listActions.add(
           ElevatedButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('No'),
+            child: Text('GenericNo'.tr()),
           ),
         );
         break;
@@ -46,13 +47,13 @@ class GenericDialog extends StatelessWidget {
         listActions.add(
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Add'),
+            child: Text('GenericAdd'.tr()),
           ),
         );
         listActions.add(
           ElevatedButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('GenericCancel'.tr()),
           ),
         );
         break;
@@ -60,7 +61,7 @@ class GenericDialog extends StatelessWidget {
         listActions.add(
           ElevatedButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Close'),
+            child: Text('GenericClose'.tr()),
           ),
         );
         break;

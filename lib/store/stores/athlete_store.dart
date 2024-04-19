@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:sqflite/sqflite.dart';
 
-import 'constants/table_attributes.dart';
-import 'database_manager.dart';
+import '../constants/table_attributes.dart';
+import '../database/database_manager.dart';
 
 class AthleteStore {
   final _databaseManager = DatabaseManager.instance;

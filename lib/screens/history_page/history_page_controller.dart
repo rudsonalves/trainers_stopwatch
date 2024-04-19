@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../common/functions/stopwatch_functions.dart';
@@ -65,7 +66,11 @@ class HistoryPageController extends ChangeNotifier {
       training: training,
     );
 
-    return 'Length: ${totalLength.toStringAsFixed(1)} ${training.distanceUnit} '
-        '- Time: ${_cleanTime(totalTime)}s\nAverage Speed $speed';
+    return 'HPTrainingStat'.tr(args: [
+      totalLength.toStringAsFixed(1),
+      training.distanceUnit,
+      _cleanTime(totalTime),
+      speed,
+    ]);
   }
 }

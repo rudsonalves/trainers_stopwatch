@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'constants/table_attributes.dart';
+import '../constants/table_attributes.dart';
 import 'database_create_tables.dart';
 
 class DatabaseManager {
@@ -28,11 +28,6 @@ class DatabaseManager {
     _database = null;
   }
 
-  Future<void> init() async {
-    if (_database != null) return;
-    await _initDatabase();
-  }
-
   Future<Database> _initDatabase() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final String path = join(directory.path, dbName);
@@ -50,6 +45,7 @@ class DatabaseManager {
   Future<void> _onCreate(Database db, int version) async {
     Batch batch = db.batch();
 
+    DatabaseCreateTable.settingsTable(batch);
     DatabaseCreateTable.athleteTable(batch);
     DatabaseCreateTable.trainingTable(batch);
     DatabaseCreateTable.historyTable(batch);
