@@ -66,7 +66,7 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
 
     _timer = Timer.periodic(
         Duration(
-          milliseconds: AppSettings.instance.millisecondRefresh,
+          milliseconds: AppSettings.instance.mSecondRefresh,
         ), (timer) {
       _durationTrainingSignal.value = DateTime.now().difference(_startTime!);
     });

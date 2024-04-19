@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
@@ -61,10 +62,8 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
   Future<bool> _removeStopwatch(int athleteId) async {
     final result = await GenericDialog.open(context,
-        title: 'Remove Training',
-        message:
-            'Training records will be removed from the log but will still be'
-            ' stored in the athlete\'s training file.',
+        title: 'StopWatchPageRemoveTraining'.tr(),
+        message: 'StopWatchPageLongMsg'.tr(),
         actions: DialogActions.yesNo);
     if (result) {
       final athleteName = _controller.athletesList
@@ -128,7 +127,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 4,
-        title: const Text('Trainer\'s Stopwatch'),
+        title: Text('StopWatchPageAppBarTitle'.tr()),
         actions: [
           IconButton(
             icon: Icon(
@@ -148,14 +147,14 @@ class _StopWatchPageState extends State<StopWatchPage> {
               decoration: BoxDecoration(
                 color: colorScheme.onPrimary,
               ),
-              child: const Text(
-                'Training\'s Stopwatch Menu',
+              child: Text(
+                'StopWatchPageDrawerTitle'.tr(),
                 style: AppFontStyle.roboto20SemiBold,
               ),
             ),
             ListTile(
               leading: const Icon(Icons.people_alt_rounded),
-              title: const Text('Athletes'),
+              title: Text('StopWatchPageDrawerItemAthletes'.tr()),
               onTap: () async {
                 Navigator.pop(context);
                 _addStopwatchs();
@@ -163,7 +162,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
             ),
             ListTile(
               leading: const Icon(Icons.directions_run),
-              title: const Text('Trainings'),
+              title: Text('StopWatchPageDrawerItemTrainings'.tr()),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, TrainingsPage.routeName);
@@ -171,7 +170,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text('StopWatchPageDrawerItemSettings'.tr()),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, SettingsPage.routeName);

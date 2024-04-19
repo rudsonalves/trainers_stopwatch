@@ -1,5 +1,5 @@
 import '../../models/training_model.dart';
-import '../../store/training_store.dart';
+import '../../store/stores/training_store.dart';
 import 'abstract_training_repository.dart';
 
 class TrainingRepository implements AbstractTrainingRepository {

@@ -3,3 +3,10 @@
 - Ao iniciar o app adicionar um atleta padrão, caso não exista nenhum, a chamar seu cronômetro.
 - remover trainings vazios. Esta tendo problema com o traino registrados, mas não iniciados. Uma proposta é registrar o treino apenas após a sua incialização, pois aí ele terá algum histórico para registrar.
 - verificar o uso dos Future.delayed(const Duration(milliseconds: 100)) nas chamadas aos cliques dos botões do cronômetro.
+
+
+Alguns Marcos para terminar o app:
+
+- fazer o sistema de update do banco de dados
+- adicionar uma tabela de configuração do sistema com percistência de estado
+- 

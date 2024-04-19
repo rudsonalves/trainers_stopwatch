@@ -1,6 +1,15 @@
 const dbName = 'app_dataBase.db';
 const dbVersion = 1;
 
+const settingsTable = 'settingsTable';
+const settingsId = 'id';
+const settingsSplitLength = 'splitLength';
+const settingsLapLength = 'lapLength';
+const settingsDatabaseSchemeVersion = 'dbSchemeVersion';
+const settingsTheme = 'theme';
+const settingsLanguage = 'language';
+const settingsMSecondRefresh = 'mSecondRefresh';
+
 const athleteTable = 'athleteTable';
 const athleteNameIndex = 'athleteNameIndex';
 const athleteId = 'id';

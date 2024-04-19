@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/athlete_model.dart';
@@ -76,9 +77,8 @@ class _AthletesPageState extends State<AthletesPage> {
   Future<bool> deleteAthlete(AthleteModel athlete) async {
     final result = await GenericDialog.open(
       context,
-      title: 'Delete Athlete',
-      message: 'When removing an athlete all their training data will be lost.'
-          '\n\nDo you confirm the removal?',
+      title: 'APDeleteAthlete'.tr(),
+      message: 'APDeleteAthleteMsg'.tr(),
       actions: DialogActions.yesNo,
     );
     if (result) {
@@ -102,7 +102,7 @@ class _AthletesPageState extends State<AthletesPage> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 5,
-          title: const Text('Athletes List'),
+          title: Text('APAthleteList'.tr()),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -121,8 +121,8 @@ class _AthletesPageState extends State<AthletesPage> {
                     case AthletesPageStateSuccess():
                       final athletes = _controller.athletes;
                       if (athletes.isEmpty) {
-                        return const Center(
-                          child: Text('Register some athletes to start'),
+                        return Center(
+                          child: Text('APRegisterSome'.tr()),
                         );
                       }
                       return Expanded(
@@ -142,7 +142,7 @@ class _AthletesPageState extends State<AthletesPage> {
                         ),
                       );
                     default:
-                      return const Center(child: Text('Error!'));
+                      return Center(child: Text('TPError'.tr()));
                   }
                 },
               ),

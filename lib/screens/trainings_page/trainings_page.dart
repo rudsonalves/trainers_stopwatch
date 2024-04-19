@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/theme/app_font_style.dart';
@@ -44,8 +45,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
   Future<bool> _removeTraining(TrainingModel training) async {
     final result = await GenericDialog.open(
       context,
-      title: 'Delete Training',
-      message: 'Do you want to delete this training?',
+      title: 'TPRemoveTrainingTitle'.tr(),
+      message: 'TPRemoveTrainingMsg'.tr(),
       actions: DialogActions.yesNo,
     );
 
@@ -58,8 +59,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
   Future<void> _removeSelected() async {
     final result = await GenericDialog.open(
       context,
-      title: 'Delete Training',
-      message: 'Do you want to delete all selected trainings?',
+      title: 'TPRemoveSelectedTitle'.tr(),
+      message: 'TPRemoveSelectedMsg'.tr(),
       actions: DialogActions.yesNo,
     );
 
@@ -84,7 +85,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trainings'),
+        title: Text('TPTitle'.tr()),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -103,8 +104,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
                   children: [
                     Row(
                       children: [
-                        const Text(
-                          'Select Athlete:',
+                        Text(
+                          'TPSelectAthlete'.tr(),
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
@@ -134,7 +135,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
                           onPressed: _controller.haveTrainingSelected
                               ? _removeSelected
                               : null,
-                          label: const Text('Remove'),
+                          label: Text('GenericRemove'.tr()),
                           icon: const Icon(Icons.delete),
                         ),
                         _allSelected
@@ -142,12 +143,12 @@ class _TrainingsPageState extends State<TrainingsPage> {
                                 onPressed: _controller.haveTrainingSelected
                                     ? _deselectAllTraining
                                     : null,
-                                label: const Text('Deselect All'),
+                                label: Text('TPDeselectAll'.tr()),
                                 icon: const Icon(Icons.deselect),
                               )
                             : OutlinedButton.icon(
                                 onPressed: _selectAllTraining,
-                                label: const Text('Select All'),
+                                label: Text('TPSelectAll'.tr()),
                                 icon: const Icon(Icons.select_all),
                               ),
                       ],
@@ -162,10 +163,10 @@ class _TrainingsPageState extends State<TrainingsPage> {
                         ),
                         child: Column(
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'Trainings',
+                                'TPTrainings'.tr(),
                                 style: AppFontStyle.roboto18SemiBold,
                               ),
                             ),
@@ -197,8 +198,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
                 );
               // Trainings Page State Error...
               default:
-                return const Center(
-                  child: Text('Error!!!'),
+                return Center(
+                  child: Text('TPError'.tr()),
                 );
             }
           },

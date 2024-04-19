@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:sqflite/sqflite.dart';
 
-import 'constants/table_attributes.dart';
-import 'database_manager.dart';
+import '../database/database_manager.dart';
+import '../constants/table_attributes.dart';
 
-class HistoryStore {
+class TrainingStore {
   final _databaseManager = DatabaseManager.instance;
 
   Future<int> insert(Map<String, dynamic> map) async {
@@ -13,13 +13,13 @@ class HistoryStore {
       final database = await _databaseManager.database;
 
       final result = await database.insert(
-        historyTable,
+        trainingTable,
         map,
         conflictAlgorithm: ConflictAlgorithm.abort,
       );
       return result;
     } catch (err) {
-      final message = 'HistoryStore.insert: $err';
+      final message = 'TrainingStore.insert: $err';
       log(message);
       throw Exception(message);
     }
@@ -30,29 +30,28 @@ class HistoryStore {
       final database = await _databaseManager.database;
 
       final result = await database.query(
-        historyTable,
-        where: '$historyId = ?',
+        trainingTable,
+        where: '$trainingId = ?',
         whereArgs: [id],
       );
       if (result.isEmpty) return null;
       return result.first;
     } catch (err) {
-      final message = 'HistoryStore.queryById: $err';
+      final message = 'TrainingStore.queryById: $err';
       log(message);
       throw Exception(message);
     }
   }
 
-  Future<List<Map<String, dynamic>?>> queryAllFromTraining(
-      int trainingId) async {
+  Future<List<Map<String, dynamic>?>> queryAllFromAthlete(int athleteId) async {
     try {
       final database = await _databaseManager.database;
 
       final result = await database.query(
-        historyTable,
-        where: '$historyTrainingId = ?',
-        whereArgs: [trainingId],
-        orderBy: historyId,
+        trainingTable,
+        where: '$trainingAthleteId = ?',
+        whereArgs: [athleteId],
+        orderBy: trainingDate,
       );
       return result;
     } catch (err) {
@@ -67,14 +66,14 @@ class HistoryStore {
       final database = await _databaseManager.database;
 
       final result = await database.delete(
-        historyTable,
-        where: '$historyId = ?',
+        trainingTable,
+        where: '$trainingId = ?',
         whereArgs: [id],
       );
 
       return result;
     } catch (err) {
-      final message = 'HistoryStore.delete: $err';
+      final message = 'TrainingStore.delete: $err';
       log(message);
       throw Exception(message);
     }
@@ -85,15 +84,15 @@ class HistoryStore {
       final database = await _databaseManager.database;
 
       final result = await database.update(
-        historyTable,
+        trainingTable,
         map,
-        where: '$historyId = ?',
+        where: '$trainingId = ?',
         whereArgs: [id],
       );
 
       return result;
     } catch (err) {
-      final message = 'HistoryStore.update: $err';
+      final message = 'TrainingStore.update: $err';
       log(message);
       throw Exception(message);
     }

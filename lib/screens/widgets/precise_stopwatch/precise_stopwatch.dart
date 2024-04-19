@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signals/signals_flutter.dart';
@@ -135,7 +136,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                               children: [
                                 CustomIconButton(
                                   onPressed: _controller.blocStartTimer,
-                                  label: 'Start',
+                                  label: 'PSStart'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.start,
                                     color: onSurfaceVariant,
@@ -143,7 +144,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                 ),
                                 CustomIconButton(
                                   onPressed: _setTraining,
-                                  label: 'Sets',
+                                  label: 'PSSets'.tr(),
                                   icon: Icon(
                                     Icons.settings,
                                     color: onSurfaceVariant,
@@ -164,7 +165,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                         ),
                                         child: CustomIconButton(
                                           onPressed: _controller.blocLapTimer,
-                                          label: 'Laps',
+                                          label: 'PSLaps'.tr(),
                                           icon: Icon(
                                             StopwatchIcons.lap1,
                                             color: onSurfaceVariant,
@@ -179,7 +180,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                         ),
                                         child: CustomIconButton(
                                           onPressed: _controller.blocSplitTimer,
-                                          label: 'Split',
+                                          label: 'PSSplit'.tr(),
                                           icon: Icon(
                                             StopwatchIcons.partial,
                                             color: onSurfaceVariant,
@@ -188,7 +189,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                       ),
                                 CustomIconButton(
                                   onPressed: _controller.blocPauseTimer,
-                                  label: 'Pause',
+                                  label: 'PSPause'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.pause,
                                     color: onSurfaceVariant,
@@ -201,7 +202,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                               children: [
                                 CustomIconButton(
                                   onPressed: _controller.blocStartTimer,
-                                  label: 'Cont.',
+                                  label: 'PSCont'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.start,
                                     color: onSurfaceVariant,
@@ -209,7 +210,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                 ),
                                 CustomIconButton(
                                   onLongPressed: _controller.blocResetTimer,
-                                  label: 'Reset',
+                                  label: 'PSReset'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.reset,
                                     color: onSurfaceVariant.withRed(130),
@@ -217,7 +218,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                                 ),
                                 CustomIconButton(
                                   onLongPressed: _controller.blocStopTimer,
-                                  label: 'Finish',
+                                  label: 'PSFinish'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.stop,
                                     color: onSurfaceVariant.withRed(130),
@@ -230,7 +231,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                               children: [
                                 CustomIconButton(
                                   onPressed: _controller.blocStartTimer,
-                                  label: 'Start',
+                                  label: 'PSStart'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.start,
                                     color: onSurfaceVariant,
@@ -243,7 +244,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                               children: [
                                 CustomIconButton(
                                   onPressed: _controller.blocStartTimer,
-                                  label: 'Start',
+                                  label: 'PSStart'.tr(),
                                   icon: Icon(
                                     StopwatchIcons.start,
                                     color: onSurfaceVariant,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../bloc/stopwatch_state.dart';
@@ -29,8 +30,11 @@ class _StopwatDismissibleState extends State<StopwatDismissible> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Dismissible(
         key: GlobalKey(),
-        background: DismissibleContainers.background(context,
-            label: 'Manage Training...', iconData: Icons.manage_accounts),
+        background: DismissibleContainers.background(
+          context,
+          label: 'SWDLabel'.tr(),
+          iconData: Icons.manage_accounts,
+        ),
         secondaryBackground: DismissibleContainers.secondaryBackground(context),
         child: widget.stopwatch,
         confirmDismiss: (direction) async {

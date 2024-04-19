@@ -20,6 +20,31 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/04/19 - version: 0.7.6+13
+
+This commit introduces internationalization and settings management improvements to the Stopwatch application, enhancing user experience and language support.
+
+- **Localization Files Addition**:
+  - Added localization files for English (`en-US.json`), Spanish (`es.json`), and Brazilian Portuguese (`pt-BR.json`), located in the `assets/translations` directory. These files include translations for various UI elements such as buttons and dialog messages, enhancing the app's accessibility for a broader audience.
+
+- **Enhancements in Settings Management**:
+  - Updated the `StopwatchBloc` to refer to the new `mSecondRefresh` property in `AppSettings` for timer periodicity, aligning variable names for better code readability and consistency.
+  - Expanded the `AppSettings` class to include multiple settings like theme mode, refresh rates, and language preferences, supporting a more customized user experience. The class now inherits from `SettingsModel`, allowing for easier settings management and updates.
+  - Introduced a new `SettingsManager` to handle settings retrieval and updates, ensuring settings are consistently managed and stored.
+  - Implemented new classes for settings persistence including `SettingsStore` and `SettingsRepository`, facilitating the storage and retrieval of user settings from a local database.
+
+- **Infrastructure and Code Organization**:
+  - Refined the database management structure by segregating database-related files into a `database` directory, which now includes files like `DatabaseManager`, `DatabaseBackup`, and `DatabaseMigration`.
+  - Refactored various stores (`AccountStore`, `BalanceStore`, `CategoryStore`, etc.) by moving them into a new `stores` directory to streamline the project structure.
+
+- **User Interface and Interaction**:
+  - Modified the `Info.plist` file in the iOS project to include new localizations, expanding the app's reach to Norwegian and English speakers.
+  - Updated the `AppSettings` singleton initialization to sync with the new settings structure, ensuring that the app correctly loads and applies user preferences at startup.
+  - Enhanced the main application entry (`main.dart`) to initialize and apply localization settings using the `EasyLocalization` package, supporting dynamic language switching based on user preferences.
+
+Overall, these changes make the Stopwatch app more versatile and user-friendly, catering to a global audience with multilingual support and customizable settings.
+
+
 ## 2024/03/18 - version: 0.7.3+10:
 
 This release introduces a series of functionality improvements and interface updates to enhance user interaction and system efficiency within the Trainers Stopwatch app.

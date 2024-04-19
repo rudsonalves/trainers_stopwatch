@@ -1,5 +1,15 @@
 import 'table_attributes.dart';
 
+const createSettingsSQL = 'CREATE TABLE IF NOT EXISTS $settingsTable ('
+    ' $settingsId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
+    ' $settingsSplitLength REAL DEFAULT 200,'
+    ' $settingsLapLength REAL DEFAULT 1000,'
+    ' $settingsDatabaseSchemeVersion INTEGER NOT NULL,'
+    ' $settingsTheme CHAR(6) DEFAULT "system",'
+    ' $settingsLanguage CHAR(5) DEFAULT "en_US",'
+    ' $settingsMSecondRefresh INTEGER DEFAULT 66'
+    ')';
+
 const createAthleteTableSQL = 'CREATE TABLE IF NOT EXISTS $athleteTable ('
     ' $athleteId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
     ' $athleteName TEXT NOT NULL,'
@@ -19,7 +29,7 @@ const createTrainingTableSQL = 'CREATE TABLE IF NOT EXISTS $trainingTable ('
     ' $trainingSplitLength REAL NOT NULL,'
     ' $trainingLapLength REAL NOT NULL,'
     ' $trainingDistanceUnit CHAR(5),'
-    ' $trainingSpeedUnit CHAR (5),'
+    ' $trainingSpeedUnit CHAR(5),'
     ' FOREIGN KEY ($trainingAthleteId)'
     '   REFERENCES $athleteTable ($athleteId)'
     '   ON DELETE CASCADE'

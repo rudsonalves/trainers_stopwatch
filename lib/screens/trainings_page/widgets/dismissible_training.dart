@@ -1,5 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/training_model.dart';
@@ -27,9 +27,12 @@ class DismissibleTraining extends StatelessWidget {
         '${DateFormat.Hm().format(date)}';
     String subtitle = training.comments ?? '';
     if (subtitle.isEmpty) {
-      subtitle =
-          'Distances: Lap ${training.lapLength} ${training.distanceUnit}  '
-          'Split ${training.splitLength} ${training.distanceUnit}';
+      subtitle = 'DTSubtitle'.tr(args: [
+        training.lapLength.toStringAsFixed(1),
+        training.distanceUnit,
+        training.splitLength.toStringAsFixed(1),
+        training.distanceUnit,
+      ]);
     }
 
     return (title, subtitle);
