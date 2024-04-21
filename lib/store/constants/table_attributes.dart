@@ -26,6 +26,7 @@ const trainingDate = 'date';
 const trainingComments = 'comments';
 const trainingSplitLength = 'splitLength';
 const trainingLapLength = 'lapLength';
+const trainingMaxlaps = 'maxlaps';
 const trainingDistanceUnit = 'distanceUnit';
 const trainingSpeedUnit = 'speedUnit';
 

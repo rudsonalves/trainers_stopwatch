@@ -20,6 +20,34 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/04/21 - version: 0.7.6+14
+
+This commit enhances the multilingual support and updates the application's information management.
+
+- **Enhanced Localization Support**:
+  - Expanded translations for English (`en-US.json`), Spanish (`es.json`), and Brazilian Portuguese (`pt-BR.json`) to include new fields such as "Version", "Developer", and "Privacy Policy". This update aims to provide users with a richer, localized interface experience.
+
+- **Documentation Updates**:
+  - Updated the `pending.txt` document to include a new item about adding a column to the training table to store the start and end times of training sessions, reflecting an ongoing effort to enhance data management and application functionality.
+
+- **Codebase Enhancements**:
+  - Introduced the `AppInfo` class in `app_info.dart`, centralizing application-related information like version, developer contact, and privacy policy URLs. This class provides methods to launch URLs and compose emails, facilitating user interaction with app developers and legal information.
+  - Updated the `AppFontStyle` in `app_font_style.dart` to include additional predefined text styles, improving consistency and ease of use across the application.
+  - Adjusted `TrainingModel` in `training_model.dart` to include an optional `maxlaps` property, accommodating future features that may require tracking the maximum laps in a training session.
+
+- **User Interface Updates**:
+  - Added the `AboutPage` to provide users with application information, including version details, developer contact, and privacy policy access.
+  - Enhanced the settings page (`settings_page.dart`) with refined localization keys, aligning with the new translations and ensuring that the interface remains consistent and user-friendly.
+
+- **Architectural Improvements**:
+  - Updated database schema management scripts (`migration_sql_scripts.dart` and related SQL scripts) to handle new database migrations smoothly, ensuring that the application's underlying data structure supports the latest features without disrupting existing functionality.
+
+- **Integration of URL Launcher**:
+  - Integrated the `url_launcher` package to handle external links effectively, enabling the application to interact with web browsers and external mail applications seamlessly.
+
+This set of enhancements not only broadens the application's international appeal but also improves its informational and configurational aspects, making it more accessible and user-friendly.
+
+
 ## 2024/04/19 - version: 0.7.6+13
 
 This commit introduces internationalization and settings management improvements to the Stopwatch application, enhancing user experience and language support.

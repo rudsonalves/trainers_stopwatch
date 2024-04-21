@@ -108,16 +108,17 @@ class _AthletesPageState extends State<AthletesPage> {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
               ListenableBuilder(
                 listenable: _controller,
                 builder: (context, child) {
                   switch (_controller.state) {
+                    // Athletes Page State Loading
                     case AthletesPageStateLoading():
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
+                    // Athletes Page State Success
                     case AthletesPageStateSuccess():
                       final athletes = _controller.athletes;
                       if (athletes.isEmpty) {
@@ -141,8 +142,13 @@ class _AthletesPageState extends State<AthletesPage> {
                           ),
                         ),
                       );
+                    // Athletes Page State Error
                     default:
-                      return Center(child: Text('TPError'.tr()));
+                      return Center(
+                        child: Text(
+                          'TPError'.tr(),
+                        ),
+                      );
                   }
                 },
               ),
