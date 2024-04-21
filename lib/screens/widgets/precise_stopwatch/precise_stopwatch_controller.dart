@@ -205,12 +205,6 @@ class PreciseStopwatchController {
     return durationStr.substring(0, point + 4);
   }
 
-  String formatCs(Duration duration) {
-    final durationStr = duration.toString();
-    final point = durationStr.indexOf('.');
-    return durationStr.substring(0, point + 3);
-  }
-
   void _sendStartedMessage() {
     final message = 'PSCStartedMessage'.tr(args: [
       athlete.name,

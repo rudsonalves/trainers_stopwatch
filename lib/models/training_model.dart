@@ -8,6 +8,7 @@ class TrainingModel {
   String? comments;
   double splitLength;
   double lapLength;
+  double? maxlaps;
   String distanceUnit;
   String speedUnit;
 
@@ -18,6 +19,7 @@ class TrainingModel {
     this.comments,
     this.splitLength = 200,
     this.lapLength = 1000,
+    this.maxlaps,
     this.distanceUnit = 'm',
     this.speedUnit = 'm/s',
   });
@@ -30,6 +32,7 @@ class TrainingModel {
       'comments': comments,
       'splitLength': splitLength,
       'lapLength': lapLength,
+      'maxlaps': maxlaps,
       'distanceUnit': distanceUnit,
       'speedUnit': speedUnit,
     };
@@ -43,6 +46,7 @@ class TrainingModel {
       comments: map['comments'] as String?,
       splitLength: map['splitLength'] as double,
       lapLength: map['lapLength'] as double,
+      maxlaps: map['maxlaps'] as double?,
       distanceUnit: map['distanceUnit'] as String,
       speedUnit: map['speedUnit'] as String,
     );
@@ -59,10 +63,11 @@ class TrainingModel {
         ' athleteId:'
         ' $athleteId,'
         ' date: $date,'
-        ' comments: $comments)'
-        ' splitLength: $splitLength'
-        ' lapLength: $lapLength'
-        ' distanceUnit: $distanceUnit'
+        ' comments: $comments,'
+        ' splitLength: $splitLength,'
+        ' lapLength: $lapLength,'
+        ' maxlaps: $maxlaps,'
+        ' distanceUnit: $distanceUnit,'
         ' speedUnit: $speedUnit';
   }
 }

@@ -3,17 +3,15 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
 
 import '../../common/singletons/app_settings.dart';
 import '../athletes_page/athletes_page.dart';
 import '../personal_training_page/personal_training_page.dart';
-import '../settings/settings_page.dart';
-import '../trainings_page/trainings_page.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'stopwatch_page_controller.dart';
 import 'widgets/message_row.dart';
 import 'widgets/stopwatch_dismissible.dart';
+import 'widgets/stopwatch_drawer.dart';
 
 const double stopWatchHeight = 134;
 
@@ -62,8 +60,8 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
   Future<bool> _removeStopwatch(int athleteId) async {
     final result = await GenericDialog.open(context,
-        title: 'StopWatchPageRemoveTraining'.tr(),
-        message: 'StopWatchPageLongMsg'.tr(),
+        title: 'SPRemoveTraining'.tr(),
+        message: 'SPLongMsg'.tr(),
         actions: DialogActions.yesNo);
     if (result) {
       final athleteName = _controller.athletesList
@@ -114,7 +112,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
   double _sizedBoxHeigth() {
     int length = _controller.stopwatchLength();
-    length = length < 2 ? 2 : length;
+    length = length < 1 ? 1 : length;
     length = length > 4 ? 4 : length;
     return length * stopWatchHeight;
   }
@@ -127,7 +125,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 4,
-        title: Text('StopWatchPageAppBarTitle'.tr()),
+        title: Text('SPAppBarTitle'.tr()),
         actions: [
           IconButton(
             icon: Icon(
@@ -139,45 +137,8 @@ class _StopWatchPageState extends State<StopWatchPage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: colorScheme.onPrimary,
-              ),
-              child: Text(
-                'StopWatchPageDrawerTitle'.tr(),
-                style: AppFontStyle.roboto20SemiBold,
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.people_alt_rounded),
-              title: Text('StopWatchPageDrawerItemAthletes'.tr()),
-              onTap: () async {
-                Navigator.pop(context);
-                _addStopwatchs();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.directions_run),
-              title: Text('StopWatchPageDrawerItemTrainings'.tr()),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, TrainingsPage.routeName);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text('StopWatchPageDrawerItemSettings'.tr()),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, SettingsPage.routeName);
-              },
-            ),
-          ],
-        ),
+      drawer: StopwatchDrawer(
+        addStopwatchs: _addStopwatchs,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -185,11 +146,13 @@ class _StopWatchPageState extends State<StopWatchPage> {
           children: [
             _stopWatchListView(),
             Expanded(
-              child: Card(
+              child: Container(
                 margin: EdgeInsets.zero,
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: colorScheme.secondaryContainer,
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(6),

@@ -39,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('SettingsPageAppBarTitle'.tr()),
+          title: Text('SetPAppBarTitle'.tr()),
         ),
         body: Padding(
           padding: const EdgeInsets.all(12),
@@ -48,14 +48,14 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Center(
                 child: Text(
-                  'SettingsPageDefault'.tr(),
+                  'SetPDefault'.tr(),
                   style: AppFontStyle.roboto16SemiBold,
                 ),
               ),
               Row(
                 children: [
                   Text(
-                    'SettingsPageSplit'.tr(),
+                    'SetPSplit'.tr(),
                     style: AppFontStyle.roboto16,
                   ),
                   const SizedBox(width: 12),
@@ -68,7 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Row(
                 children: [
                   Text(
-                    'SettingsPageLap'.tr(),
+                    'SetPLap'.tr(),
                     style: AppFontStyle.roboto16,
                   ),
                   const SizedBox(width: 12),
@@ -82,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Row(
                 children: [
                   Text(
-                    'SettingsPageTheme'.tr(),
+                    'SetPTheme'.tr(),
                     style: AppFontStyle.roboto16,
                   ),
                   const SizedBox(width: 12),
@@ -112,7 +112,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               Row(
                 children: [
-                  Text('SettingsPageLang'.tr(), style: AppFontStyle.roboto16),
+                  Text('SetPLang'.tr(), style: AppFontStyle.roboto16),
                   const SizedBox(width: 12),
                   DropdownButton<Locale>(
                     value: appSettings.language,
@@ -138,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Row(
                 children: [
                   Text(
-                    'SettingsPageRefresh'.tr(),
+                    'SetPRefresh'.tr(),
                     style: AppFontStyle.roboto16,
                   ),
                   const SizedBox(width: 12),
