@@ -5,6 +5,7 @@ import 'package:signals/signals_flutter.dart';
 import '../../../common/theme/app_font_style.dart';
 import '../../../models/training_model.dart';
 import '../common/numeric_field.dart';
+import '../common/simple_spin_box_field.dart';
 import 'widgets/distance_unit_row.dart';
 import 'widgets/speed_unit_row.dart';
 
@@ -42,10 +43,12 @@ class EditTrainingDialog extends StatefulWidget {
 class _EditTrainingDialogState extends State<EditTrainingDialog> {
   final splitController = TextEditingController(text: '');
   final lapController = TextEditingController(text: '');
-  final commentsController = TextEditingController(text: '');
+  // final commentsController = TextEditingController(text: '');
+  final maxLapController = TextEditingController();
+
   final splitFocusNode = FocusNode();
   final lapFocusNode = FocusNode();
-  final commentsFocusNode = FocusNode();
+  // final commentsFocusNode = FocusNode();
   final selectedDistUnit = signal<String>('m');
   List<String> distanceUnits = ['m', 'km', 'yd', 'mi'];
   final selectedSpeedUnit = signal<String>('m/s');
@@ -72,7 +75,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
       lapController.text = lapLength;
       selectedDistUnit.value = widget.training.distanceUnit;
       selectedSpeedUnit.value = widget.training.speedUnit;
-      commentsController.text = widget.training.comments ?? '';
+      maxLapController.text =
+          widget.training.maxlaps?.toString().padLeft(2, '0') ?? '00';
     });
   }
 
@@ -80,12 +84,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   void dispose() {
     splitController.dispose();
     lapController.dispose();
-    commentsController.dispose();
+    maxLapController.dispose();
     selectedSpeedUnit.dispose();
     selectedDistUnit.dispose();
     splitFocusNode.dispose();
     lapFocusNode.dispose();
-    commentsFocusNode.dispose();
     super.dispose();
   }
 
@@ -98,8 +101,13 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         lap.isNotEmpty && lap != '0' ? double.parse(lap) : 1000;
     widget.training.distanceUnit = selectedDistUnit();
     widget.training.speedUnit = selectedSpeedUnit();
-    widget.training.comments = commentsController.text;
+    widget.training.maxlaps = maxLaps();
     Navigator.pop(context, true);
+  }
+
+  int? maxLaps() {
+    int? value = int.tryParse(maxLapController.text);
+    return value == 0 ? value = null : value;
   }
 
   void _onsubmittedSplit(String value) {
@@ -107,14 +115,6 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     lapController.selection = TextSelection(
       baseOffset: 0,
       extentOffset: lapController.text.length,
-    );
-  }
-
-  void _onsubmittedLap(String value) {
-    FocusScope.of(context).requestFocus(commentsFocusNode);
-    commentsController.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: commentsController.text.length,
     );
   }
 
@@ -165,14 +165,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           label: 'ETDLapDistance'.tr(args: [selectedDistUnit.watch(context)]),
           controller: lapController,
           value: widget.training.lapLength,
-          onSubmitted: _onsubmittedLap,
         ),
-        TextField(
-          focusNode: commentsFocusNode,
-          controller: commentsController,
-          decoration: InputDecoration(
-            label: Text('ETDComments'.tr()),
-          ),
+        SimpleSpinBoxField(
+          label: Text('ETDNumberLaps'.tr()),
+          maxValue: 100,
+          controller: maxLapController,
         ),
         const SizedBox(height: 12),
         ButtonBar(

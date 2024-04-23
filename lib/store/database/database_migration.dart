@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:sqflite/sqflite.dart';
 
+import '../../manager/settings_manager.dart';
+import '../../models/settings_model.dart';
 import '../constants/migration_sql_scripts.dart';
 
 class DatabaseMigration {
@@ -20,12 +22,11 @@ class DatabaseMigration {
   ///     be migrated.
   static Future<void> applyMigrations({
     required Database db,
-    required int currentVersion,
-    required int targetVersion,
+    required SettingsModel settings,
   }) async {
     await db.execute('PRAGMA foreign_keys=off');
-    for (var version = currentVersion + 1;
-        version <= targetVersion;
+    for (var version = settings.dbSchemeVersion + 1;
+        version <= MigrationSqlScripts.schemeVersion;
         version++) {
       log('Database migrating to version: $version');
       final batch = db.batch();
@@ -36,6 +37,8 @@ class DatabaseMigration {
         }
       }
       await batch.commit(noResult: true);
+      settings.dbSchemeVersion = MigrationSqlScripts.schemeVersion;
+      await SettingsManager.update(settings);
     }
     await db.execute('PRAGMA foreign_keys=on');
   }

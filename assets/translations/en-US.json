@@ -25,7 +25,7 @@
   "PSReset": "Reset",
   "PSFinish": "Finish",
   "PSCStartedMessage": "{}\nStarted training at {}",
-  "PSCSplitMessage": "{}\nSplit [${}]: {} speed: {}",
+  "PSCSplitMessage": "{}\nSplit [{}]: {} speed: {}",
   "PSCLapMessage": "{}\nLap [{}]: {} speed: {}",
   "PSCFinishMessage": "{}\nFininshed training at {}",
   "PSCHistoryComments": "Speed: {}",
@@ -79,5 +79,8 @@
   "GenericUpdate": "Update",
   "APVersion": "Version: {}",
   "APDeveloperPage": "Developer",
-  "APPrivacyPolicy": "Privacy Policy"
+  "APPrivacyPolicy": "Privacy Policy",
+  "APBlockedTitle": "Blocked Action",
+  "APBlockedMsg": "Active or selected athlete cannot be removed. Remove the stopwatch and/or deselect it to remove them.",
+  "ETDNumberLaps": "Number of Laps"
 }

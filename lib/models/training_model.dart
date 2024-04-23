@@ -8,7 +8,7 @@ class TrainingModel {
   String? comments;
   double splitLength;
   double lapLength;
-  double? maxlaps;
+  int? maxlaps;
   String distanceUnit;
   String speedUnit;
 
@@ -46,7 +46,7 @@ class TrainingModel {
       comments: map['comments'] as String?,
       splitLength: map['splitLength'] as double,
       lapLength: map['lapLength'] as double,
-      maxlaps: map['maxlaps'] as double?,
+      maxlaps: map['maxlaps'] as int?,
       distanceUnit: map['distanceUnit'] as String,
       speedUnit: map['speedUnit'] as String,
     );

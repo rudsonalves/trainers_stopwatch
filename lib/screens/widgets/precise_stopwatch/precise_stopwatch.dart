@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/athlete_model.dart';
@@ -27,6 +28,7 @@ class PreciseStopwatch extends StatefulWidget {
 
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late final PreciseStopwatchController _controller;
+  final Signal<int?> maxLaps = signal<int?>(null);
 
   String name = 'Name';
   String image = defaultPhotoImage;
@@ -39,6 +41,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
       _controller.init(widget.athlete);
     }
 
+    maxLaps.value = _controller.training.maxlaps;
     name = widget.athlete.name;
     image = widget.athlete.photo ?? defaultPhotoImage;
   }
@@ -48,10 +51,11 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     if (widget.isNotClone) {
       _controller.dispose();
     }
+    maxLaps.dispose();
     super.dispose();
   }
 
-  Future<void> _setTraining() async {
+  Future<void> _editTraining() async {
     await EditTrainingDialog.open(
       context,
       athleteName: _controller.athlete.name,
@@ -59,12 +63,12 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     );
 
     _controller.updateSplitLapLength();
+    maxLaps.value = _controller.training.maxlaps;
+    _controller.bloc.maxLaps = _controller.training.maxlaps;
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Card(
       elevation: 2,
       margin: EdgeInsets.zero,
@@ -74,14 +78,17 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             AthleteImageName(image: image, name: name),
-            LapSplitCouters(colorScheme: colorScheme, bloc: _controller.bloc),
+            LapSplitCouters(
+              bloc: _controller.bloc,
+              maxLaps: maxLaps,
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 StopwatchDisplay(
                     durationTraining: _controller.durationTraining),
                 StopwatchButtonBar(
-                    controller: _controller, setTraining: _setTraining),
+                    controller: _controller, setTraining: _editTraining),
               ],
             ),
           ],

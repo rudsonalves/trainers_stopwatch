@@ -1,22 +1,25 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
+import 'package:signals/signals_flutter.dart';
 
 import '../../../../bloc/stopwatch_bloc.dart';
+import '../../../../common/theme/app_font_style.dart';
 import 'counter_row.dart';
 
 class LapSplitCouters extends StatelessWidget {
-  final ColorScheme colorScheme;
   final StopwatchBloc bloc;
+  final Signal<int?> maxLaps;
 
   const LapSplitCouters({
     super.key,
-    required this.colorScheme,
     required this.bloc,
+    required this.maxLaps,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.only(
         top: 8,
@@ -35,19 +38,31 @@ class LapSplitCouters extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'PSCounters'.tr(),
-              style: AppFontStyle.roboto12,
+            maxLaps.watch(context) != null
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      '$maxLaps Laps',
+                      style: AppFontStyle.roboto12,
+                    ),
+                  )
+                : Text(
+                    'PSCounters'.tr(),
+                    style: AppFontStyle.roboto12,
+                  ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: CounterRow(
+                label: 'PSLap'.tr(),
+                counter: bloc.lapCounter,
+              ),
             ),
-            const SizedBox(height: 4),
-            CounterRow(
-              label: 'PSLap'.tr(),
-              counter: bloc.lapCounter,
-            ),
-            const SizedBox(height: 4),
-            CounterRow(
-              counter: bloc.splitCounter,
-              label: 'PSSplit'.tr(),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: CounterRow(
+                counter: bloc.splitCounter,
+                label: 'PSSplit'.tr(),
+              ),
             ),
           ],
         ),

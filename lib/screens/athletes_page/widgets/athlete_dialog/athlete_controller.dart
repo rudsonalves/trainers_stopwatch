@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:signals/signals_flutter.dart';
 
-import '../../common/constants.dart';
-import '../../common/singletons/app_settings.dart';
-import '../../models/athlete_model.dart';
+import '../../../../common/constants.dart';
+import '../../../../common/singletons/app_settings.dart';
+import '../../../../models/athlete_model.dart';
 
 class AthleteController {
   final name = TextEditingController();

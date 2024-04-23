@@ -20,6 +20,34 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024/04/23 - version: 0.7.6+15
+
+Enhancing Localization, Functionality, and Code Organization
+
+- **Localization Updates**:
+  - Added new entries to the localization files (`en-US.json`, `es.json`, `pt-BR.json`) for handling blocked actions and specifying the number of laps, which enhances the application's user interaction by providing more specific feedback in three different languages.
+
+- **Functional Enhancements**:
+  - Modified the `StopwatchBloc` to handle a maximum number of laps (`maxLaps`). This introduces functionality where the stopwatch can automatically stop counting upon reaching a specified number of laps.
+  - Updated the `TrainingModel` to change `maxlaps` from a `double?` to an `int?`, aligning the data type more closely with its usage which typically involves whole numbers.
+
+- **Code Refactoring**:
+  - Moved `athlete_dialog` related files under `athletes_page/widgets`, improving project structure and modularity.
+  - The `athletes_page` now incorporates logic to prevent the deletion of selected athletes, enhancing application stability and user experience.
+
+- **User Interface Improvements**:
+  - Integrated a new widget, `SimpleSpinBoxField`, which provides a user-friendly interface for adjusting numerical values. This widget is utilized in the `edit_training_dialog` to handle input for the maximum number of laps.
+
+- **Database and Version Management**:
+  - Adjusted SQL scripts to accommodate the change in data type of `maxlaps` in the training table.
+  - Implemented more robust database migration handling within `database_migration` by dynamically adjusting to the latest schema version, improving maintenance and scalability.
+
+- **Version Update**:
+  - Updated the application's version in `pubspec.yaml` to reflect the new features and fixes.
+
+This commit provides significant improvements across multiple areas of the Stopwatch application, from user-facing features to backend enhancements, ensuring a more robust and user-friendly experience.
+
+
 ## 2024/04/21 - version: 0.7.6+14
 
 This commit enhances the multilingual support and updates the application's information management.

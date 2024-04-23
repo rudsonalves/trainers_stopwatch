@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/athlete_model.dart';
-import '../athlete_dialog/athlete_dialog.dart';
+import 'widgets/athlete_dialog/athlete_dialog.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'athletes_page_controller.dart';
@@ -74,7 +74,22 @@ class _AthletesPageState extends State<AthletesPage> {
     return result;
   }
 
+  bool isSelected(AthleteModel athlete) {
+    final list = _selectedAthletes.map((athlete) => athlete.id).toList();
+    return list.contains(athlete.id!);
+  }
+
   Future<bool> deleteAthlete(AthleteModel athlete) async {
+    if (isSelected(athlete)) {
+      await GenericDialog.open(
+        context,
+        title: 'APBlockedTitle'.tr(),
+        message: 'APBlockedMsg'.tr(),
+        actions: DialogActions.close,
+      );
+      return false;
+    }
+
     final result = await GenericDialog.open(
       context,
       title: 'APDeleteAthlete'.tr(),
