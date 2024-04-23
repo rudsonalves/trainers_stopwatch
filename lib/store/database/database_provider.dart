@@ -19,10 +19,8 @@ class DatabaseProvider {
       if (MigrationSqlScripts.schemeVersion > settings.dbSchemeVersion) {
         await DatabaseMigration.applyMigrations(
           db: database,
-          currentVersion: settings.dbSchemeVersion,
-          targetVersion: MigrationSqlScripts.schemeVersion,
+          settings: settings,
         );
-        await SettingsManager.update(settings);
       }
     } catch (err) {
       if (backupDatabase != null) {

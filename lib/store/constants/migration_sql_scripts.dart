@@ -28,7 +28,7 @@ class MigrationSqlScripts {
       'ALTER TABLE $settingsTable ADD COLUMN $settingsLapLength REAL DEFAULT 1000',
     ],
     1002: [
-      'ALTER TABLE $trainingTable ADD COLUMN $trainingMaxlaps REAL',
+      'ALTER TABLE $trainingTable ADD COLUMN $trainingMaxlaps INTEGER',
     ],
   };
 }

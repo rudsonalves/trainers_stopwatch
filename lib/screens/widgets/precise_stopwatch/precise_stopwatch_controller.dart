@@ -133,6 +133,14 @@ class PreciseStopwatchController {
 
     await _generateSplitRegister();
     await _generateLapRegister();
+
+    if (_bloc.maxLaps != null && _bloc.maxLaps == _bloc.lapCounter()) {
+      isPaused = false;
+      _isCreatedTraining = false;
+      _sendFinishMessage();
+      _toggleActionOnPress();
+      _createNewTraining();
+    }
   }
 
   Future<void> blocSplitTimer() async {

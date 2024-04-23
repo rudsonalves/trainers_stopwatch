@@ -79,5 +79,8 @@
   "GenericUpdate": "Atualizar",
   "APVersion": "Versão: {}",
   "APDeveloperPage": "Desenvolvedor",
-  "APPrivacyPolicy": "Política de Privacidade"
+  "APPrivacyPolicy": "Política de Privacidade",
+  "APBlockedTitle": "Ação Bloqueada",
+  "APBlockedMsg": "Atleta ativo ou selecionado não pode ser removido. Remova o cronômetro e/ou desselecione-o para removê-lo.",
+  "ETDNumberLaps": "Número de Voltas"
 }

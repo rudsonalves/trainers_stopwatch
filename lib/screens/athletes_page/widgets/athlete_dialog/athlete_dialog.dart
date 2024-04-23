@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:signals/signals_flutter.dart';
 
-import '../../common/constants.dart';
-import '../../common/theme/app_font_style.dart';
-import '../../models/athlete_model.dart';
-import '../widgets/common/show_athlete_image.dart';
+import '../../../../common/constants.dart';
+import '../../../../common/theme/app_font_style.dart';
+import '../../../../models/athlete_model.dart';
+import '../../../widgets/common/show_athlete_image.dart';
 import 'athlete_controller.dart';
 import 'validator.dart';
 import 'widgets/custom_text_field.dart';
@@ -77,11 +77,13 @@ class _AthleteDialogState extends State<AthleteDialog> {
     }
   }
 
-  void _okButton() {
+  void _addButton() {
     final valit =
         _formKey.currentState != null && _formKey.currentState!.validate();
 
-    if (valit) Navigator.pop(context, true);
+    if (!valit) return;
+
+    Navigator.pop(context, true);
 
     final id = isAddAthlete ? null : widget.athlete!.id;
 
@@ -142,14 +144,14 @@ class _AthleteDialogState extends State<AthleteDialog> {
                 ButtonBar(
                   children: [
                     FilledButton(
-                      onPressed: _okButton,
+                      onPressed: _addButton,
                       child: Text(
                         isAddAthlete ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
                       ),
                     ),
                     FilledButton(
                       onPressed: _cancelButton,
-                      child: const Text('Cancel'),
+                      child: Text('GenericCancel'.tr()),
                     ),
                   ],
                 ),

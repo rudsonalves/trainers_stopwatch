@@ -8,6 +8,7 @@ import 'stopwatch_events.dart';
 import 'stopwatch_state.dart';
 
 class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
+  int? maxLaps;
   Timer? _timer;
   DateTime? _startTime;
   DateTime? _endTime;
@@ -121,7 +122,13 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     _updateLap(now);
     _updateSplit(now);
 
-    emit(StopwatchStateRunning());
+    if (maxLaps == _lapCounter()) {
+      _endTime = now;
+      _timer?.cancel();
+      emit(StopwatchStateInitial());
+    } else {
+      emit(StopwatchStateRunning());
+    }
   }
 
   FutureOr<void> _splitEvent(
