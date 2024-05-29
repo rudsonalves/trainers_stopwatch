@@ -5,6 +5,8 @@ import 'package:signals/signals_flutter.dart';
 import '../../common/constants.dart';
 import '../../common/singletons/app_settings.dart';
 import '../../common/theme/app_font_style.dart';
+import '../../models/settings_model.dart';
+import 'widgets/length_line_edit.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,21 +19,19 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final appSettings = AppSettings.instance;
+
   bool _edited = false;
 
-  IconData _themeModeIcon(ThemeMode theme) {
-    switch (theme) {
-      case ThemeMode.dark:
-        return Icons.dark_mode;
-      case ThemeMode.light:
-        return Icons.light_mode;
-      default:
-        return Icons.brightness_auto;
-    }
+  Widget _brightnessIcon(Brightness brightness) {
+    return Icon(
+      brightness == Brightness.light ? Icons.light_mode : Icons.dark_mode,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return PopScope(
       canPop: true,
       onPopInvoked: (didPop) {
@@ -40,6 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('SetPAppBarTitle'.tr()),
+          elevation: 5,
         ),
         body: Padding(
           padding: const EdgeInsets.all(12),
@@ -49,34 +50,19 @@ class _SettingsPageState extends State<SettingsPage> {
               Center(
                 child: Text(
                   'SetPDefault'.tr(),
-                  style: AppFontStyle.roboto16SemiBold,
+                  style: AppFontStyle.roboto16SemiBold
+                      .copyWith(color: colorScheme.primary),
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'SetPSplit'.tr(),
-                    style: AppFontStyle.roboto16,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '${appSettings.splitLength} m',
-                    style: AppFontStyle.roboto16SemiBold,
-                  ),
-                ],
+              LengthLineEdit(
+                lengthLabel: 'SetPSplit'.tr(),
+                length: appSettings.splitLength,
+                lengthUnit: appSettings.lengthUnit,
               ),
-              Row(
-                children: [
-                  Text(
-                    'SetPLap'.tr(),
-                    style: AppFontStyle.roboto16,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '${appSettings.lapLength} m',
-                    style: AppFontStyle.roboto16SemiBold,
-                  ),
-                ],
+              LengthLineEdit(
+                lengthLabel: 'SetPLap'.tr(),
+                length: appSettings.lapLength,
+                lengthUnit: appSettings.lengthUnit,
               ),
               const Divider(),
               Row(
@@ -86,28 +72,44 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: AppFontStyle.roboto16,
                   ),
                   const SizedBox(width: 12),
-                  DropdownButton<ThemeMode>(
-                    value: appSettings.themeMode.watch(context),
-                    items: ThemeMode.values
-                        .map(
-                          (theme) => DropdownMenuItem<ThemeMode>(
-                            value: theme,
-                            child: Row(
-                              children: [
-                                Icon(_themeModeIcon(theme)),
-                                const SizedBox(width: 8),
-                                Text(theme.name),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      if (value == null) return;
-                      appSettings.setThemeMode(value);
-                      _edited;
+                  IconButton.filledTonal(
+                    onPressed: appSettings.toggleBrightnessMode,
+                    icon: _brightnessIcon(appSettings.brightnessMode.watch(
+                      context,
+                    )),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'Contrast:',
+                    style: AppFontStyle.roboto16,
+                  ),
+                  const SizedBox(width: 12),
+                  SegmentedButton<Contrast>(
+                    showSelectedIcon: false,
+                    segments: const [
+                      ButtonSegment(
+                        value: Contrast.standard,
+                        icon: Icon(Icons.brightness_5),
+                      ),
+                      ButtonSegment(
+                        value: Contrast.medium,
+                        icon: Icon(Icons.brightness_6),
+                      ),
+                      ButtonSegment(
+                        value: Contrast.high,
+                        icon: Icon(Icons.brightness_7),
+                      ),
+                    ],
+                    selected: {appSettings.contrastMode.watch(context)},
+                    onSelectionChanged: (value) {
+                      setState(() {
+                        appSettings.setContrast(value.first);
+                      });
                     },
-                  )
+                  ),
                 ],
               ),
               Row(
@@ -115,6 +117,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   Text('SetPLang'.tr(), style: AppFontStyle.roboto16),
                   const SizedBox(width: 12),
                   DropdownButton<Locale>(
+                    borderRadius: BorderRadius.circular(12),
+                    dropdownColor: colorScheme.primaryContainer,
                     value: appSettings.language,
                     onChanged: (value) {
                       if (value == null) return;
@@ -143,6 +147,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 12),
                   DropdownButton<int>(
+                    borderRadius: BorderRadius.circular(12),
+                    dropdownColor: colorScheme.primaryContainer,
                     value: appSettings.mSecondRefresh,
                     items: millisecondRefreshValues
                         .map(
@@ -156,9 +162,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         .toList(),
                     onChanged: (value) {
                       if (value != null) {
-                        appSettings.mSecondRefresh = value;
-                        _edited = true;
-                        setState(() {});
+                        setState(() {
+                          appSettings.mSecondRefresh = value;
+                          _edited = true;
+                        });
                       }
                     },
                   ),

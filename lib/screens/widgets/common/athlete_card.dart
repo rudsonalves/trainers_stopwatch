@@ -18,8 +18,16 @@ class AthleteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: isChecked ? elevationEnable : elevationDisable,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: isChecked
+            ? colorScheme.tertiaryContainer.withOpacity(0.5)
+            : colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: ListTile(
         title: Text(athlete.name),
         subtitle: Text(

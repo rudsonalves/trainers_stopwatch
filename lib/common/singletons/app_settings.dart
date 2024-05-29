@@ -15,17 +15,20 @@ class AppSettings extends SettingsModel {
   late final String _imagePath;
   late final Directory _appDocDir;
 
-  late final Signal<ThemeMode> _themeMode;
+  late final Signal<Brightness> _brightness;
+  late final Signal<Contrast> _contrast;
 
   String get imagePath => _imagePath;
-  Signal<ThemeMode> get themeMode => _themeMode;
+  Signal<Brightness> get brightnessMode => _brightness;
+  Signal<Contrast> get contrastMode => _contrast;
 
   Future<void> init() async {
     // Load app Settings
     final settings = await SettingsManager.query();
     copy(settings);
-    // Update ThemeMode
-    _themeMode = signal<ThemeMode>(theme);
+    // Update Brightness & Contrast
+    _brightness = signal<Brightness>(settings.brightness);
+    _contrast = signal<Contrast>(settings.contrast);
 
     // Start app paths
     _appDocDir = await getApplicationDocumentsDirectory();
@@ -37,19 +40,27 @@ class AppSettings extends SettingsModel {
     }
   }
 
-  void toggleThemeMode() {
-    _themeMode.value =
-        _themeMode.value == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-    theme = _themeMode.value;
+  void setContrast(Contrast contrast) {
+    _contrast.value = contrast;
+    this.contrast = contrast;
+    update();
+  }
+
+  void toggleBrightnessMode() {
+    _brightness.value = _brightness.value == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+    brightness = _brightness.value;
     update();
   }
 
   void dispose() {
-    _themeMode.dispose();
+    _brightness.dispose();
+    _contrast.dispose();
   }
 
-  void setThemeMode(ThemeMode theme) {
-    _themeMode.value = theme;
+  void setBrightnessMode(Brightness brightness) {
+    _brightness.value = brightness;
   }
 
   void copy(SettingsModel settings) {
@@ -59,7 +70,7 @@ class AppSettings extends SettingsModel {
     dbSchemeVersion = settings.dbSchemeVersion;
     language = settings.language;
     mSecondRefresh = settings.mSecondRefresh;
-    theme = settings.theme;
+    brightness = settings.brightness;
   }
 
   Future<void> update() async {
