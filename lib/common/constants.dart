@@ -8,6 +8,15 @@ const double elevationEnable = 5;
 
 const millisecondRefreshValues = [10, 33, 66, 133, 266, 500];
 
+const distanceUnits = ['m', 'km', 'yd', 'mi'];
+const speedUnits = ['m/s', 'km/h', 'yd/s', 'mph'];
+const speedAllowedValues = {
+  'm': ['m/s', 'km/h'],
+  'km': ['m/s', 'km/h'],
+  'yd': ['yd/s', 'm/s', 'mph'],
+  'mi': ['yd/s', 'm/s', 'mph'],
+};
+
 class AppLanguage {
   final String language;
   final String flag;

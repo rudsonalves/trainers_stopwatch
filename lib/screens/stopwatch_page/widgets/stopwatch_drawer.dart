@@ -56,7 +56,7 @@ class StopwatchDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
+            leading: const Icon(Icons.info_outline),
             title: Text('SPDItemAbout'.tr()),
             onTap: () {
               Navigator.pop(context);

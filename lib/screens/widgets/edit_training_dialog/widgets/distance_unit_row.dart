@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
+import '../../../../common/constants.dart';
+
 class DistanceUnitRow extends StatefulWidget {
+  final String label;
+  final Signal<String> selectedUnit;
+  final Signal<String> selectedSpeedUnit;
+
   const DistanceUnitRow({
     super.key,
     required this.label,
     required this.selectedUnit,
-    required this.distanceUnits,
-    required this.speedAllowedValues,
     required this.selectedSpeedUnit,
   });
-
-  final String label;
-  final Signal<String> selectedUnit;
-  final List<String> distanceUnits;
-  final Map<String, List<String>> speedAllowedValues;
-  final Signal<String> selectedSpeedUnit;
 
   @override
   State<DistanceUnitRow> createState() => _DistanceUnitRowState();
@@ -24,13 +22,17 @@ class DistanceUnitRow extends StatefulWidget {
 class _DistanceUnitRowState extends State<DistanceUnitRow> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       children: [
         Text(widget.label),
         const SizedBox(width: 8),
         DropdownButton<String>(
+          borderRadius: BorderRadius.circular(12),
+          dropdownColor: colorScheme.primaryContainer,
           value: widget.selectedUnit(),
-          items: widget.distanceUnits.map(
+          items: distanceUnits.map(
             (item) {
               return DropdownMenuItem(
                 value: item,
@@ -41,10 +43,10 @@ class _DistanceUnitRowState extends State<DistanceUnitRow> {
           onChanged: (value) {
             if (value != null) {
               widget.selectedUnit.value = value;
-              if (!widget.speedAllowedValues[value]!
+              if (!speedAllowedValues[value]!
                   .contains(widget.selectedSpeedUnit())) {
                 widget.selectedSpeedUnit.value =
-                    widget.speedAllowedValues[value]!.first;
+                    speedAllowedValues[value]!.first;
               }
             }
           },

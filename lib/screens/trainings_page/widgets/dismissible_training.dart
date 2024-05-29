@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common/constants.dart';
 import '../../../models/training_model.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 
@@ -44,7 +43,7 @@ class DismissibleTraining extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorSheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     String title;
     String subtitle;
 
@@ -54,9 +53,17 @@ class DismissibleTraining extends StatelessWidget {
       background: DismissibleContainers.background(context),
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: GlobalKey(),
-      child: Card(
-        color: colorSheme.surface,
-        elevation: selected ? elevationEnable : elevationDisable,
+      child: Container(
+        margin: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: colorScheme.secondaryContainer,
+          ),
+          color: selected
+              ? colorScheme.tertiaryContainer.withOpacity(0.5)
+              : colorScheme.surfaceBright,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: ListTile(
           title: Text(
             title,

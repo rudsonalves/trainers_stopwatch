@@ -5,8 +5,10 @@ const settingsTable = 'settingsTable';
 const settingsId = 'id';
 const settingsSplitLength = 'splitLength';
 const settingsLapLength = 'lapLength';
+const settingsLengthUnit = 'lengthUnit';
 const settingsDatabaseSchemeVersion = 'dbSchemeVersion';
-const settingsTheme = 'theme';
+const settingsBrightness = 'brightness';
+const settingsContrast = 'contrast';
 const settingsLanguage = 'language';
 const settingsMSecondRefresh = 'mSecondRefresh';
 

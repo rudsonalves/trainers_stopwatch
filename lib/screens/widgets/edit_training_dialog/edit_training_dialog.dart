@@ -43,22 +43,12 @@ class EditTrainingDialog extends StatefulWidget {
 class _EditTrainingDialogState extends State<EditTrainingDialog> {
   final splitController = TextEditingController(text: '');
   final lapController = TextEditingController(text: '');
-  // final commentsController = TextEditingController(text: '');
   final maxLapController = TextEditingController();
 
   final splitFocusNode = FocusNode();
   final lapFocusNode = FocusNode();
-  // final commentsFocusNode = FocusNode();
   final selectedDistUnit = signal<String>('m');
-  List<String> distanceUnits = ['m', 'km', 'yd', 'mi'];
   final selectedSpeedUnit = signal<String>('m/s');
-  List<String> speedUnits = ['m/s', 'km/h', 'yd/s', 'mph'];
-  final speedAllowedValues = {
-    'm': ['m/s', 'km/h'],
-    'km': ['m/s', 'km/h'],
-    'yd': ['yd/s', 'm/s', 'mph'],
-    'mi': ['yd/s', 'm/s', 'mph'],
-  };
 
   @override
   void initState() {
@@ -120,7 +110,10 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SimpleDialog(
+      backgroundColor: colorScheme.onInverseSurface,
       title: Center(child: Text('ETDTitle'.tr())),
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       children: [
@@ -142,15 +135,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         DistanceUnitRow(
           label: 'ETDDistanceUnit'.tr(),
           selectedUnit: selectedDistUnit,
-          distanceUnits: distanceUnits,
-          speedAllowedValues: speedAllowedValues,
           selectedSpeedUnit: selectedSpeedUnit,
         ),
         SpeedUnitRow(
           label: 'ETDSpeedUnit'.tr(),
           selectedSpeedUnit: selectedSpeedUnit,
-          speedUnits: speedUnits,
-          speedAllowedValues: speedAllowedValues,
           selectedDistUnit: selectedDistUnit,
         ),
         NumericField(

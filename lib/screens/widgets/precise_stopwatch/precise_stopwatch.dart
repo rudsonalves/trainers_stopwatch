@@ -69,8 +69,13 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),

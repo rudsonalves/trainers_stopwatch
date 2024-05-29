@@ -18,6 +18,7 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     const double height = 30;
     final primary = Theme.of(context).colorScheme.primary;
+    const appPage = 'https://rralves.dev.br/en/trainers-stopwatch-en/';
 
     return Scaffold(
       appBar: AppBar(
@@ -79,8 +80,32 @@ class _AboutPageState extends State<AboutPage> {
                 const SizedBox(width: 6),
                 TextButton(
                   onPressed: () => AppInfo.launchUrl(AppInfo.privacyPolicyUrl),
-                  child: const Text(
-                    AppInfo.privacyPolicyUrl,
+                  child: Text(
+                    AppInfo.privacyPolicyUrl.replaceAll('https://', ''),
+                    style: AppFontStyle.roboto16SemiBold,
+                    maxLines: 2,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: height),
+            Text(
+              'APAppPage'.tr(),
+              style: AppFontStyle.roboto16SemiBold,
+              textAlign: TextAlign.center,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.public,
+                  color: primary,
+                ),
+                const SizedBox(width: 6),
+                TextButton(
+                  onPressed: () => AppInfo.launchUrl(appPage),
+                  child: Text(
+                    appPage.replaceAll('https://', ''),
                     style: AppFontStyle.roboto16SemiBold,
                     maxLines: 2,
                   ),

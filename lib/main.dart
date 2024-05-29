@@ -22,7 +22,7 @@ void main() async {
       supportedLocales: appLanguages.values.map((item) => item.locale).toList(),
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
-      child: const MyMaterialApp(),
+      child: MyMaterialApp(),
     ),
   );
 }

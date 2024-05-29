@@ -8,13 +8,12 @@ class AppInfo {
 
   static const name = 'trainers_stopwatch';
   static const description = 'Multiple Precision Chronometers.';
-  static const version = '0.7.6+13';
+  static const version = '0.8.1+16';
 
   static get pageUrl => 'https://rralves.dev.br/en/$name/';
   static const email = 'alvesdev67@gmail.com';
-  static const privacyPolicyUrl =
-      'https://rralves.dev.br/en/privacy-policy-en/';
-
+  static const privacyPolicyUrl = 'https://rralves.dev.br/en/privacy-policy-en/';
+  
   static Future<void> launchUrl(String url) async {
     final uri = Uri.parse(url);
 

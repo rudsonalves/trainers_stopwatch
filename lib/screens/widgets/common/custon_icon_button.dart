@@ -29,7 +29,7 @@ class CustomIconButton extends StatelessWidget {
       child: Card(
         elevation: 2,
         margin: EdgeInsets.zero,
-        color: settings.themeMode.watch(context) == ThemeMode.light
+        color: settings.brightnessMode.watch(context) == Brightness.light
             ? colorScheme.onPrimary.withOpacity(0.3)
             : colorScheme.primary.withOpacity(0.2),
         child: Material(

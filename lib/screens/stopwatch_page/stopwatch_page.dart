@@ -129,11 +129,11 @@ class _StopWatchPageState extends State<StopWatchPage> {
         actions: [
           IconButton(
             icon: Icon(
-              _settings.themeMode.watch(context) == ThemeMode.dark
+              _settings.brightnessMode.watch(context) == Brightness.dark
                   ? Icons.dark_mode
                   : Icons.light_mode,
             ),
-            onPressed: _settings.toggleThemeMode,
+            onPressed: _settings.toggleBrightnessMode,
           ),
         ],
       ),

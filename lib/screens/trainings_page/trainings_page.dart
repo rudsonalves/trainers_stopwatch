@@ -110,6 +110,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
                         ),
                         const SizedBox(width: 12),
                         DropdownButton<int>(
+                          borderRadius: BorderRadius.circular(12),
+                          dropdownColor: colorScheme.primaryContainer,
                           value: _controller.athleteId,
                           items: _controller.athletes
                               .map(
