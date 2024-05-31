@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:onboarding_overlay/onboarding_overlay.dart';
 
+import '../../common/singletons/app_settings.dart';
 import '../../models/athlete_model.dart';
 import 'widgets/athlete_dialog/athlete_dialog.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
@@ -14,21 +16,37 @@ class AthletesPage extends StatefulWidget {
     super.key,
   });
 
-  static const routeName = '/athletes';
-
   @override
   State<AthletesPage> createState() => _AthletesPageState();
 }
 
 class _AthletesPageState extends State<AthletesPage> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final app = AppSettings.instance;
   final _controller = AthletesPageController();
   final List<AthleteModel> _selectedAthletes = [];
   final List<int> _preSelectedAthleteIds = [];
+  late final OnboardingState? overlay;
 
   @override
   void initState() {
     super.initState();
     _startingPage();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        overlay = Onboarding.of(context);
+        _startTutorial();
+      },
+    );
+  }
+
+  void _startTutorial() {
+    if (app.tutorialOn) {
+      if (overlay != null) {
+        overlay!.show();
+      }
+    }
   }
 
   Future<void> _startingPage() async {
@@ -45,14 +63,39 @@ class _AthletesPageState extends State<AthletesPage> {
     _selectedAthletes.addAll(athletesList);
   }
 
-  void _addNewAthlete() {
-    AthleteDialog.open(
+  Future<void> _addNewAthlete() async {
+    final result = await AthleteDialog.open(
       context,
-      sueAthlete: _controller.addAthlete,
+      addAthlete: _controller.addAthlete,
     );
+
+    await Future.delayed(const Duration(milliseconds: 150));
+    if (result != null && result) {
+      _continueTutorial();
+    } else {
+      app.tutorialOn = false;
+    }
+  }
+
+  Future<void> _continueTutorial() async {
+    if (app.tutorialOn && mounted) {
+      final overlay = Onboarding.of(context);
+      if (overlay != null) {
+        if (app.focusNodes[9].context?.mounted ?? false) {
+          overlay.showFromIndex(4);
+        } else {
+          await Future.delayed(const Duration(microseconds: 100), () {
+            if (app.focusNodes[9].context?.mounted ?? false) {
+              overlay.showFromIndex(4);
+            }
+          });
+        }
+      }
+    }
   }
 
   void _backPage() {
+    // overlay!.deactivate();
     Navigator.pop(context);
   }
 
@@ -68,7 +111,7 @@ class _AthletesPageState extends State<AthletesPage> {
     final result = await AthleteDialog.open(
           context,
           athlete: athlete,
-          sueAthlete: _controller.updateAthlete,
+          addAthlete: _controller.updateAthlete,
         ) ??
         false;
     return result;
@@ -115,9 +158,27 @@ class _AthletesPageState extends State<AthletesPage> {
         stopwatchController.addNewAthletes(_selectedAthletes);
       },
       child: Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           elevation: 5,
           title: Text('APAthleteList'.tr()),
+          actions: [
+            PopupMenuButton(
+              icon: const Icon(Icons.menu),
+              itemBuilder: (context) => <PopupMenuEntry>[
+                PopupMenuItem(
+                  onTap: () {
+                    app.tutorialOn = true;
+                    _startTutorial();
+                  },
+                  child: const ListTile(
+                    leading: Icon(Icons.question_mark),
+                    title: Text('Tutorial'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -144,15 +205,19 @@ class _AthletesPageState extends State<AthletesPage> {
                       return Expanded(
                         child: ListView.builder(
                           itemCount: athletes.length,
-                          itemBuilder: (context, index) =>
-                              DismissibleAthleteTile(
-                            athlete: athletes[index],
-                            selectAthlete: selectAthlete,
-                            editFunction: editAthlete,
-                            deleteFunction: deleteAthlete,
-                            blockedAthleteIds: _preSelectedAthleteIds,
-                            isChecked: _preSelectedAthleteIds.contains(
-                              athletes[index].id!,
+                          itemBuilder: (context, index) => Focus(
+                            focusNode: app.isTutorial(athletes[index].id!)
+                                ? app.focusNodes[9]
+                                : null,
+                            child: DismissibleAthleteTile(
+                              athlete: athletes[index],
+                              selectAthlete: selectAthlete,
+                              editFunction: editAthlete,
+                              deleteFunction: deleteAthlete,
+                              blockedAthleteIds: _preSelectedAthleteIds,
+                              isChecked: _preSelectedAthleteIds.contains(
+                                athletes[index].id!,
+                              ),
                             ),
                           ),
                         ),
@@ -174,6 +239,7 @@ class _AthletesPageState extends State<AthletesPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FloatingActionButton(
+              focusNode: app.focusNodes[10],
               heroTag: 'fab1',
               onPressed: _backPage,
               child: Icon(
@@ -183,6 +249,7 @@ class _AthletesPageState extends State<AthletesPage> {
             ),
             const SizedBox(width: 18),
             FloatingActionButton(
+              focusNode: app.focusNodes[8],
               heroTag: 'fab2',
               onPressed: _addNewAthlete,
               child: Icon(

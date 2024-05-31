@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/athlete_model.dart';
@@ -29,6 +30,7 @@ class PreciseStopwatch extends StatefulWidget {
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late final PreciseStopwatchController _controller;
   final Signal<int?> maxLaps = signal<int?>(null);
+  final app = AppSettings.instance;
 
   String name = 'Name';
   String image = defaultPhotoImage;
@@ -93,7 +95,10 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                 StopwatchDisplay(
                     durationTraining: _controller.durationTraining),
                 StopwatchButtonBar(
-                    controller: _controller, setTraining: _editTraining),
+                  controller: _controller,
+                  setTraining: _editTraining,
+                  athleteId: widget.athlete.id!,
+                ),
               ],
             ),
           ],

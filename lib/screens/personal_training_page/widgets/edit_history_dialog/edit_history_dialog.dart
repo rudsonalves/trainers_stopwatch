@@ -88,11 +88,11 @@ class _EditHistoryDialogState extends State<EditHistoryDialog> {
         const SizedBox(height: 12),
         ButtonBar(
           children: [
-            ElevatedButton(
+            FilledButton(
               onPressed: _applyButton,
               child: Text('GenericApply'.tr()),
             ),
-            ElevatedButton(
+            FilledButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text('GenericCancel'.tr()),
             ),

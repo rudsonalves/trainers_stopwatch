@@ -72,11 +72,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         ],
       ),
       actions: [
-        ElevatedButton(
+        FilledButton(
           onPressed: _applyChanges,
           child: Text('GenericApply'.tr()),
         ),
-        ElevatedButton(
+        FilledButton(
           onPressed: () => Navigator.pop(context),
           child: Text('GenericCancel'.tr()),
         ),

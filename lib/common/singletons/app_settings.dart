@@ -7,16 +7,30 @@ import 'package:signals/signals_flutter.dart';
 import '../../manager/settings_manager.dart';
 import '../../models/settings_model.dart';
 
+const int maxFocusNode = 17;
+
 class AppSettings extends SettingsModel {
   AppSettings._();
   static final _instance = AppSettings._();
   static AppSettings get instance => _instance;
+  final focusNodes = List<FocusNode>.generate(
+    maxFocusNode,
+    (index) => FocusNode(debugLabel: 'FocusNode id $index'),
+    growable: true,
+  );
 
   late final String _imagePath;
   late final Directory _appDocDir;
 
   late final Signal<Brightness> _brightness;
   late final Signal<Contrast> _contrast;
+
+  bool tutorialOn = false;
+  int tutorialId = 0;
+
+  bool isTutorial(int athleteId) {
+    return tutorialOn && tutorialId == athleteId;
+  }
 
   String get imagePath => _imagePath;
   Signal<Brightness> get brightnessMode => _brightness;
@@ -57,6 +71,9 @@ class AppSettings extends SettingsModel {
   void dispose() {
     _brightness.dispose();
     _contrast.dispose();
+    for (var focus in focusNodes) {
+      focus.dispose();
+    }
   }
 
   void setBrightnessMode(Brightness brightness) {

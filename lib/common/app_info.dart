@@ -8,7 +8,7 @@ class AppInfo {
 
   static const name = 'trainers_stopwatch';
   static const description = 'Multiple Precision Chronometers.';
-  static const version = '0.8.1+16';
+  static const version = '0.9.0+19';
 
   static get pageUrl => 'https://rralves.dev.br/en/$name/';
   static const email = 'alvesdev67@gmail.com';

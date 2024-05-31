@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:trainers_stopwatch/screens/widgets/common/generic_dialog.dart';
 
 import '../../../models/athlete_model.dart';
 import '../../widgets/common/athlete_card.dart';
@@ -49,6 +50,15 @@ class _DismissibleAthleteTileState extends State<DismissibleAthleteTile> {
       if (widget.selectAthlete != null) {
         widget.selectAthlete!(isChecked(), widget.athlete);
       }
+    } else {
+      GenericDialog.open(
+        context,
+        title: 'Sorry',
+        message:
+            'Atleta com cronômetro aberto na página incial. Para removê-lo '
+            'acesse a página inicial e remova seu cronêometro de treino.',
+        actions: DialogActions.close,
+      );
     }
   }
 

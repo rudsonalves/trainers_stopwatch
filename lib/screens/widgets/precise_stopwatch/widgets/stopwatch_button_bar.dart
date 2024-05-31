@@ -7,17 +7,20 @@ import 'package:signals/signals_flutter.dart';
 import '../../../../bloc/stopwatch_bloc.dart';
 import '../../../../bloc/stopwatch_state.dart';
 import '../../../../common/icons/stopwatch_icons_icons.dart';
+import '../../../../common/singletons/app_settings.dart';
 import '../../common/custon_icon_button.dart';
 import '../precise_stopwatch_controller.dart';
 
 class StopwatchButtonBar extends StatefulWidget {
   final PreciseStopwatchController controller;
   final Future<void> Function() setTraining;
+  final int athleteId;
 
   const StopwatchButtonBar({
     super.key,
     required this.controller,
     required this.setTraining,
+    required this.athleteId,
   });
 
   @override
@@ -26,6 +29,7 @@ class StopwatchButtonBar extends StatefulWidget {
 
 class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
   late final PreciseStopwatchController controller;
+  final app = AppSettings.instance;
 
   @override
   void initState() {
@@ -50,6 +54,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                 return ButtonBar(
                   children: [
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[12]
+                          : null,
                       onPressed: controller.blocStartTimer,
                       label: 'PSStart'.tr(),
                       icon: Icon(
@@ -58,6 +65,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                       ),
                     ),
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[13]
+                          : null,
                       onPressed: widget.setTraining,
                       label: 'PSSets'.tr(),
                       icon: Icon(
@@ -73,6 +83,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                     (controller.bloc.splitCounter.watch(context) ==
                             controller.bloc.splitCounterMax - 1)
                         ? CustomIconButton(
+                            focusNode: app.isTutorial(widget.athleteId)
+                                ? app.focusNodes[14]
+                                : null,
                             onPressed: controller.blocLapTimer,
                             label: 'PSLaps'.tr(),
                             icon: Icon(
@@ -81,6 +94,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                             ),
                           )
                         : CustomIconButton(
+                            focusNode: app.isTutorial(widget.athleteId)
+                                ? app.focusNodes[14]
+                                : null,
                             onPressed: controller.blocSplitTimer,
                             label: 'PSSplit'.tr(),
                             icon: Icon(
@@ -89,6 +105,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                             ),
                           ),
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[15]
+                          : null,
                       onPressed: controller.blocPauseTimer,
                       label: 'PSPause'.tr(),
                       icon: Icon(
@@ -102,6 +121,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                 return ButtonBar(
                   children: [
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[12]
+                          : null,
                       onPressed: controller.blocStartTimer,
                       label: 'PSCont'.tr(),
                       icon: Icon(
@@ -118,6 +140,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                       ),
                     ),
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[16]
+                          : null,
                       onLongPressed: controller.blocStopTimer,
                       label: 'PSFinish'.tr(),
                       icon: Icon(
@@ -131,6 +156,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                 return ButtonBar(
                   children: [
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[12]
+                          : null,
                       onPressed: controller.blocStartTimer,
                       label: 'PSStart'.tr(),
                       icon: Icon(
@@ -144,6 +172,9 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                 return ButtonBar(
                   children: [
                     CustomIconButton(
+                      focusNode: app.isTutorial(widget.athleteId)
+                          ? app.focusNodes[12]
+                          : null,
                       onPressed: controller.blocStartTimer,
                       label: 'PSStart'.tr(),
                       icon: Icon(
