@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
+import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../manager/athlete_manager.dart';
 import '../../models/athlete_model.dart';
@@ -12,6 +13,8 @@ class AthletesPageController extends ChangeNotifier {
 
   AthletesPageState get state => _state;
   List<AthleteModel> get athletes => _athletesManager.athletes;
+
+  final app = AppSettings.instance;
 
   void _changeState(AthletesPageState newState) {
     _state = newState;
@@ -38,6 +41,9 @@ class AthletesPageController extends ChangeNotifier {
     try {
       _changeState(AthletesPageStateLoading());
       await _athletesManager.insert(athlete);
+      if (app.tutorialOn) {
+        app.tutorialId = athlete.id!;
+      }
       _changeState(AthletesPageStateSuccess());
     } catch (err) {
       log('AthletesPageState.addAthlete: $err');

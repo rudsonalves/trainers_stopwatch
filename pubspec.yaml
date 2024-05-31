@@ -1,7 +1,7 @@
 name: trainers_stopwatch
 description: "Multiple Precision Chronometers."
 publish_to: 'none'
-version: 0.8.2+17
+version: 0.9.0+19
 
 environment:
   sdk: '>=3.3.2 <4.0.0'
@@ -21,6 +21,7 @@ dependencies:
   easy_localization: ^3.0.5
   url_launcher: ^6.2.6
   google_fonts: ^6.2.1
+  onboarding_overlay: ^3.2.2
 
 dev_dependencies:
   flutter_test:

@@ -7,10 +7,10 @@ import 'common/theme/theme.dart';
 import 'common/theme/util.dart';
 import 'models/settings_model.dart';
 import 'screens/about_page/about_page.dart';
-import 'screens/athletes_page/athletes_page.dart';
+import 'screens/athletes_page/athletes_overlay.dart';
 import 'screens/history_page/history_page.dart';
 import 'screens/settings/settings_page.dart';
-import 'screens/stopwatch_page/stopwatch_page.dart';
+import 'screens/stopwatch_page/stopwatch_overlay.dart';
 import 'screens/personal_training_page/personal_training_page.dart';
 import 'screens/trainings_page/trainings_page.dart';
 
@@ -54,10 +54,10 @@ class MyMaterialApp extends StatelessWidget {
           ? lightContrast(theme, settings.contrastMode.watch(context))
           : darkContrast(theme, settings.contrastMode.watch(context)),
       debugShowCheckedModeBanner: false,
-      initialRoute: StopWatchPage.routeName,
+      initialRoute: StopwatchOverlay.routeName,
       routes: {
-        StopWatchPage.routeName: (context) => const StopWatchPage(),
-        AthletesPage.routeName: (context) => const AthletesPage(),
+        StopwatchOverlay.routeName: (context) => const StopwatchOverlay(),
+        AthletesOverlay.routeName: (context) => const AthletesOverlay(),
         PersonalTrainingPage.routeName: (context) =>
             PersonalTrainingPage.fromContext(context),
         TrainingsPage.routeName: (context) => const TrainingsPage(),

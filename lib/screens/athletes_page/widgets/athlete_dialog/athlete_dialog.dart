@@ -13,24 +13,24 @@ import 'widgets/custom_text_field.dart';
 
 class AthleteDialog extends StatefulWidget {
   final AthleteModel? athlete;
-  final void Function(AthleteModel)? sueAthlete;
+  final void Function(AthleteModel)? addAthlete;
 
   const AthleteDialog({
     super.key,
     this.athlete,
-    this.sueAthlete,
+    this.addAthlete,
   });
 
   static Future<bool?> open(
     BuildContext context, {
     AthleteModel? athlete,
-    void Function(AthleteModel)? sueAthlete,
+    void Function(AthleteModel)? addAthlete,
   }) async {
     final bool result = await showDialog<bool?>(
           context: context,
           builder: (context) => AthleteDialog(
             athlete: athlete,
-            sueAthlete: sueAthlete,
+            addAthlete: addAthlete,
           ),
         ) ??
         false;
@@ -95,8 +95,8 @@ class _AthleteDialogState extends State<AthleteDialog> {
       phone: _controller.phone.text,
     );
 
-    if (widget.sueAthlete != null) {
-      widget.sueAthlete!(athlete);
+    if (widget.addAthlete != null) {
+      widget.addAthlete!(athlete);
     }
   }
 

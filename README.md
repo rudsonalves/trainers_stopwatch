@@ -20,6 +20,64 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_05_31 - version: 0.9.0+19
+
+feat: Add onboarding tutorial using onboarding_overlay package
+
+This commit integrates the onboarding_overlay package to provide an introductory tutorial for the app on two pages. It includes necessary adjustments to routes, FocusNodes, and user interfaces to support the tutorial.
+
+- **lib/common/singletons/app_settings.dart**:
+  - Added constant `maxFocusNode` to limit the number of FocusNodes for the tutorial.
+  - Added `List<FocusNode> focusNodes` to store FocusNodes for the tutorial.
+  - Added `tutorialOn` attribute to indicate if the tutorial is active.
+  - Added `tutorialId` attribute to track the tutorial test user's ID.
+  - Added disposal of elements in `focusNodes` in the `dispose` method.
+
+- **lib/my_material_app.dart**:
+  - Adjusted routes for `StopWatchPage` and `AthletesPage` to use tutorial overlays `StopwatchOverlay` and `AthletesOverlay`, respectively.
+
+- **lib/screens/athletes_page/athletes_overlay.dart**:
+  - Added `AthletesOverlay` class to provide the tutorial for the `AthletesPage`.
+
+- **lib/screens/athletes_page/athletes_page.dart**:
+  - Added tutorial entries in `initState`, `_addNewAthlete`.
+  - Added a `PopupMenuButton` for tutorial entry.
+  - Added `app.focusNode` for tutorial elements.
+
+- **lib/screens/athletes_page/athletes_page_controller.dart**:
+  - Added an entry to store the athlete ID used in the tutorial.
+
+- **lib/screens/athletes_page/widgets/athlete_dialog/athlete_dialog.dart**:
+  - Corrected attribute name from `sueAthlete` to `addAthlete`.
+
+- **lib/screens/athletes_page/widgets/dismissible_athlete_tile.dart**:
+  - Added a dialog for attempting to deselect an athlete when they have an active stopwatch on the main page.
+
+- **lib/screens/widgets/common/generic_dialog.dart**:
+- **lib/screens/widgets/edit_training_dialog/edit_training_dialog.dart**:
+- **lib/screens/personal_training_page/widgets/edit_history_dialog/edit_history_dialog.dart**:
+- **lib/screens/trainings_page/widgets/edit_training_dialog.dart**:
+  - Replaced `ElevatedButton` with `FilledButton`.
+
+- **lib/screens/stopwatch_page/stopwatch_overlay.dart**:
+  - Added `StopwatchOverlay` class to provide the tutorial for the `StopWatchPage`.
+
+- **lib/screens/stopwatch_page/stopwatch_page.dart**:
+  - Added tutorial entries in `initState`, `_addNewAthlete`.
+  - Added a `PopupMenuButton` for tutorial entry.
+  - Added `app.focusNode` for tutorial elements.
+  - Added a call to dispose `AppSettings.instance` in the `dispose` method of the class.
+
+- **lib/screens/stopwatch_page/widgets/stopwatch_dismissible.dart**:
+- **lib/screens/stopwatch_page/widgets/stopwatch_drawer.dart**:
+- **lib/screens/widgets/common/custon_icon_button.dart**:
+- **lib/screens/widgets/precise_stopwatch/widgets/stopwatch_button_bar.dart**:
+  - Added `app.focusNode` for tutorial elements.
+
+- **lib/screens/widgets/precise_stopwatch/precise_stopwatch.dart**:
+  - `PreciseStopwatch` now passes `athlete.id` to the `StopwatchButtonBar` class.
+
+
 ## 2024/05/17 - version 0.8.2+17:
 
 feat: Update translations, theme settings, and database schema for improved functionality and Flutter 3.22 compliance

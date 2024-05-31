@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../../bloc/stopwatch_state.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
@@ -22,37 +23,45 @@ class StopwatDismissible extends StatefulWidget {
 }
 
 class _StopwatDismissibleState extends State<StopwatDismissible> {
+  final app = AppSettings.instance;
+
   @override
   Widget build(BuildContext context) {
     final athleteId = widget.stopwatch.athlete.id!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Dismissible(
-        key: GlobalKey(),
-        background: DismissibleContainers.background(
-          context,
-          label: 'SWDLabel'.tr(),
-          iconData: Icons.manage_accounts,
-        ),
-        secondaryBackground: DismissibleContainers.secondaryBackground(context),
-        child: widget.stopwatch,
-        confirmDismiss: (direction) async {
-          if (direction == DismissDirection.endToStart) {
-            final state = widget.stopwatch.controller.bloc.state;
-            if (state is StopwatchStateRunning ||
-                state is StopwatchStatePaused) {
+      child: Focus(
+        focusNode: app.isTutorial(athleteId) ? app.focusNodes[11] : null,
+        child: Dismissible(
+          key: GlobalKey(),
+          background: DismissibleContainers.background(
+            context,
+            label: 'SWDLabel'.tr(),
+            iconData: Icons.manage_accounts,
+          ),
+          secondaryBackground: DismissibleContainers.secondaryBackground(
+            context,
+            label: 'Remove Training...',
+          ),
+          child: widget.stopwatch,
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.endToStart) {
+              final state = widget.stopwatch.controller.bloc.state;
+              if (state is StopwatchStateRunning ||
+                  state is StopwatchStatePaused) {
+                return false;
+              }
+              bool result = await widget.removeStopwatch(athleteId);
+              return result;
+            }
+            if (direction == DismissDirection.startToEnd) {
+              widget.managerStopwatch(athleteId);
               return false;
             }
-            bool result = await widget.removeStopwatch(athleteId);
-            return result;
-          }
-          if (direction == DismissDirection.startToEnd) {
-            widget.managerStopwatch(athleteId);
             return false;
-          }
-          return false;
-        },
+          },
+        ),
       ),
     );
   }

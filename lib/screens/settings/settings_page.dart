@@ -132,7 +132,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           (entry) => DropdownMenuItem<Locale>(
                             value: entry.value.locale,
                             child: Text(
-                                '${entry.value.flag} - ${entry.value.localeCode}'),
+                              '${entry.value.flag} - ${entry.value.localeCode}',
+                            ),
                           ),
                         )
                         .toList(),
