@@ -6,13 +6,13 @@ import 'common/singletons/app_settings.dart';
 import 'common/theme/theme.dart';
 import 'common/theme/util.dart';
 import 'models/settings_model.dart';
-import 'screens/about_page/about_page.dart';
-import 'screens/athletes_page/athletes_overlay.dart';
-import 'screens/history_page/history_page.dart';
-import 'screens/settings/settings_page.dart';
-import 'screens/stopwatch_page/stopwatch_overlay.dart';
-import 'screens/personal_training_page/personal_training_page.dart';
-import 'screens/trainings_page/trainings_page.dart';
+import 'features/about_page/about_page.dart';
+import 'features/athletes_page/athletes_overlay.dart';
+import 'features/history_page/history_page.dart';
+import 'features/settings/settings_page.dart';
+import 'features/stopwatch_page/stopwatch_overlay.dart';
+import 'features/personal_training_page/personal_training_page.dart';
+import 'features/trainings_page/trainings_page.dart';
 
 class MyMaterialApp extends StatelessWidget {
   MyMaterialApp({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
-import 'package:trainers_stopwatch/screens/athletes_page/athletes_page.dart';
+import 'package:trainers_stopwatch/features/athletes_page/athletes_page.dart';
 
 class AthletesOverlay extends StatefulWidget {
   const AthletesOverlay({super.key});
