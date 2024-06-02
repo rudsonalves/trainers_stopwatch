@@ -86,6 +86,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('TPTitle'.tr()),
+        elevation: 5,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -102,6 +103,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
               case TrainingsPageStateSuccess():
                 return Column(
                   children: [
+                    // Select Athlete
                     Row(
                       children: [
                         Text(
@@ -109,19 +111,28 @@ class _TrainingsPageState extends State<TrainingsPage> {
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
-                        DropdownButton<int>(
-                          borderRadius: BorderRadius.circular(12),
-                          dropdownColor: colorScheme.primaryContainer,
-                          value: _controller.athleteId,
-                          items: _controller.athletes
-                              .map(
-                                (athlete) => DropdownMenuItem<int>(
-                                  value: athlete.id!,
-                                  child: Text(athlete.name),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: _controller.selectAthlete,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton<int>(
+                            borderRadius: BorderRadius.circular(12),
+                            dropdownColor: colorScheme.primaryContainer,
+                            value: _controller.athleteId,
+                            items: _controller.athletes
+                                .map(
+                                  (athlete) => DropdownMenuItem<int>(
+                                    value: athlete.id!,
+                                    child: Text(athlete.name),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: _controller.selectAthlete,
+                          ),
                         ),
                       ],
                     ),

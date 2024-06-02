@@ -6,6 +6,7 @@ import 'package:onboarding_overlay/onboarding_overlay.dart';
 import 'package:signals/signals_flutter.dart';
 
 import '../../common/singletons/app_settings.dart';
+import '../../models/messages_model.dart';
 import '../athletes_page/athletes_overlay.dart';
 import '../personal_training_page/personal_training_page.dart';
 import '../widgets/common/generic_dialog.dart';
@@ -26,7 +27,7 @@ class StopWatchPage extends StatefulWidget {
 class _StopWatchPageState extends State<StopWatchPage> {
   final _controller = StopwatchPageController.instance;
   final app = AppSettings.instance;
-  final _messageList = <String>[];
+  final _messageList = <MessagesModel>[];
   late final OnboardingState? overlay;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -37,9 +38,8 @@ class _StopWatchPageState extends State<StopWatchPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       effect(() {
         final message = _controller.historyMessage.value;
-        if (message.isNotEmpty &&
-            !_messageList.contains(message) &&
-            message != 'none') {
+        // && message != 'none'
+        if (message.isNotEmpty && !_messageList.contains(message)) {
           _messageList.add(message);
         }
       });
@@ -88,7 +88,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   void _removeAthleteFromLogs(String athleteName) {
-    _messageList.removeWhere((message) => message.contains(athleteName));
+    _messageList.removeWhere((message) => message.title == athleteName);
   }
 
   Future<void> _managerStopwatch(int athleteId) async {

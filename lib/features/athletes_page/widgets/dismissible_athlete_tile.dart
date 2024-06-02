@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:trainers_stopwatch/screens/widgets/common/generic_dialog.dart';
+import 'package:trainers_stopwatch/features/widgets/common/generic_dialog.dart';
 
 import '../../../models/athlete_model.dart';
 import '../../widgets/common/athlete_card.dart';
