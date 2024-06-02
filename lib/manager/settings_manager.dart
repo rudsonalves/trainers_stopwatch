@@ -8,7 +8,12 @@ class SettingsManager {
 
   static Future<SettingsModel> query() async {
     // Load app settings
-    SettingsModel? settings = await repository.query();
+    SettingsModel? settings;
+    try {
+      settings = await repository.query();
+    } catch (err) {
+      settings = null;
+    }
 
     // If there are no settings in the database, create one
     if (settings == null) {

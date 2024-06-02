@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
 import '../../../bloc/stopwatch_events.dart';
@@ -214,10 +215,12 @@ class PreciseStopwatchController {
   }
 
   void _sendStartedMessage() {
-    final message = 'PSCStartedMessage'.tr(args: [
-      athlete.name,
-      DateFormat.Hms().format(_bloc.startTime),
-    ]);
+    final message = MessagesModel(
+      title: athlete.name,
+      body: 'PSCStartedMessage'.tr(args: [
+        DateFormat.Hms().format(_bloc.startTime),
+      ]),
+    );
     _stopwatchController.sendHistoryMessage(message);
   }
 
@@ -226,12 +229,11 @@ class PreciseStopwatchController {
     String speed,
     int split,
   ) {
-    final message = 'PSCSplitMessage'.tr(args: [
-      athlete.name,
-      split.toString(),
-      _formatMs(time),
-      speed,
-    ]);
+    final message = MessagesModel(
+      title: athlete.name,
+      body: 'PSCSplitMessage'
+          .tr(args: [split.toString(), _formatMs(time), speed]),
+    );
 
     _stopwatchController.sendHistoryMessage(message);
   }
@@ -241,21 +243,21 @@ class PreciseStopwatchController {
     String speed,
     int lap,
   ) {
-    final message = 'PSCLapMessage'.tr(args: [
-      athlete.name,
-      lap.toString(),
-      _formatMs(time),
-      speed,
-    ]);
+    final message = MessagesModel(
+      title: athlete.name,
+      body: 'PSCLapMessage'.tr(args: [lap.toString(), _formatMs(time), speed]),
+    );
 
     _stopwatchController.sendHistoryMessage(message);
   }
 
   void _sendFinishMessage() {
-    final message = 'PSCFinishMessage'.tr(args: [
-      athlete.name,
-      DateFormat.Hms().format(DateTime.now()),
-    ]);
+    final message = MessagesModel(
+      title: athlete.name,
+      body: 'PSCFinishMessage'.tr(args: [
+        DateFormat.Hms().format(DateTime.now()),
+      ]),
+    );
 
     _stopwatchController.sendHistoryMessage(message);
   }

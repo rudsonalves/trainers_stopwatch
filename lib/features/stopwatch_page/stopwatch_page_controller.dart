@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../models/athlete_model.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
@@ -12,7 +13,7 @@ class StopwatchPageController {
 
   final List<PreciseStopwatch> _stopwatchList = [];
   final _stopwatchLength = signal<int>(0);
-  final _historyMessage = signal<String>('');
+  final _historyMessage = signal<MessagesModel>(MessagesModel());
   final List<AthleteModel> _athletesList = [];
   final List<PreciseStopwatchController> _stopwatchControllers = [];
   final List<AthleteModel> _newAthletes = [];
@@ -23,7 +24,7 @@ class StopwatchPageController {
   List<PreciseStopwatchController> get stopwatchControllers =>
       _stopwatchControllers;
   Signal<int> get stopwatchLength => _stopwatchLength;
-  Signal<String> get historyMessage => _historyMessage;
+  Signal<MessagesModel> get historyMessage => _historyMessage;
 
   void dispose() {
     _stopwatchLength.dispose();
@@ -38,7 +39,7 @@ class StopwatchPageController {
     }
   }
 
-  void sendHistoryMessage(String message) {
+  void sendHistoryMessage(MessagesModel message) {
     _historyMessage.value = message;
   }
 

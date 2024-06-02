@@ -7,7 +7,7 @@ const createSettingsSQL = 'CREATE TABLE IF NOT EXISTS $settingsTable ('
     ' $settingsLengthUnit CHAR(3) DEFAULT "m",'
     ' $settingsDatabaseSchemeVersion INTEGER NOT NULL,'
     ' $settingsBrightness CHAR(6) DEFAULT "system",'
-    ' $settingsContrast CHAR(6) DEFAULT "standard"'
+    ' $settingsContrast CHAR(6) DEFAULT "standard",'
     ' $settingsLanguage CHAR(5) DEFAULT "en_US",'
     ' $settingsMSecondRefresh INTEGER DEFAULT 66'
     ')';
