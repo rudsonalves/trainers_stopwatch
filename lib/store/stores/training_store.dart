@@ -43,14 +43,14 @@ class TrainingStore {
     }
   }
 
-  Future<List<Map<String, dynamic>?>> queryAllFromAthlete(int athleteId) async {
+  Future<List<Map<String, dynamic>?>> queryAllFromUser(int userId) async {
     try {
       final database = await _databaseManager.database;
 
       final result = await database.query(
         trainingTable,
-        where: '$trainingAthleteId = ?',
-        whereArgs: [athleteId],
+        where: '$trainingUserId = ?',
+        whereArgs: [userId],
         orderBy: trainingDate,
       );
       return result;

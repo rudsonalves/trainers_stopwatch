@@ -6,21 +6,21 @@ import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../common/singletons/app_settings.dart';
-import '../../../../models/athlete_model.dart';
+import '../../../../models/user_model.dart';
 
-class AthleteController {
+class UserController {
   final name = TextEditingController();
   final email = TextEditingController();
   final phone = TextEditingController();
 
   final image = signal<String>(defaultPhotoImage);
 
-  void init(AthleteModel? athlete) {
-    if (athlete != null) {
-      name.text = athlete.name;
-      email.text = athlete.email;
-      phone.text = athlete.phone ?? '';
-      image.value = athlete.photo ?? defaultPhotoImage;
+  void init(UserModel? user) {
+    if (user != null) {
+      name.text = user.name;
+      email.text = user.email;
+      phone.text = user.phone ?? '';
+      image.value = user.photo ?? defaultPhotoImage;
     }
   }
 

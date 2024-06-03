@@ -7,7 +7,7 @@ import 'package:signals/signals_flutter.dart';
 
 import '../../common/singletons/app_settings.dart';
 import '../../models/messages_model.dart';
-import '../athletes_page/athletes_overlay.dart';
+import '../users_page/users_overlay.dart';
 import '../personal_training_page/personal_training_page.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'stopwatch_page_controller.dart';
@@ -63,7 +63,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   Future<void> _addStopwatchs() async {
-    await Navigator.pushNamed(context, AthletesOverlay.routeName);
+    await Navigator.pushNamed(context, UsersOverlay.routeName);
     _controller.addStopwatch();
     setState(() {});
 
@@ -76,31 +76,31 @@ class _StopWatchPageState extends State<StopWatchPage> {
     }
   }
 
-  Future<bool> _removeStopwatch(int athleteId) async {
+  Future<bool> _removeStopwatch(int userId) async {
     final result = await GenericDialog.open(context,
         title: 'SPRemoveTraining'.tr(),
         message: 'SPLongMsg'.tr(),
         actions: DialogActions.yesNo);
     if (result) {
-      final athleteName = _controller.athletesList
+      final userName = _controller.usersList
           .firstWhere(
-            (athlete) => athlete.id == athleteId,
+            (user) => user.id == userId,
           )
           .name;
-      _removeAthleteFromLogs(athleteName);
-      _controller.removeStopwatch(athleteId);
+      _removeUserFromLogs(userName);
+      _controller.removeStopwatch(userId);
       setState(() {});
     }
     return result;
   }
 
-  void _removeAthleteFromLogs(String athleteName) {
-    _messageList.removeWhere((message) => message.title == athleteName);
+  void _removeUserFromLogs(String userName) {
+    _messageList.removeWhere((message) => message.title == userName);
   }
 
-  Future<void> _managerStopwatch(int athleteId) async {
+  Future<void> _managerStopwatch(int userId) async {
     final stopwatch = _controller.stopwatchList.firstWhere(
-      (stopwatch) => stopwatch.athlete.id == athleteId,
+      (stopwatch) => stopwatch.user.id == userId,
     );
     if (!context.mounted) return;
     await Navigator.pushNamed(

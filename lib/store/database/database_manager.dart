@@ -65,7 +65,7 @@ class DatabaseManager {
       Batch batch = db.batch();
 
       DatabaseCreateTable.settingsTable(batch);
-      DatabaseCreateTable.athleteTable(batch);
+      DatabaseCreateTable.userTable(batch);
       DatabaseCreateTable.trainingTable(batch);
       DatabaseCreateTable.historyTable(batch);
 

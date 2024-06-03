@@ -3,22 +3,22 @@ import 'package:signals/signals_flutter.dart';
 import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../../common/constants.dart';
-import '../../../models/athlete_model.dart';
+import '../../../models/user_model.dart';
 import '../edit_training_dialog/edit_training_dialog.dart';
 import 'precise_stopwatch_controller.dart';
-import 'widgets/athlete_image_name.dart';
+import 'widgets/user_image_name.dart';
 import 'widgets/lap_split_counters.dart';
 import 'widgets/stopwatch_button_bar.dart';
 import 'widgets/stopwatch_display.dart';
 
 class PreciseStopwatch extends StatefulWidget {
-  final AthleteModel athlete;
+  final UserModel user;
   final PreciseStopwatchController controller;
   final bool isNotClone;
 
   const PreciseStopwatch({
     super.key,
-    required this.athlete,
+    required this.user,
     required this.controller,
     this.isNotClone = true,
   });
@@ -40,12 +40,12 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     super.initState();
     _controller = widget.controller;
     if (widget.isNotClone) {
-      _controller.init(widget.athlete);
+      _controller.init(widget.user);
     }
 
     maxLaps.value = _controller.training.maxlaps;
-    name = widget.athlete.name;
-    image = widget.athlete.photo ?? defaultPhotoImage;
+    name = widget.user.name;
+    image = widget.user.photo ?? defaultPhotoImage;
   }
 
   @override
@@ -60,7 +60,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
   Future<void> _editTraining() async {
     await EditTrainingDialog.open(
       context,
-      athleteName: _controller.athlete.name,
+      userName: _controller.user.name,
       training: _controller.training,
     );
 
@@ -84,7 +84,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            AthleteImageName(image: image, name: name),
+            UserImageName(image: image, name: name),
             LapSplitCouters(
               bloc: _controller.bloc,
               maxLaps: maxLaps,
@@ -97,7 +97,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
                 StopwatchButtonBar(
                   controller: _controller,
                   setTraining: _editTraining,
-                  athleteId: widget.athlete.id!,
+                  userId: widget.user.id!,
                 ),
               ],
             ),

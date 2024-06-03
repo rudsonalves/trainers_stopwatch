@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
-import '../../../models/athlete_model.dart';
+import '../../../models/user_model.dart';
 import 'show_athlete_image.dart';
 
-class AthleteCard extends StatelessWidget {
+class UserCard extends StatelessWidget {
   final bool isChecked;
-  final AthleteModel athlete;
+  final UserModel user;
   final void Function()? onTap;
 
-  const AthleteCard({
+  const UserCard({
     super.key,
     required this.isChecked,
-    required this.athlete,
+    required this.user,
     this.onTap,
   });
 
@@ -29,14 +29,14 @@ class AthleteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ListTile(
-        title: Text(athlete.name),
+        title: Text(user.name),
         subtitle: Text(
-          '${athlete.email}\n${athlete.phone}',
+          '${user.email}\n${user.phone}',
         ),
         leading: SizedBox(
           width: photoImageSize,
           height: photoImageSize,
-          child: ShowAthleteImage(athlete.photo!, size: 40),
+          child: ShowUserImage(user.photo!, size: 40),
         ),
         onTap: onTap,
       ),

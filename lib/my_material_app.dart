@@ -7,7 +7,7 @@ import 'common/theme/theme.dart';
 import 'common/theme/util.dart';
 import 'models/settings_model.dart';
 import 'features/about_page/about_page.dart';
-import 'features/athletes_page/athletes_overlay.dart';
+import 'features/users_page/users_overlay.dart';
 import 'features/history_page/history_page.dart';
 import 'features/settings/settings_page.dart';
 import 'features/stopwatch_page/stopwatch_overlay.dart';
@@ -57,7 +57,7 @@ class MyMaterialApp extends StatelessWidget {
       initialRoute: StopwatchOverlay.routeName,
       routes: {
         StopwatchOverlay.routeName: (context) => const StopwatchOverlay(),
-        AthletesOverlay.routeName: (context) => const AthletesOverlay(),
+        UsersOverlay.routeName: (context) => const UsersOverlay(),
         PersonalTrainingPage.routeName: (context) =>
             PersonalTrainingPage.fromContext(context),
         TrainingsPage.routeName: (context) => const TrainingsPage(),

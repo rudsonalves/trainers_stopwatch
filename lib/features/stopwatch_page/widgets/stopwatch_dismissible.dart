@@ -27,12 +27,12 @@ class _StopwatDismissibleState extends State<StopwatDismissible> {
 
   @override
   Widget build(BuildContext context) {
-    final athleteId = widget.stopwatch.athlete.id!;
+    final userId = widget.stopwatch.user.id!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Focus(
-        focusNode: app.isTutorial(athleteId) ? app.focusNodes[11] : null,
+        focusNode: app.isTutorial(userId) ? app.focusNodes[11] : null,
         child: Dismissible(
           key: GlobalKey(),
           background: DismissibleContainers.background(
@@ -52,11 +52,11 @@ class _StopwatDismissibleState extends State<StopwatDismissible> {
                   state is StopwatchStatePaused) {
                 return false;
               }
-              bool result = await widget.removeStopwatch(athleteId);
+              bool result = await widget.removeStopwatch(userId);
               return result;
             }
             if (direction == DismissDirection.startToEnd) {
-              widget.managerStopwatch(athleteId);
+              widget.managerStopwatch(userId);
               return false;
             }
             return false;

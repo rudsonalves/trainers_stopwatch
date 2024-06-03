@@ -5,32 +5,32 @@ import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../common/theme/app_font_style.dart';
-import '../../../../models/athlete_model.dart';
+import '../../../../models/user_model.dart';
 import '../../../widgets/common/show_athlete_image.dart';
-import 'athlete_controller.dart';
+import 'user_controller.dart';
 import 'validator.dart';
 import 'widgets/custom_text_field.dart';
 
-class AthleteDialog extends StatefulWidget {
-  final AthleteModel? athlete;
-  final void Function(AthleteModel)? addAthlete;
+class UserDialog extends StatefulWidget {
+  final UserModel? user;
+  final void Function(UserModel)? addUser;
 
-  const AthleteDialog({
+  const UserDialog({
     super.key,
-    this.athlete,
-    this.addAthlete,
+    this.user,
+    this.addUser,
   });
 
   static Future<bool?> open(
     BuildContext context, {
-    AthleteModel? athlete,
-    void Function(AthleteModel)? addAthlete,
+    UserModel? user,
+    void Function(UserModel)? addUser,
   }) async {
     final bool result = await showDialog<bool?>(
           context: context,
-          builder: (context) => AthleteDialog(
-            athlete: athlete,
-            addAthlete: addAthlete,
+          builder: (context) => UserDialog(
+            user: user,
+            addUser: addUser,
           ),
         ) ??
         false;
@@ -39,22 +39,22 @@ class AthleteDialog extends StatefulWidget {
   }
 
   @override
-  State<AthleteDialog> createState() => _AthleteDialogState();
+  State<UserDialog> createState() => _UserDialogState();
 }
 
-class _AthleteDialogState extends State<AthleteDialog> {
-  bool isAddAthlete = false;
-  final _controller = AthleteController();
+class _UserDialogState extends State<UserDialog> {
+  bool isAddUser = false;
+  final _controller = UserController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    if (widget.athlete != null) {
-      isAddAthlete = false;
-      _controller.init(widget.athlete);
+    if (widget.user != null) {
+      isAddUser = false;
+      _controller.init(widget.user);
     } else {
-      isAddAthlete = true;
+      isAddUser = true;
     }
   }
 
@@ -85,9 +85,9 @@ class _AthleteDialogState extends State<AthleteDialog> {
 
     Navigator.pop(context, true);
 
-    final id = isAddAthlete ? null : widget.athlete!.id;
+    final id = isAddUser ? null : widget.user!.id;
 
-    final athlete = AthleteModel(
+    final user = UserModel(
       id: id,
       name: _controller.name.text,
       email: _controller.email.text,
@@ -95,8 +95,8 @@ class _AthleteDialogState extends State<AthleteDialog> {
       phone: _controller.phone.text,
     );
 
-    if (widget.addAthlete != null) {
-      widget.addAthlete!(athlete);
+    if (widget.addUser != null) {
+      widget.addUser!(user);
     }
   }
 
@@ -115,7 +115,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
               children: [
                 Center(
                   child: Text(
-                    isAddAthlete ? 'ADNew'.tr() : 'ADEdit'.tr(),
+                    isAddUser ? 'ADNew'.tr() : 'ADEdit'.tr(),
                     style: AppFontStyle.roboto18SemiBold,
                   ),
                 ),
@@ -123,7 +123,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
                 InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: _photoImageOnTap,
-                  child: ShowAthleteImage(_controller.image.watch(context)),
+                  child: ShowUserImage(_controller.image.watch(context)),
                 ),
                 CustomTextField(
                   controller: _controller.name,
@@ -146,7 +146,7 @@ class _AthleteDialogState extends State<AthleteDialog> {
                     FilledButton(
                       onPressed: _addButton,
                       child: Text(
-                        isAddAthlete ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
+                        isAddUser ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
                       ),
                     ),
                     FilledButton(

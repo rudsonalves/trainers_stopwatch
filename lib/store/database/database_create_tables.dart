@@ -9,9 +9,9 @@ sealed class DatabaseCreateTable {
     batch.execute(createSettingsSQL);
   }
 
-  static void athleteTable(Batch batch) {
-    batch.execute(createAthleteTableSQL);
-    batch.execute(createAthleteNameIndexSQL);
+  static void userTable(Batch batch) {
+    batch.execute(createUserTableSQL);
+    batch.execute(createUserNameIndexSQL);
   }
 
   static void trainingTable(Batch batch) {

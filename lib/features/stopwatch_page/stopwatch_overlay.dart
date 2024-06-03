@@ -69,10 +69,10 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[2],
-        titleText: 'Gerenciar Atletas',
+        titleText: 'Gerenciar Usuários',
         bodyText:
-            'Esta página permite cadastrar, editar e remover atletas, além '
-            'de abrir os cornômetros para os atletas selecionados.',
+            'Esta página permite cadastrar, editar e remover usuários, além '
+            'de abrir os cornômetros para os usuários selecionados.',
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
@@ -117,11 +117,11 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Adicionar Atletas',
+        titleText: 'Adicionar Usuários',
         bodyText:
             'Para iniciar o uso do aplicativo você necessita adicionar alguns '
-            'atletas para treino. Isto pode ser feito pressionando botão flutuante '
-            'ou no Menu > Gerenciar Atletas, ou pressionar o botão abaixo.',
+            'usuários para treino. Isto pode ser feito pressionando botão flutuante '
+            'ou no Menu > Gerenciar Usuários, ou pressionar o botão abaixo.',
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         shape: const CircleBorder(),
@@ -132,7 +132,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         focusNode: FocusNode(),
         titleText: 'Interromper Tutorial',
         bodyText:
-            'O tutorial prosseguirá pela página de adição de atletas. Você '
+            'O tutorial prosseguirá pela página de adição de usuários. Você '
             'pode interromper aqui ou prosseguir pala próxima parte do tutorial.',
         fullscreen: true,
         overlayBehavior: HitTestBehavior.translucent,
@@ -231,7 +231,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         stepBuilder: (context, renderInfo) => fullScreenMessage(
           context: context,
           render: renderInfo,
-          image: 'assets/images/athlete_settings.png',
+          image: 'assets/images/user_settings.png',
           scale: 2,
         ),
       ),

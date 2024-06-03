@@ -38,7 +38,7 @@ class StopwatchDrawer extends StatelessWidget {
           ListTile(
             focusNode: focusNodes[2],
             leading: const Icon(Icons.people_alt_rounded),
-            title: Text('SPDItemAthletes'.tr()),
+            title: Text('SPDItemUsers'.tr()),
             onTap: () async {
               Navigator.pop(context);
               addStopwatchs();

@@ -2,19 +2,19 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/theme/app_font_style.dart';
-import '../../models/athlete_model.dart';
+import '../../models/user_model.dart';
 import '../../models/training_model.dart';
 import 'history_page_controller.dart';
 import 'history_page_state.dart';
 import 'widgets/card_history.dart';
 
 class HistoryPage extends StatefulWidget {
-  final AthleteModel athlete;
+  final UserModel user;
   final TrainingModel training;
 
   const HistoryPage({
     super.key,
-    required this.athlete,
+    required this.user,
     required this.training,
   });
 
@@ -24,11 +24,11 @@ class HistoryPage extends StatefulWidget {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-    final athlete = args['athlete']! as AthleteModel;
+    final user = args['user']! as UserModel;
     final training = args['training']! as TrainingModel;
 
     return HistoryPage(
-      athlete: athlete,
+      user: user,
       training: training,
     );
   }
@@ -39,7 +39,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final _controller = HistoryPageController();
-  late final AthleteModel athlete;
+  late final UserModel user;
   late final TrainingModel training;
 
   String get lapMessage =>
@@ -51,7 +51,7 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     training = widget.training;
-    athlete = widget.athlete;
+    user = widget.user;
     _controller.init(training);
   }
 
@@ -65,7 +65,7 @@ class _HistoryPageState extends State<HistoryPage> {
           children: [
             Center(
               child: Text(
-                athlete.name,
+                user.name,
                 style: AppFontStyle.roboto18SemiBold,
               ),
             ),

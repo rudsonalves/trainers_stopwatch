@@ -1,6 +1,6 @@
 # Trainer's Stopwatch
 
-The Trainer's Stopwatch app is ingeniously designed to harness the internal clock of the device for computing precise timings of training sessions, ensuring that any potential lags in the graphical interface do not affect its accuracy. This feature is crucial for trainers and coaches who rely on precise timing to assess and improve the performance of their athletes.
+The Trainer's Stopwatch app is ingeniously designed to harness the internal clock of the device for computing precise timings of training sessions, ensuring that any potential lags in the graphical interface do not affect its accuracy. This feature is crucial for trainers and coaches who rely on precise timing to assess and improve the performance of their users.
 
 The app is equipped with an intuitive set of buttons to control the stopwatch, each serving a specific function in the training process:
 - **Start/Continue**: Initiates or continues the timing, making it simple to kick off a training session or pick up where you left off.
@@ -9,16 +9,35 @@ The app is equipped with an intuitive set of buttons to control the stopwatch, e
 - **Lap**: A lap counter button that logs the time, useful for tracking performance over repetitive exercises or distances.
 - **Split**: Captures a split time without stopping the stopwatch, perfect for recording the duration of individual activities within a continuous session.
 
-Each athlete's timing data is meticulously recorded in an individual history log, enabling trainers to analyze performance over time and tailor training regimens accordingly.
+Each user's timing data is meticulously recorded in an individual history log, enabling trainers to analyze performance over time and tailor training regimens accordingly.
 
 To maintain a clean and user-friendly interface, the app smartly makes only the relevant buttons active based on the current state of the stopwatch:
 - **StopwatchStateInitial**: Only the Start/Continue and Reset buttons are active, readying the app for initiation.
 - **StopwatchStateRunning**: The Split, Pause, and Lap buttons become available, allowing for dynamic interaction during the session.
 - **StopwatchStatePaused**: The interface reverts to offering the Start/Continue and Reset options, facilitating a smooth transition out of a paused state.
 
-This thoughtful design ensures that the user interface remains uncluttered and focused, reducing confusion and enhancing the overall user experience. The Trainers Stopwatch is not just a timing tool; it's a comprehensive solution aimed at optimizing training efficiency and athlete performance through precision, convenience, and detailed analysis.
+This thoughtful design ensures that the user interface remains uncluttered and focused, reducing confusion and enhancing the overall user experience. The Trainers Stopwatch is not just a timing tool; it's a comprehensive solution aimed at optimizing training efficiency and user performance through precision, convenience, and detailed analysis.
 
 # ChangeLog
+
+## 2024_06_03 - version: 0.9.3+22
+
+refactor: Rename Athlete to User across the application
+
+This commit includes comprehensive renaming of directories, files, variables, constants, classes, and functions to replace "Athlete" with "User". The term "User" aligns better with the application's purpose and scope.
+
+Changes include:
+- **Directory and file names**:
+  - Renamed directories and files from `athlete*` to `user*`.
+
+- **Variables and constants**:
+  - Updated variable and constant names from `athlete*` to `user*`.
+
+- **Classes and functions**:
+  - Renamed classes and functions from `Athlete*` to `User*`.
+
+These changes enhance clarity and consistency throughout the codebase, ensuring the terminology aligns with the app's intended functionality.
+
 
 ## 2024_06_03 - version: 0.9.2+21
 
@@ -27,7 +46,7 @@ feat: Add tutorial steps and enhance app settings
 This commit introduces new tutorial steps using the onboarding_overlay package, adds a new image asset, and enhances app settings management. A bug fix in the `settingsTable` creation script has been made, and the database will now be removed if an error occurs during its creation.
 
 ### Images
-- **assets/images/athlete_settings.png**:
+- **assets/images/user_settings.png**:
   - Added new image asset for tutorial purposes.
 
 ### App Settings
@@ -36,9 +55,9 @@ This commit introduces new tutorial steps using the onboarding_overlay package, 
   - Removed `copy` method to avoid redundant data copying.
   - Enhanced `update` method for better settings management.
 
-### Athletes Overlay
-- **lib/features/athletes_page/athletes_overlay.dart**:
-  - Added new onboarding steps for the Athletes page tutorial.
+### Users Overlay
+- **lib/features/users_page/users_overlay.dart**:
+  - Added new onboarding steps for the Users page tutorial.
   - Included an option to interrupt the tutorial with explanatory text and buttons.
 
 ### Stopwatch Overlay
@@ -100,7 +119,7 @@ This commit introduces improvements to stopwatch messaging and adds support for 
   - Added import for `MessagesModel`.
   - Changed `_messageList` to use `MessagesModel` instead of `String`.
   - Updated logic to handle `MessagesModel` instances.
-  - Modified `_removeAthleteFromLogs` to use `message.title` for comparison.
+  - Modified `_removeUserFromLogs` to use `message.title` for comparison.
 
 - **lib/features/stopwatch_page/stopwatch_page_controller.dart**:
   - Changed `_historyMessage` to use `MessagesModel` instead of `String`.
@@ -152,24 +171,24 @@ This commit integrates the onboarding_overlay package to provide an introductory
   - Added disposal of elements in `focusNodes` in the `dispose` method.
 
 - **lib/my_material_app.dart**:
-  - Adjusted routes for `StopWatchPage` and `AthletesPage` to use tutorial overlays `StopwatchOverlay` and `AthletesOverlay`, respectively.
+  - Adjusted routes for `StopWatchPage` and `UsersPage` to use tutorial overlays `StopwatchOverlay` and `UsersOverlay`, respectively.
 
-- **lib/screens/athletes_page/athletes_overlay.dart**:
-  - Added `AthletesOverlay` class to provide the tutorial for the `AthletesPage`.
+- **lib/screens/users_page/users_overlay.dart**:
+  - Added `UsersOverlay` class to provide the tutorial for the `UsersPage`.
 
-- **lib/screens/athletes_page/athletes_page.dart**:
-  - Added tutorial entries in `initState`, `_addNewAthlete`.
+- **lib/screens/users_page/users_page.dart**:
+  - Added tutorial entries in `initState`, `_addNewUser`.
   - Added a `PopupMenuButton` for tutorial entry.
   - Added `app.focusNode` for tutorial elements.
 
-- **lib/screens/athletes_page/athletes_page_controller.dart**:
-  - Added an entry to store the athlete ID used in the tutorial.
+- **lib/screens/users_page/users_page_controller.dart**:
+  - Added an entry to store the user ID used in the tutorial.
 
-- **lib/screens/athletes_page/widgets/athlete_dialog/athlete_dialog.dart**:
-  - Corrected attribute name from `sueAthlete` to `addAthlete`.
+- **lib/screens/users_page/widgets/user_dialog/user_dialog.dart**:
+  - Corrected attribute name from `sueUser` to `addUser`.
 
-- **lib/screens/athletes_page/widgets/dismissible_athlete_tile.dart**:
-  - Added a dialog for attempting to deselect an athlete when they have an active stopwatch on the main page.
+- **lib/screens/users_page/widgets/dismissible_user_tile.dart**:
+  - Added a dialog for attempting to deselect an user when they have an active stopwatch on the main page.
 
 - **lib/screens/widgets/common/generic_dialog.dart**:
 - **lib/screens/widgets/edit_training_dialog/edit_training_dialog.dart**:
@@ -181,7 +200,7 @@ This commit integrates the onboarding_overlay package to provide an introductory
   - Added `StopwatchOverlay` class to provide the tutorial for the `StopWatchPage`.
 
 - **lib/screens/stopwatch_page/stopwatch_page.dart**:
-  - Added tutorial entries in `initState`, `_addNewAthlete`.
+  - Added tutorial entries in `initState`, `_addNewUser`.
   - Added a `PopupMenuButton` for tutorial entry.
   - Added `app.focusNode` for tutorial elements.
   - Added a call to dispose `AppSettings.instance` in the `dispose` method of the class.
@@ -193,7 +212,7 @@ This commit integrates the onboarding_overlay package to provide an introductory
   - Added `app.focusNode` for tutorial elements.
 
 - **lib/screens/widgets/precise_stopwatch/precise_stopwatch.dart**:
-  - `PreciseStopwatch` now passes `athlete.id` to the `StopwatchButtonBar` class.
+  - `PreciseStopwatch` now passes `user.id` to the `StopwatchButtonBar` class.
 
 
 ## 2024/05/17 - version 0.8.2+17:
@@ -243,8 +262,8 @@ This commit includes extensive updates to the translations, theme settings, and 
 - **lib/screens/trainings_page/widgets/dismissible_training.dart**:
   - Replaced the card with a `Container` and implemented selection control via the container's background color.
 
-- **lib/screens/widgets/common/athlete_card.dart**:
-  - Replaced the athlete card with a `Container`, similar to above.
+- **lib/screens/widgets/common/user_card.dart**:
+  - Replaced the user card with a `Container`, similar to above.
 
 - **lib/screens/trainings_page/widgets/dismissible_training.dart**:
   - Replaced card with a `Container` and implemented color control for selection. This was necessary as the dark theme currently lacks shadow on `Card` widgets. It is unclear if this is a bug or new directive in the current Material Theme.
@@ -276,8 +295,8 @@ Enhancing Localization, Functionality, and Code Organization
   - Updated the `TrainingModel` to change `maxlaps` from a `double?` to an `int?`, aligning the data type more closely with its usage which typically involves whole numbers.
 
 - **Code Refactoring**:
-  - Moved `athlete_dialog` related files under `athletes_page/widgets`, improving project structure and modularity.
-  - The `athletes_page` now incorporates logic to prevent the deletion of selected athletes, enhancing application stability and user experience.
+  - Moved `user_dialog` related files under `users_page/widgets`, improving project structure and modularity.
+  - The `users_page` now incorporates logic to prevent the deletion of selected users, enhancing application stability and user experience.
 
 - **User Interface Improvements**:
   - Integrated a new widget, `SimpleSpinBoxField`, which provides a user-friendly interface for adjusting numerical values. This widget is utilized in the `edit_training_dialog` to handle input for the maximum number of laps.
@@ -359,7 +378,7 @@ This release introduces a series of functionality improvements and interface upd
   - Fixed a bug in `TrainingManager` that incorrectly handled zero-index checks, ensuring more robust data handling.
 
 - **UI Components and Dialog Enhancements:**
-  - Removed the Card from `DismissibleAthleteTile` and incorporated it into a new `AthleteCard` class for better code reusability and streamlined design.
+  - Removed the Card from `DismissibleUserTile` and incorporated it into a new `UserCard` class for better code reusability and streamlined design.
   - In `PersonalTrainingPage` and related widgets, speed calculation now utilizes `StopwatchFunctions.speedCalc` for enhanced performance metrics.
   - `TrainingsPage` now includes new commands such as `_editTraining`, `_removeTraining`, `_selectAllTraining`, and `_deselectAllTraining`, with added widgets to facilitate these actions.
   - Separated `DismissibleTraining` class into its own file to clean up the codebase and improve maintainability.
@@ -376,8 +395,8 @@ This update aims to streamline the app's operations and enhance the user experie
 ## 2024/03/16 - version: 0.7.2+9:
 
 * doc/pending.txt:
-  - Removed outdated tasks and streamlined the document with new priorities including athlete message editing and disposal checks.
-  - Added initialization of a default athlete on app start if none exists.
+  - Removed outdated tasks and streamlined the document with new priorities including user message editing and disposal checks.
+  - Added initialization of a default user on app start if none exists.
 
 * lib/common/singletons/app_settings.dart:
   - Added a dispose method to clean up the theme mode listener.
@@ -385,13 +404,13 @@ This update aims to streamline the app's operations and enhance the user experie
 * lib/common/theme/app_font_style.dart:
   - Updated font styles to include semi-bold instead of bold and added new size variants for better text clarity.
 
-* lib/manager/athlete_manager.dart:
-  - Converted AthleteManager into a singleton and added initialization checks to prevent multiple instances.
-  - Added methods to ensure that all athletes are loaded when the manager is first accessed.
+* lib/manager/user_manager.dart:
+  - Converted UserManager into a singleton and added initialization checks to prevent multiple instances.
+  - Added methods to ensure that all users are loaded when the manager is first accessed.
 
 * lib/manager/training_manager.dart:
   - Added a flag to prevent reinitialization of the training manager.
-  - Enabled creation of a training manager by athlete ID, which initializes training sessions specific to an athlete.
+  - Enabled creation of a training manager by user ID, which initializes training sessions specific to an user.
 
 * lib/my_material_app.dart:
   - Expanded routing to include new pages for settings, training and about, enhancing navigation options within the app.
@@ -399,11 +418,11 @@ This update aims to streamline the app's operations and enhance the user experie
 * lib/screens/about_page/about_page.dart:
   - Added a new About page with basic placeholder content.
 
-* lib/screens/athlete_dialog/athlete_dialog.dart:
-  - Adjusted the athlete dialog to reflect changes in font style from bold to semi-bold.
+* lib/screens/user_dialog/user_dialog.dart:
+  - Adjusted the user dialog to reflect changes in font style from bold to semi-bold.
 
-* lib/screens/athletes_page/athletes_page.dart:
-  - Added initial loading logic to pre-select athletes who are already engaged in activities to prevent their deselection.
+* lib/screens/users_page/users_page.dart:
+  - Added initial loading logic to pre-select users who are already engaged in activities to prevent their deselection.
 
 * lib/screens/personal_training_page/personal_training_page.dart:
   - Refactored to use a dedicated dismissible widget class for better modularity and maintenance.
@@ -418,7 +437,7 @@ This update aims to streamline the app's operations and enhance the user experie
   - Refined message handling in the stopwatch page to prevent duplicate messages and improved UI updates through state management.
 
 * lib/screens/trainings_page/trainings_page.dart:
-  - Added a training page that handles the display and management of athlete-specific training sessions.
+  - Added a training page that handles the display and management of user-specific training sessions.
 
 * lib/screens/widgets/common/generic_dialog.dart:
   - Renamed method from callDialog to open for clarity and consistency in usage.
@@ -441,9 +460,9 @@ This release focuses on improving functionality and user interface enhancements 
 - **Model Updates**:
   - In `HistoryModel`, added an `int split` attribute to directly record splits instead of calculating them.
 
-- **Athletes Page Enhancements**:
-  - Introduced a list of pre-selected athlete IDs, `_preSelectedAthleteIds.addAll`, which locks the selected athletes from being deselected on the `AthletesPage`. This ensures athletes with active stopwatches are not accidentally deselected.
-  - In `DismissibleAthleteTile`, athlete lock control is managed, and the checkbox for athlete selection has been replaced with a card elevation of 5, enhancing the aesthetic appeal.
+- **Users Page Enhancements**:
+  - Introduced a list of pre-selected user IDs, `_preSelectedUserIds.addAll`, which locks the selected users from being deselected on the `UsersPage`. This ensures users with active stopwatches are not accidentally deselected.
+  - In `DismissibleUserTile`, user lock control is managed, and the checkbox for user selection has been replaced with a card elevation of 5, enhancing the aesthetic appeal.
 
 - **Personal Training Page Refactoring**:
   - Refactored to remove `Dismissible` into a dedicated class `DismissiblePersonalTraining`.
@@ -498,7 +517,7 @@ This release introduces several enhancements and new features aimed at refining 
   - Configured `DismissDirection.startToEnd` to launch `PersonalTrainingPage`, identified a bug with stopwatch restart that needs assessment.
 
 - **Stopwatch Page Controller**:
-  - Renamed `_selectedAthletes` to `_stopwatchList` and introduced `_stopwatchControllers`.
+  - Renamed `_selectedUsers` to `_stopwatchList` and introduced `_stopwatchControllers`.
   - Added method `sendSnackBarMessage` to relay messages via `Signal<String> snackBarMessage`.
 
 - **Set Distance Dialog Enhancement**:
@@ -542,9 +561,9 @@ This update introduces a series of enhancements and structural changes across th
   - New styles have been added to `AppFontStyle` to support diverse UI requirements.
 
 - **Manager Updates**:
-  - Standardized error messages within `AthleteManager`.
+  - Standardized error messages within `UserManager`.
   - Launched `HistoryManager` to oversee training history models.
-  - Introduced `TrainingManager` to manage athlete training models.
+  - Introduced `TrainingManager` to manage user training models.
 
 - **Model Enhancements**:
   - `TrainingModel` now includes attributes to store the lengths of splits and laps, adding detailed tracking capabilities.
@@ -552,17 +571,17 @@ This update introduces a series of enhancements and structural changes across th
 - **MyMaterialApp**:
   - Implemented theme selection support within the app for enhanced user personalization.
 
-- **Athlete Dialog Adjustments**:
-  - Modified the athlete dialog for both adding and updating athlete details, improving usability.
+- **User Dialog Adjustments**:
+  - Modified the user dialog for both adding and updating user details, improving usability.
 
-- **Athletes Page Enhancements**:
-  - Added editing and removal capabilities for athletes on the `AthletesPage`, enhancing management efficiency.
+- **Users Page Enhancements**:
+  - Added editing and removal capabilities for users on the `UsersPage`, enhancing management efficiency.
 
-- **Athletes Page Controller**:
-  - Integrated methods to update and delete athletes, supporting robust athlete management.
+- **Users Page Controller**:
+  - Integrated methods to update and delete users, supporting robust user management.
 
-- **Dismissible Athlete Tile**:
-  - Introduced `editFunction` and `deleteFunction` callbacks to facilitate athlete management directly from the UI.
+- **Dismissible User Tile**:
+  - Introduced `editFunction` and `deleteFunction` callbacks to facilitate user management directly from the UI.
 
 - **Stopwatch Page Updates**:
   - Added an `IconButton` for theme switching and another for setup (the latter is not yet implemented), improving accessibility and customization.
@@ -579,7 +598,7 @@ This update introduces a series of enhancements and structural changes across th
 - **Set Distance Dialog**:
   - Added a specialized dialog for setting distances for a split and lap, aiding in precise training setup.
 
-- **Show Athlete Image Updates**:
+- **Show User Image Updates**:
   - Modified to accept an optional window size parameter, enhancing flexibility in image presentation.
 
 - **Precise Stopwatch Updates**:
@@ -589,7 +608,7 @@ This update introduces a series of enhancements and structural changes across th
 - **Precise Stopwatch Controller**:
   - Created `PreciseStopwatchController` to handle business logic for `PreciseStopwatch`, encompassing all control logic previously in `StopwatchBloc` and adding split and lap record management.
 
-These updates significantly enhance the app's configurability, user interaction, and overall efficiency, providing a more tailored and professional experience for trainers managing multiple athletes.
+These updates significantly enhance the app's configurability, user interaction, and overall efficiency, providing a more tailored and professional experience for trainers managing multiple users.
 
 
 ## 2024-04-10 - version: 0.4.2+5
@@ -605,13 +624,13 @@ Significant enhancements and refinements have been implemented in the Trainers S
 - **Font Style Consolidation**:
   - All font styles are now centralized within the `AppFontStyle` class, promoting consistency and ease of maintenance.
 
-- **Athlete Dialog and Tile Updates**:
-  - Athlete images are now handled through `Signal`, enhancing the reactivity and update efficiency.
-  - Athlete images are displayed using the `ShowAthleteImage` class, standardizing image presentation.
-  - Modified `DismissibleAthleteTile` to use a `Signal` for athlete selection (`isChecked` signal).
+- **User Dialog and Tile Updates**:
+  - User images are now handled through `Signal`, enhancing the reactivity and update efficiency.
+  - User images are displayed using the `ShowUserImage` class, standardizing image presentation.
+  - Modified `DismissibleUserTile` to use a `Signal` for user selection (`isChecked` signal).
 
 - **Stopwatch Page and Controller Logic**:
-  - Relocated PreciseTimer allocation logic for athletes to `StopwatchPageController`, streamlining the control mechanism.
+  - Relocated PreciseTimer allocation logic for users to `StopwatchPageController`, streamlining the control mechanism.
 
 - **Dismissible Background Enhancements**:
   - `DismissibleContainers` now accept `context`, `label`, `iconData`, and `color` parameters, offering customizable backgrounds.
@@ -630,35 +649,35 @@ Significant updates and enhancements have been made in the Trainers Stopwatch ap
 
 - **StopwatchBloc and Events**: The StopwatchBloc is now fully functional, implementing all events successfully. A few areas marked with FIXME need refinement for cleaner operation.
 
-- **Common Constants**: Introduced a `constants.dart` file for app-wide constants, including `photoImageSize` for image sizing and `defaultPhotoImage` providing a default athlete image string.
+- **Common Constants**: Introduced a `constants.dart` file for app-wide constants, including `photoImageSize` for image sizing and `defaultPhotoImage` providing a default user image string.
 
 - **Custom Icons**: Added a new set of custom icons specific to the app, enhancing the visual appeal and user experience.
 
-- **App Settings Singleton**: Implemented the `AppSettings` singleton class to store system-wide variables like `imagePath`, organizing internal storage for athlete images.
+- **App Settings Singleton**: Implemented the `AppSettings` singleton class to store system-wide variables like `imagePath`, organizing internal storage for user images.
 
 - **Database and Settings Initialization**: The main entry point now includes database and app settings initialization, laying a solid foundation for the app's data handling.
 
-- **Athlete Manager**: The `AthleteManager` class is introduced for comprehensive management of athlete-related operations, handling the business logic for athlete actions such as registration, editing, and deletion.
+- **User Manager**: The `UserManager` class is introduced for comprehensive management of user-related operations, handling the business logic for user actions such as registration, editing, and deletion.
 
-- **Data Models**: Data models for athletes, training sessions, and history are fully integrated with the store and repository layers, though currently, only athlete models are worked on within the manager layer.
+- **Data Models**: Data models for users, training sessions, and history are fully integrated with the store and repository layers, though currently, only user models are worked on within the manager layer.
 
-- **Page Routing**: Routing for `StopWatchPage` and `AthletesPage` is set up, facilitating navigation within the app.
+- **Page Routing**: Routing for `StopWatchPage` and `UsersPage` is set up, facilitating navigation within the app.
 
-- **Repository Layer**: The repository layer is now fully implemented for athletes, history, and training, performing basic database operations and bridging app objects to database maps.
+- **Repository Layer**: The repository layer is now fully implemented for users, history, and training, performing basic database operations and bridging app objects to database maps.
 
-- **Athlete Dialog UI**: A new `AthleteDialog` class introduces a dialog for adding new athletes, complemented by `AthleteController` for handling form UI elements and `Validator` for input validation. A custom `TextField` widget is designed specifically for this dialog.
+- **User Dialog UI**: A new `UserDialog` class introduces a dialog for adding new users, complemented by `UserController` for handling form UI elements and `Validator` for input validation. A custom `TextField` widget is designed specifically for this dialog.
 
-- **Athletes Page for Management**: The `AthletesPage` allows for athlete management within the app, with current functionality for adding new athletes. Future updates will include editing and removal options.
+- **Users Page for Management**: The `UsersPage` allows for user management within the app, with current functionality for adding new users. Future updates will include editing and removal options.
 
-- **Dismissible Athlete Tile**: Customized Dismissible widget for athlete management in `AthletesPage`.
+- **Dismissible User Tile**: Customized Dismissible widget for user management in `UsersPage`.
 
-- **Stopwatch Page Adjustments**: Adjusted to display stopwatches for selected athletes from `AthletesPage`.
+- **Stopwatch Page Adjustments**: Adjusted to display stopwatches for selected users from `UsersPage`.
 
 - **Database Store and Management**: Implemented insertion, update, deletion, and search methods across all app models. Additionally, constants for table names, attributes, and SQL creation scripts are defined, alongside static classes for database table creation and a `DatabaseManager` for overall database management.
 
 - **Dependencies Update**: The `pubspec.yaml` file has been updated with packages for SQLite database (`sqflite`), file path extraction (`path_provider` and `path`), testing mocks (`mockito`), Observer pattern implementation (`signals`), and device camera access (`image_picker`). Also, added the custom `StopwatchIcons` font.
 
-This version marks a significant step towards realizing a robust, professional stopwatch application tailored for trainers managing multiple athletes, combining precise timing functionalities with comprehensive athlete management and history tracking capabilities.
+This version marks a significant step towards realizing a robust, professional stopwatch application tailored for trainers managing multiple users, combining precise timing functionalities with comprehensive user management and history tracking capabilities.
 
 
 ## 2024_04_07 - version: 0.1.0:

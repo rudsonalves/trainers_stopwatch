@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-class AthleteModel {
+class UserModel {
   int? id;
   String name;
   String email;
   String? phone;
   String? photo;
 
-  AthleteModel({
+  UserModel({
     this.id,
     required this.name,
     required this.email,
@@ -25,8 +25,8 @@ class AthleteModel {
     };
   }
 
-  factory AthleteModel.fromMap(Map<String, dynamic> map) {
-    return AthleteModel(
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
       id: map['id'] as int?,
       name: map['name'] as String,
       email: map['email'] as String,
@@ -37,12 +37,12 @@ class AthleteModel {
 
   String toJson() => json.encode(toMap());
 
-  factory AthleteModel.fromJson(String source) =>
-      AthleteModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'AthleteModel(id: $id,'
+    return 'UserModel(id: $id,'
         ' name: $name,'
         ' email: $email,'
         ' phone: $phone,'

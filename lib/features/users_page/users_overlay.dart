@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
-import 'package:trainers_stopwatch/features/athletes_page/athletes_page.dart';
+import 'package:trainers_stopwatch/features/users_page/users_page.dart';
 
-class AthletesOverlay extends StatefulWidget {
-  const AthletesOverlay({super.key});
+class UsersOverlay extends StatefulWidget {
+  const UsersOverlay({super.key});
 
-  static const routeName = '/athletes';
+  static const routeName = '/users';
 
   @override
-  State<AthletesOverlay> createState() => _AthletesOverlayState();
+  State<UsersOverlay> createState() => _UsersOverlayState();
 }
 
-class _AthletesOverlayState extends State<AthletesOverlay> {
+class _UsersOverlayState extends State<UsersOverlay> {
   late final List<OnboardingStep> steps;
   final app = AppSettings.instance;
 
@@ -28,7 +28,7 @@ class _AthletesOverlayState extends State<AthletesOverlay> {
       OnboardingStep(
         focusNode: FocusNode(),
         titleText: 'Atheltas',
-        bodyText: 'Nesta página você deve cadastrar os athletas para habilitar '
+        bodyText: 'Nesta página você deve cadastrar os usuários para habilitar '
             'seu cronômetro de treino.',
         fullscreen: false,
         overlayShape: const CircleBorder(),
@@ -97,8 +97,7 @@ class _AthletesOverlayState extends State<AthletesOverlay> {
       OnboardingStep(
         focusNode: FocusNode(),
         titleText: 'Interromper Tutorial',
-        bodyText:
-            'O tutorial prosseguirá pela página Athletes Management. Você '
+        bodyText: 'O tutorial prosseguirá pela página Users Management. Você '
             'pode interromper aqui ou prosseguir pala próxima parte do tutorial.',
         fullscreen: true,
         overlayBehavior: HitTestBehavior.translucent,
@@ -184,7 +183,7 @@ class _AthletesOverlayState extends State<AthletesOverlay> {
     return Onboarding(
       key: GlobalKey<OnboardingState>(),
       steps: steps,
-      child: const AthletesPage(),
+      child: const UsersPage(),
     );
   }
 }

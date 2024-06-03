@@ -13,20 +13,20 @@ const createSettingsSQL = 'CREATE TABLE IF NOT EXISTS $settingsTable ('
     ' $settingsShowTutorial INTEGER DEFAULT 1'
     ')';
 
-const createAthleteTableSQL = 'CREATE TABLE IF NOT EXISTS $athleteTable ('
-    ' $athleteId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
-    ' $athleteName TEXT NOT NULL,'
-    ' $athleteEmail TEXT NOT NULL,'
-    ' $athletePhone TEXT,'
-    ' $athletePhoto TEXT'
+const createUserTableSQL = 'CREATE TABLE IF NOT EXISTS $userTable ('
+    ' $userId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
+    ' $userName TEXT NOT NULL,'
+    ' $userEmail TEXT NOT NULL,'
+    ' $userPhone TEXT,'
+    ' $userPhoto TEXT'
     ')';
 
-const createAthleteNameIndexSQL = 'CREATE INDEX IF NOT EXISTS $athleteNameIndex'
-    ' ON $athleteTable ($athleteName)';
+const createUserNameIndexSQL = 'CREATE INDEX IF NOT EXISTS $userNameIndex'
+    ' ON $userTable ($userName)';
 
 const createTrainingTableSQL = 'CREATE TABLE IF NOT EXISTS $trainingTable ('
     ' $trainingId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
-    ' $trainingAthleteId INTEGER NOT NULL,'
+    ' $trainingUserId INTEGER NOT NULL,'
     ' $trainingDate INTEGER NOT NULL,'
     ' $trainingComments TEXT,'
     ' $trainingSplitLength REAL NOT NULL,'
@@ -34,8 +34,8 @@ const createTrainingTableSQL = 'CREATE TABLE IF NOT EXISTS $trainingTable ('
     ' $trainingMaxlaps INTEGER,'
     ' $trainingDistanceUnit CHAR(5),'
     ' $trainingSpeedUnit CHAR(5),'
-    ' FOREIGN KEY ($trainingAthleteId)'
-    '   REFERENCES $athleteTable ($athleteId)'
+    ' FOREIGN KEY ($trainingUserId)'
+    '   REFERENCES $userTable ($userId)'
     '   ON DELETE CASCADE'
     ')';
 
