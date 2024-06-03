@@ -8,7 +8,7 @@ class MigrationSqlScripts {
   /// This is the database scheme current version. To futures upgrades
   /// in database increment this value and add a new update script in
   /// _migrationScripts Map.
-  static const schemeVersion = 1004;
+  static const schemeVersion = 1005;
 
   // Retrieves the database schema version in a readable format (e.g., "1.0.07").
   static String get dbSchemeVersion {
@@ -34,7 +34,10 @@ class MigrationSqlScripts {
       'ALTER TABLE $settingsTable ADD COLUMN $settingsLengthUnit CHAR(3) DEFAULT "m"',
     ],
     1004: [
-      'ALTER TABLE $settingsTable ADD COLUMN $settingsContrast CHAR(6) DEFAULT "standard"'
+      'ALTER TABLE $settingsTable ADD COLUMN $settingsContrast CHAR(6) DEFAULT "standard"',
+    ],
+    1005: [
+      'ALTER TABLE $settingsTable ADD COLUMN $settingsShowTutorial INTEGER DEFAULT 1',
     ],
   };
 }

@@ -45,6 +45,13 @@ class _StopWatchPageState extends State<StopWatchPage> {
       });
 
       overlay = Onboarding.of(context);
+      if (app.showTutorial) {
+        if (overlay != null) {
+          app.disableTutorial();
+          app.tutorialOn = true;
+          overlay!.show();
+        }
+      }
     });
   }
 
@@ -63,7 +70,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
     if (app.tutorialOn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          overlay?.showFromIndex(10);
+          overlay?.showFromIndex(11);
         }
       });
     }

@@ -87,6 +87,7 @@ class _AthletesOverlayState extends State<AthletesOverlay> {
         overlayColor: Colors.green.withOpacity(0.9),
         overlayShape: const CircleBorder(),
         overlayBehavior: HitTestBehavior.translucent,
+        showPulseAnimation: true,
         onTapCallback: (area, next, close) {
           if (area == TapArea.hole) {
             next();
@@ -94,10 +95,64 @@ class _AthletesOverlayState extends State<AthletesOverlay> {
         },
       ),
       OnboardingStep(
+        focusNode: FocusNode(),
+        titleText: 'Interromper Tutorial',
+        bodyText:
+            'O tutorial prosseguirá pela página Athletes Management. Você '
+            'pode interromper aqui ou prosseguir pala próxima parte do tutorial.',
+        fullscreen: true,
+        overlayBehavior: HitTestBehavior.translucent,
+        onTapCallback: (area, next, close) {},
+        stepBuilder: (context, renderInfo) => SizedBox(
+          child: Material(
+            child: Container(
+              width: renderInfo.size.width * 0.9,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.green.withOpacity(0.9),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      renderInfo.titleText,
+                      style: renderInfo.titleStyle,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      renderInfo.bodyText,
+                      style: renderInfo.bodyStyle,
+                    ),
+                    ButtonBar(
+                      children: [
+                        FilledButton(
+                          onPressed: renderInfo.nextStep,
+                          child: const Text('Next'),
+                        ),
+                        FilledButton(
+                          onPressed: () {
+                            renderInfo.close();
+                            app.tutorialOn = false;
+                          },
+                          child: const Text('close'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      OnboardingStep(
         focusNode: app.focusNodes[9],
         titleText: 'Selecionados',
         bodyText:
-            'Atletas selecionados irão criar cronômetros na página inicial '
+            'Atletas selecionados irão criar novos cronômetros na página inicial '
             'do aplicativo.',
         fullscreen: false,
         overlayShape: const CircleBorder(),

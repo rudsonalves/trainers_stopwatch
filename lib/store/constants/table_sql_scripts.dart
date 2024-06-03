@@ -9,7 +9,8 @@ const createSettingsSQL = 'CREATE TABLE IF NOT EXISTS $settingsTable ('
     ' $settingsBrightness CHAR(6) DEFAULT "system",'
     ' $settingsContrast CHAR(6) DEFAULT "standard",'
     ' $settingsLanguage CHAR(5) DEFAULT "en_US",'
-    ' $settingsMSecondRefresh INTEGER DEFAULT 66'
+    ' $settingsMSecondRefresh INTEGER DEFAULT 66,'
+    ' $settingsShowTutorial INTEGER DEFAULT 1'
     ')';
 
 const createAthleteTableSQL = 'CREATE TABLE IF NOT EXISTS $athleteTable ('

@@ -54,6 +54,11 @@ class AppSettings extends SettingsModel {
     }
   }
 
+  void disableTutorial() {
+    showTutorial = false;
+    update();
+  }
+
   void setContrast(Contrast contrast) {
     _contrast.value = contrast;
     this.contrast = contrast;
@@ -78,16 +83,6 @@ class AppSettings extends SettingsModel {
 
   void setBrightnessMode(Brightness brightness) {
     _brightness.value = brightness;
-  }
-
-  void copy(SettingsModel settings) {
-    id = settings.id;
-    splitLength = settings.splitLength;
-    lapLength = settings.lapLength;
-    dbSchemeVersion = settings.dbSchemeVersion;
-    language = settings.language;
-    mSecondRefresh = settings.mSecondRefresh;
-    brightness = settings.brightness;
   }
 
   Future<void> update() async {
