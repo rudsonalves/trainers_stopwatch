@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:trainers_stopwatch/models/messages_model.dart';
 
-import '../../models/athlete_model.dart';
+import '../../models/user_model.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch_controller.dart';
 
@@ -14,12 +14,12 @@ class StopwatchPageController {
   final List<PreciseStopwatch> _stopwatchList = [];
   final _stopwatchLength = signal<int>(0);
   final _historyMessage = signal<MessagesModel>(MessagesModel());
-  final List<AthleteModel> _athletesList = [];
+  final List<UserModel> _usersList = [];
   final List<PreciseStopwatchController> _stopwatchControllers = [];
-  final List<AthleteModel> _newAthletes = [];
+  final List<UserModel> _newUsers = [];
 
-  List<AthleteModel> get athletesList => _athletesList;
-  List<AthleteModel> get newAthletes => _newAthletes;
+  List<UserModel> get usersList => _usersList;
+  List<UserModel> get newUsers => _newUsers;
   List<PreciseStopwatch> get stopwatchList => _stopwatchList;
   List<PreciseStopwatchController> get stopwatchControllers =>
       _stopwatchControllers;
@@ -31,10 +31,10 @@ class StopwatchPageController {
     _historyMessage.dispose();
   }
 
-  void addNewAthletes(List<AthleteModel> newSelectedAthletes) {
-    for (final athlete in newSelectedAthletes) {
-      if (!_hasAthlete(athlete.id!)) {
-        _newAthletes.add(athlete);
+  void addNewUsers(List<UserModel> newSelectedUsers) {
+    for (final user in newSelectedUsers) {
+      if (!_hasUser(user.id!)) {
+        _newUsers.add(user);
       }
     }
   }
@@ -43,39 +43,38 @@ class StopwatchPageController {
     _historyMessage.value = message;
   }
 
-  void mergeAthleteLists() {
-    if (_newAthletes.isNotEmpty) {
-      _athletesList.addAll(_newAthletes);
-      _newAthletes.clear();
+  void mergeUserLists() {
+    if (_newUsers.isNotEmpty) {
+      _usersList.addAll(_newUsers);
+      _newUsers.clear();
     }
   }
 
-  bool _hasAthlete(int id) {
-    int index = _athletesList.indexWhere((athlete) => athlete.id == id);
+  bool _hasUser(int id) {
+    int index = _usersList.indexWhere((user) => user.id == id);
     return index >= 0;
   }
 
   void addStopwatch() {
-    for (final athlete in newAthletes) {
+    for (final user in newUsers) {
       final stopwatchController = PreciseStopwatchController();
       _stopwatchControllers.add(stopwatchController);
       _stopwatchList.add(
         PreciseStopwatch(
           key: GlobalKey(),
-          athlete: athlete,
+          user: user,
           controller: stopwatchController,
         ),
       );
     }
-    mergeAthleteLists();
+    mergeUserLists();
 
     _stopwatchLength.value = _stopwatchList.length;
   }
 
-  void removeStopwatch(int athleteId) {
-    _athletesList.removeWhere((item) => item.id == athleteId);
-    _stopwatchList
-        .removeWhere((stopwatch) => stopwatch.athlete.id == athleteId);
+  void removeStopwatch(int userId) {
+    _usersList.removeWhere((item) => item.id == userId);
+    _stopwatchList.removeWhere((stopwatch) => stopwatch.user.id == userId);
 
     _stopwatchLength.value = _stopwatchList.length;
   }

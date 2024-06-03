@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class TrainingModel {
   int? id;
-  int athleteId;
+  int userId;
   DateTime date;
   String? comments;
   double splitLength;
@@ -13,7 +13,7 @@ class TrainingModel {
 
   TrainingModel({
     this.id,
-    required this.athleteId,
+    required this.userId,
     required this.date,
     this.comments,
     this.splitLength = 200,
@@ -26,7 +26,7 @@ class TrainingModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'athleteId': athleteId,
+      'userId': userId,
       'date': date.millisecondsSinceEpoch,
       'comments': comments,
       'splitLength': splitLength,
@@ -40,7 +40,7 @@ class TrainingModel {
   factory TrainingModel.fromMap(Map<String, dynamic> map) {
     return TrainingModel(
       id: map['id'] as int?,
-      athleteId: map['athleteId'] as int,
+      userId: map['userId'] as int,
       date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
       comments: map['comments'] as String?,
       splitLength: map['splitLength'] as double,
@@ -59,8 +59,8 @@ class TrainingModel {
   @override
   String toString() {
     return 'TrainingModel(id: $id,'
-        ' athleteId:'
-        ' $athleteId,'
+        ' userId:'
+        ' $userId,'
         ' date: $date,'
         ' comments: $comments,'
         ' splitLength: $splitLength,'

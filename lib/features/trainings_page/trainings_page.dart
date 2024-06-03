@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../models/training_model.dart';
 import '../history_page/history_page.dart';
-import '../widgets/common/athlete_card.dart';
+import '../widgets/common/user_card.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'trainings_page_controller.dart';
 import 'trainings_page_state.dart';
@@ -36,7 +36,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
       context,
       HistoryPage.routeName,
       arguments: {
-        'athlete': _controller.athlete,
+        'user': _controller.user,
         'training': training,
       },
     );
@@ -103,11 +103,11 @@ class _TrainingsPageState extends State<TrainingsPage> {
               case TrainingsPageStateSuccess():
                 return Column(
                   children: [
-                    // Select Athlete
+                    // Select User
                     Row(
                       children: [
                         Text(
-                          'TPSelectAthlete'.tr(),
+                          'TPSelectUser'.tr(),
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
@@ -122,24 +122,24 @@ class _TrainingsPageState extends State<TrainingsPage> {
                           child: DropdownButton<int>(
                             borderRadius: BorderRadius.circular(12),
                             dropdownColor: colorScheme.primaryContainer,
-                            value: _controller.athleteId,
-                            items: _controller.athletes
+                            value: _controller.userId,
+                            items: _controller.users
                                 .map(
-                                  (athlete) => DropdownMenuItem<int>(
-                                    value: athlete.id!,
-                                    child: Text(athlete.name),
+                                  (user) => DropdownMenuItem<int>(
+                                    value: user.id!,
+                                    child: Text(user.name),
                                   ),
                                 )
                                 .toList(),
-                            onChanged: _controller.selectAthlete,
+                            onChanged: _controller.selectUser,
                           ),
                         ),
                       ],
                     ),
-                    if (_controller.athlete != null)
-                      AthleteCard(
+                    if (_controller.user != null)
+                      UserCard(
                         isChecked: true,
-                        athlete: _controller.athlete!,
+                        user: _controller.user!,
                       ),
                     ButtonBar(
                       alignment: MainAxisAlignment.spaceAround,

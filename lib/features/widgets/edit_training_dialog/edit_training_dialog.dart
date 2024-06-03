@@ -10,24 +10,24 @@ import 'widgets/distance_unit_row.dart';
 import 'widgets/speed_unit_row.dart';
 
 class EditTrainingDialog extends StatefulWidget {
-  final String athleteName;
+  final String userName;
   final TrainingModel training;
 
   const EditTrainingDialog({
     super.key,
-    required this.athleteName,
+    required this.userName,
     required this.training,
   });
 
   static Future<bool> open(
     BuildContext context, {
-    required String athleteName,
+    required String userName,
     required TrainingModel training,
   }) async {
     final bool result = await showDialog<bool?>(
           context: context,
           builder: (context) => EditTrainingDialog(
-            athleteName: athleteName,
+            userName: userName,
             training: training,
           ),
         ) ??
@@ -120,7 +120,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         const Divider(),
         Center(
           child: Text(
-            widget.athleteName,
+            widget.userName,
             style: AppFontStyle.roboto18SemiBold,
           ),
         ),

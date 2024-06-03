@@ -5,29 +5,29 @@ class TrainingManager {
   TrainingManager();
 
   final _repository = TrainingRepository();
-  late final int _athleteId;
+  late final int _userId;
   final List<TrainingModel> _trainings = [];
   bool _started = false;
 
-  int get athleteId => _athleteId;
+  int get userId => _userId;
   List<TrainingModel> get trainings => _trainings;
 
-  static Future<TrainingManager> byAthleteId(int id) async {
+  static Future<TrainingManager> byUserId(int id) async {
     final trainingManager = TrainingManager();
     await trainingManager.init(id);
     return trainingManager;
   }
 
-  Future<void> init(int athleteId) async {
+  Future<void> init(int userId) async {
     if (_started) return;
     _started = true;
-    _athleteId = athleteId;
+    _userId = userId;
     await getTrainings();
   }
 
   Future<void> getTrainings() async {
     _trainings.clear();
-    final trainings = await _repository.queryAllFromAthlete(_athleteId);
+    final trainings = await _repository.queryAllFromUser(_userId);
 
     if (trainings.isNotEmpty) {
       _trainings.addAll(trainings);
@@ -35,7 +35,7 @@ class TrainingManager {
   }
 
   Future<void> insert(TrainingModel training) async {
-    training.athleteId = _athleteId;
+    training.userId = _userId;
     final result = await _repository.insert(training);
 
     if (result > 0) {

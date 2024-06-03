@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../common/show_athlete_image.dart';
 
-class AthleteImageName extends StatelessWidget {
-  const AthleteImageName({
+class UserImageName extends StatelessWidget {
+  const UserImageName({
     super.key,
     required this.image,
     required this.name,
@@ -16,7 +16,7 @@ class AthleteImageName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ShowAthleteImage(image),
+        ShowUserImage(image),
         const SizedBox(height: 4),
         SizedBox(
           width: 70,

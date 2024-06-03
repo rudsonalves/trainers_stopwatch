@@ -8,12 +8,12 @@ class MockBatch extends Mock implements Batch {}
 
 void main() {
   group('DatabaseCreateTable', () {
-    test('should execute athlete table creation SQL', () {
+    test('should execute user table creation SQL', () {
       final mockBatch = MockBatch();
-      DatabaseCreateTable.athleteTable(mockBatch);
+      DatabaseCreateTable.userTable(mockBatch);
 
-      verify(mockBatch.execute(createAthleteTableSQL)).called(1);
-      verify(mockBatch.execute(createAthleteNameIndexSQL)).called(1);
+      verify(mockBatch.execute(createUserTableSQL)).called(1);
+      verify(mockBatch.execute(createUserNameIndexSQL)).called(1);
     });
 
     test('should execute training table creation SQL', () {

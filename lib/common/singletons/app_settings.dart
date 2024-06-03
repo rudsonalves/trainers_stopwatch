@@ -28,8 +28,8 @@ class AppSettings extends SettingsModel {
   bool tutorialOn = false;
   int tutorialId = 0;
 
-  bool isTutorial(int athleteId) {
-    return tutorialOn && tutorialId == athleteId;
+  bool isTutorial(int userId) {
+    return tutorialOn && tutorialId == userId;
   }
 
   String get imagePath => _imagePath;
@@ -46,11 +46,11 @@ class AppSettings extends SettingsModel {
 
     // Start app paths
     _appDocDir = await getApplicationDocumentsDirectory();
-    _imagePath = '${_appDocDir.path}/athletes_images';
-    final athletesImageDir = Directory(_imagePath);
-    // Create athletesImageDir in necessary
-    if (!await athletesImageDir.exists()) {
-      await athletesImageDir.create(recursive: true);
+    _imagePath = '${_appDocDir.path}/users_images';
+    final usersImageDir = Directory(_imagePath);
+    // Create usersImageDir in necessary
+    if (!await usersImageDir.exists()) {
+      await usersImageDir.create(recursive: true);
     }
   }
 

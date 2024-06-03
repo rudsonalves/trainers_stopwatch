@@ -3,29 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
-import '../../models/athlete_model.dart';
-import 'widgets/athlete_dialog/athlete_dialog.dart';
+import '../../models/user_model.dart';
+import 'widgets/user_dialog/user_dialog.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
 import '../widgets/common/generic_dialog.dart';
-import 'athletes_page_controller.dart';
-import 'athletes_page_state.dart';
-import 'widgets/dismissible_athlete_tile.dart';
+import 'users_page_controller.dart';
+import 'users_page_state.dart';
+import 'widgets/dismissible_user_tile.dart';
 
-class AthletesPage extends StatefulWidget {
-  const AthletesPage({
+class UsersPage extends StatefulWidget {
+  const UsersPage({
     super.key,
   });
 
   @override
-  State<AthletesPage> createState() => _AthletesPageState();
+  State<UsersPage> createState() => _UsersPageState();
 }
 
-class _AthletesPageState extends State<AthletesPage> {
+class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final app = AppSettings.instance;
-  final _controller = AthletesPageController();
-  final List<AthleteModel> _selectedAthletes = [];
-  final List<int> _preSelectedAthleteIds = [];
+  final _controller = UsersPageController();
+  final List<UserModel> _selectedUsers = [];
+  final List<int> _preSelectedUserIds = [];
   late final OnboardingState? overlay;
 
   @override
@@ -52,21 +52,21 @@ class _AthletesPageState extends State<AthletesPage> {
   Future<void> _startingPage() async {
     await _controller.init();
 
-    final athletesList = StopwatchPageController.instance.athletesList;
+    final usersList = StopwatchPageController.instance.usersList;
 
-    _preSelectedAthleteIds.addAll(
-      athletesList.map(
-        (athlete) => athlete.id!,
+    _preSelectedUserIds.addAll(
+      usersList.map(
+        (user) => user.id!,
       ),
     );
 
-    _selectedAthletes.addAll(athletesList);
+    _selectedUsers.addAll(usersList);
   }
 
-  Future<void> _addNewAthlete() async {
-    final result = await AthleteDialog.open(
+  Future<void> _addNewUser() async {
+    final result = await UserDialog.open(
       context,
-      addAthlete: _controller.addAthlete,
+      addUser: _controller.addUser,
     );
 
     await Future.delayed(const Duration(milliseconds: 150));
@@ -99,31 +99,31 @@ class _AthletesPageState extends State<AthletesPage> {
     Navigator.pop(context);
   }
 
-  void selectAthlete(bool select, AthleteModel athlete) {
+  void selectUser(bool select, UserModel user) {
     if (select) {
-      _selectedAthletes.add(athlete);
+      _selectedUsers.add(user);
     } else {
-      _selectedAthletes.removeWhere((item) => item.id == athlete.id);
+      _selectedUsers.removeWhere((item) => item.id == user.id);
     }
   }
 
-  Future<bool> editAthlete(AthleteModel athlete) async {
-    final result = await AthleteDialog.open(
+  Future<bool> editUser(UserModel user) async {
+    final result = await UserDialog.open(
           context,
-          athlete: athlete,
-          addAthlete: _controller.updateAthlete,
+          user: user,
+          addUser: _controller.updateUser,
         ) ??
         false;
     return result;
   }
 
-  bool isSelected(AthleteModel athlete) {
-    final list = _selectedAthletes.map((athlete) => athlete.id).toList();
-    return list.contains(athlete.id!);
+  bool isSelected(UserModel user) {
+    final list = _selectedUsers.map((u) => u.id).toList();
+    return list.contains(user.id!);
   }
 
-  Future<bool> deleteAthlete(AthleteModel athlete) async {
-    if (isSelected(athlete)) {
+  Future<bool> deleteUser(UserModel user) async {
+    if (isSelected(user)) {
       await GenericDialog.open(
         context,
         title: 'APBlockedTitle'.tr(),
@@ -135,12 +135,12 @@ class _AthletesPageState extends State<AthletesPage> {
 
     final result = await GenericDialog.open(
       context,
-      title: 'APDeleteAthlete'.tr(),
-      message: 'APDeleteAthleteMsg'.tr(),
+      title: 'APDeleteUser'.tr(),
+      message: 'APDeleteUserMsg'.tr(),
       actions: DialogActions.yesNo,
     );
     if (result) {
-      _controller.deleteAthlete(athlete);
+      _controller.deleteUser(user);
       return true;
     } else {
       return false;
@@ -155,13 +155,13 @@ class _AthletesPageState extends State<AthletesPage> {
       canPop: true,
       onPopInvoked: (didPop) {
         final stopwatchController = StopwatchPageController.instance;
-        stopwatchController.addNewAthletes(_selectedAthletes);
+        stopwatchController.addNewUsers(_selectedUsers);
       },
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
           elevation: 5,
-          title: Text('APAthleteList'.tr()),
+          title: Text('APUserList'.tr()),
           actions: [
             PopupMenuButton(
               icon: const Icon(Icons.menu),
@@ -189,40 +189,40 @@ class _AthletesPageState extends State<AthletesPage> {
                 listenable: _controller,
                 builder: (context, child) {
                   switch (_controller.state) {
-                    // Athletes Page State Loading
-                    case AthletesPageStateLoading():
+                    // Users Page State Loading
+                    case UsersPageStateLoading():
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    // Athletes Page State Success
-                    case AthletesPageStateSuccess():
-                      final athletes = _controller.athletes;
-                      if (athletes.isEmpty) {
+                    // Users Page State Success
+                    case UsersPageStateSuccess():
+                      final user = _controller.users;
+                      if (user.isEmpty) {
                         return Center(
                           child: Text('APRegisterSome'.tr()),
                         );
                       }
                       return Expanded(
                         child: ListView.builder(
-                          itemCount: athletes.length,
+                          itemCount: user.length,
                           itemBuilder: (context, index) => Focus(
-                            focusNode: app.isTutorial(athletes[index].id!)
+                            focusNode: app.isTutorial(user[index].id!)
                                 ? app.focusNodes[9]
                                 : null,
-                            child: DismissibleAthleteTile(
-                              athlete: athletes[index],
-                              selectAthlete: selectAthlete,
-                              editFunction: editAthlete,
-                              deleteFunction: deleteAthlete,
-                              blockedAthleteIds: _preSelectedAthleteIds,
-                              isChecked: _preSelectedAthleteIds.contains(
-                                athletes[index].id!,
+                            child: DismissibleUserTile(
+                              user: user[index],
+                              selectUser: selectUser,
+                              editFunction: editUser,
+                              deleteFunction: deleteUser,
+                              blockedUserIds: _preSelectedUserIds,
+                              isChecked: _preSelectedUserIds.contains(
+                                user[index].id!,
                               ),
                             ),
                           ),
                         ),
                       );
-                    // Athletes Page State Error
+                    // Users Page State Error
                     default:
                       return Center(
                         child: Text(
@@ -251,7 +251,7 @@ class _AthletesPageState extends State<AthletesPage> {
             FloatingActionButton(
               focusNode: app.focusNodes[8],
               heroTag: 'fab2',
-              onPressed: _addNewAthlete,
+              onPressed: _addNewUser,
               child: Icon(
                 Icons.person_add,
                 color: primary.withOpacity(.5),

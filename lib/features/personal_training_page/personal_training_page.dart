@@ -45,7 +45,7 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.stopwatch.athlete.name),
+        title: Text(widget.stopwatch.user.name),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -53,7 +53,7 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             PreciseStopwatch(
-              athlete: widget.stopwatch.athlete,
+              user: widget.stopwatch.user,
               controller: widget.stopwatch.controller,
               isNotClone: false,
             ),

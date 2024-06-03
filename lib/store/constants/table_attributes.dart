@@ -13,18 +13,18 @@ const settingsLanguage = 'language';
 const settingsMSecondRefresh = 'mSecondRefresh';
 const settingsShowTutorial = 'showTutorial';
 
-const athleteTable = 'athleteTable';
-const athleteNameIndex = 'athleteNameIndex';
-const athleteId = 'id';
-const athleteName = 'name';
-const athleteEmail = 'email';
-const athletePhone = 'phone';
-const athletePhoto = 'photo';
+const userTable = 'userTable';
+const userNameIndex = 'userNameIndex';
+const userId = 'id';
+const userName = 'name';
+const userEmail = 'email';
+const userPhone = 'phone';
+const userPhoto = 'photo';
 
 const trainingTable = 'trainingTable';
 const trainingDateIndex = 'trainingDateIndex';
 const trainingId = 'id';
-const trainingAthleteId = 'athleteId';
+const trainingUserId = 'userId';
 const trainingDate = 'date';
 const trainingComments = 'comments';
 const trainingSplitLength = 'splitLength';

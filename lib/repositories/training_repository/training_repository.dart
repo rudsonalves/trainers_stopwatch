@@ -22,8 +22,8 @@ class TrainingRepository implements AbstractTrainingRepository {
   }
 
   @override
-  Future<List<TrainingModel>> queryAllFromAthlete(int athleteId) async {
-    final mapList = await _store.queryAllFromAthlete(athleteId);
+  Future<List<TrainingModel>> queryAllFromUser(int userId) async {
+    final mapList = await _store.queryAllFromUser(userId);
     if (mapList.isEmpty) return [];
     final trainingList =
         mapList.map((map) => TrainingModel.fromMap(map!)).toList();

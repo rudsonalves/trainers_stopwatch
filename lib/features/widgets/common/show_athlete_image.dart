@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
 
-class ShowAthleteImage extends StatelessWidget {
+class ShowUserImage extends StatelessWidget {
   final String image;
   final double? size;
 
-  const ShowAthleteImage(
+  const ShowUserImage(
     this.image, {
     super.key,
     this.size,

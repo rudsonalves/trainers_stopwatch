@@ -10,7 +10,7 @@ import '../../../common/functions/stopwatch_functions.dart';
 import '../../../common/singletons/app_settings.dart';
 import '../../../manager/history_manager.dart';
 import '../../../manager/training_manager.dart';
-import '../../../models/athlete_model.dart';
+import '../../../models/user_model.dart';
 import '../../../models/history_model.dart';
 import '../../../models/training_model.dart';
 import '../../stopwatch_page/stopwatch_page_controller.dart';
@@ -19,7 +19,7 @@ class PreciseStopwatchController {
   final _bloc = StopwatchBloc();
   final _trainingManager = TrainingManager();
   final _historyManager = HistoryManager();
-  late final AthleteModel _athlete;
+  late final UserModel _user;
   TrainingModel? _training;
   bool isPaused = false;
   late double splitLength;
@@ -34,18 +34,18 @@ class PreciseStopwatchController {
   Signal<int> get lapCounter => _bloc.lapCounter;
   Signal<int> get splitCounter => _bloc.splitCounter;
   Signal<Duration> get durationTraining => _bloc.durationTraining;
-  AthleteModel get athlete => _athlete;
+  UserModel get user => _user;
   List<TrainingModel> get trainings => _trainingManager.trainings;
   List<HistoryModel> get histories => _historyManager.histories;
   TrainingModel get training => _training!;
   ValueNotifier<bool> get actionOnPress => _actionOnPress;
 
-  Future<void> init(AthleteModel athlete) async {
-    _athlete = athlete;
+  Future<void> init(UserModel user) async {
+    _user = user;
     splitLength = AppSettings.instance.splitLength;
     lapLength = AppSettings.instance.lapLength;
     _bloc.splitCounterMax = lapLength ~/ splitLength;
-    _trainingManager.init(_athlete.id!);
+    _trainingManager.init(_user.id!);
     _createNewTraining();
   }
 
@@ -62,7 +62,7 @@ class PreciseStopwatchController {
 
   void _createNewTraining() {
     _training = TrainingModel(
-      athleteId: _athlete.id!,
+      userId: _user.id!,
       date: DateTime.now(),
       splitLength: splitLength,
       lapLength: lapLength,
@@ -216,7 +216,7 @@ class PreciseStopwatchController {
 
   void _sendStartedMessage() {
     final message = MessagesModel(
-      title: athlete.name,
+      title: user.name,
       body: 'PSCStartedMessage'.tr(args: [
         DateFormat.Hms().format(_bloc.startTime),
       ]),
@@ -230,7 +230,7 @@ class PreciseStopwatchController {
     int split,
   ) {
     final message = MessagesModel(
-      title: athlete.name,
+      title: user.name,
       body: 'PSCSplitMessage'
           .tr(args: [split.toString(), _formatMs(time), speed]),
     );
@@ -244,7 +244,7 @@ class PreciseStopwatchController {
     int lap,
   ) {
     final message = MessagesModel(
-      title: athlete.name,
+      title: user.name,
       body: 'PSCLapMessage'.tr(args: [lap.toString(), _formatMs(time), speed]),
     );
 
@@ -253,7 +253,7 @@ class PreciseStopwatchController {
 
   void _sendFinishMessage() {
     final message = MessagesModel(
-      title: athlete.name,
+      title: user.name,
       body: 'PSCFinishMessage'.tr(args: [
         DateFormat.Hms().format(DateTime.now()),
       ]),

@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import '../constants/table_attributes.dart';
 import '../database/database_manager.dart';
 
-class AthleteStore {
+class UserStore {
   final _databaseManager = DatabaseManager.instance;
 
   Future<int> insert(Map<String, dynamic> map) async {
@@ -13,13 +13,13 @@ class AthleteStore {
       final database = await _databaseManager.database;
 
       final result = await database.insert(
-        athleteTable,
+        userTable,
         map,
         conflictAlgorithm: ConflictAlgorithm.abort,
       );
       return result;
     } catch (err) {
-      final message = 'AthleteStore.insert: $err';
+      final message = 'UserStore.insert: $err';
       log(message);
       throw Exception(message);
     }
@@ -30,14 +30,14 @@ class AthleteStore {
       final database = await _databaseManager.database;
 
       final result = await database.query(
-        athleteTable,
-        where: '$athleteId = ?',
+        userTable,
+        where: '$userId = ?',
         whereArgs: [id],
       );
       if (result.isEmpty) return null;
       return result.first;
     } catch (err) {
-      final message = 'AthleteStore.queryById: $err';
+      final message = 'UserStore.queryById: $err';
       log(message);
       throw Exception(message);
     }
@@ -48,12 +48,12 @@ class AthleteStore {
       final database = await _databaseManager.database;
 
       final result = await database.query(
-        athleteTable,
-        orderBy: athleteName,
+        userTable,
+        orderBy: userName,
       );
       return result;
     } catch (err) {
-      final message = 'AthleteStore.queryAll: $err';
+      final message = 'UserStore.queryAll: $err';
       log(message);
       throw Exception(message);
     }
@@ -64,14 +64,14 @@ class AthleteStore {
       final database = await _databaseManager.database;
 
       final result = await database.delete(
-        athleteTable,
-        where: '$athleteId = ?',
+        userTable,
+        where: '$userId = ?',
         whereArgs: [id],
       );
 
       return result;
     } catch (err) {
-      final message = 'AthleteStore.delete: $err';
+      final message = 'UserStore.delete: $err';
       log(message);
       throw Exception(message);
     }
@@ -82,15 +82,15 @@ class AthleteStore {
       final database = await _databaseManager.database;
 
       final result = await database.update(
-        athleteTable,
+        userTable,
         map,
-        where: '$athleteId = ?',
+        where: '$userId = ?',
         whereArgs: [id],
       );
 
       return result;
     } catch (err) {
-      final message = 'AthleteStore.update: $err';
+      final message = 'UserStore.update: $err';
       log(message);
       throw Exception(message);
     }
