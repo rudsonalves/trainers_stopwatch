@@ -16,6 +16,7 @@ class SettingsModel {
   Contrast contrast;
   Locale language;
   int mSecondRefresh;
+  bool showTutorial;
 
   SettingsModel({
     this.id,
@@ -27,7 +28,21 @@ class SettingsModel {
     this.contrast = Contrast.standard,
     this.language = const Locale('en', 'US'),
     this.mSecondRefresh = 66,
+    this.showTutorial = true,
   });
+
+  void copy(SettingsModel settings) {
+    id = settings.id;
+    splitLength = settings.splitLength;
+    lapLength = settings.lapLength;
+    lengthUnit = settings.lengthUnit;
+    dbSchemeVersion = settings.dbSchemeVersion;
+    brightness = settings.brightness;
+    contrast = settings.contrast;
+    language = settings.language;
+    mSecondRefresh = settings.mSecondRefresh;
+    showTutorial = settings.showTutorial;
+  }
 
   Map<String, dynamic> toMap() {
     final langCode =
@@ -44,6 +59,7 @@ class SettingsModel {
       'contrast': contrast.name,
       'language': langCode,
       'mSecondRefresh': mSecondRefresh,
+      'showTutorial': showTutorial ? 1 : 0,
     };
   }
 
@@ -54,6 +70,7 @@ class SettingsModel {
     final locale = langCodes.length < 2
         ? Locale(langCodes[0])
         : Locale(langCodes[0], langCodes[1]);
+    final showtutorialNow = (map['showTutorial'] ?? 1) as int;
 
     return SettingsModel(
       id: map['id'] as int?,
@@ -71,6 +88,7 @@ class SettingsModel {
       ),
       language: locale,
       mSecondRefresh: map['mSecondRefresh'] as int,
+      showTutorial: showtutorialNow == 1 ? true : false,
     );
   }
 

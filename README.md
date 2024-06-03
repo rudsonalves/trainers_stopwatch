@@ -20,6 +20,124 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_03 - version: 0.9.2+21
+
+feat: Add tutorial steps and enhance app settings
+
+This commit introduces new tutorial steps using the onboarding_overlay package, adds a new image asset, and enhances app settings management. A bug fix in the `settingsTable` creation script has been made, and the database will now be removed if an error occurs during its creation.
+
+### Images
+- **assets/images/athlete_settings.png**:
+  - Added new image asset for tutorial purposes.
+
+### App Settings
+- **lib/common/singletons/app_settings.dart**:
+  - Added `disableTutorial` method to turn off the tutorial and update settings.
+  - Removed `copy` method to avoid redundant data copying.
+  - Enhanced `update` method for better settings management.
+
+### Athletes Overlay
+- **lib/features/athletes_page/athletes_overlay.dart**:
+  - Added new onboarding steps for the Athletes page tutorial.
+  - Included an option to interrupt the tutorial with explanatory text and buttons.
+
+### Stopwatch Overlay
+- **lib/features/stopwatch_page/stopwatch_overlay.dart**:
+  - Added new onboarding steps for the Stopwatch page tutorial.
+  - Included an option to interrupt the tutorial with explanatory text and buttons.
+  - Improved the full-screen message layout for better user experience.
+
+### Stopwatch Page
+- **lib/features/stopwatch_page/stopwatch_page.dart**:
+  - Enabled tutorial overlay display based on app settings.
+  - Enhanced post-frame callback to manage tutorial states.
+
+### Main Initialization
+- **lib/main.dart**:
+  - Adjusted initialization sequence to ensure settings are loaded before database initialization.
+
+### Settings Model
+- **lib/models/settings_model.dart**:
+  - Added `showTutorial` attribute to manage tutorial display.
+  - Enhanced `copy` method to include the new attribute.
+  - Updated `toMap` and `fromMap` methods to handle `showTutorial`.
+
+### Database Management
+- **lib/store/constants/migration_sql_scripts.dart**:
+  - Added migration script for version 1005 to include `showTutorial` column.
+- **lib/store/constants/table_attributes.dart**:
+  - Added `settingsShowTutorial` attribute.
+- **lib/store/constants/table_sql_scripts.dart**:
+  - Fixed bug in `createSettingsSQL` script and added `settingsShowTutorial` column.
+- **lib/store/database/database_provider.dart**:
+  - Updated initialization to handle app settings and migrations correctly.
+
+### Version Update
+- **pubspec.yaml**:
+  - Updated version to `0.9.2+21`.
+
+This commit ensures better management of app settings, introduces a comprehensive onboarding tutorial, and fixes potential issues in database initialization and migration processes.
+
+
+## 2024_05_31 - version: 0.9.1+20
+
+feat: Enhance stopwatch messaging and add onboarding tutorial
+
+This commit introduces improvements to stopwatch messaging and adds support for the onboarding tutorial using the onboarding_overlay package. It also includes translations updates and several UI and backend adjustments. A bug fix in the `settingsTable` creation script has been made, and the database will now be removed if an error occurs during its creation.
+
+### Translations
+- **assets/translations/en-US.json**:
+  - Updated `PSCStartedMessage`, `PSCSplitMessage`, `PSCLapMessage`, and `PSCFinishMessage` to remove redundant placeholders.
+
+- **assets/translations/es.json**:
+  - Updated `PSCStartedMessage`, `PSCSplitMessage`, `PSCLapMessage`, and `PSCFinishMessage` to remove redundant placeholders.
+
+- **assets/translations/pt-BR.json**:
+  - Updated `PSCStartedMessage`, `PSCSplitMessage`, `PSCLapMessage`, and `PSCFinishMessage` to remove redundant placeholders.
+
+### Stopwatch Page
+- **lib/features/stopwatch_page/stopwatch_page.dart**:
+  - Added import for `MessagesModel`.
+  - Changed `_messageList` to use `MessagesModel` instead of `String`.
+  - Updated logic to handle `MessagesModel` instances.
+  - Modified `_removeAthleteFromLogs` to use `message.title` for comparison.
+
+- **lib/features/stopwatch_page/stopwatch_page_controller.dart**:
+  - Changed `_historyMessage` to use `MessagesModel` instead of `String`.
+  - Updated `sendHistoryMessage` to accept `MessagesModel`.
+
+- **lib/features/stopwatch_page/widgets/message_row.dart**:
+  - Changed `message` type to `MessagesModel`.
+  - Updated `_buildMessageRow` and `_messageRow` to handle `MessagesModel` attributes.
+  - Improved UI styling for message rows using `Container`.
+
+### Trainings Page
+- **lib/features/trainings_page/trainings_page.dart**:
+  - Added elevation to `AppBar`.
+  - Enhanced dropdown styling with `Container`.
+
+### Precise Stopwatch Controller
+- **lib/features/widgets/precise_stopwatch/precise_stopwatch_controller.dart**:
+  - Changed messages to use `MessagesModel`.
+  - Updated `_sendStartedMessage`, `_sendSplitMessage`, `_sendLapMessage`, and `_sendFinishMessage` to create `MessagesModel` instances.
+
+### Settings Manager
+- **lib/manager/settings_manager.dart**:
+  - Added try-catch block to handle errors when querying settings.
+
+### Database Manager
+- **lib/store/database/database_manager.dart**:
+  - Added logging and error handling for database creation.
+
+### Messages Model
+- **lib/models/messages_model.dart**:
+  - Created new `MessagesModel` class to encapsulate message details.
+
+### SQL Scripts
+- **lib/store/constants/table_sql_scripts.dart**:
+  - Added missing comma in `createSettingsSQL`.
+
+
 ## 2024_05_31 - version: 0.9.0+19
 
 feat: Add onboarding tutorial using onboarding_overlay package

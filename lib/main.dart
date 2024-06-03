@@ -12,10 +12,11 @@ void main() async {
   await EasyLocalization.ensureInitialized();
 
   final dbProvider = DatabaseProvider();
-  await dbProvider.init();
 
   final appSettings = AppSettings.instance;
   await appSettings.init();
+
+  await dbProvider.init();
 
   runApp(
     EasyLocalization(

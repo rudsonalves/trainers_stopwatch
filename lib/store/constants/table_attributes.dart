@@ -11,6 +11,7 @@ const settingsBrightness = 'brightness';
 const settingsContrast = 'contrast';
 const settingsLanguage = 'language';
 const settingsMSecondRefresh = 'mSecondRefresh';
+const settingsShowTutorial = 'showTutorial';
 
 const athleteTable = 'athleteTable';
 const athleteNameIndex = 'athleteNameIndex';

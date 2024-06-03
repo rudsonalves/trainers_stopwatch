@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:trainers_stopwatch/manager/settings_manager.dart';
+import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../constants/migration_sql_scripts.dart';
 import 'database_backup.dart';
@@ -12,14 +12,16 @@ class DatabaseProvider {
 
   Future init() async {
     final database = await _databaseManager.database;
-    final settings = await SettingsManager.query();
+    final app = AppSettings.instance;
+    // app.init();
+    // final settings = await SettingsManager.query();
 
     final backupDatabase = await DatabaseBackup.backupDatabase();
     try {
-      if (MigrationSqlScripts.schemeVersion > settings.dbSchemeVersion) {
+      if (MigrationSqlScripts.schemeVersion > app.dbSchemeVersion) {
         await DatabaseMigration.applyMigrations(
           db: database,
-          settings: settings,
+          settings: app,
         );
       }
     } catch (err) {

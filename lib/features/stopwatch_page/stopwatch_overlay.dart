@@ -129,6 +129,60 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         showPulseAnimation: true,
       ),
       OnboardingStep(
+        focusNode: FocusNode(),
+        titleText: 'Interromper Tutorial',
+        bodyText:
+            'O tutorial prosseguirá pela página de adição de atletas. Você '
+            'pode interromper aqui ou prosseguir pala próxima parte do tutorial.',
+        fullscreen: true,
+        overlayBehavior: HitTestBehavior.translucent,
+        onTapCallback: (area, next, close) {},
+        stepBuilder: (context, renderInfo) => SizedBox(
+          child: Material(
+            child: Container(
+              width: renderInfo.size.width * 0.9,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.blue.withOpacity(0.9),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      renderInfo.titleText,
+                      style: renderInfo.titleStyle,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      renderInfo.bodyText,
+                      style: renderInfo.bodyStyle,
+                    ),
+                    ButtonBar(
+                      children: [
+                        FilledButton(
+                          onPressed: renderInfo.nextStep,
+                          child: const Text('Next'),
+                        ),
+                        FilledButton(
+                          onPressed: () {
+                            renderInfo.close();
+                            app.tutorialOn = false;
+                          },
+                          child: const Text('close'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      OnboardingStep(
         focusNode: app.focusNodes[7],
         titleText: 'Adicionar Usuários',
         bodyText:
@@ -146,18 +200,16 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
           }
         },
       ),
-      // Continue tutorial...
+
+      // Continue tutorial... (11)
       OnboardingStep(
         focusNode: app.focusNodes[11],
         titleText: 'Stopwatch',
-        bodyText: 'Neste momento um cronômetro para o treinamento é criado.',
+        bodyText:
+            'Neste momento um novo cronômetro para o treinamento é criado, e '
+            'o seu treino pode ser gerenciado pelo aplicativo.',
         fullscreen: true,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
-        onTapCallback: (area, next, close) {
-          if (area == TapArea.hole) {
-            next();
-          }
-        },
       ),
       OnboardingStep(
         focusNode: app.focusNodes[13],
@@ -167,6 +219,21 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         fullscreen: false,
         overlayShape: const CircleBorder(),
         overlayColor: Colors.blueAccent.withOpacity(0.9),
+      ),
+      OnboardingStep(
+        focusNode: FocusNode(),
+        titleText: 'Configurações',
+        bodyText:
+            'As configurações podem ser ajustadas antes de iniciar o treino.',
+        fullscreen: true,
+        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        onTapCallback: (area, next, close) => next(),
+        stepBuilder: (context, renderInfo) => fullScreenMessage(
+          context: context,
+          render: renderInfo,
+          image: 'assets/images/athlete_settings.png',
+          scale: 2,
+        ),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[12],
@@ -273,32 +340,10 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         overlayShape: const CircleBorder(),
         showPulseAnimation: true,
         onTapCallback: (area, next, close) => next(),
-        stepBuilder: (context, renderInfo) => SizedBox(
-          width: renderInfo.size.width * 0.8,
-          height: 400,
-          child: Material(
-            child: Container(
-              color: Colors.blueAccent.withOpacity(0.9),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Text(
-                      renderInfo.titleText,
-                      style: renderInfo.titleStyle,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Image.asset('assets/images/dismissingLeft.png'),
-                    ),
-                    Text(
-                      renderInfo.bodyText,
-                      style: renderInfo.bodyStyle,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        stepBuilder: (context, renderInfo) => fullScreenMessage(
+          context: context,
+          render: renderInfo,
+          image: 'assets/images/dismissingLeft.png',
         ),
       ),
       OnboardingStep(
@@ -316,35 +361,51 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
           close();
           app.tutorialOn = false;
         },
-        stepBuilder: (context, renderInfo) => SizedBox(
-          width: renderInfo.size.width * 0.8,
-          height: 400,
-          child: Material(
-            child: Container(
-              color: Colors.blueAccent.withOpacity(0.9),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Text(
-                      renderInfo.titleText,
-                      style: renderInfo.titleStyle,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Image.asset('assets/images/dismissingRight.png'),
-                    ),
-                    Text(
-                      renderInfo.bodyText,
-                      style: renderInfo.bodyStyle,
-                    ),
-                  ],
+        stepBuilder: (context, renderInfo) => fullScreenMessage(
+          context: context,
+          render: renderInfo,
+          image: 'assets/images/dismissingRight.png',
+        ),
+      ),
+    ];
+  }
+
+  SizedBox fullScreenMessage({
+    required BuildContext context,
+    required OnboardingStepRenderInfo render,
+    required String image,
+    double? scale,
+  }) {
+    return SizedBox(
+      width: render.size.width * 0.8,
+      height: 400,
+      child: Material(
+        child: Container(
+          color: Colors.blueAccent.withOpacity(0.9),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  render.titleText,
+                  style: render.titleStyle,
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Image.asset(
+                    image,
+                    scale: scale,
+                  ),
+                ),
+                Text(
+                  render.bodyText,
+                  style: render.bodyStyle,
+                ),
+              ],
             ),
           ),
         ),
       ),
-    ];
+    );
   }
 
   @override
