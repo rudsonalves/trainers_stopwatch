@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
@@ -28,11 +29,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
     steps = [
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Trainer\'s Stopwatch Tutorial',
-        bodyText:
-            'Este tutorial vai lhe apresentar os passo básicos para melhor '
-            'usar o Trainer\'s Stopwatch. Caso deseje repetir o tutorial acesso no ícone'
-            ' "?", no menu do aplicativo.',
+        titleText: 'tutorSWTitle01'.tr(),
+        bodyText: 'tutorSWMsg01'.tr(),
         fullscreen: false,
         overlayColor: Colors.blue.withOpacity(0.9),
         shape: const CircleBorder(),
@@ -40,8 +38,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[0],
-        titleText: 'Tocar Tema',
-        bodyText: 'Este botão permite permutar entre os temas claro/escuro.',
+        titleText: 'tutorSWTitle02'.tr(),
+        bodyText: 'tutorSWMsg02'.tr(),
         fullscreen: false,
         overlayColor: Colors.blue.withOpacity(0.9),
         shape: const CircleBorder(),
@@ -51,10 +49,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[1],
-        titleText: 'Menu',
-        bodyText:
-            'Permite acessar outras páginas do aplicativo, configurações e '
-            'informações. Abra o menu para prosseguir',
+        titleText: 'tutorSWTitle03'.tr(),
+        bodyText: 'tutorSWMsg03'.tr(),
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         fullscreen: false,
         shape: const CircleBorder(),
@@ -69,44 +65,40 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[2],
-        titleText: 'Gerenciar Usuários',
-        bodyText:
-            'Esta página permite cadastrar, editar e remover usuários, além '
-            'de abrir os cornômetros para os usuários selecionados.',
+        titleText: 'tutorSWTitle04'.tr(),
+        bodyText: 'tutorSWMsg04'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[3],
-        titleText: 'Gerenciar Treinamentos',
-        bodyText:
-            'Esta página permite editar, apagar e remover treinamentos gravados.',
+        titleText: 'tutorSWTitle05'.tr(),
+        bodyText: 'tutorSWMsg05'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[4],
-        titleText: 'Configuraçãoes',
-        bodyText:
-            'Esta página permite editar, apagar e remover treinamentos gravados.',
-        fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
-        overlayShape: const CircleBorder(),
-      ),
-      OnboardingStep(
-        focusNode: app.focusNodes[5],
-        titleText: 'Tutorial',
-        bodyText: 'Iniciar o tutotial.',
+        titleText: 'tutorSWTitle06'.tr(),
+        bodyText: 'tutorSWMsg06'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[6],
-        titleText: 'Sobre',
-        bodyText: 'Apresenta a página de informações do aplicativo.',
+        titleText: 'tutorSWTitle08'.tr(),
+        bodyText: 'tutorSWMsg08'.tr(),
+        fullscreen: false,
+        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayShape: const CircleBorder(),
+      ),
+      OnboardingStep(
+        focusNode: app.focusNodes[5],
+        titleText: 'tutorSWTitle07'.tr(),
+        bodyText: 'tutorSWMsg07'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
@@ -117,11 +109,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Adicionar Usuários',
-        bodyText:
-            'Para iniciar o uso do aplicativo você necessita adicionar alguns '
-            'usuários para treino. Isto pode ser feito pressionando botão flutuante '
-            'ou no Menu > Gerenciar Usuários, ou pressionar o botão abaixo.',
+        titleText: 'tutorSWTitle09'.tr(),
+        bodyText: 'tutorSWMsg09'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         shape: const CircleBorder(),
@@ -130,11 +119,10 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Interromper Tutorial',
-        bodyText:
-            'O tutorial prosseguirá pela página de adição de usuários. Você '
-            'pode interromper aqui ou prosseguir pala próxima parte do tutorial.',
+        titleText: 'tutorSWTitle10'.tr(),
+        bodyText: 'tutorSWMsg10'.tr(),
         fullscreen: true,
+        overlayColor: Colors.transparent,
         overlayBehavior: HitTestBehavior.translucent,
         onTapCallback: (area, next, close) {},
         stepBuilder: (context, renderInfo) => SizedBox(
@@ -184,10 +172,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[7],
-        titleText: 'Adicionar Usuários',
-        bodyText:
-            'Antes de iniciar o uso do seu cronômetro é necessário cadastrar '
-            'os usuários que farão o treino. Pressione aqui.',
+        titleText: 'tutorSWTitle11'.tr(),
+        bodyText: 'tutorSWMsg11'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         shape: const CircleBorder(),
@@ -204,27 +190,23 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       // Continue tutorial... (11)
       OnboardingStep(
         focusNode: app.focusNodes[11],
-        titleText: 'Stopwatch',
-        bodyText:
-            'Neste momento um novo cronômetro para o treinamento é criado, e '
-            'o seu treino pode ser gerenciado pelo aplicativo.',
+        titleText: 'tutorSWTitle12'.tr(),
+        bodyText: 'tutorSWMsg12'.tr(),
         fullscreen: true,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[13],
-        titleText: 'Configurações',
-        bodyText: 'Este botão abre a configuração para o treino, onde se pode '
-            'ajustar unidades, comprimentos das voltas e dos splits e total de voltas.',
-        fullscreen: false,
-        overlayShape: const CircleBorder(),
+        titleText: 'tutorSWTitle12'.tr(),
+        bodyText: 'tutorSWMsg12'.tr(),
+        fullscreen: true,
+        // overlayShape: const CircleBorder(),
         overlayColor: Colors.blueAccent.withOpacity(0.9),
       ),
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Configurações',
-        bodyText:
-            'As configurações podem ser ajustadas antes de iniciar o treino.',
+        titleText: 'tutorSWTitle13'.tr(),
+        bodyText: 'tutorSWMsg13'.tr(),
         fullscreen: true,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         onTapCallback: (area, next, close) => next(),
@@ -237,10 +219,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[12],
-        titleText: 'Iniciar',
-        bodyText:
-            'Este botão inicia o treino, disparando o cronômetro. Pressione-o '
-            'para prosseguir',
+        titleText: 'tutorSWTitle14'.tr(),
+        bodyText: 'tutorSWMsg14'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
@@ -254,19 +234,15 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[11],
-        titleText: 'Cronômetro',
-        bodyText:
-            'Uma vez o cornômetro iniciado, os instantes são marcados na lista '
-            'de logs abaixo.',
+        titleText: 'tutorSWTitle15'.tr(),
+        bodyText: 'tutorSWMsg15'.tr(),
         fullscreen: true,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[14],
-        titleText: 'Split/Lap',
-        bodyText: 'Os botões do cronômetro são apresentados por demanda, '
-            'mostrando apenas os botões ativos. O botão Split/Lap permite '
-            'registra uma split/Lap quando pressionado.',
+        titleText: 'tutorSWTitle16'.tr(),
+        bodyText: 'tutorSWMsg16'.tr(),
         overlayColor: Colors.blueAccent.withOpacity(0.8),
         fullscreen: false,
         overlayShape: const CircleBorder(),
@@ -280,18 +256,16 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[17],
-        titleText: 'Registros',
-        bodyText: 'Os registros são adicionados no quadro abaixo, a cada ação.',
+        titleText: 'tutorSWTitle17'.tr(),
+        bodyText: 'tutorSWMsg17'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[15],
-        titleText: 'Parar',
-        bodyText:
-            'O botão Pause irá parar o treinamento, possibilitando continuar, '
-            'reiniciar e terminar o treinamento.',
+        titleText: 'tutorSWTitle18'.tr(),
+        bodyText: 'tutorSWMsg18'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
@@ -305,20 +279,16 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: app.focusNodes[11],
-        titleText: 'Cont./Reset/Finish',
-        bodyText:
-            'Os botões reiniciar e terminar são acionados por uma pressão longa, '
-            'por isto possuem uma coloração levemente diferente nos ícones.',
+        titleText: 'tutorSWTitle18'.tr(),
+        bodyText: 'tutorSWMsg18'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[16],
-        titleText: 'Fininsh',
-        bodyText:
-            'Para terminar o treinamento faça uma pressão longa no botão Finish.'
-            'reiniciar e terminar o treinamento.',
+        titleText: 'tutorSWTitle20'.tr(),
+        bodyText: 'tutorSWMsg20'.tr(),
         fullscreen: false,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
@@ -332,9 +302,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Gerenciar um Treino',
-        bodyText: 'Você pode gerenciar o treino de um usuário, com total foco, '
-            'deslizando-o para direita.',
+        titleText: 'tutorSWTitle21'.tr(),
+        bodyText: 'tutorSWMsg21'.tr(),
         fullscreen: true,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),
@@ -348,10 +317,8 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       ),
       OnboardingStep(
         focusNode: FocusNode(),
-        titleText: 'Remover Treino',
-        bodyText: 'Voce pode remover um treino deslizando-o para esquerda. '
-            'Treinos removidos não são apagados, ficam disponíveis para consulta e '
-            'edição no Menu -> Gestão de treinamento ',
+        titleText: 'tutorSWTitle22'.tr(),
+        bodyText: 'tutorSWMsg22'.tr(),
         fullscreen: true,
         overlayColor: Colors.blueAccent.withOpacity(0.9),
         overlayShape: const CircleBorder(),

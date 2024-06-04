@@ -5,11 +5,11 @@ import 'package:signals/signals_flutter.dart';
 import 'common/singletons/app_settings.dart';
 import 'common/theme/theme.dart';
 import 'common/theme/util.dart';
+import 'features/settings/settings_overlay.dart';
 import 'models/settings_model.dart';
 import 'features/about_page/about_page.dart';
 import 'features/users_page/users_overlay.dart';
 import 'features/history_page/history_page.dart';
-import 'features/settings/settings_page.dart';
 import 'features/stopwatch_page/stopwatch_overlay.dart';
 import 'features/personal_training_page/personal_training_page.dart';
 import 'features/trainings_page/trainings_page.dart';
@@ -61,7 +61,7 @@ class MyMaterialApp extends StatelessWidget {
         PersonalTrainingPage.routeName: (context) =>
             PersonalTrainingPage.fromContext(context),
         TrainingsPage.routeName: (context) => const TrainingsPage(),
-        SettingsPage.routeName: (context) => const SettingsPage(),
+        SettingsOverlay.routeName: (context) => const SettingsOverlay(),
         AboutPage.routeName: (context) => const AboutPage(),
         HistoryPage.routeName: (context) => HistoryPage.fromContext(context),
       },

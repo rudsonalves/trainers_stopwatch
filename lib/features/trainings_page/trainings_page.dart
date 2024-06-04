@@ -111,27 +111,33 @@ class _TrainingsPageState extends State<TrainingsPage> {
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: DropdownButton<int>(
-                            borderRadius: BorderRadius.circular(12),
-                            dropdownColor: colorScheme.primaryContainer,
-                            value: _controller.userId,
-                            items: _controller.users
-                                .map(
-                                  (user) => DropdownMenuItem<int>(
-                                    value: user.id!,
-                                    child: Text(user.name),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: _controller.selectUser,
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton<int>(
+                              isExpanded: true,
+                              borderRadius: BorderRadius.circular(12),
+                              dropdownColor: colorScheme.primaryContainer,
+                              value: _controller.userId,
+                              items: _controller.users
+                                  .map(
+                                    (user) => DropdownMenuItem<int>(
+                                      value: user.id!,
+                                      child: Text(
+                                        user.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: _controller.selectUser,
+                            ),
                           ),
                         ),
                       ],

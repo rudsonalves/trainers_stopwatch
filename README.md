@@ -20,6 +20,61 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_04 - version: 0.9.4+23
+
+feat: Update app icons and improve tutorial content
+
+This commit introduces the following changes:
+- Updated application icons for various resolutions (hdpi, mdpi, xhdpi, xxhdpi, xxxhdpi).
+- Added a new stopwatch icon in PNG and SVG formats.
+- Enhanced tutorial content with detailed steps and messages.
+- Updated translation files to include new tutorial messages in English, Spanish, and Portuguese.
+- Added a new overlay for settings and users pages to provide a more comprehensive tutorial experience.
+- Implemented a new class, `SettingsOverlay`, to manage tutorial steps for the settings page.
+- Fixed a bug in the tutorial step sequence on the stopwatch page.
+- Integrated `flutter_launcher_icons` package to manage app icons.
+- Updated pubspec.yaml to include the new icon path and launcher icon configurations.
+
+Changes in detail:
+
+### Assets
+- Added new icon files:
+  - `assets/icon/stopwatch.png`
+  - `assets/svgs/stopwatch.svg`
+- Updated application icons in:
+  - `android/app/src/main/res/mipmap-hdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-mdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-xhdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png`
+- Added images for tutorial:
+  - `assets/images/dismissingLeft.png`
+  - `assets/images/dismissingRight.png`
+
+### Codebase
+- `app_settings.dart`:
+  - Updated to handle tutorial state and added methods to disable tutorial.
+- `settings_overlay.dart`:
+  - Created to manage tutorial steps for settings page.
+- `settings_page.dart`:
+  - Integrated `OnboardingOverlay` for the settings page tutorial.
+- `stopwatch_overlay.dart`:
+  - Enhanced with new tutorial steps and localized messages.
+- `users_overlay.dart`:
+  - Added detailed tutorial steps and messages.
+
+### Translations
+- Updated translation files:
+  - `en-US.json`
+  - `es.json`
+  - `pt-BR.json`
+
+### Pubspec
+- Updated dependencies to include `flutter_launcher_icons` and configuration for the new app icon.
+
+This update enhances the user experience by providing detailed guidance through tutorials and updating visual elements to align with the app's branding.
+
+
 ## 2024_06_03 - version: 0.9.3+22
 
 refactor: Rename Athlete to User across the application

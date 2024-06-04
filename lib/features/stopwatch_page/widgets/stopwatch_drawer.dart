@@ -5,7 +5,7 @@ import 'package:onboarding_overlay/onboarding_overlay.dart';
 import '../../../common/singletons/app_settings.dart';
 import '../../../common/theme/app_font_style.dart';
 import '../../about_page/about_page.dart';
-import '../../settings/settings_page.dart';
+import '../../settings/settings_overlay.dart';
 import '../../trainings_page/trainings_page.dart';
 
 class StopwatchDrawer extends StatelessWidget {
@@ -59,7 +59,16 @@ class StopwatchDrawer extends StatelessWidget {
             title: Text('SPDItemSettings'.tr()),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, SettingsPage.routeName);
+              Navigator.pushNamed(context, SettingsOverlay.routeName);
+            },
+          ),
+          ListTile(
+            focusNode: focusNodes[6],
+            leading: const Icon(Icons.info_outline),
+            title: Text('SPDItemAbout'.tr()),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, AboutPage.routeName);
             },
           ),
           ListTile(
@@ -73,15 +82,6 @@ class StopwatchDrawer extends StatelessWidget {
                 AppSettings.instance.tutorialOn = true;
                 overlay.show();
               }
-            },
-          ),
-          ListTile(
-            focusNode: focusNodes[6],
-            leading: const Icon(Icons.info_outline),
-            title: Text('SPDItemAbout'.tr()),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, AboutPage.routeName);
             },
           ),
         ],
