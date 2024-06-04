@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../manager/settings_manager.dart';
 import '../../models/settings_model.dart';
@@ -22,8 +21,8 @@ class AppSettings extends SettingsModel {
   late final String _imagePath;
   late final Directory _appDocDir;
 
-  late final Signal<Brightness> _brightness;
-  late final Signal<Contrast> _contrast;
+  late final ValueNotifier<Brightness> _brightness;
+  late final ValueNotifier<Contrast> _contrast;
 
   bool tutorialOn = false;
   int tutorialId = 0;
@@ -33,16 +32,16 @@ class AppSettings extends SettingsModel {
   }
 
   String get imagePath => _imagePath;
-  Signal<Brightness> get brightnessMode => _brightness;
-  Signal<Contrast> get contrastMode => _contrast;
+  ValueNotifier<Brightness> get brightnessMode => _brightness;
+  ValueNotifier<Contrast> get contrastMode => _contrast;
 
   Future<void> init() async {
     // Load app Settings
     final settings = await SettingsManager.query();
     copy(settings);
     // Update Brightness & Contrast
-    _brightness = signal<Brightness>(settings.brightness);
-    _contrast = signal<Contrast>(settings.contrast);
+    _brightness = ValueNotifier<Brightness>(settings.brightness);
+    _contrast = ValueNotifier<Contrast>(settings.contrast);
 
     // Start app paths
     _appDocDir = await getApplicationDocumentsDirectory();

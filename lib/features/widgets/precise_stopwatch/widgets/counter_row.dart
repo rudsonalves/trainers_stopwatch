@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/theme/app_font_style.dart';
 
@@ -10,7 +9,7 @@ class CounterRow extends StatelessWidget {
     required this.label,
   });
 
-  final Signal<int> counter;
+  final ValueNotifier<int> counter;
   final String label;
 
   @override
@@ -25,10 +24,13 @@ class CounterRow extends StatelessWidget {
           style: AppFontStyle.roboto12,
         ),
         const SizedBox(width: 8),
-        Text(
-          counter.watch(context).toString(),
-          style: AppFontStyle.ibm14SemiBold.copyWith(
-            color: primary,
+        ValueListenableBuilder(
+          valueListenable: counter,
+          builder: (context, value, _) => Text(
+            value.toString(),
+            style: AppFontStyle.ibm14SemiBold.copyWith(
+              color: primary,
+            ),
           ),
         ),
       ],

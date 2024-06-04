@@ -13,8 +13,8 @@ void main() async {
 
   final dbProvider = DatabaseProvider();
 
-  final appSettings = AppSettings.instance;
-  await appSettings.init();
+  final app = AppSettings.instance;
+  await app.init();
 
   await dbProvider.init();
 

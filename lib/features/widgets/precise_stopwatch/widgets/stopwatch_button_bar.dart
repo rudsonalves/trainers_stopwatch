@@ -1,8 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../bloc/stopwatch_bloc.dart';
 import '../../../../bloc/stopwatch_state.dart';
@@ -78,44 +76,46 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                   ],
                 );
               case StopwatchStateRunning():
-                return ButtonBar(
-                  children: [
-                    (controller.bloc.splitCounter.watch(context) ==
-                            controller.bloc.splitCounterMax - 1)
-                        ? CustomIconButton(
-                            focusNode: app.isTutorial(widget.userId)
-                                ? app.focusNodes[14]
-                                : null,
-                            onPressed: controller.blocLapTimer,
-                            label: 'PSLaps'.tr(),
-                            icon: Icon(
-                              StopwatchIcons.lap1,
-                              color: onSurfaceVariant,
+                return ValueListenableBuilder(
+                  valueListenable: controller.bloc.splitCounter,
+                  builder: (context, value, _) => ButtonBar(
+                    children: [
+                      (value == controller.bloc.splitCounterMax - 1)
+                          ? CustomIconButton(
+                              focusNode: app.isTutorial(widget.userId)
+                                  ? app.focusNodes[14]
+                                  : null,
+                              onPressed: controller.blocLapTimer,
+                              label: 'PSLaps'.tr(),
+                              icon: Icon(
+                                StopwatchIcons.lap1,
+                                color: onSurfaceVariant,
+                              ),
+                            )
+                          : CustomIconButton(
+                              focusNode: app.isTutorial(widget.userId)
+                                  ? app.focusNodes[14]
+                                  : null,
+                              onPressed: controller.blocSplitTimer,
+                              label: 'PSSplit'.tr(),
+                              icon: Icon(
+                                StopwatchIcons.partial,
+                                color: onSurfaceVariant,
+                              ),
                             ),
-                          )
-                        : CustomIconButton(
-                            focusNode: app.isTutorial(widget.userId)
-                                ? app.focusNodes[14]
-                                : null,
-                            onPressed: controller.blocSplitTimer,
-                            label: 'PSSplit'.tr(),
-                            icon: Icon(
-                              StopwatchIcons.partial,
-                              color: onSurfaceVariant,
-                            ),
-                          ),
-                    CustomIconButton(
-                      focusNode: app.isTutorial(widget.userId)
-                          ? app.focusNodes[15]
-                          : null,
-                      onPressed: controller.blocPauseTimer,
-                      label: 'PSPause'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.pause,
-                        color: onSurfaceVariant,
+                      CustomIconButton(
+                        focusNode: app.isTutorial(widget.userId)
+                            ? app.focusNodes[15]
+                            : null,
+                        onPressed: controller.blocPauseTimer,
+                        label: 'PSPause'.tr(),
+                        icon: Icon(
+                          StopwatchIcons.pause,
+                          color: onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               case StopwatchStatePaused():
                 return ButtonBar(

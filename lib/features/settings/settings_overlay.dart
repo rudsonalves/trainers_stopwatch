@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
-import 'package:trainers_stopwatch/features/settings/settings_page.dart';
+
+import '../../common/singletons/app_settings.dart';
+import 'settings_page.dart';
 
 class SettingsOverlay extends StatefulWidget {
   const SettingsOverlay({super.key});

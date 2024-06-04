@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
+import '../../common/singletons/app_settings.dart';
 import 'stopwatch_page.dart';
 
 class StopwatchOverlay extends StatefulWidget {

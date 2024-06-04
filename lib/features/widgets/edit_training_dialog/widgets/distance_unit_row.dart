@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/constants.dart';
 
 class DistanceUnitRow extends StatefulWidget {
   final String label;
-  final Signal<String> selectedUnit;
-  final Signal<String> selectedSpeedUnit;
+  final ValueNotifier<String> selectedUnit;
+  final ValueNotifier<String> selectedSpeedUnit;
 
   const DistanceUnitRow({
     super.key,
@@ -31,7 +30,7 @@ class _DistanceUnitRowState extends State<DistanceUnitRow> {
         DropdownButton<String>(
           borderRadius: BorderRadius.circular(12),
           dropdownColor: colorScheme.primaryContainer,
-          value: widget.selectedUnit(),
+          value: widget.selectedUnit.value,
           items: distanceUnits.map(
             (item) {
               return DropdownMenuItem(
@@ -44,7 +43,7 @@ class _DistanceUnitRowState extends State<DistanceUnitRow> {
             if (value != null) {
               widget.selectedUnit.value = value;
               if (!speedAllowedValues[value]!
-                  .contains(widget.selectedSpeedUnit())) {
+                  .contains(widget.selectedSpeedUnit.value)) {
                 widget.selectedSpeedUnit.value =
                     speedAllowedValues[value]!.first;
               }

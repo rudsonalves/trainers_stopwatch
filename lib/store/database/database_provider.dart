@@ -1,7 +1,6 @@
 import 'dart:developer';
 
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
-
+import '../../common/singletons/app_settings.dart';
 import '../constants/migration_sql_scripts.dart';
 import 'database_backup.dart';
 import 'database_manager.dart';

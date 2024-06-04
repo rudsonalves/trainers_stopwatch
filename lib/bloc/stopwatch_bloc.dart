@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../common/singletons/app_settings.dart';
 import 'stopwatch_events.dart';
@@ -19,14 +19,14 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
   Duration _lapDuration = const Duration();
   Duration _splitDuration = const Duration();
 
-  final _durationTrainingSignal = signal<Duration>(const Duration());
-  final _lapCounter = signal<int>(0);
-  final _splitCounter = signal<int>(0);
+  final _durationTrainingSignal = ValueNotifier<Duration>(const Duration());
+  final _lapCounter = ValueNotifier<int>(0);
+  final _splitCounter = ValueNotifier<int>(0);
   int splitCounterMax = 99;
 
-  Signal<Duration> get durationTraining => _durationTrainingSignal;
-  Signal<int> get lapCounter => _lapCounter;
-  Signal<int> get splitCounter => _splitCounter;
+  ValueNotifier<Duration> get durationTraining => _durationTrainingSignal;
+  ValueNotifier<int> get lapCounter => _lapCounter;
+  ValueNotifier<int> get splitCounter => _splitCounter;
   DateTime get startTime => _startTime!;
   DateTime get endTime => _endTime!;
   Duration get lapDuration => _lapDuration;
@@ -122,7 +122,7 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     _updateLap(now);
     _updateSplit(now);
 
-    if (maxLaps == _lapCounter()) {
+    if (maxLaps == _lapCounter.value) {
       _endTime = now;
       _timer?.cancel();
       emit(StopwatchStateInitial());
@@ -166,7 +166,7 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
     _splitDuration = now.difference(_lastSplitTime!);
     _lastSplitTime = now;
 
-    if (_splitCounter() == splitCounterMax - 1) {
+    if (_splitCounter.value == splitCounterMax - 1) {
       _splitCounter.value = 0;
     } else {
       _splitCounter.value++;

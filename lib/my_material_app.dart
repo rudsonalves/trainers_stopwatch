@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import 'common/singletons/app_settings.dart';
 import 'common/theme/theme.dart';
@@ -17,7 +16,7 @@ import 'features/trainings_page/trainings_page.dart';
 class MyMaterialApp extends StatelessWidget {
   MyMaterialApp({super.key});
 
-  final settings = AppSettings.instance;
+  final app = AppSettings.instance;
 
   ThemeData lightContrast(MaterialTheme theme, Contrast contrast) {
     switch (contrast) {
@@ -46,25 +45,28 @@ class MyMaterialApp extends StatelessWidget {
     TextTheme textTheme = createTextTheme(context, "Roboto", "Actor");
     MaterialTheme theme = MaterialTheme(textTheme);
 
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      theme: settings.brightnessMode.watch(context) == Brightness.light
-          ? lightContrast(theme, settings.contrastMode.watch(context))
-          : darkContrast(theme, settings.contrastMode.watch(context)),
-      debugShowCheckedModeBanner: false,
-      initialRoute: StopwatchOverlay.routeName,
-      routes: {
-        StopwatchOverlay.routeName: (context) => const StopwatchOverlay(),
-        UsersOverlay.routeName: (context) => const UsersOverlay(),
-        PersonalTrainingPage.routeName: (context) =>
-            PersonalTrainingPage.fromContext(context),
-        TrainingsPage.routeName: (context) => const TrainingsPage(),
-        SettingsOverlay.routeName: (context) => const SettingsOverlay(),
-        AboutPage.routeName: (context) => const AboutPage(),
-        HistoryPage.routeName: (context) => HistoryPage.fromContext(context),
-      },
+    return AnimatedBuilder(
+      animation: Listenable.merge([app.brightnessMode, app.contrastMode]),
+      builder: (context, _) => MaterialApp(
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        theme: app.brightnessMode.value == Brightness.light
+            ? lightContrast(theme, app.contrastMode.value)
+            : darkContrast(theme, app.contrastMode.value),
+        debugShowCheckedModeBanner: false,
+        initialRoute: StopwatchOverlay.routeName,
+        routes: {
+          StopwatchOverlay.routeName: (context) => const StopwatchOverlay(),
+          UsersOverlay.routeName: (context) => const UsersOverlay(),
+          PersonalTrainingPage.routeName: (context) =>
+              PersonalTrainingPage.fromContext(context),
+          TrainingsPage.routeName: (context) => const TrainingsPage(),
+          SettingsOverlay.routeName: (context) => const SettingsOverlay(),
+          AboutPage.routeName: (context) => const AboutPage(),
+          HistoryPage.routeName: (context) => HistoryPage.fromContext(context),
+        },
+      ),
     );
   }
 }

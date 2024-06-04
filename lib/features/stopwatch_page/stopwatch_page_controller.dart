@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../models/user_model.dart';
@@ -12,8 +11,8 @@ class StopwatchPageController {
   static StopwatchPageController get instance => _instance;
 
   final List<PreciseStopwatch> _stopwatchList = [];
-  final _stopwatchLength = signal<int>(0);
-  final _historyMessage = signal<MessagesModel>(MessagesModel());
+  final _stopwatchLength = ValueNotifier<int>(0);
+  final _historyMessage = ValueNotifier<MessagesModel>(MessagesModel());
   final List<UserModel> _usersList = [];
   final List<PreciseStopwatchController> _stopwatchControllers = [];
   final List<UserModel> _newUsers = [];
@@ -23,8 +22,8 @@ class StopwatchPageController {
   List<PreciseStopwatch> get stopwatchList => _stopwatchList;
   List<PreciseStopwatchController> get stopwatchControllers =>
       _stopwatchControllers;
-  Signal<int> get stopwatchLength => _stopwatchLength;
-  Signal<MessagesModel> get historyMessage => _historyMessage;
+  ValueNotifier<int> get stopwatchLength => _stopwatchLength;
+  ValueNotifier<MessagesModel> get historyMessage => _historyMessage;
 
   void dispose() {
     _stopwatchLength.dispose();

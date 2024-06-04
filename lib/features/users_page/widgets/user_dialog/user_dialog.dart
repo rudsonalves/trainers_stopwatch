@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../common/theme/app_font_style.dart';
@@ -91,7 +90,7 @@ class _UserDialogState extends State<UserDialog> {
       id: id,
       name: _controller.name.text,
       email: _controller.email.text,
-      photo: _controller.image(),
+      photo: _controller.image.value,
       phone: _controller.phone.text,
     );
 
@@ -123,7 +122,10 @@ class _UserDialogState extends State<UserDialog> {
                 InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: _photoImageOnTap,
-                  child: ShowUserImage(_controller.image.watch(context)),
+                  child: ValueListenableBuilder(
+                    valueListenable: _controller.image,
+                    builder: (context, value, _) => ShowUserImage(value),
+                  ),
                 ),
                 CustomTextField(
                   controller: _controller.name,

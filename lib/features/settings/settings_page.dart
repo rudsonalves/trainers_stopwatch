@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../common/constants.dart';
 import '../../common/singletons/app_settings.dart';
@@ -17,7 +16,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final appSettings = AppSettings.instance;
+  final app = AppSettings.instance;
   late final OnboardingState? overlay;
 
   bool _edited = false;
@@ -40,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _startTutorial() {
-    if (appSettings.tutorialOn) {
+    if (app.tutorialOn) {
       if (overlay != null) {
         overlay!.show();
       }
@@ -54,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return PopScope(
       canPop: true,
       onPopInvoked: (didPop) {
-        if (_edited) appSettings.update();
+        if (_edited) app.update();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -66,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
               itemBuilder: (context) => <PopupMenuEntry>[
                 PopupMenuItem(
                   onTap: () {
-                    appSettings.tutorialOn = true;
+                    app.tutorialOn = true;
                     _startTutorial();
                   },
                   child: const ListTile(
@@ -84,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Focus(
-                focusNode: appSettings.focusNodes[19],
+                focusNode: app.focusNodes[19],
                 child: Column(
                   children: [
                     Center(
@@ -96,20 +95,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     LengthLineEdit(
                       lengthLabel: 'SetPSplit'.tr(),
-                      length: appSettings.splitLength,
-                      lengthUnit: appSettings.lengthUnit,
+                      length: app.splitLength,
+                      lengthUnit: app.lengthUnit,
                     ),
                     LengthLineEdit(
                       lengthLabel: 'SetPLap'.tr(),
-                      length: appSettings.lapLength,
-                      lengthUnit: appSettings.lengthUnit,
+                      length: app.lapLength,
+                      lengthUnit: app.lengthUnit,
                     ),
                   ],
                 ),
               ),
               const Divider(),
               Focus(
-                focusNode: appSettings.focusNodes[20],
+                focusNode: app.focusNodes[20],
                 child: Column(
                   children: [
                     Row(
@@ -119,12 +118,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
-                        IconButton.filledTonal(
-                          onPressed: appSettings.toggleBrightnessMode,
-                          icon:
-                              _brightnessIcon(appSettings.brightnessMode.watch(
-                            context,
-                          )),
+                        ValueListenableBuilder(
+                          valueListenable: app.brightnessMode,
+                          builder: (context, value, _) =>
+                              IconButton.filledTonal(
+                            onPressed: app.toggleBrightnessMode,
+                            icon: _brightnessIcon(value),
+                          ),
                         ),
                       ],
                     ),
@@ -135,28 +135,32 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
-                        SegmentedButton<Contrast>(
-                          showSelectedIcon: false,
-                          segments: const [
-                            ButtonSegment(
-                              value: Contrast.standard,
-                              icon: Icon(Icons.brightness_5),
-                            ),
-                            ButtonSegment(
-                              value: Contrast.medium,
-                              icon: Icon(Icons.brightness_6),
-                            ),
-                            ButtonSegment(
-                              value: Contrast.high,
-                              icon: Icon(Icons.brightness_7),
-                            ),
-                          ],
-                          selected: {appSettings.contrastMode.watch(context)},
-                          onSelectionChanged: (value) {
-                            setState(() {
-                              appSettings.setContrast(value.first);
-                            });
-                          },
+                        ValueListenableBuilder(
+                          valueListenable: app.contrastMode,
+                          builder: (context, value, _) =>
+                              SegmentedButton<Contrast>(
+                            showSelectedIcon: false,
+                            segments: const [
+                              ButtonSegment(
+                                value: Contrast.standard,
+                                icon: Icon(Icons.brightness_5),
+                              ),
+                              ButtonSegment(
+                                value: Contrast.medium,
+                                icon: Icon(Icons.brightness_6),
+                              ),
+                              ButtonSegment(
+                                value: Contrast.high,
+                                icon: Icon(Icons.brightness_7),
+                              ),
+                            ],
+                            selected: {value},
+                            onSelectionChanged: (value) {
+                              setState(() {
+                                app.setContrast(value.first);
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -164,7 +168,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               Focus(
-                focusNode: appSettings.focusNodes[21],
+                focusNode: app.focusNodes[21],
                 child: Row(
                   children: [
                     Text('SetPLang'.tr(), style: AppFontStyle.roboto16),
@@ -172,12 +176,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     DropdownButton<Locale>(
                       borderRadius: BorderRadius.circular(12),
                       dropdownColor: colorScheme.primaryContainer,
-                      value: appSettings.language,
+                      value: app.language,
                       onChanged: (value) {
                         if (value == null) return;
-                        appSettings.language = value;
+                        app.language = value;
                         _edited = true;
-                        context.setLocale(appSettings.language);
+                        context.setLocale(app.language);
                         setState(() {});
                       },
                       items: appLanguages.entries
@@ -195,7 +199,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               Focus(
-                focusNode: appSettings.focusNodes[22],
+                focusNode: app.focusNodes[22],
                 child: Row(
                   children: [
                     Text(
@@ -206,7 +210,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     DropdownButton<int>(
                       borderRadius: BorderRadius.circular(12),
                       dropdownColor: colorScheme.primaryContainer,
-                      value: appSettings.mSecondRefresh,
+                      value: app.mSecondRefresh,
                       items: millisecondRefreshValues
                           .map(
                             (value) => DropdownMenuItem<int>(
@@ -220,7 +224,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (value) {
                         if (value != null) {
                           setState(() {
-                            appSettings.mSecondRefresh = value;
+                            app.mSecondRefresh = value;
                             _edited = true;
                           });
                         }

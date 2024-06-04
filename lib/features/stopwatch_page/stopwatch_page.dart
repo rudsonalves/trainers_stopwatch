@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../common/singletons/app_settings.dart';
 import '../../models/messages_model.dart';
@@ -35,15 +34,9 @@ class _StopWatchPageState extends State<StopWatchPage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      effect(() {
-        final message = _controller.historyMessage.value;
-        // && message != 'none'
-        if (message.isNotEmpty && !_messageList.contains(message)) {
-          _messageList.add(message);
-        }
-      });
+    _controller.historyMessage.addListener(_onHistoryMessageChanged);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       overlay = Onboarding.of(context);
       if (app.showTutorial) {
         if (overlay != null) {
@@ -53,6 +46,14 @@ class _StopWatchPageState extends State<StopWatchPage> {
         }
       }
     });
+  }
+
+  void _onHistoryMessageChanged() {
+    final message = _controller.historyMessage.value;
+    // && message != 'none'
+    if (message.isNotEmpty && !_messageList.contains(message)) {
+      _messageList.add(message);
+    }
   }
 
   @override
@@ -114,7 +115,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
   Widget _stopWatchListView() {
     final listViewBuilder = ListView.builder(
-      itemCount: _controller.stopwatchLength(),
+      itemCount: _controller.stopwatchLength.value,
       itemBuilder: (context, index) => StopwatDismissible(
         stopwatch: _controller.stopwatchList[index],
         removeStopwatch: _removeStopwatch,
@@ -145,7 +146,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
           child: Padding(
             padding: const EdgeInsets.all(6),
             child: ListenableBuilder(
-              listenable: _controller.historyMessage.toValueListenable(),
+              listenable: _controller.historyMessage,
               builder: (context, _) {
                 final int lastIndex = _messageList.length - 1;
 
@@ -164,7 +165,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   double _sizedBoxHeigth() {
-    int length = _controller.stopwatchLength();
+    int length = _controller.stopwatchLength.value;
     length = length < 1 ? 1 : length;
     length = length > 4 ? 4 : length;
     return length * stopWatchHeight;
@@ -183,10 +184,11 @@ class _StopWatchPageState extends State<StopWatchPage> {
         actions: [
           IconButton(
             focusNode: app.focusNodes[0],
-            icon: Icon(
-              app.brightnessMode.watch(context) == Brightness.dark
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
+            icon: ValueListenableBuilder(
+              valueListenable: app.brightnessMode,
+              builder: (context, value, _) => Icon(
+                value == Brightness.dark ? Icons.dark_mode : Icons.light_mode,
+              ),
             ),
             onPressed: app.toggleBrightnessMode,
           ),
