@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
@@ -31,9 +30,9 @@ class PreciseStopwatchController {
 
   StopwatchBloc get bloc => _bloc;
   StopwatchState get state => _bloc.state;
-  Signal<int> get lapCounter => _bloc.lapCounter;
-  Signal<int> get splitCounter => _bloc.splitCounter;
-  Signal<Duration> get durationTraining => _bloc.durationTraining;
+  ValueNotifier<int> get lapCounter => _bloc.lapCounter;
+  ValueNotifier<int> get splitCounter => _bloc.splitCounter;
+  ValueNotifier<Duration> get durationTraining => _bloc.durationTraining;
   UserModel get user => _user;
   List<TrainingModel> get trainings => _trainingManager.trainings;
   List<HistoryModel> get histories => _historyManager.histories;
@@ -52,8 +51,6 @@ class PreciseStopwatchController {
   void dispose() {
     _bloc.dispose();
     _actionOnPress.dispose();
-    lapCounter.dispose();
-    durationTraining.dispose();
   }
 
   void _toggleActionOnPress() {
@@ -135,7 +132,7 @@ class PreciseStopwatchController {
     await _generateSplitRegister();
     await _generateLapRegister();
 
-    if (_bloc.maxLaps != null && _bloc.maxLaps == _bloc.lapCounter()) {
+    if (_bloc.maxLaps != null && _bloc.maxLaps == _bloc.lapCounter.value) {
       isPaused = false;
       _isCreatedTraining = false;
       _sendFinishMessage();
@@ -193,7 +190,7 @@ class PreciseStopwatchController {
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
       duration: Duration(milliseconds: lapMs),
-      lap: lapCounter(),
+      lap: lapCounter.value,
       split: _getSplit(),
       comments: 'PSCHistoryComments'.tr(args: [speed]),
     );
@@ -204,7 +201,7 @@ class PreciseStopwatchController {
   }
 
   int _getSplit() {
-    int split = splitCounter();
+    int split = splitCounter.value;
     return split == 0 ? bloc.splitCounterMax : split;
   }
 

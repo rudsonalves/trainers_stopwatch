@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../common/theme/app_font_style.dart';
 import '../../../models/training_model.dart';
@@ -47,8 +46,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
 
   final splitFocusNode = FocusNode();
   final lapFocusNode = FocusNode();
-  final selectedDistUnit = signal<String>('m');
-  final selectedSpeedUnit = signal<String>('m/s');
+  final selectedDistUnit = ValueNotifier<String>('m');
+  final selectedSpeedUnit = ValueNotifier<String>('m/s');
 
   @override
   void initState() {
@@ -89,8 +88,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         split != '0' && split.isNotEmpty ? double.parse(split) : 200;
     widget.training.lapLength =
         lap.isNotEmpty && lap != '0' ? double.parse(lap) : 1000;
-    widget.training.distanceUnit = selectedDistUnit();
-    widget.training.speedUnit = selectedSpeedUnit();
+    widget.training.distanceUnit = selectedDistUnit.value;
+    widget.training.speedUnit = selectedSpeedUnit.value;
     widget.training.maxlaps = maxLaps();
     Navigator.pop(context, true);
   }
@@ -142,18 +141,24 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           selectedSpeedUnit: selectedSpeedUnit,
           selectedDistUnit: selectedDistUnit,
         ),
-        NumericField(
-          focusNode: splitFocusNode,
-          label: 'ETDSplitDistance'.tr(args: [selectedDistUnit.watch(context)]),
-          controller: splitController,
-          value: widget.training.splitLength,
-          onSubmitted: _onsubmittedSplit,
+        ValueListenableBuilder(
+          valueListenable: selectedDistUnit,
+          builder: (context, value, _) => NumericField(
+            focusNode: splitFocusNode,
+            label: 'ETDSplitDistance'.tr(args: [value]),
+            controller: splitController,
+            value: widget.training.splitLength,
+            onSubmitted: _onsubmittedSplit,
+          ),
         ),
-        NumericField(
-          focusNode: lapFocusNode,
-          label: 'ETDLapDistance'.tr(args: [selectedDistUnit.watch(context)]),
-          controller: lapController,
-          value: widget.training.lapLength,
+        ValueListenableBuilder(
+          valueListenable: selectedDistUnit,
+          builder: (context, value, _) => NumericField(
+            focusNode: lapFocusNode,
+            label: 'ETDLapDistance'.tr(args: [value]),
+            controller: lapController,
+            value: widget.training.lapLength,
+          ),
         ),
         SimpleSpinBoxField(
           label: Text('ETDNumberLaps'.tr()),

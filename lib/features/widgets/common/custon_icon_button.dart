@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../common/singletons/app_settings.dart';
 import '../../../common/theme/app_font_style.dart';
@@ -30,37 +28,40 @@ class CustomIconButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       child: Focus(
         focusNode: focusNode,
-        child: Card(
-          elevation: 2,
-          margin: EdgeInsets.zero,
-          color: app.brightnessMode.watch(context) == Brightness.light
-              ? colorScheme.onPrimary.withOpacity(0.3)
-              : colorScheme.primary.withOpacity(0.2),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(5),
-            child: InkWell(
+        child: ValueListenableBuilder(
+          valueListenable: app.brightnessMode,
+          builder: (context, value, _) => Card(
+            elevation: 2,
+            margin: EdgeInsets.zero,
+            color: value == Brightness.light
+                ? colorScheme.onPrimary.withOpacity(0.3)
+                : colorScheme.primary.withOpacity(0.2),
+            child: Material(
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(5),
-              onLongPress: onLongPressed,
-              onTap: onPressed,
-              child: SizedBox(
-                width: 48,
-                height: label == null ? 48 : 54,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 3),
-                  child: label != null
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            icon,
-                            const SizedBox(height: 2),
-                            Text(
-                              label!,
-                              style: AppFontStyle.roboto12,
-                            ),
-                          ],
-                        )
-                      : icon,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(5),
+                onLongPress: onLongPressed,
+                onTap: onPressed,
+                child: SizedBox(
+                  width: 48,
+                  height: label == null ? 48 : 54,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: label != null
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              icon,
+                              const SizedBox(height: 2),
+                              Text(
+                                label!,
+                                style: AppFontStyle.roboto12,
+                              ),
+                            ],
+                          )
+                        : icon,
+                  ),
                 ),
               ),
             ),

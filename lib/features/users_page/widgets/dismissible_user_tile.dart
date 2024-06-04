@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:trainers_stopwatch/features/widgets/common/generic_dialog.dart';
 
 import '../../../models/user_model.dart';
+import '../../widgets/common/generic_dialog.dart';
 import '../../widgets/common/user_card.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 
@@ -29,11 +28,11 @@ class DismissibleUserTile extends StatefulWidget {
 }
 
 class _DismissibleUserTileState extends State<DismissibleUserTile> {
-  late final Signal<bool> isChecked;
+  late final ValueNotifier<bool> isChecked;
 
   @override
   void initState() {
-    isChecked = signal(widget.isChecked);
+    isChecked = ValueNotifier(widget.isChecked);
 
     super.initState();
   }
@@ -46,9 +45,9 @@ class _DismissibleUserTileState extends State<DismissibleUserTile> {
 
   void _onTap() {
     if (!widget.blockedUserIds.contains(widget.user.id!)) {
-      isChecked.value = !isChecked();
+      isChecked.value = !isChecked.value;
       if (widget.selectUser != null) {
-        widget.selectUser!(isChecked(), widget.user);
+        widget.selectUser!(isChecked.value, widget.user);
       }
     } else {
       GenericDialog.open(
@@ -68,10 +67,13 @@ class _DismissibleUserTileState extends State<DismissibleUserTile> {
       background: DismissibleContainers.background(context),
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: GlobalKey(),
-      child: UserCard(
-        isChecked: isChecked.watch(context),
-        user: widget.user,
-        onTap: _onTap,
+      child: ValueListenableBuilder(
+        valueListenable: isChecked,
+        builder: (context, value, _) => UserCard(
+          isChecked: value,
+          user: widget.user,
+          onTap: _onTap,
+        ),
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd &&

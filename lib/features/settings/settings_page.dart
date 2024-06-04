@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../common/constants.dart';
 import '../../common/singletons/app_settings.dart';
@@ -119,11 +118,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
-                        IconButton.filledTonal(
-                          onPressed: app.toggleBrightnessMode,
-                          icon: _brightnessIcon(app.brightnessMode.watch(
-                            context,
-                          )),
+                        ValueListenableBuilder(
+                          valueListenable: app.brightnessMode,
+                          builder: (context, value, _) =>
+                              IconButton.filledTonal(
+                            onPressed: app.toggleBrightnessMode,
+                            icon: _brightnessIcon(value),
+                          ),
                         ),
                       ],
                     ),
@@ -134,28 +135,32 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: AppFontStyle.roboto16,
                         ),
                         const SizedBox(width: 12),
-                        SegmentedButton<Contrast>(
-                          showSelectedIcon: false,
-                          segments: const [
-                            ButtonSegment(
-                              value: Contrast.standard,
-                              icon: Icon(Icons.brightness_5),
-                            ),
-                            ButtonSegment(
-                              value: Contrast.medium,
-                              icon: Icon(Icons.brightness_6),
-                            ),
-                            ButtonSegment(
-                              value: Contrast.high,
-                              icon: Icon(Icons.brightness_7),
-                            ),
-                          ],
-                          selected: {app.contrastMode.watch(context)},
-                          onSelectionChanged: (value) {
-                            setState(() {
-                              app.setContrast(value.first);
-                            });
-                          },
+                        ValueListenableBuilder(
+                          valueListenable: app.contrastMode,
+                          builder: (context, value, _) =>
+                              SegmentedButton<Contrast>(
+                            showSelectedIcon: false,
+                            segments: const [
+                              ButtonSegment(
+                                value: Contrast.standard,
+                                icon: Icon(Icons.brightness_5),
+                              ),
+                              ButtonSegment(
+                                value: Contrast.medium,
+                                icon: Icon(Icons.brightness_6),
+                              ),
+                              ButtonSegment(
+                                value: Contrast.high,
+                                icon: Icon(Icons.brightness_7),
+                              ),
+                            ],
+                            selected: {value},
+                            onSelectionChanged: (value) {
+                              setState(() {
+                                app.setContrast(value.first);
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),

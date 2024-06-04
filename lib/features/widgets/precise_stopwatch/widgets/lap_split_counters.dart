@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../bloc/stopwatch_bloc.dart';
 import '../../../../common/theme/app_font_style.dart';
@@ -8,7 +7,7 @@ import 'counter_row.dart';
 
 class LapSplitCouters extends StatelessWidget {
   final StopwatchBloc bloc;
-  final Signal<int?> maxLaps;
+  final ValueNotifier<int?> maxLaps;
 
   const LapSplitCouters({
     super.key,
@@ -38,18 +37,21 @@ class LapSplitCouters extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            maxLaps.watch(context) != null
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      '$maxLaps Laps',
+            ValueListenableBuilder(
+              valueListenable: maxLaps,
+              builder: (context, value, _) => value != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        '$maxLaps Laps',
+                        style: AppFontStyle.roboto12,
+                      ),
+                    )
+                  : Text(
+                      'PSCounters'.tr(),
                       style: AppFontStyle.roboto12,
                     ),
-                  )
-                : Text(
-                    'PSCounters'.tr(),
-                    style: AppFontStyle.roboto12,
-                  ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: CounterRow(

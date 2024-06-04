@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../common/singletons/app_settings.dart';
@@ -13,7 +12,7 @@ class UserController {
   final email = TextEditingController();
   final phone = TextEditingController();
 
-  final image = signal<String>(defaultPhotoImage);
+  final image = ValueNotifier<String>(defaultPhotoImage);
 
   void init(UserModel? user) {
     if (user != null) {
@@ -37,8 +36,8 @@ class UserController {
     final destinyPath = AppSettings.instance.imagePath;
     File? oldImageFile;
 
-    if (image().isNotEmpty && image() != defaultPhotoImage) {
-      oldImageFile = File(image());
+    if (image.value.isNotEmpty && image.value != defaultPhotoImage) {
+      oldImageFile = File(image.value);
     }
 
     final finalPath = '$destinyPath/$fileName';

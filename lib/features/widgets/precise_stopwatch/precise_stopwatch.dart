@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/singletons/app_settings.dart';
@@ -29,7 +28,7 @@ class PreciseStopwatch extends StatefulWidget {
 
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late final PreciseStopwatchController _controller;
-  final Signal<int?> maxLaps = signal<int?>(null);
+  final ValueNotifier<int?> maxLaps = ValueNotifier<int?>(null);
   final app = AppSettings.instance;
 
   String name = 'Name';

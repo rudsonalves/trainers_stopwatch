@@ -20,6 +20,51 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_04 - version: 0.9.4+24
+
+Replace Signal with ValueNotifier
+
+Replaced the Signal package with ValueNotifier in several parts of the codebase to address issues encountered during development with hot-reload. It seems that Signal was masking dispose errors of some elements, causing interference with hot-reload. While not entirely certain, I decided to remove Signal and use ValueNotifier instead.
+
+Changes Made:
+- Updated lib/bloc/stopwatch_bloc.dart:
+  - Replaced Signal with ValueNotifier for attributes _lapCounter and _splitCounter.
+- Updated lib/common/singletons/app_settings.dart:
+  - Replaced Signal with ValueNotifier for attributes _brightness and _contrast.
+- Updated lib/features/personal_training_page/widgets/edit_history_dialog/widgets/distance_unit_row.dart:
+  - Replaced Signal with ValueNotifier for attributes selectedUnit and selectedSpeedUnit.
+- Updated lib/features/personal_training_page/widgets/edit_history_dialog/widgets/speed_unit_row.dart:
+  - Replaced Signal with ValueNotifier for attributes selectedSpeedUnit and selectedDistUnit.
+- Updated lib/features/users_page/widgets/dismissible_user_tile.dart:
+  - Replaced Signal with ValueNotifier for attribute isChecked.
+- Updated lib/features/users_page/widgets/user_dialog/user_controller.dart:
+  - Replaced Signal with ValueNotifier for attribute image.
+- Updated lib/features/widgets/edit_training_dialog/edit_training_dialog.dart:
+  - Replaced Signal with ValueNotifier for attributes splitFocusNode, lapFocusNode, selectedDistUnit, and selectedSpeedUnit.
+- Updated lib/features/widgets/edit_training_dialog/widgets/distance_unit_row.dart:
+  - Replaced Signal with ValueNotifier for attributes selectedUnit and selectedSpeedUnit.
+- Updated lib/features/widgets/edit_training_dialog/widgets/speed_unit_row.dart:
+  - Replaced Signal with ValueNotifier for attributes selectedSpeedUnit and selectedDistUnit.
+- Updated lib/features/stopwatch_page/stopwatch_page_controller.dart:
+  - Replaced Signal with ValueNotifier for attributes _stopwatchLength and _historyMessage.
+- Updated lib/features/widgets/precise_stopwatch/precise_stopwatch.dart:
+  - Replaced Signal with ValueNotifier for attribute maxLaps.
+- Updated lib/features/widgets/precise_stopwatch/widgets/counter_row.dart:
+  - Replaced Signal with ValueNotifier for attribute counter.
+- Updated lib/features/widgets/precise_stopwatch/widgets/lap_split_counters.dart:
+  - Replaced Signal with ValueNotifier for attribute maxLaps.
+- Updated lib/features/widgets/precise_stopwatch/widgets/stopwatch_display.dart:
+  - Replaced Signal with ValueNotifier for attribute durationTraining.
+- Removed Signal package from pubspec.yaml.
+- lib/features/users_page/widgets/user_dialog/user_dialog.dart
+- lib/features/settings/settings_page.dart:
+- lib/features/stopwatch_page/stopwatch_page.dart:
+- lib/features/widgets/common/custom_icon_button.dart
+- lib/features/widgets/precise_stopwatch/precise_stopwatch_controller.dart:
+- lib/features/widgets/precise_stopwatch/widgets/stopwatch_button_bar.dart:
+  - Adjusted for the replacement of Signal with ValueNotifier.
+
+
 ## 2024_06_04 - version: 0.9.4+23
 
 feat: Update app icons and improve tutorial content

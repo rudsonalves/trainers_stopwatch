@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 class DistanceUnitRow extends StatefulWidget {
   const DistanceUnitRow({
@@ -12,10 +11,10 @@ class DistanceUnitRow extends StatefulWidget {
   });
 
   final String label;
-  final Signal<String> selectedUnit;
+  final ValueNotifier<String> selectedUnit;
   final List<String> distanceUnits;
   final Map<String, List<String>> speedAllowedValues;
-  final Signal<String> selectedSpeedUnit;
+  final ValueNotifier<String> selectedSpeedUnit;
 
   @override
   State<DistanceUnitRow> createState() => _DistanceUnitRowState();
@@ -29,7 +28,7 @@ class _DistanceUnitRowState extends State<DistanceUnitRow> {
         Text(widget.label),
         const SizedBox(width: 8),
         DropdownButton<String>(
-          value: widget.selectedUnit(),
+          value: widget.selectedUnit.value,
           items: widget.distanceUnits.map(
             (item) {
               return DropdownMenuItem(
@@ -42,7 +41,7 @@ class _DistanceUnitRowState extends State<DistanceUnitRow> {
             if (value != null) {
               widget.selectedUnit.value = value;
               if (!widget.speedAllowedValues[value]!
-                  .contains(widget.selectedSpeedUnit())) {
+                  .contains(widget.selectedSpeedUnit.value)) {
                 widget.selectedSpeedUnit.value =
                     widget.speedAllowedValues[value]!.first;
               }

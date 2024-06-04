@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 import '../../../../common/theme/app_font_style.dart';
 
 class StopwatchDisplay extends StatelessWidget {
-  final Signal<Duration> durationTraining;
+  final ValueNotifier<Duration> durationTraining;
 
   const StopwatchDisplay({
     super.key,
@@ -30,10 +29,13 @@ class StopwatchDisplay extends StatelessWidget {
           color: colorScheme.primary.withOpacity(0.2),
         ),
       ),
-      child: Text(
-        formatCs(durationTraining.watch(context)),
-        style: AppFontStyle.ibm26.copyWith(
-          color: colorScheme.primary,
+      child: ValueListenableBuilder(
+        valueListenable: durationTraining,
+        builder: (context, value, _) => Text(
+          formatCs(value),
+          style: AppFontStyle.ibm26.copyWith(
+            color: colorScheme.primary,
+          ),
         ),
       ),
     );
