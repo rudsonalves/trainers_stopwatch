@@ -17,7 +17,7 @@ import 'features/trainings_page/trainings_page.dart';
 class MyMaterialApp extends StatelessWidget {
   MyMaterialApp({super.key});
 
-  final settings = AppSettings.instance;
+  final app = AppSettings.instance;
 
   ThemeData lightContrast(MaterialTheme theme, Contrast contrast) {
     switch (contrast) {
@@ -50,9 +50,9 @@ class MyMaterialApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      theme: settings.brightnessMode.watch(context) == Brightness.light
-          ? lightContrast(theme, settings.contrastMode.watch(context))
-          : darkContrast(theme, settings.contrastMode.watch(context)),
+      theme: app.brightnessMode.watch(context) == Brightness.light
+          ? lightContrast(theme, app.contrastMode.watch(context))
+          : darkContrast(theme, app.contrastMode.watch(context)),
       debugShowCheckedModeBanner: false,
       initialRoute: StopwatchOverlay.routeName,
       routes: {

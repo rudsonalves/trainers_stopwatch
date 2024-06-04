@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../common/singletons/app_settings.dart';
 
 class SpeedUnitRow extends StatefulWidget {
   const SpeedUnitRow({
@@ -21,7 +21,7 @@ class SpeedUnitRow extends StatefulWidget {
 }
 
 class _SpeedUnitRowState extends State<SpeedUnitRow> {
-  final appSettings = AppSettings.instance;
+  final app = AppSettings.instance;
 
   @override
   Widget build(BuildContext context) {

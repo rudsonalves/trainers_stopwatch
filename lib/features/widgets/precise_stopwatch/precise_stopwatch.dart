@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/singletons/app_settings.dart';
 import '../../../models/user_model.dart';
 import '../edit_training_dialog/edit_training_dialog.dart';
 import 'precise_stopwatch_controller.dart';

@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
+import '../../common/singletons/app_settings.dart';
 import '../../manager/user_manager.dart';
 import '../../models/user_model.dart';
 import 'users_page_state.dart';

@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../../bloc/stopwatch_state.dart';
+import '../../../common/singletons/app_settings.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 import '../../widgets/precise_stopwatch/precise_stopwatch.dart';
 

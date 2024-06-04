@@ -23,7 +23,7 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = AppSettings.instance;
+    final app = AppSettings.instance;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -33,7 +33,7 @@ class CustomIconButton extends StatelessWidget {
         child: Card(
           elevation: 2,
           margin: EdgeInsets.zero,
-          color: settings.brightnessMode.watch(context) == Brightness.light
+          color: app.brightnessMode.watch(context) == Brightness.light
               ? colorScheme.onPrimary.withOpacity(0.3)
               : colorScheme.primary.withOpacity(0.2),
           child: Material(
