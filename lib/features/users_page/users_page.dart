@@ -36,7 +36,9 @@ class _UsersPageState extends State<UsersPage> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         overlay = Onboarding.of(context);
-        _startTutorial();
+        if (app.showTutorial || app.tutorialOn) {
+          _startTutorial();
+        }
       },
     );
   }
@@ -82,11 +84,11 @@ class _UsersPageState extends State<UsersPage> {
       final overlay = Onboarding.of(context);
       if (overlay != null) {
         if (app.focusNodes[9].context?.mounted ?? false) {
-          overlay.showFromIndex(4);
+          overlay.showFromIndex(2);
         } else {
           await Future.delayed(const Duration(microseconds: 100), () {
             if (app.focusNodes[9].context?.mounted ?? false) {
-              overlay.showFromIndex(4);
+              overlay.showFromIndex(2);
             }
           });
         }

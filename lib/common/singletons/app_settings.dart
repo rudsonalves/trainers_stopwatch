@@ -7,7 +7,7 @@ import 'package:signals/signals_flutter.dart';
 import '../../manager/settings_manager.dart';
 import '../../models/settings_model.dart';
 
-const int maxFocusNode = 18;
+const int maxFocusNode = 23;
 
 class AppSettings extends SettingsModel {
   AppSettings._();
@@ -55,6 +55,7 @@ class AppSettings extends SettingsModel {
   }
 
   void disableTutorial() {
+    tutorialOn = false;
     showTutorial = false;
     update();
   }
