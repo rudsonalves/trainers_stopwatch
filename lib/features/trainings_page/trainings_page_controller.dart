@@ -103,6 +103,11 @@ class TrainingsPageController extends ChangeNotifier {
     }
   }
 
+  bool areAllSelecting() {
+    if (selectedTraining.isEmpty) return false;
+    return !selectedTraining.any((item) => !item.selected);
+  }
+
   Future<void> updateTraining(TrainingModel training) async {
     try {
       _changeState(TrainingsPageStateLoading());

@@ -15,6 +15,24 @@ class LapSplitCouters extends StatelessWidget {
     required this.maxLaps,
   });
 
+  Widget lapsHeader(int? value) {
+    if (value != null) {
+      final String lapLabel = value == 1 ? 'Lap' : 'Laps';
+      return Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          '$value $lapLabel',
+          style: AppFontStyle.roboto12,
+        ),
+      );
+    } else {
+      return Text(
+        'PSCounters'.tr(),
+        style: AppFontStyle.roboto12,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -38,20 +56,8 @@ class LapSplitCouters extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ValueListenableBuilder(
-              valueListenable: maxLaps,
-              builder: (context, value, _) => value != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        '$maxLaps Laps',
-                        style: AppFontStyle.roboto12,
-                      ),
-                    )
-                  : Text(
-                      'PSCounters'.tr(),
-                      style: AppFontStyle.roboto12,
-                    ),
-            ),
+                valueListenable: maxLaps,
+                builder: (context, value, _) => lapsHeader(value)),
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: CounterRow(

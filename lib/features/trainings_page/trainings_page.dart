@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/functions/share_functions.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../models/training_model.dart';
 import '../history_page/history_page.dart';
@@ -21,7 +22,6 @@ class TrainingsPage extends StatefulWidget {
 
 class _TrainingsPageState extends State<TrainingsPage> {
   final _controller = TrainingsPageController();
-  bool _allSelected = false;
 
   List<TrainingModel> get trainings => _controller.trainings;
 
@@ -70,13 +70,27 @@ class _TrainingsPageState extends State<TrainingsPage> {
   }
 
   void _selectAllTraining() {
-    _allSelected = true;
     _controller.selectAllTraining();
   }
 
   void _deselectAllTraining() {
-    _allSelected = false;
     _controller.deselectAllTraining();
+  }
+
+  void _sendEmail() {
+    final trainings = <TrainingModel>[];
+    for (final item in _controller.selectedTraining) {
+      if (item.selected) {
+        trainings.add(
+          _controller.trainings.firstWhere((t) => t.id == item.trainingId),
+        );
+      }
+    }
+
+    AppShare.sendEmail(
+      recipient: _controller.user!.email,
+      trainings: trainings,
+    );
   }
 
   @override
@@ -150,24 +164,35 @@ class _TrainingsPageState extends State<TrainingsPage> {
                     ButtonBar(
                       alignment: MainAxisAlignment.spaceAround,
                       children: [
-                        OutlinedButton.icon(
+                        IconButton.filledTonal(
+                          onPressed: _controller.haveTrainingSelected
+                              ? _sendEmail
+                              : null,
+                          icon: const Icon(Icons.share),
+                          tooltip: 'TPShare'.tr(),
+                        ),
+                        IconButton.filledTonal(
                           onPressed: _controller.haveTrainingSelected
                               ? _removeSelected
                               : null,
-                          label: Text('GenericRemove'.tr()),
+                          tooltip: 'GenericRemove'.tr(),
                           icon: const Icon(Icons.delete),
                         ),
-                        _allSelected
-                            ? OutlinedButton.icon(
+                        _controller.areAllSelecting()
+                            ? IconButton.filledTonal(
                                 onPressed: _controller.haveTrainingSelected
                                     ? _deselectAllTraining
-                                    : null,
-                                label: Text('TPDeselectAll'.tr()),
+                                    : _controller.trainings.isEmpty
+                                        ? null
+                                        : _selectAllTraining,
+                                tooltip: 'TPDeselectAll'.tr(),
                                 icon: const Icon(Icons.deselect),
                               )
-                            : OutlinedButton.icon(
-                                onPressed: _selectAllTraining,
-                                label: Text('TPSelectAll'.tr()),
+                            : IconButton.filledTonal(
+                                onPressed: _controller.trainings.isEmpty
+                                    ? null
+                                    : _selectAllTraining,
+                                tooltip: 'TPSelectAll'.tr(),
                                 icon: const Icon(Icons.select_all),
                               ),
                       ],

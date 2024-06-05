@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class SimpleSpinBoxField extends StatefulWidget {
-  final int value;
+  final int? value;
   final Widget? label;
   final TextStyle? style;
   final String? hintText;
@@ -16,7 +16,7 @@ class SimpleSpinBoxField extends StatefulWidget {
 
   const SimpleSpinBoxField({
     super.key,
-    this.value = 0,
+    this.value,
     this.label,
     this.style,
     this.hintText,
@@ -42,7 +42,7 @@ class _SimpleSpinBoxFieldState extends State<SimpleSpinBoxField> {
   void initState() {
     super.initState();
 
-    value = widget.value;
+    value = widget.value ?? 0;
     widget.controller.text = value.toString().padLeft(2, '0');
   }
 

@@ -29,7 +29,10 @@ class UserCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ListTile(
-        title: Text(user.name),
+        title: Text(
+          user.name,
+          overflow: TextOverflow.ellipsis,
+        ),
         subtitle: Text(
           '${user.email}\n${user.phone}',
         ),
