@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../models/user_model.dart';
 import '../../models/training_model.dart';
+import '../widgets/edit_training_dialog/edit_training_dialog.dart';
 import 'history_page_controller.dart';
 import 'history_page_state.dart';
 import 'widgets/card_history.dart';
@@ -55,28 +56,44 @@ class _HistoryPageState extends State<HistoryPage> {
     _controller.init(training);
   }
 
-  Card _cardHeader() {
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: Text(
-                user.name,
-                style: AppFontStyle.roboto18SemiBold,
+  Widget _cardHeader() {
+    return InkWell(
+      onTap: () async {
+        await EditTrainingDialog.open(
+          context,
+          userName: user.name,
+          training: training,
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Text(
+                  user.name,
+                  style: AppFontStyle.roboto18SemiBold,
+                ),
               ),
-            ),
-            const Divider(),
-            Text(
-              'HPTrainingDistances'.tr(),
-              style: AppFontStyle.roboto16SemiBold,
-            ),
-            Text(lapMessage),
-            Text(splitMessage),
-          ],
+              const Divider(),
+              Text(
+                'HPTrainingDistances'.tr(),
+                style: AppFontStyle.roboto16SemiBold,
+              ),
+              Text(lapMessage),
+              Text(splitMessage),
+              Text(
+                'ETDComments'.tr(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(training.comments ?? '-'),
+            ],
+          ),
         ),
       ),
     );
@@ -95,20 +112,6 @@ class _HistoryPageState extends State<HistoryPage> {
         child: Column(
           children: [
             _cardHeader(),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceAround,
-              children: [
-                ButtonBar(
-                  children: [
-                    OutlinedButton.icon(
-                      icon: const Icon(Icons.share),
-                      label: Text('HPShare'.tr()),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
-            ),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -130,13 +133,10 @@ class _HistoryPageState extends State<HistoryPage> {
                         String startMessage = _controller.trainingStatistic();
                         return ListView.builder(
                           itemCount: _controller.histories.length,
-                          itemBuilder: (context, index) {
-                            final history = _controller.histories[index];
-                            return CardHistory(
-                              history: history,
-                              startMessage: startMessage,
-                            );
-                          },
+                          itemBuilder: (context, index) => CardHistory(
+                            history: _controller.histories[index],
+                            startMessage: startMessage,
+                          ),
                         );
                       default:
                         return Center(

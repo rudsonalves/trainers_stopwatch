@@ -43,9 +43,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   final splitController = TextEditingController(text: '');
   final lapController = TextEditingController(text: '');
   final maxLapController = TextEditingController();
+  final commentsController = TextEditingController(text: '');
 
-  final splitFocusNode = FocusNode();
-  final lapFocusNode = FocusNode();
   final selectedDistUnit = ValueNotifier<String>('m');
   final selectedSpeedUnit = ValueNotifier<String>('m/s');
 
@@ -53,7 +52,6 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      FocusScope.of(context).requestFocus(splitFocusNode);
       final splitLength = widget.training.splitLength.toString();
       final lapLength = widget.training.lapLength.toString();
       splitController.text = splitLength;
@@ -66,6 +64,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
       selectedSpeedUnit.value = widget.training.speedUnit;
       maxLapController.text =
           widget.training.maxlaps?.toString().padLeft(2, '0') ?? '00';
+      commentsController.text = widget.training.comments ?? '';
     });
   }
 
@@ -76,8 +75,6 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     maxLapController.dispose();
     selectedSpeedUnit.dispose();
     selectedDistUnit.dispose();
-    splitFocusNode.dispose();
-    lapFocusNode.dispose();
     super.dispose();
   }
 
@@ -91,6 +88,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     widget.training.distanceUnit = selectedDistUnit.value;
     widget.training.speedUnit = selectedSpeedUnit.value;
     widget.training.maxlaps = maxLaps();
+    widget.training.comments = commentsController.text;
     Navigator.pop(context, true);
   }
 
@@ -100,7 +98,6 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   }
 
   void _onsubmittedSplit(String value) {
-    FocusScope.of(context).requestFocus(lapFocusNode);
     lapController.selection = TextSelection(
       baseOffset: 0,
       extentOffset: lapController.text.length,
@@ -120,6 +117,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         Center(
           child: Text(
             widget.userName,
+            overflow: TextOverflow.ellipsis,
             style: AppFontStyle.roboto18SemiBold,
           ),
         ),
@@ -144,7 +142,6 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         ValueListenableBuilder(
           valueListenable: selectedDistUnit,
           builder: (context, value, _) => NumericField(
-            focusNode: splitFocusNode,
             label: 'ETDSplitDistance'.tr(args: [value]),
             controller: splitController,
             value: widget.training.splitLength,
@@ -154,13 +151,23 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         ValueListenableBuilder(
           valueListenable: selectedDistUnit,
           builder: (context, value, _) => NumericField(
-            focusNode: lapFocusNode,
             label: 'ETDLapDistance'.tr(args: [value]),
             controller: lapController,
             value: widget.training.lapLength,
           ),
         ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: commentsController,
+          decoration: InputDecoration(
+            labelText: 'ETDComments'.tr(),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+          ),
+        ),
         SimpleSpinBoxField(
+          value: widget.training.maxlaps,
           label: Text('ETDNumberLaps'.tr()),
           maxValue: 100,
           controller: maxLapController,

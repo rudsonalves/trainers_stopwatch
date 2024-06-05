@@ -20,6 +20,52 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_04 - version: 0.9.4+25
+
+Introduced new features and made several improvements to the application.
+
+Refactor AndroidManifest and Update Application Assets
+
+- Updated `AndroidManifest.xml`:
+  - Commented out `<intent>` element for `android.intent.action.PROCESS_TEXT`.
+  - Added `<intent>` element for `android.intent.action.SENDTO` with `mailto` scheme.
+
+- Replaced launcher icons in various resolutions:
+  - `mipmap-hdpi/ic_launcher.png`
+  - `mipmap-mdpi/ic_launcher.png`
+  - `mipmap-xhdpi/ic_launcher.png`
+  - `mipmap-xxhdpi/ic_launcher.png`
+  - `mipmap-xxxhdpi/ic_launcher.png`
+
+- Added new asset icons:
+  - `assets/icon/stopwatch.png`
+  - `assets/svgs/stopwatch2.svg`
+
+- Updated translations to include "Share" feature:
+  - `assets/translations/en-US.json`
+  - `assets/translations/es.json`
+  - `assets/translations/pt-BR.json`
+
+- Incremented app version from `0.9.3+22` to `0.9.3+24` in `lib/common/app_info.dart`.
+
+- Added functionality to generate and share PDFs via email:
+  - Created `lib/common/functions/build_pdf.dart` to build PDFs from training data.
+  - Created `lib/common/functions/share_functions.dart` to handle email sending with attachment.
+
+- Enhanced `history_page` to include training comments:
+  - Modified `_cardHeader` in `lib/features/history_page/history_page.dart`.
+
+- Improved training selection and sharing functionality:
+  - Updated `lib/features/trainings_page/trainings_page.dart` to handle email sharing.
+  - Enhanced `TrainingsPageController` to check if all trainings are selected.
+
+- Improved UI components:
+  - `SimpleSpinBoxField` in `lib/features/widgets/common/simple_spin_box_field.dart` to support nullable values.
+  - `UserCard` in `lib/features/widgets/common/user_card.dart` to handle text overflow.
+  - `EditTrainingDialog` in `lib/features/widgets/edit_training_dialog/edit_training_dialog.dart` to include comments.
+  - `LapSplitCounters` in `lib/features/widgets/precise_stopwatch/widgets/lap_split_counters.dart` to dynamically display lap count.
+
+
 ## 2024_06_04 - version: 0.9.4+24
 
 Replace Signal with ValueNotifier
