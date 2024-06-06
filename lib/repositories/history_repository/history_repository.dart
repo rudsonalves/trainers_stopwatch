@@ -38,7 +38,7 @@ class HistoryRepository implements AbstractHistoryRepository {
 
   @override
   Future<int> update(HistoryModel history) async {
-    final result = await _store.update(history.id!, history.toMap());
+    final result = await _store.update(history.toMap());
     return result;
   }
 }

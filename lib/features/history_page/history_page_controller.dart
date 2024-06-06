@@ -28,6 +28,14 @@ class HistoryPageController extends ChangeNotifier {
     getHistory();
   }
 
+  Future<void> updateHistory(HistoryModel history) async {
+    await _historyManager.update(history);
+  }
+
+  Future<void> deleteHistory(HistoryModel history) async {
+    await _historyManager.delete(history);
+  }
+
   Future<void> getHistory() async {
     try {
       _changeState(HistoryPageStateLoading());

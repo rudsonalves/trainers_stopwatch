@@ -5,6 +5,7 @@ import '../../../common/theme/app_font_style.dart';
 import '../../../models/training_model.dart';
 import '../common/numeric_field.dart';
 import '../common/simple_spin_box_field.dart';
+import 'widgets/color_dialog.dart';
 import 'widgets/distance_unit_row.dart';
 import 'widgets/speed_unit_row.dart';
 
@@ -48,9 +49,13 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   final selectedDistUnit = ValueNotifier<String>('m');
   final selectedSpeedUnit = ValueNotifier<String>('m/s');
 
+  late final currentColor = ValueNotifier<Color>(Colors.green);
+
   @override
   void initState() {
     super.initState();
+    currentColor.value = widget.training.color;
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final splitLength = widget.training.splitLength.toString();
       final lapLength = widget.training.lapLength.toString();
@@ -89,6 +94,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     widget.training.speedUnit = selectedSpeedUnit.value;
     widget.training.maxlaps = maxLaps();
     widget.training.comments = commentsController.text;
+    widget.training.color = currentColor.value;
     Navigator.pop(context, true);
   }
 
@@ -110,25 +116,14 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
 
     return SimpleDialog(
       backgroundColor: colorScheme.onInverseSurface,
-      title: Center(child: Text('ETDTitle'.tr())),
+      title: Text(widget.userName),
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       children: [
-        const Divider(),
-        Center(
-          child: Text(
-            widget.userName,
-            overflow: TextOverflow.ellipsis,
-            style: AppFontStyle.roboto18SemiBold,
-          ),
+        Text(
+          DateFormat.yMd().add_Hm().format(widget.training.date),
+          style: AppFontStyle.roboto10,
+          textAlign: TextAlign.left,
         ),
-        Center(
-          child: Text(
-            '${DateFormat.yMMMMd().format(widget.training.date)} - '
-            '${DateFormat.Hms().format(widget.training.date)}',
-            style: AppFontStyle.roboto16,
-          ),
-        ),
-        const Divider(),
         DistanceUnitRow(
           label: 'ETDDistanceUnit'.tr(),
           selectedUnit: selectedDistUnit,
@@ -139,31 +134,67 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           selectedSpeedUnit: selectedSpeedUnit,
           selectedDistUnit: selectedDistUnit,
         ),
-        ValueListenableBuilder(
-          valueListenable: selectedDistUnit,
-          builder: (context, value, _) => NumericField(
-            label: 'ETDSplitDistance'.tr(args: [value]),
-            controller: splitController,
-            value: widget.training.splitLength,
-            onSubmitted: _onsubmittedSplit,
-          ),
-        ),
-        ValueListenableBuilder(
-          valueListenable: selectedDistUnit,
-          builder: (context, value, _) => NumericField(
-            label: 'ETDLapDistance'.tr(args: [value]),
-            controller: lapController,
-            value: widget.training.lapLength,
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  ValueListenableBuilder(
+                    valueListenable: selectedDistUnit,
+                    builder: (context, value, _) => NumericField(
+                      label: 'ETDSplitDistance'.tr(args: [value]),
+                      controller: splitController,
+                      value: widget.training.splitLength,
+                      onSubmitted: _onsubmittedSplit,
+                    ),
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: selectedDistUnit,
+                    builder: (context, value, _) => NumericField(
+                      label: 'ETDLapDistance'.tr(args: [value]),
+                      controller: lapController,
+                      value: widget.training.lapLength,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 20),
+            ValueListenableBuilder(
+                valueListenable: currentColor,
+                builder: (context, value, _) {
+                  return InkWell(
+                    onTap: () async {
+                      currentColor.value =
+                          await ColorDialog.open(context, currentColor.value);
+                    },
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: currentColor.value.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                          child: Text(
+                        'Color',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
+                    ),
+                  );
+                }),
+          ],
         ),
         const SizedBox(height: 8),
         TextFormField(
           controller: commentsController,
           decoration: InputDecoration(
             labelText: 'ETDComments'.tr(),
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
+            hintText: 'ETDCommHit'.tr(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
           ),
         ),
         SimpleSpinBoxField(
@@ -172,7 +203,6 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           maxValue: 100,
           controller: maxLapController,
         ),
-        const SizedBox(height: 12),
         ButtonBar(
           children: [
             FilledButton(

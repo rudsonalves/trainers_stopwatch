@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
+import '../common/constants.dart';
+
 class TrainingModel {
   int? id;
   int userId;
@@ -10,6 +14,7 @@ class TrainingModel {
   int? maxlaps;
   String distanceUnit;
   String speedUnit;
+  Color color;
 
   TrainingModel({
     this.id,
@@ -21,6 +26,7 @@ class TrainingModel {
     this.maxlaps,
     this.distanceUnit = 'm',
     this.speedUnit = 'm/s',
+    this.color = primaryColor,
   });
 
   Map<String, dynamic> toMap() {

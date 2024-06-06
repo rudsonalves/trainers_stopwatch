@@ -1,12 +1,18 @@
+import 'package:flutter/material.dart';
+
+import '../common/constants.dart';
+
 class MessagesModel {
   String title;
   String subTitle;
   String body;
+  Color color;
 
   MessagesModel({
     this.title = "",
     this.subTitle = "",
     this.body = "",
+    this.color = primaryColor,
   });
 
   @override

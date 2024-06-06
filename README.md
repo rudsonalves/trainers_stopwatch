@@ -20,6 +20,52 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_06 - version: 0.9.5+26
+
+Refactor and updates to the project:
+
+This commit introduces significant refactoring and updates across various components of the project. It includes enhancements in translation files, UI improvements, new functionality in stopwatch functions, and code clean-up. The changes aim to improve the maintainability and user experience of the application.
+
+* **Updated translation files:**
+  - Added new translation keys in `en-US.json`, `es.json`, and `pt-BR.json`.
+
+* **Updated constants:**
+  - Added `primaryColor` constant in `lib/common/constants.dart`.
+
+* **Enhanced stopwatch functions:**
+  - Added `formatDuration` function in `lib/common/functions/stopwatch_functions.dart`.
+
+* **Improved font styles:**
+  - Added `roboto10` style in `lib/common/theme/app_font_style.dart`.
+
+* **Refactored history page:**
+  - Replaced `CardHistory` with `DismissibleHistory` in `lib/features/history_page/history_page.dart`.
+
+* **Updated controllers:**
+  - Added `updateHistory` and `deleteHistory` methods to `HistoryPageController`.
+
+* **Improved trainings page:**
+  - Adjusted `trainings_page.dart` to reflect new control logic and color management.
+
+* **Implemented new widget:**
+  - Created `dismissible_history.dart` for managing history with edit and delete options.
+
+* **Enhanced edit training dialog:**
+  - Added color selection in `edit_training_dialog.dart` and created `color_dialog.dart`.
+
+* **Updated models and repositories:**
+  - Added a color field to `TrainingModel`.
+  - Adjusted `history_repository.dart` to support updates without explicitly passing an ID.
+
+* **Added new dependencies:**
+  - Included `flutter_colorpicker` in `pubspec.yaml`.
+
+* **Other improvements:**
+  - General adjustments in layouts and widget behaviors for better usability and visual consistency.
+
+The files `lib/features/history_page/widgets/card_history.dart` and `lib/features/personal_training_page/widgets/dismissible_personal_training.dart` were removed and replaced with `lib/features/widgets/common/dismissible_history.dart`.
+
+
 ## 2024_06_04 - version: 0.9.4+25
 
 Introduced new features and made several improvements to the application.

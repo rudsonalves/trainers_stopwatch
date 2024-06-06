@@ -42,7 +42,7 @@ class _StopwatDismissibleState extends State<StopwatDismissible> {
           ),
           secondaryBackground: DismissibleContainers.secondaryBackground(
             context,
-            label: 'Remove Training...',
+            label: 'SWDLabelDel'.tr(),
           ),
           child: widget.stopwatch,
           confirmDismiss: (direction) async {

@@ -131,7 +131,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
                               horizontal: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: colorScheme.primary.withOpacity(0.1),
+                              color: colorScheme.secondaryContainer
+                                  .withOpacity(0.4),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: DropdownButton<int>(
@@ -202,7 +203,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: colorScheme.primary,
+                            color: colorScheme.secondaryContainer,
                           ),
                         ),
                         child: Column(

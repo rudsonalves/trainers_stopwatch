@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../common/theme/app_font_style.dart';
+import '../widgets/common/dismissible_history.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch_controller.dart';
-import 'widgets/dismissible_personal_training.dart';
 
 class PersonalTrainingPage extends StatefulWidget {
   final PreciseStopwatch stopwatch;
@@ -79,10 +79,10 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
 
                   return ListView.builder(
                     itemCount: _controller.histories.length,
-                    itemBuilder: (context, index) =>
-                        DismissiblePersonalTraining(
+                    itemBuilder: (context, index) => DismissibleHistory(
                       history: histories[index],
-                      training: _controller.training,
+                      managerUpdade: _controller.updateHistory,
+                      managerDelete: _controller.deleteHistory,
                     ),
                   );
                 },

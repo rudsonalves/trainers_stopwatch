@@ -11,7 +11,6 @@ class HistoryManager {
 
   Future<void> init(int trainingId) async {
     _trainingId = trainingId;
-    // await getHistory();
   }
 
   Future<void> getHistory() async {

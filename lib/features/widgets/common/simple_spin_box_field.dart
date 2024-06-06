@@ -129,7 +129,7 @@ class _SimpleSpinBoxFieldState extends State<SimpleSpinBoxField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 5, bottom: 10),
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Row(
         children: [
           if (widget.label != null) widget.label!,

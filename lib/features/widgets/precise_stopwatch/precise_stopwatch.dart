@@ -29,6 +29,7 @@ class PreciseStopwatch extends StatefulWidget {
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late final PreciseStopwatchController _controller;
   final ValueNotifier<int?> maxLaps = ValueNotifier<int?>(null);
+  final trainingColor = ValueNotifier<Color>(primaryColor);
   final app = AppSettings.instance;
 
   String name = 'Name';
@@ -45,6 +46,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     maxLaps.value = _controller.training.maxlaps;
     name = widget.user.name;
     image = widget.user.photo ?? defaultPhotoImage;
+    trainingColor.value = _controller.training.color;
   }
 
   @override
@@ -52,6 +54,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     if (widget.isNotClone) {
       _controller.dispose();
     }
+    trainingColor.dispose();
     maxLaps.dispose();
     super.dispose();
   }
@@ -66,43 +69,46 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     _controller.updateSplitLapLength();
     maxLaps.value = _controller.training.maxlaps;
     _controller.bloc.maxLaps = _controller.training.maxlaps;
+    trainingColor.value = _controller.training.color;
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.primary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            UserImageName(image: image, name: name),
-            LapSplitCouters(
-              bloc: _controller.bloc,
-              maxLaps: maxLaps,
+    return ValueListenableBuilder(
+        valueListenable: trainingColor,
+        builder: (context, value, _) {
+          return Container(
+            decoration: BoxDecoration(
+              color: value.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                StopwatchDisplay(
-                    durationTraining: _controller.durationTraining),
-                StopwatchButtonBar(
-                  controller: _controller,
-                  setTraining: _editTraining,
-                  userId: widget.user.id!,
-                ),
-              ],
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  UserImageName(image: image, name: name),
+                  LapSplitCouters(
+                    bloc: _controller.bloc,
+                    maxLaps: maxLaps,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      StopwatchDisplay(
+                          durationTraining: _controller.durationTraining),
+                      StopwatchButtonBar(
+                        controller: _controller,
+                        setTraining: _editTraining,
+                        userId: widget.user.id!,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
