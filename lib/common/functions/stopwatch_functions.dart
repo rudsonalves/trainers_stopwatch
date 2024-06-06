@@ -35,4 +35,19 @@ class StopwatchFunctions {
 
     return '${speed.toStringAsFixed(2)} ${training.speedUnit}';
   }
+
+  static String formatDuration(Duration duration) {
+    double seconds = duration.inMilliseconds / 1000;
+    if (seconds < 60) {
+      return '${seconds.toStringAsFixed(2)}s';
+    } else if (seconds < 3600) {
+      final minutes = duration.inMinutes;
+      seconds -= minutes * 60;
+      return '${minutes.toString().padLeft(2, '0')}:${seconds.toStringAsFixed(2)}s';
+    }
+
+    final durationStr = duration.toString();
+    final point = durationStr.indexOf('.');
+    return '${durationStr.substring(0, point + 4)}s';
+  }
 }

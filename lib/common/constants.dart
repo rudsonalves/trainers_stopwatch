@@ -8,6 +8,8 @@ const double elevationEnable = 5;
 
 const millisecondRefreshValues = [10, 33, 66, 133, 266, 500];
 
+const primaryColor = Color(0xff4a5c92);
+
 const distanceUnits = ['m', 'km', 'yd', 'mi'];
 const speedUnits = ['m/s', 'km/h', 'yd/s', 'mph'];
 const speedAllowedValues = {

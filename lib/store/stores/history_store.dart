@@ -80,8 +80,9 @@ class HistoryStore {
     }
   }
 
-  Future<int> update(int id, Map<String, dynamic> map) async {
+  Future<int> update(Map<String, dynamic> map) async {
     try {
+      int id = map['id'];
       final database = await _databaseManager.database;
 
       final result = await database.update(

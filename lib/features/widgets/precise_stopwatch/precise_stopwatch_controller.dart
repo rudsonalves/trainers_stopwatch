@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:trainers_stopwatch/common/constants.dart';
 import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
@@ -28,6 +30,8 @@ class PreciseStopwatchController {
 
   final _stopwatchController = StopwatchPageController.instance;
 
+  Color? lastColor;
+
   StopwatchBloc get bloc => _bloc;
   StopwatchState get state => _bloc.state;
   ValueNotifier<int> get lapCounter => _bloc.lapCounter;
@@ -53,6 +57,14 @@ class PreciseStopwatchController {
     _actionOnPress.dispose();
   }
 
+  Future<void> updateHistory(HistoryModel history) async {
+    await _historyManager.update(history);
+  }
+
+  Future<void> deleteHistory(HistoryModel history) async {
+    await _historyManager.delete(history);
+  }
+
   void _toggleActionOnPress() {
     _actionOnPress.value = !_actionOnPress.value;
   }
@@ -64,24 +76,29 @@ class PreciseStopwatchController {
       splitLength: splitLength,
       lapLength: lapLength,
     );
+
     _isCreatedTraining = true;
   }
 
   Future<void> _insertTraining() async {
-    if (training.id != null) {
+    if (_training!.id != null) {
       throw Exception('Error!!!');
+    }
+    if (lastColor != null && _training!.color == primaryColor) {
+      _training!.color = lastColor!;
     }
     _training!.date = bloc.startTime;
     await _trainingManager.insert(_training!);
     _historyManager.init(_training!.id!);
+    lastColor = _training!.color;
   }
 
   void updateSplitLapLength() {
     if (splitLength != _training!.splitLength) {
-      splitLength = training.splitLength;
+      splitLength = _training!.splitLength;
     }
     if (lapLength != _training!.lapLength) {
-      lapLength = training.lapLength;
+      lapLength = _training!.lapLength;
     }
 
     _bloc.splitCounterMax = lapLength ~/ splitLength;
@@ -106,11 +123,14 @@ class PreciseStopwatchController {
       duration: const Duration(milliseconds: 0),
       lap: 0,
       split: 0,
+      comments: 'PSCStartedMessage'.tr(args: [
+        DateFormat.yMd().add_Hms().format(_bloc.startTime),
+      ]),
     );
 
     await _historyManager.insert(history);
     _toggleActionOnPress();
-    _sendStartedMessage();
+    _sendStartedMessage(history.comments!);
   }
 
   Future<void> blocPauseTimer() async {
@@ -178,7 +198,7 @@ class PreciseStopwatchController {
     );
 
     await _historyManager.insert(history);
-    _sendSplitMessage(history.duration, speed, split);
+    _sendSplitMessage(history, split);
     _toggleActionOnPress();
   }
 
@@ -196,7 +216,7 @@ class PreciseStopwatchController {
     );
 
     await _historyManager.insert(history);
-    _sendLapMessage(history.duration, speed, history.lap!);
+    _sendLapMessage(history, history.lap!);
     _toggleActionOnPress();
   }
 
@@ -205,44 +225,44 @@ class PreciseStopwatchController {
     return split == 0 ? bloc.splitCounterMax : split;
   }
 
-  String _formatMs(Duration duration) {
-    final durationStr = duration.toString();
-    final point = durationStr.indexOf('.');
-    return durationStr.substring(0, point + 4);
-  }
-
-  void _sendStartedMessage() {
+  void _sendStartedMessage(String comments) {
     final message = MessagesModel(
       title: user.name,
-      body: 'PSCStartedMessage'.tr(args: [
-        DateFormat.Hms().format(_bloc.startTime),
-      ]),
+      body: comments,
+      color: _training!.color,
     );
     _stopwatchController.sendHistoryMessage(message);
   }
 
   void _sendSplitMessage(
-    Duration time,
-    String speed,
+    HistoryModel history,
     int split,
   ) {
     final message = MessagesModel(
       title: user.name,
-      body: 'PSCSplitMessage'
-          .tr(args: [split.toString(), _formatMs(time), speed]),
+      body: 'PSCSplitMessage'.tr(args: [
+        split.toString(),
+        StopwatchFunctions.formatDuration(history.duration),
+        history.comments!,
+      ]),
+      color: _training!.color,
     );
 
     _stopwatchController.sendHistoryMessage(message);
   }
 
   void _sendLapMessage(
-    Duration time,
-    String speed,
+    HistoryModel history,
     int lap,
   ) {
     final message = MessagesModel(
       title: user.name,
-      body: 'PSCLapMessage'.tr(args: [lap.toString(), _formatMs(time), speed]),
+      body: 'PSCLapMessage'.tr(args: [
+        lap.toString(),
+        StopwatchFunctions.formatDuration(history.duration),
+        history.comments!,
+      ]),
+      color: _training!.color,
     );
 
     _stopwatchController.sendHistoryMessage(message);
@@ -254,6 +274,7 @@ class PreciseStopwatchController {
       body: 'PSCFinishMessage'.tr(args: [
         DateFormat.Hms().format(DateTime.now()),
       ]),
+      color: _training!.color,
     );
 
     _stopwatchController.sendHistoryMessage(message);
@@ -263,9 +284,9 @@ class PreciseStopwatchController {
     final lapMS = bloc.lapDuration.inMilliseconds;
 
     final speed = StopwatchFunctions.speedCalc(
-      length: training.lapLength,
+      length: _training!.lapLength,
       time: lapMS / 1000,
-      training: training,
+      training: _training!,
     );
 
     return (lapMS, speed);
@@ -275,9 +296,9 @@ class PreciseStopwatchController {
     final splitMS = bloc.splitDuration.inMilliseconds;
 
     final speed = StopwatchFunctions.speedCalc(
-      length: training.splitLength,
+      length: _training!.splitLength,
       time: splitMS / 1000,
-      training: training,
+      training: _training!,
     );
     return (splitMS, speed);
   }

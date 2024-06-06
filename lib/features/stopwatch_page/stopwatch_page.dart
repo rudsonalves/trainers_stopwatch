@@ -153,7 +153,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
                 return ListView.builder(
                   itemCount: _messageList.length,
                   itemBuilder: (context, index) => MessageRow(
-                    _messageList[lastIndex - index],
+                    message: _messageList[lastIndex - index],
                   ),
                 );
               },

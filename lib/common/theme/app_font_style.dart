@@ -76,4 +76,8 @@ class AppFontStyle {
     fontSize: 16,
     fontWeight: FontWeight.w600,
   );
+
+  static const roboto10 = TextStyle(
+    fontSize: 10,
+  );
 }

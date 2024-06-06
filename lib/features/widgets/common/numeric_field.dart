@@ -78,15 +78,19 @@ class _NumericFieldState extends State<NumericField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: widget.controller,
-      keyboardType: TextInputType.number,
-      focusNode: widget.focusNode,
-      decoration: InputDecoration(
-        label: Text(widget.label ?? ''),
-        enabled: widget.enable,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: TextField(
+        controller: widget.controller,
+        keyboardType: TextInputType.number,
+        focusNode: widget.focusNode,
+        decoration: InputDecoration(
+          label: Text(widget.label ?? ''),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          enabled: widget.enable,
+        ),
+        onSubmitted: widget.onSubmitted,
       ),
-      onSubmitted: widget.onSubmitted,
     );
   }
 }

@@ -7,7 +7,7 @@ import '../../models/training_model.dart';
 import '../widgets/edit_training_dialog/edit_training_dialog.dart';
 import 'history_page_controller.dart';
 import 'history_page_state.dart';
-import 'widgets/card_history.dart';
+import '../widgets/common/dismissible_history.dart';
 
 class HistoryPage extends StatefulWidget {
   final UserModel user;
@@ -40,6 +40,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final _controller = HistoryPageController();
+
   late final UserModel user;
   late final TrainingModel training;
 
@@ -56,7 +57,7 @@ class _HistoryPageState extends State<HistoryPage> {
     _controller.init(training);
   }
 
-  Widget _cardHeader() {
+  Widget _cardHeader(ColorScheme colorScheme) {
     return InkWell(
       onTap: () async {
         await EditTrainingDialog.open(
@@ -65,35 +66,47 @@ class _HistoryPageState extends State<HistoryPage> {
           training: training,
         );
       },
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Text(
-                  user.name,
-                  style: AppFontStyle.roboto18SemiBold,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(),
+          color: colorScheme.secondaryContainer.withOpacity(0.2),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    user.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppFontStyle.roboto18SemiBold,
+                  ),
                 ),
-              ),
-              const Divider(),
-              Text(
-                'HPTrainingDistances'.tr(),
-                style: AppFontStyle.roboto16SemiBold,
-              ),
-              Text(lapMessage),
-              Text(splitMessage),
-              Text(
-                'ETDComments'.tr(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+                const Icon(
+                  Icons.edit,
+                  color: Colors.green,
                 ),
+              ],
+            ),
+            const Divider(),
+            Text(
+              'HPTrainingDistances'.tr(),
+              style: AppFontStyle.roboto16SemiBold,
+            ),
+            Text(lapMessage),
+            Text(splitMessage),
+            Text(
+              'ETDComments'.tr(),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
               ),
-              Text(training.comments ?? '-'),
-            ],
-          ),
+            ),
+            Text(training.comments ?? '-'),
+          ],
         ),
       ),
     );
@@ -111,13 +124,13 @@ class _HistoryPageState extends State<HistoryPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Column(
           children: [
-            _cardHeader(),
+            _cardHeader(colorScheme),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: colorScheme.primary,
+                    color: colorScheme.secondaryContainer,
                   ),
                 ),
                 padding: const EdgeInsets.all(8),
@@ -130,12 +143,12 @@ class _HistoryPageState extends State<HistoryPage> {
                           child: CircularProgressIndicator(),
                         );
                       case HistoryPageStateSuccess():
-                        String startMessage = _controller.trainingStatistic();
                         return ListView.builder(
                           itemCount: _controller.histories.length,
-                          itemBuilder: (context, index) => CardHistory(
+                          itemBuilder: (context, index) => DismissibleHistory(
                             history: _controller.histories[index],
-                            startMessage: startMessage,
+                            managerUpdade: _controller.updateHistory,
+                            managerDelete: _controller.deleteHistory,
                           ),
                         );
                       default:

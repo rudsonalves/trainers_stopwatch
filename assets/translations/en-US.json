@@ -25,8 +25,8 @@
   "PSReset": "Reset",
   "PSFinish": "Finish",
   "PSCStartedMessage": "Started training at {}",
-  "PSCSplitMessage": "Split [{}]: {} speed: {}",
-  "PSCLapMessage": "Lap [{}]: {} speed: {}",
+  "PSCSplitMessage": "Split [{}]: {} {}",
+  "PSCLapMessage": "Lap [{}]: {} {}",
   "PSCFinishMessage": "Finished training at {}",
   "PSCHistoryComments": "Speed: {}",
   "ETDTitle": "Training Settings",
@@ -35,6 +35,7 @@
   "ETDSplitDistance": "Split Distance ({})",
   "ETDLapDistance": "Lap Distance ({})",
   "ETDComments": "Comments",
+  "ETDCommHit": "Add some comment here",
   "GenericApply": "Apply",
   "GenericCancel": "Cancel",
   "GenericYes": "Yes",
@@ -58,6 +59,7 @@
   "ETD2Title": "Edit Training",
   "DTSubtitle": "Distances: Lap {} {}  Split {} {}",
   "SWDLabel": "Manage Training...",
+  "SWDLabelDel": "Remove Training...",
   "HPTrainingDistances": "Training Distances",
   "HPTile": "History Page",
   "HPShare": "Share",
@@ -152,5 +154,6 @@
   "tutorSettingsTitle04": "Language",
   "tutorSettingsMsg04": "Allows you to select the languages supported by the app.",
   "tutorSettingsTitle05": "Refresh Time",
-  "tutorSettingsMsg05": "Interval for updating the displays on the timers. Its value does not affect the accuracy of the measurements. However, small values may affect responsiveness on modest devices."
+  "tutorSettingsMsg05": "Interval for updating the displays on the timers. Its value does not affect the accuracy of the measurements. However, small values may affect responsiveness on modest devices.",
+  "historyDlgTitle": "History"
 }

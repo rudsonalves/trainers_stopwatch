@@ -6,16 +6,16 @@ import '../../../common/icons/stopwatch_icons_icons.dart';
 class MessageRow extends StatelessWidget {
   final MessagesModel message;
 
-  const MessageRow(
-    this.message, {
+  const MessageRow({
     super.key,
+    required this.message,
   });
 
   Row _buildMessageRow(IconData iconData) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Icon(iconData),
+        Icon(iconData, color: message.color),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,8 +48,6 @@ class MessageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2),
       padding: const EdgeInsets.symmetric(
@@ -57,7 +55,7 @@ class MessageRow extends StatelessWidget {
         horizontal: 8,
       ),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withOpacity(0.2),
+        color: message.color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: _messageRow(),
