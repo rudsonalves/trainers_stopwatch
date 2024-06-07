@@ -1,26 +1,18 @@
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 
+import '../../common/abstract_classes/history_controller.dart';
 import '../../common/functions/stopwatch_functions.dart';
 import '../../manager/history_manager.dart';
 import '../../models/history_model.dart';
 import '../../models/training_model.dart';
-import 'history_page_state.dart';
 
-class HistoryPageController extends ChangeNotifier {
+class HistoryPageController extends HistoryController {
   final _historyManager = HistoryManager();
-  HistoryPageState _state = HistoryPageStateInitial();
   late final TrainingModel training;
 
-  HistoryPageState get state => _state;
   List<HistoryModel> get histories => _historyManager.histories;
-
-  void _changeState(HistoryPageState newState) {
-    _state = newState;
-    notifyListeners();
-  }
 
   void init(TrainingModel training) {
     this.training = training;
@@ -28,23 +20,26 @@ class HistoryPageController extends ChangeNotifier {
     getHistory();
   }
 
+  @override
   Future<void> updateHistory(HistoryModel history) async {
     await _historyManager.update(history);
   }
 
+  @override
   Future<void> deleteHistory(HistoryModel history) async {
     await _historyManager.delete(history);
   }
 
+  @override
   Future<void> getHistory() async {
     try {
-      _changeState(HistoryPageStateLoading());
+      changeState(StateLoading());
       await _historyManager.getHistory();
-      _changeState(HistoryPageStateSuccess());
+      changeState(StateSuccess());
     } catch (err) {
       final message = 'HistoryPageController.getHistory: $err';
       log(message);
-      _changeState(HistoryPageStateError());
+      changeState(StateError());
     }
   }
 

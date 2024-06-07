@@ -148,12 +148,12 @@ class _StopWatchPageState extends State<StopWatchPage> {
             child: ListenableBuilder(
               listenable: _controller.historyMessage,
               builder: (context, _) {
-                final int lastIndex = _messageList.length - 1;
+                final messages = _messageList.reversed.toList();
 
                 return ListView.builder(
-                  itemCount: _messageList.length,
+                  itemCount: messages.length,
                   itemBuilder: (context, index) => MessageRow(
-                    message: _messageList[lastIndex - index],
+                    message: messages[index],
                   ),
                 );
               },

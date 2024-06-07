@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:trainers_stopwatch/common/constants.dart';
 import 'package:trainers_stopwatch/models/messages_model.dart';
