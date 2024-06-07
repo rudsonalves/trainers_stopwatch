@@ -20,6 +20,38 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_07 - version: 0.9.6+27
+
+Refactor and enhance history management:
+
+This commit introduces several improvements and refactorings to the history management features of the application. Key changes include the creation of abstract classes for better state management, updates to the history and training controllers, and various UI enhancements.
+
+- **New Abstract Classes**: Introduced `HistoryController` and related state classes to abstract history management logic.
+  - Added `lib/common/abstract_classes/history_controller.dart`.
+
+- **Version Update**: Incremented app version to `0.9.6+27`.
+  - Updated `lib/common/app_info.dart` and `pubspec.yaml`.
+
+- **Refactored History Page**:
+  - Moved history list view logic to a separate widget `HistoryListView`.
+  - Moved training information display logic to a new widget `TrainingInformations`.
+  - Updated `HistoryPage` to use the new abstract classes and widgets.
+  - Deleted `lib/features/history_page/history_page_state.dart`.
+
+- **Controller Enhancements**:
+  - Refactored `HistoryPageController` to extend the new `HistoryController`.
+  - Created `PersonalTrainingController` to manage personal training sessions.
+  - Updated `PersonalTrainingPage` to use `PersonalTrainingController`.
+
+- **UI Improvements**:
+  - Enhanced `MessageRow` to correctly reverse the message list in `StopWatchPage`.
+
+- **Removed Redundant Imports**:
+  - Cleaned up imports in various files to remove unused dependencies.
+
+These changes aim to streamline history management, improve code maintainability, and enhance the user interface for a better user experience.
+
+
 ## 2024_06_06 - version: 0.9.5+26
 
 Refactor and updates to the project:

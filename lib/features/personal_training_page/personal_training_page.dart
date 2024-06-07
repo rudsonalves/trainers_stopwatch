@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/abstract_classes/history_controller.dart';
 import '../../common/theme/app_font_style.dart';
-import '../widgets/common/dismissible_history.dart';
+import '../history_page/widgets/history_list_view.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
-import '../widgets/precise_stopwatch/precise_stopwatch_controller.dart';
+import 'personal_training_controller.dart';
 
 class PersonalTrainingPage extends StatefulWidget {
   final PreciseStopwatch stopwatch;
@@ -31,17 +33,19 @@ class PersonalTrainingPage extends StatefulWidget {
 }
 
 class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
-  late final PreciseStopwatchController _controller;
+  late final PersonalTrainingController controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = widget.stopwatch.controller;
+    controller = PersonalTrainingController(widget.stopwatch);
+    controller.init(widget.stopwatch.controller.training);
+    controller.getHistory();
   }
 
   @override
   Widget build(BuildContext context) {
-    final training = _controller.training;
+    final training = controller.training;
 
     return Scaffold(
       appBar: AppBar(
@@ -72,21 +76,28 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
               ),
             ),
             Expanded(
-              child: ListenableBuilder(
-                listenable: _controller.actionOnPress,
-                builder: (context, _) {
-                  final histories = _controller.histories.reversed.toList();
-
-                  return ListView.builder(
-                    itemCount: _controller.histories.length,
-                    itemBuilder: (context, index) => DismissibleHistory(
-                      history: histories[index],
-                      managerUpdade: _controller.updateHistory,
-                      managerDelete: _controller.deleteHistory,
-                    ),
-                  );
-                },
-              ),
+              child: AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, _) {
+                    switch (controller.state) {
+                      case StateLoading():
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case StateSuccess():
+                        return HistoryListView(
+                          controller: controller,
+                          histories: controller.histories,
+                          updateHistory: controller.updateHistory,
+                          deleteHistory: controller.deleteHistory,
+                          reversed: true,
+                        );
+                      default:
+                        return Center(
+                          child: Text('TPError'.tr()),
+                        );
+                    }
+                  }),
             ),
           ],
         ),

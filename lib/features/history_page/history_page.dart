@@ -1,13 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/theme/app_font_style.dart';
+import '../../common/abstract_classes/history_controller.dart';
 import '../../models/user_model.dart';
 import '../../models/training_model.dart';
-import '../widgets/edit_training_dialog/edit_training_dialog.dart';
 import 'history_page_controller.dart';
-import 'history_page_state.dart';
-import '../widgets/common/dismissible_history.dart';
+import 'widgets/history_list_view.dart';
+import 'widgets/training_informations.dart';
 
 class HistoryPage extends StatefulWidget {
   final UserModel user;
@@ -41,81 +40,19 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   final _controller = HistoryPageController();
 
-  late final UserModel user;
-  late final TrainingModel training;
-
   String get lapMessage =>
-      'Lap: ${training.lapLength} ${training.distanceUnit}';
+      'Lap: ${widget.training.lapLength} ${widget.training.distanceUnit}';
   String get splitMessage =>
-      'Split: ${training.splitLength} ${training.distanceUnit}';
+      'Split: ${widget.training.splitLength} ${widget.training.distanceUnit}';
 
   @override
   void initState() {
     super.initState();
-    training = widget.training;
-    user = widget.user;
-    _controller.init(training);
-  }
-
-  Widget _cardHeader(ColorScheme colorScheme) {
-    return InkWell(
-      onTap: () async {
-        await EditTrainingDialog.open(
-          context,
-          userName: user.name,
-          training: training,
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(),
-          color: colorScheme.secondaryContainer.withOpacity(0.2),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    user.name,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppFontStyle.roboto18SemiBold,
-                  ),
-                ),
-                const Icon(
-                  Icons.edit,
-                  color: Colors.green,
-                ),
-              ],
-            ),
-            const Divider(),
-            Text(
-              'HPTrainingDistances'.tr(),
-              style: AppFontStyle.roboto16SemiBold,
-            ),
-            Text(lapMessage),
-            Text(splitMessage),
-            Text(
-              'ETDComments'.tr(),
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(training.comments ?? '-'),
-          ],
-        ),
-      ),
-    );
+    _controller.init(widget.training);
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('HPTile'.tr()),
@@ -124,40 +61,33 @@ class _HistoryPageState extends State<HistoryPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Column(
           children: [
-            _cardHeader(colorScheme),
+            TrainingInformations(
+                user: widget.user,
+                training: widget.training,
+                lapMessage: lapMessage,
+                splitMessage: splitMessage),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: colorScheme.secondaryContainer,
-                  ),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, _) {
-                    switch (_controller.state) {
-                      case HistoryPageStateLoading():
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      case HistoryPageStateSuccess():
-                        return ListView.builder(
-                          itemCount: _controller.histories.length,
-                          itemBuilder: (context, index) => DismissibleHistory(
-                            history: _controller.histories[index],
-                            managerUpdade: _controller.updateHistory,
-                            managerDelete: _controller.deleteHistory,
-                          ),
-                        );
-                      default:
-                        return Center(
-                          child: Text('TPError'.tr()),
-                        );
-                    }
-                  },
-                ),
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, _) {
+                  switch (_controller.state) {
+                    case StateLoading():
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    case StateSuccess():
+                      return HistoryListView(
+                        controller: _controller,
+                        histories: _controller.histories,
+                        updateHistory: _controller.updateHistory,
+                        deleteHistory: _controller.deleteHistory,
+                      );
+                    default:
+                      return Center(
+                        child: Text('TPError'.tr()),
+                      );
+                  }
+                },
               ),
             ),
           ],
