@@ -1,4 +1,4 @@
-import 'package:trainers_stopwatch/store/constants/table_attributes.dart';
+import 'table_attributes.dart';
 
 class MigrationSqlScripts {
   MigrationSqlScripts._();

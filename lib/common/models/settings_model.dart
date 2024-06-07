@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import '../store/constants/migration_sql_scripts.dart';
+import '../../store/constants/migration_sql_scripts.dart';
 
 enum Contrast { standard, medium, high }
 

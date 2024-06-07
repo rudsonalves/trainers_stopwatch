@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../common/theme/app_font_style.dart';
-import '../../../../models/user_model.dart';
+import '../../../../common/models/user_model.dart';
 import '../../../widgets/common/show_athlete_image.dart';
 import 'user_controller.dart';
 import 'validator.dart';

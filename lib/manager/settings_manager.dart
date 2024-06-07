@@ -1,5 +1,4 @@
-import 'package:trainers_stopwatch/models/settings_model.dart';
-
+import '../common/models/settings_model.dart';
 import '../repositories/settings_repository/settings_repository.dart';
 
 class SettingsManager {

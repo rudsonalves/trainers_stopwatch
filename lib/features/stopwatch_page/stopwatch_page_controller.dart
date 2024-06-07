@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/models/messages_model.dart';
 
-import '../../models/user_model.dart';
+import '../../common/models/messages_model.dart';
+import '../../common/models/user_model.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch_controller.dart';
 

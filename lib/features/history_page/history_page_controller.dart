@@ -5,8 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../common/abstract_classes/history_controller.dart';
 import '../../common/functions/stopwatch_functions.dart';
 import '../../manager/history_manager.dart';
-import '../../models/history_model.dart';
-import '../../models/training_model.dart';
+import '../../common/models/history_model.dart';
+import '../../common/models/training_model.dart';
 
 class HistoryPageController extends HistoryController {
   final _historyManager = HistoryManager();

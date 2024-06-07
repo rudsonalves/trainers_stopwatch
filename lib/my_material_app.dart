@@ -5,7 +5,7 @@ import 'common/singletons/app_settings.dart';
 import 'common/theme/theme.dart';
 import 'common/theme/util.dart';
 import 'features/settings/settings_overlay.dart';
-import 'models/settings_model.dart';
+import 'common/models/settings_model.dart';
 import 'features/about_page/about_page.dart';
 import 'features/users_page/users_overlay.dart';
 import 'features/history_page/history_page.dart';

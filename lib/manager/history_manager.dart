@@ -1,4 +1,4 @@
-import '../models/history_model.dart';
+import '../common/models/history_model.dart';
 import '../repositories/history_repository/history_repository.dart';
 
 class HistoryManager {

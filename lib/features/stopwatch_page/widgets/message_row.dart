@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../../common/icons/stopwatch_icons_icons.dart';
+import '../../../common/models/messages_model.dart';
 
 class MessageRow extends StatelessWidget {
   final MessagesModel message;

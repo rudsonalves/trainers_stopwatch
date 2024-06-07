@@ -1,4 +1,4 @@
-import '../../models/history_model.dart';
+import '../../common/models/history_model.dart';
 import '../../store/stores/history_store.dart';
 import 'abstract_history_repository.dart';
 

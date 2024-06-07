@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/abstract_classes/history_controller.dart';
-import '../../models/user_model.dart';
-import '../../models/training_model.dart';
+import '../../common/models/user_model.dart';
+import '../../common/models/training_model.dart';
 import 'history_page_controller.dart';
-import 'widgets/history_list_view.dart';
+import '../widgets/common/history_list_view.dart';
 import 'widgets/training_informations.dart';
 
 class HistoryPage extends StatefulWidget {

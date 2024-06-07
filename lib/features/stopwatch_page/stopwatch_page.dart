@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
-import '../../models/messages_model.dart';
+import '../../common/models/messages_model.dart';
 import '../users_page/users_overlay.dart';
 import '../personal_training_page/personal_training_page.dart';
 import '../widgets/common/generic_dialog.dart';

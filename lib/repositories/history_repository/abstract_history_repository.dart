@@ -1,4 +1,4 @@
-import '../../models/history_model.dart';
+import '../../common/models/history_model.dart';
 
 abstract class AbstractHistoryRepository {
   Future<int> insert(HistoryModel history);

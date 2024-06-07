@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/singletons/app_settings.dart';
-import '../../../models/user_model.dart';
+import '../../../common/models/user_model.dart';
 import '../edit_training_dialog/edit_training_dialog.dart';
 import 'precise_stopwatch_controller.dart';
 import 'widgets/user_image_name.dart';

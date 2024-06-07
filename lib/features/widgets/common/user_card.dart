@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
-import '../../../models/user_model.dart';
+import '../../../common/models/user_model.dart';
 import 'show_athlete_image.dart';
 
 class UserCard extends StatelessWidget {

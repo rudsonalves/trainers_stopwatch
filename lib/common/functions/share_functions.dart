@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
-import '../../models/training_model.dart';
+import '../models/training_model.dart';
 import 'build_pdf.dart';
 
 sealed class AppShare {

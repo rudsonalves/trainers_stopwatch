@@ -5,7 +5,7 @@ import 'package:onboarding_overlay/onboarding_overlay.dart';
 import '../../common/constants.dart';
 import '../../common/singletons/app_settings.dart';
 import '../../common/theme/app_font_style.dart';
-import '../../models/settings_model.dart';
+import '../../common/models/settings_model.dart';
 import 'widgets/length_line_edit.dart';
 
 class SettingsPage extends StatefulWidget {
