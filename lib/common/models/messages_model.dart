@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../common/constants.dart';
+import '../constants.dart';
 
 class MessagesModel {
   String title;

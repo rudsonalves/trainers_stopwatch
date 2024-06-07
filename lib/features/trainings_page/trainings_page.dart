@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../common/functions/share_functions.dart';
 import '../../common/theme/app_font_style.dart';
-import '../../models/training_model.dart';
+import '../../common/models/training_model.dart';
 import '../history_page/history_page.dart';
 import '../widgets/common/user_card.dart';
 import '../widgets/common/generic_dialog.dart';

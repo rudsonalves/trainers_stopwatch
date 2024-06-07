@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../models/history_model.dart';
-import '../../models/training_model.dart';
+import '../models/history_model.dart';
+import '../models/training_model.dart';
 
 abstract class HistoryState {}
 

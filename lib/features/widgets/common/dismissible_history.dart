@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/icons/stopwatch_icons_icons.dart';
-import '../../../models/history_model.dart';
+import '../../../common/models/history_model.dart';
 import 'dismissible_backgrounds.dart';
 import 'edit_history_dialog.dart';
 

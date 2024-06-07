@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/theme/app_font_style.dart';
-import '../../../models/history_model.dart';
+import '../../../common/models/history_model.dart';
 
 class EditHistoryDialog extends StatefulWidget {
   final String title;

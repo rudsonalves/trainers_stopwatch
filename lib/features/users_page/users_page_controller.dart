@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../common/singletons/app_settings.dart';
 import '../../manager/user_manager.dart';
-import '../../models/user_model.dart';
+import '../../common/models/user_model.dart';
 import 'users_page_state.dart';
 
 class UsersPageController extends ChangeNotifier {

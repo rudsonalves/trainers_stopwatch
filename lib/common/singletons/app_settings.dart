@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../manager/settings_manager.dart';
-import '../../models/settings_model.dart';
+import '../models/settings_model.dart';
 
 const int maxFocusNode = 23;
 

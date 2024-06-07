@@ -1,4 +1,4 @@
-import '../../models/user_model.dart';
+import '../../common/models/user_model.dart';
 
 abstract class AbstractUserRepository {
   Future<int> insert(UserModel user);

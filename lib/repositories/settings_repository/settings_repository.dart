@@ -1,4 +1,4 @@
-import '../../models/settings_model.dart';
+import '../../common/models/settings_model.dart';
 import '../../store/stores/settings_store.dart';
 import 'abstract_settings_repository.dart';
 

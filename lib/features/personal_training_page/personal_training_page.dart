@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../common/abstract_classes/history_controller.dart';
 import '../../common/theme/app_font_style.dart';
-import '../history_page/widgets/history_list_view.dart';
+import '../widgets/common/history_list_view.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 import 'personal_training_controller.dart';
 

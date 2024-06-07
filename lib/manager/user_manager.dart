@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../models/user_model.dart';
+import '../common/models/user_model.dart';
 import '../repositories/user_repository/user_repository.dart';
 
 class UserManager {

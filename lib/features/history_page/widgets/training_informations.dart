@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/theme/app_font_style.dart';
-import '../../../models/training_model.dart';
-import '../../../models/user_model.dart';
+import '../../../common/models/training_model.dart';
+import '../../../common/models/user_model.dart';
 import '../../widgets/edit_training_dialog/edit_training_dialog.dart';
 
 class TrainingInformations extends StatelessWidget {

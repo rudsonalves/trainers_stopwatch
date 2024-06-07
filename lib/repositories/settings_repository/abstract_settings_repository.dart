@@ -1,4 +1,4 @@
-import '../../models/settings_model.dart';
+import '../../common/models/settings_model.dart';
 
 abstract class AbstractSettingsRepositoy {
   Future<int> insert(SettingsModel settings);

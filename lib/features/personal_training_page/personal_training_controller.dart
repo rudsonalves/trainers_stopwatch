@@ -1,9 +1,8 @@
 import 'dart:developer';
 
-import 'package:trainers_stopwatch/models/history_model.dart';
-
 import '../../common/abstract_classes/history_controller.dart';
-import '../../models/training_model.dart';
+import '../../common/models/history_model.dart';
+import '../../common/models/training_model.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 
 class PersonalTrainingController extends HistoryController {

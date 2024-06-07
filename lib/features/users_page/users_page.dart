@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
-import '../../models/user_model.dart';
+import '../../common/models/user_model.dart';
 import 'widgets/user_dialog/user_dialog.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
 import '../widgets/common/generic_dialog.dart';

@@ -1,18 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/constants.dart';
-import 'package:trainers_stopwatch/models/messages_model.dart';
 
 import '../../../bloc/stopwatch_bloc.dart';
 import '../../../bloc/stopwatch_events.dart';
 import '../../../bloc/stopwatch_state.dart';
+import '../../../common/constants.dart';
 import '../../../common/functions/stopwatch_functions.dart';
+import '../../../common/models/messages_model.dart';
 import '../../../common/singletons/app_settings.dart';
 import '../../../manager/history_manager.dart';
 import '../../../manager/training_manager.dart';
-import '../../../models/user_model.dart';
-import '../../../models/history_model.dart';
-import '../../../models/training_model.dart';
+import '../../../common/models/user_model.dart';
+import '../../../common/models/history_model.dart';
+import '../../../common/models/training_model.dart';
 import '../../stopwatch_page/stopwatch_page_controller.dart';
 
 class PreciseStopwatchController {

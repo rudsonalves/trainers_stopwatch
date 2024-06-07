@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/user_model.dart';
+import '../../../common/models/user_model.dart';
 import '../../widgets/common/generic_dialog.dart';
 import '../../widgets/common/user_card.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';

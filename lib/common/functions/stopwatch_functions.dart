@@ -1,4 +1,4 @@
-import '../../models/training_model.dart';
+import '../models/training_model.dart';
 
 class StopwatchFunctions {
   StopwatchFunctions._();

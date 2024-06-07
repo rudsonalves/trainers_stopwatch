@@ -1,4 +1,4 @@
-import '../../models/training_model.dart';
+import '../../common/models/training_model.dart';
 
 abstract class AbstractTrainingRepository {
   Future<int> insert(TrainingModel training);

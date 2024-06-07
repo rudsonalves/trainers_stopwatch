@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/abstract_classes/history_controller.dart';
-import '../../../models/history_model.dart';
-import '../../widgets/common/dismissible_history.dart';
+import '../../../common/models/history_model.dart';
+import 'dismissible_history.dart';
 
 class HistoryListView extends StatelessWidget {
   final HistoryController controller;

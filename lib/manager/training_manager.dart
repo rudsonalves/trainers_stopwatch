@@ -1,4 +1,4 @@
-import '../models/training_model.dart';
+import '../common/models/training_model.dart';
 import '../repositories/training_repository/training_repository.dart';
 
 class TrainingManager {

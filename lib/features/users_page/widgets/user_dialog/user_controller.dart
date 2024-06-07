@@ -5,7 +5,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../../common/constants.dart';
 import '../../../../common/singletons/app_settings.dart';
-import '../../../../models/user_model.dart';
+import '../../../../common/models/user_model.dart';
 
 class UserController {
   final name = TextEditingController();

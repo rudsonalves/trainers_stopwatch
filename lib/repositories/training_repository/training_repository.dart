@@ -1,4 +1,4 @@
-import '../../models/training_model.dart';
+import '../../common/models/training_model.dart';
 import '../../store/stores/training_store.dart';
 import 'abstract_training_repository.dart';
 

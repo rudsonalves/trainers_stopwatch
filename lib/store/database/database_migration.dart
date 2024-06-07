@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:sqflite/sqflite.dart';
 
 import '../../manager/settings_manager.dart';
-import '../../models/settings_model.dart';
+import '../../common/models/settings_model.dart';
 import '../constants/migration_sql_scripts.dart';
 
 class DatabaseMigration {
