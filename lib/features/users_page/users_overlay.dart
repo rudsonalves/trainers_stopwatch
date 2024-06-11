@@ -110,11 +110,11 @@ class _UsersOverlayState extends State<UsersOverlay> {
                     ),
                     ButtonBar(
                       children: [
-                        FilledButton(
+                        FilledButton.tonal(
                           onPressed: renderInfo.nextStep,
                           child: const Text('Tutorial'),
                         ),
-                        FilledButton(
+                        FilledButton.tonal(
                           onPressed: () {
                             renderInfo.close();
                             app.tutorialOn = false;

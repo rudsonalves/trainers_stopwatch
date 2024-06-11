@@ -150,11 +150,11 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
                     ),
                     ButtonBar(
                       children: [
-                        FilledButton(
+                        FilledButton.tonal(
                           onPressed: renderInfo.nextStep,
                           child: const Text('Next'),
                         ),
-                        FilledButton(
+                        FilledButton.tonal(
                           onPressed: () {
                             renderInfo.close();
                             app.tutorialOn = false;

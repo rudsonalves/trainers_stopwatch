@@ -1,7 +1,7 @@
 name: trainers_stopwatch
 description: "Multiple Precision Chronometers."
 publish_to: 'none'
-version: 0.9.6+27
+version: 0.9.7+28
 
 environment:
   sdk: '>=3.3.2 <4.0.0'
@@ -24,6 +24,8 @@ dependencies:
   flutter_email_sender: ^6.0.3
   pdf: ^3.10.8
   flutter_colorpicker: ^1.1.0
+  flutter_native_splash: ^2.4.0
+  share_plus: ^9.0.0
 
 dev_dependencies:
   flutter_test:
@@ -35,8 +37,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/icon/stopwatch.png
+  image_path: assets/icons/stopwatch.png
   min_sdk_android: 21
+  adaptive_icon_foreground: assets/icons/stopwatch.png
 
 flutter:
 
@@ -44,7 +47,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/icon/stopwatch.png
+    - assets/icons/
     - assets/translations/
 
   fonts:

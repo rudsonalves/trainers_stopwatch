@@ -6,7 +6,7 @@ import '../../../common/singletons/app_settings.dart';
 import '../../../common/theme/app_font_style.dart';
 import '../../about_page/about_page.dart';
 import '../../settings/settings_overlay.dart';
-import '../../trainings_page/trainings_page.dart';
+import '../../trainings_page/trainings_overlay.dart';
 
 class StopwatchDrawer extends StatelessWidget {
   final Future<void> Function() addStopwatchs;
@@ -50,7 +50,7 @@ class StopwatchDrawer extends StatelessWidget {
             title: Text('SPDItemTrainings'.tr()),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, TrainingsPage.routeName);
+              Navigator.pushNamed(context, TrainingsOverlay.routeName);
             },
           ),
           ListTile(

@@ -7,6 +7,7 @@ class NumericField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode? focusNode;
   final void Function(String)? onSubmitted;
+  final void Function(String)? onChanged;
 
   const NumericField({
     super.key,
@@ -16,6 +17,7 @@ class NumericField extends StatefulWidget {
     required this.controller,
     this.focusNode,
     this.onSubmitted,
+    this.onChanged,
   });
 
   @override
@@ -90,6 +92,7 @@ class _NumericFieldState extends State<NumericField> {
           enabled: widget.enable,
         ),
         onSubmitted: widget.onSubmitted,
+        onChanged: widget.onChanged,
       ),
     );
   }

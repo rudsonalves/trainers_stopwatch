@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
 
-import '../../../common/theme/app_font_style.dart';
 import '../../../common/models/training_model.dart';
 import '../common/numeric_field.dart';
 import '../common/simple_spin_box_field.dart';
@@ -41,13 +41,15 @@ class EditTrainingDialog extends StatefulWidget {
 }
 
 class _EditTrainingDialogState extends State<EditTrainingDialog> {
-  final splitController = TextEditingController(text: '');
   final lapController = TextEditingController(text: '');
+  final splitController = TextEditingController(text: '');
   final maxLapController = TextEditingController();
   final commentsController = TextEditingController(text: '');
 
   final selectedDistUnit = ValueNotifier<String>('m');
   final selectedSpeedUnit = ValueNotifier<String>('m/s');
+  final splitLength = ValueNotifier<double>(0);
+  final splitMult = ValueNotifier<int>(5);
 
   late final currentColor = ValueNotifier<Color>(Colors.green);
 
@@ -56,15 +58,12 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     super.initState();
     currentColor.value = widget.training.color;
 
+    final lapLength = widget.training.lapLength;
+    splitLength.value = widget.training.splitLength;
+    splitMult.value = (lapLength ~/ splitLength.value);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final splitLength = widget.training.splitLength.toString();
-      final lapLength = widget.training.lapLength.toString();
-      splitController.text = splitLength;
-      splitController.selection = TextSelection(
-        baseOffset: 0,
-        extentOffset: splitLength.length,
-      );
-      lapController.text = lapLength;
+      lapController.text = lapLength.toString();
+      splitController.text = splitLength.value.toString();
       selectedDistUnit.value = widget.training.distanceUnit;
       selectedSpeedUnit.value = widget.training.speedUnit;
       maxLapController.text =
@@ -75,7 +74,8 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
 
   @override
   void dispose() {
-    splitController.dispose();
+    splitLength.dispose();
+    splitMult.dispose();
     lapController.dispose();
     maxLapController.dispose();
     selectedSpeedUnit.dispose();
@@ -84,12 +84,9 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   }
 
   void _applyButton() {
-    final split = splitController.text;
-    final lap = lapController.text;
-    widget.training.splitLength =
-        split != '0' && split.isNotEmpty ? double.parse(split) : 200;
-    widget.training.lapLength =
-        lap.isNotEmpty && lap != '0' ? double.parse(lap) : 1000;
+    final split = splitLength.value;
+    widget.training.splitLength = split;
+    widget.training.lapLength = double.parse(lapController.text);
     widget.training.distanceUnit = selectedDistUnit.value;
     widget.training.speedUnit = selectedSpeedUnit.value;
     widget.training.maxlaps = maxLaps();
@@ -103,11 +100,16 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     return value == 0 ? value = null : value;
   }
 
-  void _onsubmittedSplit(String value) {
-    lapController.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: lapController.text.length,
-    );
+  void _onChangedSplit(String value) {
+    if (value.isNotEmpty && isNumber(value) && int.parse(value) > 0) {
+      splitLength.value = double.parse(value);
+      final lapLength = double.parse(lapController.text);
+      splitMult.value = (lapLength ~/ splitLength.value);
+    }
+  }
+
+  bool isNumber(String value) {
+    return double.tryParse(value) != null;
   }
 
   @override
@@ -116,79 +118,132 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
 
     return SimpleDialog(
       backgroundColor: colorScheme.onInverseSurface,
-      title: Text(widget.userName),
+      title: Text(
+        widget.userName,
+        overflow: TextOverflow.ellipsis,
+      ),
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       children: [
-        Text(
-          DateFormat.yMd().add_Hm().format(widget.training.date),
-          style: AppFontStyle.roboto10,
-          textAlign: TextAlign.left,
-        ),
-        DistanceUnitRow(
-          label: 'ETDDistanceUnit'.tr(),
-          selectedUnit: selectedDistUnit,
-          selectedSpeedUnit: selectedSpeedUnit,
-        ),
-        SpeedUnitRow(
-          label: 'ETDSpeedUnit'.tr(),
-          selectedSpeedUnit: selectedSpeedUnit,
-          selectedDistUnit: selectedDistUnit,
-        ),
         Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
-              child: Column(
+              child: Stack(
                 children: [
-                  ValueListenableBuilder(
-                    valueListenable: selectedDistUnit,
-                    builder: (context, value, _) => NumericField(
-                      label: 'ETDSplitDistance'.tr(args: [value]),
-                      controller: splitController,
-                      value: widget.training.splitLength,
-                      onSubmitted: _onsubmittedSplit,
+                  Container(
+                    margin: const EdgeInsets.only(right: 12, top: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: colorScheme.primaryContainer,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        DistanceUnitRow(
+                          label: 'ETDDistanceUnit'.tr(),
+                          selectedUnit: selectedDistUnit,
+                          selectedSpeedUnit: selectedSpeedUnit,
+                        ),
+                        SpeedUnitRow(
+                          label: 'ETDSpeedUnit'.tr(),
+                          selectedSpeedUnit: selectedSpeedUnit,
+                          selectedDistUnit: selectedDistUnit,
+                        ),
+                      ],
                     ),
                   ),
-                  ValueListenableBuilder(
-                    valueListenable: selectedDistUnit,
-                    builder: (context, value, _) => NumericField(
-                      label: 'ETDLapDistance'.tr(args: [value]),
-                      controller: lapController,
-                      value: widget.training.lapLength,
+                  Positioned(
+                    left: 12,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      color: colorScheme.onInverseSurface,
+                      child: Text(
+                        'ETDUnits'.tr(),
+                        style: AppFontStyle.roboto12,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 20),
             ValueListenableBuilder(
-                valueListenable: currentColor,
-                builder: (context, value, _) {
-                  return InkWell(
-                    onTap: () async {
-                      currentColor.value =
-                          await ColorDialog.open(context, currentColor.value);
-                    },
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: currentColor.value.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                          child: Text(
+              valueListenable: currentColor,
+              builder: (context, value, _) {
+                return InkWell(
+                  onTap: () async {
+                    currentColor.value =
+                        await ColorDialog.open(context, currentColor.value);
+                  },
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: currentColor.value.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text(
                         'Color',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
-                      )),
+                      ),
                     ),
-                  );
-                }),
+                  ),
+                );
+              },
+            ),
           ],
         ),
-        const SizedBox(height: 8),
+        ValueListenableBuilder(
+          valueListenable: selectedDistUnit,
+          builder: (context, value, _) => NumericField(
+            label: 'ETDSplitDistance'.tr(args: [value]),
+            controller: splitController,
+            value: widget.training.splitLength,
+            onChanged: _onChangedSplit,
+          ),
+        ),
+        AnimatedBuilder(
+          animation:
+              Listenable.merge([splitLength, selectedDistUnit, splitMult]),
+          builder: (context, _) {
+            lapController.text =
+                (splitLength.value * splitMult.value).toString();
+
+            return Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    readOnly: true,
+                    controller: lapController,
+                    decoration: InputDecoration(
+                      label: Text(
+                        'ETDLapDistance'.tr(args: [selectedDistUnit.value]),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    splitMult.value++;
+                  },
+                  icon: const Icon(Icons.add),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (splitMult.value > 1) {
+                      splitMult.value--;
+                    }
+                  },
+                  icon: const Icon(Icons.remove),
+                ),
+              ],
+            );
+          },
+        ),
         TextFormField(
           controller: commentsController,
           decoration: InputDecoration(
@@ -205,11 +260,11 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
         ),
         ButtonBar(
           children: [
-            FilledButton(
+            FilledButton.tonal(
               onPressed: _applyButton,
               child: Text('GenericApply'.tr()),
             ),
-            FilledButton(
+            FilledButton.tonal(
               onPressed: () => Navigator.pop(context, false),
               child: Text('GenericCancel'.tr()),
             ),

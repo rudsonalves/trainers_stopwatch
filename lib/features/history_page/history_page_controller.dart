@@ -14,6 +14,7 @@ class HistoryPageController extends HistoryController {
 
   List<HistoryModel> get histories => _historyManager.histories;
 
+  @override
   void init(TrainingModel training) {
     this.training = training;
     _historyManager.init(training.id!);

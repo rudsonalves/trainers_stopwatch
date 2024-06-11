@@ -1,13 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/constants.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+import 'common/constants.dart';
 import 'common/singletons/app_settings.dart';
 import 'my_material_app.dart';
 import 'store/database/database_provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await EasyLocalization.ensureInitialized();
 

@@ -145,13 +145,13 @@ class _UserDialogState extends State<UserDialog> {
                 const SizedBox(height: 12),
                 ButtonBar(
                   children: [
-                    FilledButton(
+                    FilledButton.tonal(
                       onPressed: _addButton,
                       child: Text(
                         isAddUser ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
                       ),
                     ),
-                    FilledButton(
+                    FilledButton.tonal(
                       onPressed: _cancelButton,
                       child: Text('GenericCancel'.tr()),
                     ),

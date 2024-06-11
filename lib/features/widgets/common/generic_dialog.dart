@@ -31,13 +31,13 @@ class GenericDialog extends StatelessWidget {
     switch (actions) {
       case DialogActions.yesNo:
         listActions.add(
-          FilledButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(context, true),
             child: Text('GenericYes'.tr()),
           ),
         );
         listActions.add(
-          FilledButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(context, false),
             child: Text('GenericNo'.tr()),
           ),
@@ -45,13 +45,13 @@ class GenericDialog extends StatelessWidget {
         break;
       case DialogActions.addCancel:
         listActions.add(
-          FilledButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(context, true),
             child: Text('GenericAdd'.tr()),
           ),
         );
         listActions.add(
-          FilledButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(context, false),
             child: Text('GenericCancel'.tr()),
           ),
@@ -59,7 +59,7 @@ class GenericDialog extends StatelessWidget {
         break;
       case DialogActions.close:
         listActions.add(
-          FilledButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(context, false),
             child: Text('GenericClose'.tr()),
           ),

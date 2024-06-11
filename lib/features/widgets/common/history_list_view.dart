@@ -44,11 +44,13 @@ class HistoryListView extends StatelessWidget {
             case StateSuccess():
               final sortHist =
                   reversed ? histories.reversed.toList() : histories;
+              // final lastIndex = reversed ? sortHist.length - 1 : 0;
 
               return ListView.builder(
                 itemCount: sortHist.length,
                 itemBuilder: (context, index) => DismissibleHistory(
                   history: sortHist[index],
+                  enableDelete: false, // index == lastIndex ? false : true,
                   managerUpdade: updateHistory,
                   managerDelete: deleteHistory,
                 ),
