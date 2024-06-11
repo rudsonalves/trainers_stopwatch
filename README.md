@@ -20,6 +20,49 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_11 - version: 0.9.7+28
+
+Enhanced app initialization, sharing features, and UI improvements
+
+- **flutter_native_splash Configuration:**
+  - Added `flutter_native_splash.yaml` to configure splash screens with primary and dark colors.
+  - Set Android 12 splash screen image.
+
+- **Icon Path Update:**
+  - Changed icon path in `build_pdf.dart` from `assets/icon/stopwatch.png` to `assets/icons/stopwatch.png`.
+
+- **Sharing Enhancements:**
+  - Added `share_plus` package for sharing capabilities.
+  - Implemented `sendWhatsApp` function in `share_functions.dart` to share training PDFs via WhatsApp.
+
+- **UI Improvements:**
+  - Increased `maxFocusNode` to 28 in `app_settings.dart`.
+  - Adjusted button styles to `FilledButton.tonal` for a more consistent look across:
+    - `stopwatch_overlay.dart`
+    - `stopwatch_page.dart`
+    - `edit_training_dialog.dart`
+    - `users_overlay.dart`
+    - `user_dialog.dart`
+    - `generic_dialog.dart`
+  - Ensured splash screen removal after app initialization in `stopwatch_page.dart` using `FlutterNativeSplash.remove()`.
+  - Enhanced `edit_training_dialog.dart` to include animated updates of split and lap distances with added validation.
+
+- **Refactoring and Cleanup:**
+  - Renamed `TrainingsPage` to `TrainingsOverlay` and updated related navigation routes and tutorial overlays.
+  - Introduced `SelectUserPopupMenu` component for better user selection in `trainings_page.dart`.
+  - Enhanced `DismissibleHistory` to optionally disable delete functionality based on the `enableDelete` flag.
+  - Added `onChanged` callback in `NumericField` for real-time updates.
+
+- **Database Initialization Logging:**
+  - Added logging statements in `database_manager.dart` to track table creation process.
+
+- **Dependency and Version Updates:**
+  - Updated `pubspec.yaml` to include:
+    - `flutter_native_splash: ^2.4.0`
+    - `share_plus: ^9.0.0`
+  - Incremented app version to `0.9.7+28` to reflect new features and enhancements.
+
+
 ## 2024_06_07 - version: 0.9.6+27
 
 Refactor and enhance history management:
@@ -116,7 +159,7 @@ Refactor AndroidManifest and Update Application Assets
   - `mipmap-xxxhdpi/ic_launcher.png`
 
 - Added new asset icons:
-  - `assets/icon/stopwatch.png`
+  - `assets/icons/stopwatch.png`
   - `assets/svgs/stopwatch2.svg`
 
 - Updated translations to include "Share" feature:
@@ -208,7 +251,7 @@ Changes in detail:
 
 ### Assets
 - Added new icon files:
-  - `assets/icon/stopwatch.png`
+  - `assets/icons/stopwatch.png`
   - `assets/svgs/stopwatch.svg`
 - Updated application icons in:
   - `android/app/src/main/res/mipmap-hdpi/ic_launcher.png`

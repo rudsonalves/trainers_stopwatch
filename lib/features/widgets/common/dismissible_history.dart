@@ -8,12 +8,14 @@ import 'edit_history_dialog.dart';
 
 class DismissibleHistory extends StatefulWidget {
   final HistoryModel history;
+  final bool enableDelete;
   final Future<void> Function(HistoryModel) managerUpdade;
   final Future<void> Function(HistoryModel) managerDelete;
 
   const DismissibleHistory({
     super.key,
     required this.history,
+    this.enableDelete = true,
     required this.managerUpdade,
     required this.managerDelete,
   });
@@ -81,7 +83,10 @@ class _DismissibleHistoryState extends State<DismissibleHistory> {
     return Dismissible(
       key: GlobalKey(),
       background: DismissibleContainers.background(context),
-      secondaryBackground: DismissibleContainers.secondaryBackground(context),
+      secondaryBackground: DismissibleContainers.secondaryBackground(
+        context,
+        enable: widget.enableDelete,
+      ),
       child: Container(
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(

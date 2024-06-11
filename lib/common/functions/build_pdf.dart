@@ -12,7 +12,7 @@ sealed class BuildPdf {
 
   static Future<File> makeTraining(List<TrainingModel> trainings) async {
     final pdf = pw.Document();
-    final imageData = await rootBundle.load('assets/icon/stopwatch.png');
+    final imageData = await rootBundle.load('assets/icons/stopwatch.png');
     final image = pw.MemoryImage(imageData.buffer.asUint8List());
 
     pdf.addPage(

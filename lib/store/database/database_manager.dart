@@ -41,6 +41,7 @@ class DatabaseManager {
   Future<Database> _initDatabase() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final String path = join(directory.path, dbName);
+    // await deleteDatabase(path);
 
     try {
       final database = await openDatabase(
@@ -62,6 +63,7 @@ class DatabaseManager {
 
   Future<void> _onCreate(Database db, int version) async {
     try {
+      log('Create database tables...');
       Batch batch = db.batch();
 
       DatabaseCreateTable.settingsTable(batch);
@@ -70,6 +72,7 @@ class DatabaseManager {
       DatabaseCreateTable.historyTable(batch);
 
       await batch.commit();
+      log('Create database tables finish...');
     } catch (err) {
       log('DatabaseManager._onCreate: $err');
       throw DatabaseCreationException(err.toString());

@@ -2,12 +2,25 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/training_model.dart';
 import 'build_pdf.dart';
 
 sealed class AppShare {
   AppShare._();
+
+  static Future<void> sendWhatsApp({
+    required List<TrainingModel> trainings,
+  }) async {
+    final pdfFile = await BuildPdf.makeTraining(trainings);
+    final XFile xfile = XFile(pdfFile.path);
+
+    await Share.shareXFiles(
+      [xfile],
+      subject: 'Training',
+    );
+  }
 
   static Future<void> sendEmail({
     required String recipient,

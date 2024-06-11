@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
@@ -35,6 +36,8 @@ class _StopWatchPageState extends State<StopWatchPage> {
     super.initState();
 
     _controller.historyMessage.addListener(_onHistoryMessageChanged);
+
+    FlutterNativeSplash.remove();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       overlay = Onboarding.of(context);
