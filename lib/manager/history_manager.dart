@@ -13,6 +13,13 @@ class HistoryManager {
     _trainingId = trainingId;
   }
 
+  static Future<HistoryManager> newInstance(int trainingId) async {
+    final manager = HistoryManager();
+    manager.init(trainingId);
+    await manager.getHistory();
+    return manager;
+  }
+
   Future<void> getHistory() async {
     _histories.clear();
     final histories = await _repository.queryAllFromTraining(trainingId);

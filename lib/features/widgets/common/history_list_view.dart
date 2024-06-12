@@ -1,12 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trainers_stopwatch/common/models/messages_model.dart';
 
 import '../../../common/abstract_classes/history_controller.dart';
 import '../../../common/models/history_model.dart';
+import '../../../common/models/training_model.dart';
+import '../../../common/models/user_model.dart';
 import 'dismissible_history.dart';
 
-class HistoryListView extends StatelessWidget {
+class HistoryListView extends StatefulWidget {
   final HistoryController controller;
+  final UserModel user;
+  final TrainingModel training;
   final List<HistoryModel> histories;
   final Future<void> Function(HistoryModel history) updateHistory;
   final Future<void> Function(HistoryModel history) deleteHistory;
@@ -15,6 +20,8 @@ class HistoryListView extends StatelessWidget {
   const HistoryListView({
     super.key,
     required this.controller,
+    required this.user,
+    required this.training,
     required this.histories,
     required this.updateHistory,
     required this.deleteHistory,
@@ -22,8 +29,19 @@ class HistoryListView extends StatelessWidget {
   });
 
   @override
+  State<HistoryListView> createState() => _HistoryListViewState();
+}
+
+class _HistoryListViewState extends State<HistoryListView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final messages = widget.controller.messages;
 
     return Container(
       decoration: BoxDecoration(
@@ -34,25 +52,23 @@ class HistoryListView extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(8),
       child: AnimatedBuilder(
-        animation: controller,
+        animation: widget.controller,
         builder: (context, _) {
-          switch (controller.state) {
+          switch (widget.controller.state) {
             case StateLoading():
               return const Center(
                 child: CircularProgressIndicator(),
               );
             case StateSuccess():
-              final sortHist =
-                  reversed ? histories.reversed.toList() : histories;
-              // final lastIndex = reversed ? sortHist.length - 1 : 0;
-
               return ListView.builder(
-                itemCount: sortHist.length,
+                itemCount: messages.length,
                 itemBuilder: (context, index) => DismissibleHistory(
-                  history: sortHist[index],
-                  enableDelete: false, // index == lastIndex ? false : true,
-                  managerUpdade: updateHistory,
-                  managerDelete: deleteHistory,
+                  message: messages[index],
+                  enableDelete: messages[index].msgType == MessageType.isSplit
+                      ? true
+                      : false,
+                  managerUpdade: widget.updateHistory,
+                  managerDelete: widget.deleteHistory,
                 ),
               );
             default:

@@ -1,17 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 
 import '../../common/functions/share_functions.dart';
+import '../../common/functions/training_report.dart';
+import '../../common/singletons/app_settings.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../common/models/training_model.dart';
+import '../../manager/history_manager.dart';
 import '../history_page/history_page.dart';
 import '../widgets/common/user_card.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'trainings_page_controller.dart';
 import 'trainings_page_state.dart';
 import 'widgets/dismissible_training.dart';
+import 'widgets/select_user_popup_menu.dart';
 
 class TrainingsPage extends StatefulWidget {
   const TrainingsPage({super.key});
@@ -121,6 +124,28 @@ class _TrainingsPageState extends State<TrainingsPage> {
     );
   }
 
+  Future<void> _sendRelat() async {
+    final trainings = <TrainingModel>[];
+    for (final item in _controller.selectedTraining) {
+      if (item.selected) {
+        trainings.add(
+          _controller.trainings.firstWhere((t) => t.id == item.trainingId),
+        );
+      }
+    }
+
+    for (final t in trainings) {
+      final manager = await HistoryManager.newInstance(t.id!);
+      final report = TrainingReport(
+        user: _controller.user!,
+        training: t,
+        histories: manager.histories,
+      );
+
+      report.generateReport();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -179,14 +204,16 @@ class _TrainingsPageState extends State<TrainingsPage> {
                       children: [
                         MenuAnchor(
                           builder: (context, controller, child) {
-                            return IconButton(
-                              onPressed: () {
-                                if (controller.isOpen) {
-                                  controller.close();
-                                } else {
-                                  controller.open();
-                                }
-                              },
+                            return IconButton.filledTonal(
+                              onPressed: _controller.haveTrainingSelected
+                                  ? () {
+                                      if (controller.isOpen) {
+                                        controller.close();
+                                      } else {
+                                        controller.open();
+                                      }
+                                    }
+                                  : null,
                               icon: const Icon(Icons.share),
                               tooltip: 'Show menu',
                             );
@@ -207,15 +234,12 @@ class _TrainingsPageState extends State<TrainingsPage> {
                                 width: 30,
                                 height: 30,
                               ),
-                            )
+                            ),
+                            MenuItemButton(
+                              onPressed: _sendRelat,
+                              child: const Icon(Icons.receipt_long),
+                            ),
                           ],
-                          child: IconButton.filledTonal(
-                            onPressed: _controller.haveTrainingSelected
-                                ? _sendEmail
-                                : null,
-                            icon: const Icon(Icons.share),
-                            tooltip: 'TPShare'.tr(),
-                          ),
                         ),
                         IconButton.filledTonal(
                           onPressed: _controller.haveTrainingSelected
@@ -295,64 +319,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
           },
         ),
       ),
-    );
-  }
-}
-
-class SelectUserPopupMenu extends StatelessWidget {
-  const SelectUserPopupMenu({
-    super.key,
-    required this.colorScheme,
-    required TrainingsPageController controller,
-  }) : _controller = controller;
-
-  final ColorScheme colorScheme;
-  final TrainingsPageController _controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final app = AppSettings.instance;
-
-    return Row(
-      children: [
-        Text(
-          'TPSelectUser'.tr(),
-          style: AppFontStyle.roboto16,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-            ),
-            decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Focus(
-              focusNode: app.focusNodes[24],
-              child: DropdownButton<int>(
-                isExpanded: true,
-                borderRadius: BorderRadius.circular(12),
-                dropdownColor: colorScheme.primaryContainer,
-                value: _controller.userId,
-                items: _controller.users
-                    .map(
-                      (user) => DropdownMenuItem<int>(
-                        value: user.id!,
-                        child: Text(
-                          user.name,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: _controller.selectUser,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

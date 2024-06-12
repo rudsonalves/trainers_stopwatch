@@ -20,6 +20,54 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_11 - version: 0.9.8+29
+
+This commit enhances the project with various improvements and new features that provide a more robust and efficient user experience. 
+
+**Changes:**
+
+- **Android Manifest Update**:
+  - Enabled `android.intent.action.PROCESS_TEXT` intent filter to support text processing within the application.
+
+- **History Controller Enhancements**:
+  - Added `TrainingReport` integration to the `HistoryController`.
+  - Updated the `init` method to initialize `TrainingReport` with user and training data, including histories.
+  - Ensured that `getHistory` updates the training report messages upon fetching history data.
+
+- **New Training Report Class**:
+  - Created `TrainingReport` to handle the generation of training reports.
+  - The class includes methods for creating split and lap messages, calculating speeds, and formatting durations.
+  - Provides a structured way to log and retrieve training history details.
+
+- **Messages Model Updates**:
+  - Introduced `MessageType` enum to classify message types (Lap, Split, Starting).
+  - Added `historyId` to `MessagesModel` to link messages with specific history records.
+
+- **History Page Updates**:
+  - Modified `init` method to accept user, training, and history data.
+  - Initialized `TrainingReport` with the necessary data within the controller.
+  - Updated `HistoryListView` to work with new messages from `TrainingReport`.
+
+- **Personal Training Page Enhancements**:
+  - Updated `PersonalTrainingController` to use the enhanced `HistoryController` with `TrainingReport`.
+  - Initialized the controller with user, training, and history data.
+
+- **Trainings Page Updates**:
+  - Added functionality to generate detailed training reports.
+  - Introduced a new icon in the action bar to trigger report generation.
+  - Refactored the `SelectUserPopupMenu` into a separate widget for better code organization.
+
+- **Widgets and UI Improvements**:
+  - Refactored `DismissibleHistory` to work with the new `MessagesModel`.
+  - Updated `HistoryListView` to display messages instead of direct history data.
+  - Enhanced `PreciseStopwatch` UI for better alignment and presentation.
+
+- **History Manager Enhancements**:
+  - Added a `newInstance` method to `HistoryManager` for better initialization and fetching of history data.
+
+This commit ensures a more structured approach to handling training data, improves user experience with new reporting capabilities, and enhances the overall maintainability and readability of the codebase.
+
+
 ## 2024_06_11 - version: 0.9.7+28
 
 Enhanced app initialization, sharing features, and UI improvements

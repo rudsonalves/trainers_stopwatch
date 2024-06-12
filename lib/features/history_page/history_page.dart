@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/abstract_classes/history_controller.dart';
+import '../../common/models/history_model.dart';
 import '../../common/models/user_model.dart';
 import '../../common/models/training_model.dart';
 import 'history_page_controller.dart';
@@ -48,7 +49,12 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-    _controller.init(widget.training);
+
+    _controller.init(
+      user: widget.user,
+      training: widget.training,
+      histories: <HistoryModel>[],
+    );
   }
 
   @override
@@ -78,6 +84,8 @@ class _HistoryPageState extends State<HistoryPage> {
                     case StateSuccess():
                       return HistoryListView(
                         controller: _controller,
+                        user: _controller.user,
+                        training: _controller.training,
                         histories: _controller.histories,
                         updateHistory: _controller.updateHistory,
                         deleteHistory: _controller.deleteHistory,

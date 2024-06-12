@@ -75,40 +75,41 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: trainingColor,
-        builder: (context, value, _) {
-          return Container(
-            decoration: BoxDecoration(
-              color: value.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
+      valueListenable: trainingColor,
+      builder: (context, value, _) {
+        return Container(
+          decoration: BoxDecoration(
+            color: value.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                UserImageName(image: image, name: name),
+                LapSplitCouters(
+                  bloc: _controller.bloc,
+                  maxLaps: maxLaps,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    StopwatchDisplay(
+                        durationTraining: _controller.durationTraining),
+                    StopwatchButtonBar(
+                      controller: _controller,
+                      setTraining: _editTraining,
+                      userId: widget.user.id!,
+                    ),
+                  ],
+                ),
+              ],
             ),
-            margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  UserImageName(image: image, name: name),
-                  LapSplitCouters(
-                    bloc: _controller.bloc,
-                    maxLaps: maxLaps,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      StopwatchDisplay(
-                          durationTraining: _controller.durationTraining),
-                      StopwatchButtonBar(
-                        controller: _controller,
-                        setTraining: _editTraining,
-                        userId: widget.user.id!,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

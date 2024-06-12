@@ -3,6 +3,7 @@ import 'dart:developer';
 import '../../common/abstract_classes/history_controller.dart';
 import '../../common/models/history_model.dart';
 import '../../common/models/training_model.dart';
+import '../../common/models/user_model.dart';
 import '../widgets/precise_stopwatch/precise_stopwatch.dart';
 
 class PersonalTrainingController extends HistoryController {
@@ -10,11 +11,16 @@ class PersonalTrainingController extends HistoryController {
 
   PersonalTrainingController(this.stopwatch);
 
-  TrainingModel get training => stopwatch.controller.training;
   List<HistoryModel> get histories => stopwatch.controller.histories;
 
   @override
-  void init(TrainingModel training) async {
+  void init({
+    required UserModel user,
+    required TrainingModel training,
+    required List<HistoryModel> histories,
+  }) async {
+    super.init(user: user, training: training, histories: histories);
+
     stopwatch.controller.actionOnPress.addListener(getHistory);
   }
 
