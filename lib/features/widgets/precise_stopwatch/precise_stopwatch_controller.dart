@@ -214,7 +214,7 @@ class PreciseStopwatchController {
       comments: 'PSCHistoryComments'.tr(args: [speed]),
     );
 
-    await _historyManager.insert(history);
+    // await _historyManager.insert(history);
     _sendLapMessage(history, history.lap!);
     _toggleActionOnPress();
   }

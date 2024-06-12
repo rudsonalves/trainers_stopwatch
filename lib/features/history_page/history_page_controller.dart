@@ -4,19 +4,27 @@ import 'package:easy_localization/easy_localization.dart';
 
 import '../../common/abstract_classes/history_controller.dart';
 import '../../common/functions/stopwatch_functions.dart';
+import '../../common/models/user_model.dart';
 import '../../manager/history_manager.dart';
 import '../../common/models/history_model.dart';
 import '../../common/models/training_model.dart';
 
 class HistoryPageController extends HistoryController {
   final _historyManager = HistoryManager();
-  late final TrainingModel training;
 
   List<HistoryModel> get histories => _historyManager.histories;
 
   @override
-  void init(TrainingModel training) {
-    this.training = training;
+  void init({
+    required UserModel user,
+    required TrainingModel training,
+    required List<HistoryModel> histories,
+  }) {
+    super.init(
+      user: user,
+      training: training,
+      histories: _historyManager.histories,
+    );
     _historyManager.init(training.id!);
     getHistory();
   }
@@ -36,6 +44,7 @@ class HistoryPageController extends HistoryController {
     try {
       changeState(StateLoading());
       await _historyManager.getHistory();
+      trainingReport.createMessages();
       changeState(StateSuccess());
     } catch (err) {
       final message = 'HistoryPageController.getHistory: $err';

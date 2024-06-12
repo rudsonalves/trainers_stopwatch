@@ -39,13 +39,18 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
   void initState() {
     super.initState();
     controller = PersonalTrainingController(widget.stopwatch);
-    controller.init(widget.stopwatch.controller.training);
+    controller.init(
+      user: widget.stopwatch.controller.user,
+      training: widget.stopwatch.controller.training,
+      histories: widget.stopwatch.controller.histories,
+    );
     controller.getHistory();
   }
 
   @override
   Widget build(BuildContext context) {
     final training = controller.training;
+    final user = controller.user;
 
     return Scaffold(
       appBar: AppBar(
@@ -87,6 +92,8 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
                       case StateSuccess():
                         return HistoryListView(
                           controller: controller,
+                          user: user,
+                          training: training,
                           histories: controller.histories,
                           updateHistory: controller.updateHistory,
                           deleteHistory: controller.deleteHistory,
