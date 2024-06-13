@@ -99,7 +99,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   void _removeUserFromLogs(String userName) {
-    _messageList.removeWhere((message) => message.title == userName);
+    _messageList.removeWhere((message) => message.userName == userName);
   }
 
   Future<void> _managerStopwatch(int userId) async {

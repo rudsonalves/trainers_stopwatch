@@ -50,6 +50,8 @@ class _DismissibleHistoryState extends State<DismissibleHistory> {
         return StopwatchIcons.partial;
       case MessageType.isStarting:
         return StopwatchIcons.start;
+      case MessageType.isFinish:
+        return StopwatchIcons.stop;
     }
   }
 
@@ -72,7 +74,7 @@ class _DismissibleHistoryState extends State<DismissibleHistory> {
         ),
         child: ListTile(
           title: Text(widget.message.title),
-          subtitle: Text(widget.message.body),
+          subtitle: Text(widget.message.subTitle),
           leading: Icon(iconData),
         ),
       ),

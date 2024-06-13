@@ -184,7 +184,7 @@ class PreciseStopwatchController {
 
   Future<void> _generateSplitRegister() async {
     int splitMs;
-    String speed;
+    SpeedValue speed;
     (splitMs, speed) = _calculateSplitTimeSpeed();
 
     int split = _getSplit();
@@ -193,17 +193,17 @@ class PreciseStopwatchController {
       trainingId: _training!.id!,
       duration: Duration(milliseconds: splitMs),
       split: split,
-      comments: 'PSCHistoryComments'.tr(args: [speed]),
+      comments: 'PSCHistoryComments'.tr(args: [speed.toString()]),
     );
 
     await _historyManager.insert(history);
-    _sendSplitMessage(history, split);
+    _sendSplitMessage(history, split, speed);
     _toggleActionOnPress();
   }
 
   Future<void> _generateLapRegister() async {
     int lapMs;
-    String speed;
+    SpeedValue speed;
     (lapMs, speed) = _calculateLapTimeSpeed();
 
     HistoryModel history = HistoryModel(
@@ -211,11 +211,11 @@ class PreciseStopwatchController {
       duration: Duration(milliseconds: lapMs),
       lap: lapCounter.value,
       split: _getSplit(),
-      comments: 'PSCHistoryComments'.tr(args: [speed]),
+      comments: 'PSCHistoryComments'.tr(args: [speed.toString()]),
     );
 
     // await _historyManager.insert(history);
-    _sendLapMessage(history, history.lap!);
+    _sendLapMessage(history, history.lap!, speed);
     _toggleActionOnPress();
   }
 
@@ -226,9 +226,11 @@ class PreciseStopwatchController {
 
   void _sendStartedMessage(String comments) {
     final message = MessagesModel(
-      title: user.name,
-      body: comments,
+      userName: user.name,
+      duration: Duration.zero,
+      comments: comments,
       color: _training!.color,
+      msgType: MessageType.isStarting,
     );
     _stopwatchController.sendHistoryMessage(message);
   }
@@ -236,15 +238,20 @@ class PreciseStopwatchController {
   void _sendSplitMessage(
     HistoryModel history,
     int split,
+    SpeedValue speed,
   ) {
     final message = MessagesModel(
-      title: user.name,
-      body: 'PSCSplitMessage'.tr(args: [
+      userName: user.name,
+      label: 'Split[$split]',
+      speed: speed,
+      duration: history.duration,
+      comments: 'PSCSplitMessage'.tr(args: [
         split.toString(),
         StopwatchFunctions.formatDuration(history.duration),
         history.comments!,
       ]),
       color: _training!.color,
+      msgType: MessageType.isSplit,
     );
 
     _stopwatchController.sendHistoryMessage(message);
@@ -253,15 +260,20 @@ class PreciseStopwatchController {
   void _sendLapMessage(
     HistoryModel history,
     int lap,
+    SpeedValue speed,
   ) {
     final message = MessagesModel(
-      title: user.name,
-      body: 'PSCLapMessage'.tr(args: [
+      userName: user.name,
+      label: 'Lap[$lap]',
+      speed: speed,
+      duration: history.duration,
+      comments: 'PSCLapMessage'.tr(args: [
         lap.toString(),
         StopwatchFunctions.formatDuration(history.duration),
         history.comments!,
       ]),
       color: _training!.color,
+      msgType: MessageType.isLap,
     );
 
     _stopwatchController.sendHistoryMessage(message);
@@ -269,17 +281,19 @@ class PreciseStopwatchController {
 
   void _sendFinishMessage() {
     final message = MessagesModel(
-      title: user.name,
-      body: 'PSCFinishMessage'.tr(args: [
+      userName: user.name,
+      duration: Duration.zero,
+      comments: 'PSCFinishMessage'.tr(args: [
         DateFormat.Hms().format(DateTime.now()),
       ]),
       color: _training!.color,
+      msgType: MessageType.isFinish,
     );
 
     _stopwatchController.sendHistoryMessage(message);
   }
 
-  (int, String) _calculateLapTimeSpeed() {
+  (int, SpeedValue) _calculateLapTimeSpeed() {
     final lapMS = bloc.lapDuration.inMilliseconds;
 
     final speed = StopwatchFunctions.speedCalc(
@@ -291,7 +305,7 @@ class PreciseStopwatchController {
     return (lapMS, speed);
   }
 
-  (int, String) _calculateSplitTimeSpeed() {
+  (int, SpeedValue) _calculateSplitTimeSpeed() {
     final splitMS = bloc.splitDuration.inMilliseconds;
 
     final speed = StopwatchFunctions.speedCalc(

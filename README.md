@@ -20,6 +20,54 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_13 - version: 0.9.10+31
+
+Release First Beta Version with Comprehensive Enhancements and Optimizations
+
+**Detailed Changes:**
+
+- **Build PDF Functionality**:
+  - Added `makeReport` method to generate detailed training reports for users, including metrics like total length, total time, medium speed, lap length, split length, and number of laps.
+  - Enhanced PDF formatting with the inclusion of user details and training logs.
+
+- **Share Functionality**:
+  - Updated `sendWhatsApp` and `sendEmail` methods to utilize the new `makeReport` method for generating comprehensive PDF reports.
+  - Included user details in shared reports for better personalization.
+
+- **Stopwatch Functions**:
+  - Introduced `SpeedValue` class to encapsulate speed and its unit, ensuring consistent handling and display of speed metrics across the application.
+  - Enhanced `formatDuration` method to handle durations exceeding one hour, ensuring accurate time representation.
+
+- **Training Report Enhancements**:
+  - Streamlined `TrainingReport` class by removing redundant methods and focusing on generating message models with detailed training information.
+  - Improved message creation methods to include user names and formatted speed values, providing clearer and more informative messages.
+
+- **Messages Model**:
+  - Added new fields (`userName`, `label`, `speed`, `duration`, `comments`) to the `MessagesModel` class for detailed message representation.
+  - Implemented methods to generate formatted titles and subtitles for message logs, ensuring clarity in the displayed and logged messages.
+
+- **History Page Controller**:
+  - Updated state management to handle the new speed calculation and message generation functionalities.
+  - Ensured proper logging and error handling during history retrieval and updates.
+
+- **Trainings Page**:
+  - Enhanced sharing functionality to include user details in shared training logs.
+  - Removed redundant report generation code, focusing on streamlined sharing methods.
+
+- **Dismissible History Widget**:
+  - Improved display of history messages with detailed subtitles, including speed values and formatted durations.
+  - Added handling for finish messages with appropriate icons and labels.
+
+- **Precise Stopwatch Controller**:
+  - Updated message generation methods to include detailed labels, speed values, and durations for split and lap messages.
+  - Enhanced finish message generation with formatted timestamps and clear labels.
+
+- **Project Configuration**:
+  - Updated project version to `0.9.9+30` in `pubspec.yaml` to reflect the transition to the first beta release.
+
+These enhancements mark the completion of all planned features and improvements for the application, moving it into the beta testing phase for final bug fixes and optimizations before the first official release.
+
+
 ## 2024_06_13 - version: 0.9.9+30
 
 Enhance PersonalTrainingController and HistoryListView with Improved State Management and Message Handling

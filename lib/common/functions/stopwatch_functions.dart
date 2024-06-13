@@ -1,9 +1,25 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import '../models/training_model.dart';
+
+class SpeedValue {
+  final double value;
+  final String speedUnit;
+
+  const SpeedValue([
+    this.value = 0,
+    this.speedUnit = 'm/s',
+  ]);
+
+  @override
+  String toString() {
+    return '${value.toStringAsFixed(2)} $speedUnit';
+  }
+}
 
 class StopwatchFunctions {
   StopwatchFunctions._();
 
-  static String speedCalc({
+  static SpeedValue speedCalc({
     required double length,
     required double time,
     required TrainingModel training,
@@ -33,21 +49,25 @@ class StopwatchFunctions {
         break;
     }
 
-    return '${speed.toStringAsFixed(2)} ${training.speedUnit}';
+    return SpeedValue(speed, training.speedUnit);
   }
 
   static String formatDuration(Duration duration) {
     double seconds = duration.inMilliseconds / 1000;
     if (seconds < 60) {
-      return '${seconds.toStringAsFixed(2)}s';
+      return '${seconds.toStringAsFixed(2)} s';
     } else if (seconds < 3600) {
       final minutes = duration.inMinutes;
       seconds -= minutes * 60;
-      return '${minutes.toString().padLeft(2, '0')}:${seconds.toStringAsFixed(2)}s';
+      return '${minutes.toString().padLeft(2, '0')}:'
+          '${seconds.toStringAsFixed(2)} s';
+    } else {
+      final hours = duration.inHours;
+      final minutes = duration.inMinutes;
+      seconds -= hours * 3600 - minutes * 60;
+      return '${hours.toString().padLeft(2, '0')}:'
+          '${minutes.toString().padLeft(2, '0')}:'
+          '${seconds.toStringAsFixed(2)} s';
     }
-
-    final durationStr = duration.toString();
-    final point = durationStr.indexOf('.');
-    return '${durationStr.substring(0, point + 4)}s';
   }
 }

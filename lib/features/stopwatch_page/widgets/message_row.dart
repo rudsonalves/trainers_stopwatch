@@ -22,12 +22,12 @@ class MessageRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              message.title,
+              message.logTitle,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text(message.body),
+            Text(message.logSubtitle),
           ],
         ),
       ],
@@ -35,11 +35,11 @@ class MessageRow extends StatelessWidget {
   }
 
   Row _messageRow() {
-    if (message.body.contains('Start')) {
+    if (message.comments.contains('Start')) {
       return _buildMessageRow(StopwatchIcons.start);
-    } else if (message.body.contains('Split')) {
+    } else if (message.comments.contains('Split')) {
       return _buildMessageRow(StopwatchIcons.partial);
-    } else if (message.body.contains('Lap')) {
+    } else if (message.comments.contains('Lap')) {
       return _buildMessageRow(StopwatchIcons.lap);
     } else {
       return _buildMessageRow(StopwatchIcons.stop);

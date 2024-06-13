@@ -1,7 +1,7 @@
 name: trainers_stopwatch
 description: "Multiple Precision Chronometers."
 publish_to: 'none'
-version: 0.9.9+30
+version: 0.9.10+31
 
 environment:
   sdk: '>=3.3.2 <4.0.0'
