@@ -74,12 +74,17 @@ class TrainingsPageController extends ChangeNotifier {
   Future<void> removeTraining(TrainingModel training) async {
     try {
       _changeState(TrainingsPageStateLoading());
+      _removeFromSelection(training);
       await _trainingsManager!.delete(training);
       _changeState(TrainingsPageStateSuccess());
     } catch (err) {
       log('TrainingsPageController.removeTraining: $err');
       _changeState(TrainingsPageStateError());
     }
+  }
+
+  void _removeFromSelection(TrainingModel training) {
+    selectedTraining.removeWhere((item) => item.trainingId == training.id);
   }
 
   Future<void> _selectUser(int id) async {

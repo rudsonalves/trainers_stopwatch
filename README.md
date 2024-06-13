@@ -20,6 +20,29 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_06_13 - version: 0.9.9+30
+
+Enhance PersonalTrainingController and HistoryListView with Improved State Management and Message Handling
+
+**Detailed Changes:**
+
+- **PersonalTrainingController**:
+  - Improved `getHistory` method to handle errors and update the state accordingly.
+  - Added `trainingReport.createMessages()` in `getHistory`, `updateHistory`, and `deleteHistory` methods to keep the messages updated based on the latest history changes.
+  - Ensured state changes are correctly reflected in case of errors with appropriate logging.
+
+- **TrainingsPageController**:
+  - Added `_removeFromSelection` method to remove a training from the selection list upon deletion.
+  - Integrated `_removeFromSelection` call within `removeTraining` to keep the selection list updated.
+
+- **HistoryListView**:
+  - Refactored to use messages model import for consistency.
+  - Updated the `build` method to handle reversed message lists, ensuring correct display order.
+  - Adjusted ListView builder to display the correct set of messages, taking into account the `reversed` flag for proper order presentation.
+
+These changes aim to provide a more robust and user-friendly experience by ensuring state and message consistency across various parts of the application.
+
+
 ## 2024_06_12 - version: 0.9.8+29
 
 This commit enhances the project with various improvements and new features that provide a more robust and efficient user experience. 
