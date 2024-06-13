@@ -19,16 +19,27 @@ class PersonalTrainingController extends HistoryController {
     required TrainingModel training,
     required List<HistoryModel> histories,
   }) async {
-    super.init(user: user, training: training, histories: histories);
+    super.init(
+      user: user,
+      training: training,
+      histories: histories,
+    );
 
     stopwatch.controller.actionOnPress.addListener(getHistory);
   }
 
   @override
   Future<void> getHistory() async {
-    changeState(StateLoading());
-    await Future.delayed(const Duration(milliseconds: 50));
-    changeState(StateSuccess());
+    try {
+      changeState(StateLoading());
+      await Future.delayed(const Duration(milliseconds: 50));
+      trainingReport.createMessages();
+      changeState(StateSuccess());
+    } catch (err) {
+      final message = 'PersonalTrainingController.getHistory: $err';
+      log(message);
+      changeState(StateError());
+    }
   }
 
   @override
@@ -36,6 +47,7 @@ class PersonalTrainingController extends HistoryController {
     try {
       changeState(StateLoading());
       await stopwatch.controller.deleteHistory(history);
+      trainingReport.createMessages();
       changeState(StateSuccess());
     } catch (err) {
       changeState(StateError());
@@ -48,6 +60,7 @@ class PersonalTrainingController extends HistoryController {
     try {
       changeState(StateLoading());
       await stopwatch.controller.updateHistory(history);
+      trainingReport.createMessages();
       changeState(StateSuccess());
     } catch (err) {
       changeState(StateError());

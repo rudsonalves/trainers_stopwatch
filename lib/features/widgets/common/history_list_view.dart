@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/models/messages_model.dart';
 
 import '../../../common/abstract_classes/history_controller.dart';
 import '../../../common/models/history_model.dart';
+import '../../../common/models/messages_model.dart';
 import '../../../common/models/training_model.dart';
 import '../../../common/models/user_model.dart';
 import 'dismissible_history.dart';
@@ -60,11 +60,14 @@ class _HistoryListViewState extends State<HistoryListView> {
                 child: CircularProgressIndicator(),
               );
             case StateSuccess():
+              final showMsgs =
+                  widget.reversed ? messages.reversed.toList() : messages;
+
               return ListView.builder(
-                itemCount: messages.length,
+                itemCount: showMsgs.length,
                 itemBuilder: (context, index) => DismissibleHistory(
-                  message: messages[index],
-                  enableDelete: messages[index].msgType == MessageType.isSplit
+                  message: showMsgs[index],
+                  enableDelete: showMsgs[index].msgType == MessageType.isSplit
                       ? true
                       : false,
                   managerUpdade: widget.updateHistory,
