@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/functions/share_functions.dart';
-import '../../common/functions/training_report.dart';
 import '../../common/singletons/app_settings.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../common/models/training_model.dart';
-import '../../manager/history_manager.dart';
 import '../history_page/history_page.dart';
 import '../widgets/common/user_card.dart';
 import '../widgets/common/generic_dialog.dart';
@@ -104,6 +102,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
     }
 
     AppShare.sendEmail(
+      user: _controller.user!,
       recipient: _controller.user!.email,
       trainings: trainings,
     );
@@ -120,31 +119,32 @@ class _TrainingsPageState extends State<TrainingsPage> {
     }
 
     AppShare.sendWhatsApp(
+      user: _controller.user!,
       trainings: trainings,
     );
   }
 
-  Future<void> _sendRelat() async {
-    final trainings = <TrainingModel>[];
-    for (final item in _controller.selectedTraining) {
-      if (item.selected) {
-        trainings.add(
-          _controller.trainings.firstWhere((t) => t.id == item.trainingId),
-        );
-      }
-    }
+  // Future<void> _sendRelat() async {
+  //   final trainings = <TrainingModel>[];
+  //   for (final item in _controller.selectedTraining) {
+  //     if (item.selected) {
+  //       trainings.add(
+  //         _controller.trainings.firstWhere((t) => t.id == item.trainingId),
+  //       );
+  //     }
+  //   }
 
-    for (final t in trainings) {
-      final manager = await HistoryManager.newInstance(t.id!);
-      final report = TrainingReport(
-        user: _controller.user!,
-        training: t,
-        histories: manager.histories,
-      );
+  //   for (final t in trainings) {
+  //     final manager = await HistoryManager.newInstance(t.id!);
+  //     final report = TrainingReport(
+  //       user: _controller.user!,
+  //       training: t,
+  //       histories: manager.histories,
+  //     );
 
-      report.generateReport();
-    }
-  }
+  //     // report.generateReport();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -235,10 +235,10 @@ class _TrainingsPageState extends State<TrainingsPage> {
                                 height: 30,
                               ),
                             ),
-                            MenuItemButton(
-                              onPressed: _sendRelat,
-                              child: const Icon(Icons.receipt_long),
-                            ),
+                            // MenuItemButton(
+                            //   onPressed: _sendRelat,
+                            //   child: const Icon(Icons.receipt_long),
+                            // ),
                           ],
                         ),
                         IconButton.filledTonal(

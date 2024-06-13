@@ -5,15 +5,17 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/training_model.dart';
+import '../models/user_model.dart';
 import 'build_pdf.dart';
 
 sealed class AppShare {
   AppShare._();
 
   static Future<void> sendWhatsApp({
+    required UserModel user,
     required List<TrainingModel> trainings,
   }) async {
-    final pdfFile = await BuildPdf.makeTraining(trainings);
+    final pdfFile = await BuildPdf.makeReport(user, trainings);
     final XFile xfile = XFile(pdfFile.path);
 
     await Share.shareXFiles(
@@ -23,13 +25,14 @@ sealed class AppShare {
   }
 
   static Future<void> sendEmail({
+    required UserModel user,
     required String recipient,
     required List<TrainingModel> trainings,
   }) async {
     const subject = 'Training logs';
     final body = _createBody(trainings);
 
-    final file = await BuildPdf.makeTraining(trainings);
+    final file = await BuildPdf.makeReport(user, trainings);
 
     final email = Email(
       subject: subject,

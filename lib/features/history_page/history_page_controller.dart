@@ -83,7 +83,7 @@ class HistoryPageController extends HistoryController {
       totalLength.toStringAsFixed(1),
       training.distanceUnit,
       _cleanTime(totalTime),
-      speed,
+      speed.toString(),
     ]);
   }
 }
