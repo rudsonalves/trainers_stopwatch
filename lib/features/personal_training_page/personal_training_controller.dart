@@ -58,10 +58,10 @@ class PersonalTrainingController extends HistoryController {
   }
 
   @override
-  Future<bool> updateHistory(int historyId) async {
+  Future<bool> updateHistory(HistoryModel history) async {
     try {
       changeState(StateLoading());
-      await stopwatch.controller.updateHistory(historyId);
+      await stopwatch.controller.updateHistory(history);
       trainingReport.createMessages();
       changeState(StateSuccess());
       return true;

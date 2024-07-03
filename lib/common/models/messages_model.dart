@@ -32,8 +32,11 @@ class MessagesModel {
   });
 
   @override
-  String toString() =>
-      'MessagesModel(title: "$title", subTitle: "$subTitle", body: "$comments")';
+  String toString() => 'MessagesModel(title: "$title",'
+      ' historyId: $historyId,'
+      ' subTitle: "$subTitle",'
+      ' body: "$comments"'
+      ')';
 
   bool get isNotEmpty =>
       label.isNotEmpty || speed.value != 0 || comments.isNotEmpty;
@@ -45,11 +48,13 @@ class MessagesModel {
     switch (msgType) {
       case MessageType.isLap:
         return 'Speed: $speedString';
-      case MessageType.isSplit:
-        return 'Speed: $speedString';
+      // case MessageType.isSplit:
+      //   return 'Speed: $speedString';
       case MessageType.isStarting:
         return comments;
       case MessageType.isFinish:
+        return comments;
+      default:
         return comments;
     }
   }
