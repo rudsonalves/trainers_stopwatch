@@ -7,13 +7,14 @@ import '../../../common/models/messages_model.dart';
 import '../../../common/models/training_model.dart';
 import '../../../common/models/user_model.dart';
 import 'dismissible_history.dart';
+import 'edit_history_dialog.dart';
 
 class HistoryListView extends StatefulWidget {
   final HistoryController controller;
   final UserModel user;
   final TrainingModel training;
   final List<HistoryModel> histories;
-  final Future<bool> Function(int historyId) updateHistory;
+  final Future<bool> Function(HistoryModel history) updateHistory;
   final Future<bool> Function(int historyId) deleteHistory;
   final bool reversed;
 
@@ -36,6 +37,23 @@ class _HistoryListViewState extends State<HistoryListView> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<bool> editHistory(int historyId) async {
+    final history = widget.histories.firstWhere((h) => h.id == historyId);
+    final title = widget.controller.messages
+        .firstWhere((m) => m.historyId == historyId)
+        .title;
+    if (mounted) {
+      await EditHistoryDialog.open(
+        context,
+        title: title,
+        history: history,
+      );
+    }
+
+    await widget.updateHistory(history);
+    return true;
   }
 
   @override
@@ -72,7 +90,7 @@ class _HistoryListViewState extends State<HistoryListView> {
                       : showMsgs[index].msgType == MessageType.isSplit
                           ? true
                           : false,
-                  managerUpdade: widget.updateHistory,
+                  editHistory: editHistory,
                   managerDelete: widget.deleteHistory,
                 ),
               );

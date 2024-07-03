@@ -20,8 +20,50 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
-## 2024_07_03 - version: 1.0.0+32
+## 2024_07_03 - version: 1.0.0+33
 
+refactor: Update HistoryModel usage and refactor history management
+
+- Refactored `updateHistory` method across various controllers to use `HistoryModel` instead of `int historyId`.
+- Updated `MessagesModel` to include `historyId` in `toString()` method.
+- Commented out unused `isSplit` case in `MessagesModel`.
+- Adjusted `StopwatchDrawer` to align the text at the bottom center.
+- Renamed `managerUpdate` to `editHistory` in `DismissibleHistory` and related calls.
+- Added `editHistory` method to `HistoryListView` to handle history edits through a dialog.
+- Commented out the unused `_cleanUserLog` method in `PreciseStopwatch`.
+- Updated `PreciseStopwatchController` to use `HistoryModel` for updating history.
+- Added `getById` method to `HistoryManager` for fetching a history by ID.
+- Refactored `update` method in `HistoryManager` to use `HistoryModel` directly.
+- Renamed `query` to `getById` in `AbstractHistoryRepository` and `HistoryRepository` for consistency.
+
+### Detailed Description:
+
+1. **History Management Refactor:**
+   - Changed the signature of the `updateHistory` method in various controllers (`HistoryPageController`, `PersonalTrainingController`, `PreciseStopwatchController`) to accept `HistoryModel` instead of an integer ID. This change ensures that the entire history object is passed, allowing for more detailed updates and better type safety.
+   
+2. **Model Updates:**
+   - Updated `MessagesModel` to include `historyId` in the `toString()` method for better debugging and logging.
+   - Commented out the `isSplit` case in the `MessagesModel` class, indicating that it is currently not in use.
+
+3. **UI Adjustments:**
+   - Modified `StopwatchDrawer` to align the text at the bottom center, enhancing the UI layout and readability.
+
+4. **Dismissible History:**
+   - Renamed the `managerUpdate` function to `editHistory` in the `DismissibleHistory` widget and ensured that related calls in the widget tree were updated accordingly.
+   - Added `editHistory` method in `HistoryListView` to handle the editing of history entries through a dialog interface, providing a more interactive user experience.
+
+5. **Precise Stopwatch:**
+   - Commented out the `_cleanUserLog` method in `PreciseStopwatch`, indicating it is not in use and simplifying the codebase.
+
+6. **HistoryManager and Repository:**
+   - Introduced the `getById` method in `HistoryManager` to fetch a history record by its ID, improving data retrieval capabilities.
+   - Refactored the `update` method in `HistoryManager` to accept `HistoryModel` directly, simplifying the update logic and ensuring consistency.
+   - Renamed the `query` method to `getById` in both `AbstractHistoryRepository` and `HistoryRepository` for better clarity and consistency in naming conventions.
+
+These changes collectively improve the structure, readability, and maintainability of the codebase, ensuring that history management is more robust and that UI components are better aligned.
+
+
+## 2024_07_03 - version: 1.0.0+32
 
 feat: Implementation of WhatsApp data sending button and enhancements in training management interface
 

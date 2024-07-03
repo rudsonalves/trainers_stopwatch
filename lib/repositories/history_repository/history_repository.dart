@@ -14,7 +14,7 @@ class HistoryRepository implements AbstractHistoryRepository {
   }
 
   @override
-  Future<HistoryModel?> query(int id) async {
+  Future<HistoryModel?> getById(int id) async {
     final map = await _store.query(id);
     if (map == null) return null;
     final history = HistoryModel.fromMap(map);

@@ -7,14 +7,14 @@ import 'dismissible_backgrounds.dart';
 class DismissibleHistory extends StatefulWidget {
   final MessagesModel message;
   final bool enableDelete;
-  final Future<bool> Function(int historyId) managerUpdade;
+  final Future<bool> Function(int historyId) editHistory;
   final Future<bool> Function(int historyId) managerDelete;
 
   const DismissibleHistory({
     super.key,
     required this.message,
     this.enableDelete = true,
-    required this.managerUpdade,
+    required this.editHistory,
     required this.managerDelete,
   });
 
@@ -23,9 +23,11 @@ class DismissibleHistory extends StatefulWidget {
 }
 
 class _DismissibleHistoryState extends State<DismissibleHistory> {
-  Future<bool> _editHistory() async {
-    await widget.managerUpdade(widget.message.historyId);
-    return true;
+  Future<void> _editHistory() async {
+    await widget.editHistory(widget.message.historyId);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<bool> _deleteHistory() async {

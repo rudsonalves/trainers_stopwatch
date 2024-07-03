@@ -30,10 +30,10 @@ class HistoryPageController extends HistoryController {
   }
 
   @override
-  Future<bool> updateHistory(int historyId) async {
+  Future<bool> updateHistory(HistoryModel history) async {
     try {
       changeState(StateLoading());
-      await _historyManager.update(historyId);
+      await _historyManager.update(history);
       trainingReport.createMessages();
       changeState(StateSuccess());
       return true;

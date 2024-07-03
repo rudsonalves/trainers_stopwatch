@@ -28,6 +28,11 @@ class HistoryManager {
     }
   }
 
+  Future<HistoryModel?> getById(int id) async {
+    final history = await _repository.getById(id);
+    return history;
+  }
+
   Future<void> insert(HistoryModel history) async {
     history.trainingId = _trainingId;
     final result = await _repository.insert(history);
@@ -60,9 +65,8 @@ class HistoryManager {
     }
   }
 
-  Future<void> update(int historyId) async {
-    int index = findIndex(historyId);
-    final history = _histories[index];
+  Future<void> update(HistoryModel history) async {
+    int index = findIndex(history.id!);
 
     final result = await _repository.update(history);
     if (result > 0) {

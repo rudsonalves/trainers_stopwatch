@@ -47,7 +47,7 @@ abstract class HistoryController extends ChangeNotifier {
 
   Future<void> getHistory();
 
-  Future<bool> updateHistory(int historyId);
+  Future<bool> updateHistory(HistoryModel history);
 
   Future<bool> deleteHistory(int historyId);
 }

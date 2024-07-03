@@ -59,8 +59,8 @@ class PreciseStopwatchController {
     _actionOnPress.dispose();
   }
 
-  Future<void> updateHistory(int historyId) async {
-    await _historyManager.update(historyId);
+  Future<void> updateHistory(HistoryModel history) async {
+    await _historyManager.update(history);
   }
 
   Future<void> deleteHistory(int historyId) async {

@@ -72,7 +72,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
     trainingColor.value = _controller.training.color;
   }
 
-  Future<void> _cleanUserLog() async {}
+  // Future<void> _cleanUserLog() async {}
 
   @override
   Widget build(BuildContext context) {

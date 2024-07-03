@@ -34,9 +34,12 @@ class StopwatchDrawer extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            child: Text(
-              'SPDTitle'.tr(),
-              style: AppFontStyle.roboto20SemiBold,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                'SPDTitle'.tr(),
+                style: AppFontStyle.roboto20SemiBold,
+              ),
             ),
           ),
           ListTile(
