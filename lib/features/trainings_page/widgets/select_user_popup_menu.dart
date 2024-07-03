@@ -36,7 +36,7 @@ class SelectUserPopupMenu extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Focus(
-              focusNode: app.focusNodes[24],
+              focusNode: app.focusNodes[23],
               child: DropdownButton<int>(
                 isExpanded: true,
                 borderRadius: BorderRadius.circular(12),

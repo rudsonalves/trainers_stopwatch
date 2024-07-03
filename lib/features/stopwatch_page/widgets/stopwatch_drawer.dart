@@ -29,6 +29,10 @@ class StopwatchDrawer extends StatelessWidget {
           DrawerHeader(
             decoration: BoxDecoration(
               color: colorScheme.onPrimary,
+              image: const DecorationImage(
+                image: AssetImage('assets/images/running.png'),
+                fit: BoxFit.cover,
+              ),
             ),
             child: Text(
               'SPDTitle'.tr(),

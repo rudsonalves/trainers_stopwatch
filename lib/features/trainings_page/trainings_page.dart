@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/functions/share_functions.dart';
+import '../../common/icons/stopwatch_icons_icons.dart';
 import '../../common/singletons/app_settings.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../common/models/training_model.dart';
@@ -124,28 +125,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
     );
   }
 
-  // Future<void> _sendRelat() async {
-  //   final trainings = <TrainingModel>[];
-  //   for (final item in _controller.selectedTraining) {
-  //     if (item.selected) {
-  //       trainings.add(
-  //         _controller.trainings.firstWhere((t) => t.id == item.trainingId),
-  //       );
-  //     }
-  //   }
-
-  //   for (final t in trainings) {
-  //     final manager = await HistoryManager.newInstance(t.id!);
-  //     final report = TrainingReport(
-  //       user: _controller.user!,
-  //       training: t,
-  //       histories: manager.histories,
-  //     );
-
-  //     // report.generateReport();
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -187,85 +166,95 @@ class _TrainingsPageState extends State<TrainingsPage> {
                 return Column(
                   children: [
                     // Select User
-                    Focus(
-                      focusNode: app.focusNodes[23],
-                      child: SelectUserPopupMenu(
-                        colorScheme: colorScheme,
-                        controller: _controller,
-                      ),
+                    SelectUserPopupMenu(
+                      colorScheme: colorScheme,
+                      controller: _controller,
                     ),
                     if (_controller.user != null)
                       UserCard(
                         isChecked: true,
                         user: _controller.user!,
                       ),
-                    ButtonBar(
-                      alignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        MenuAnchor(
-                          builder: (context, controller, child) {
-                            return IconButton.filledTonal(
-                              onPressed: _controller.haveTrainingSelected
-                                  ? () {
-                                      if (controller.isOpen) {
-                                        controller.close();
-                                      } else {
-                                        controller.open();
-                                      }
-                                    }
-                                  : null,
-                              icon: const Icon(Icons.share),
-                              tooltip: 'Show menu',
-                            );
-                          },
-                          menuChildren: [
-                            MenuItemButton(
-                              onPressed: _sendEmail,
-                              child: Image.asset(
-                                'assets/icons/Gmail_icon.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                            ),
-                            MenuItemButton(
-                              onPressed: _sendWhatsApp,
-                              child: Image.asset(
-                                'assets/icons/WhatsApp_Icon.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                            ),
-                            // MenuItemButton(
-                            //   onPressed: _sendRelat,
-                            //   child: const Icon(Icons.receipt_long),
-                            // ),
-                          ],
-                        ),
-                        IconButton.filledTonal(
-                          onPressed: _controller.haveTrainingSelected
-                              ? _removeSelected
-                              : null,
-                          tooltip: 'GenericRemove'.tr(),
-                          icon: const Icon(Icons.delete),
-                        ),
-                        _controller.areAllSelecting()
-                            ? IconButton.filledTonal(
+                    Focus(
+                      focusNode: app.focusNodes[25],
+                      child: ButtonBar(
+                        alignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          MenuAnchor(
+                            builder: (context, controller, child) {
+                              return IconButton.filledTonal(
+                                focusNode: app.focusNodes[28],
                                 onPressed: _controller.haveTrainingSelected
-                                    ? _deselectAllTraining
-                                    : _controller.trainings.isEmpty
-                                        ? null
-                                        : _selectAllTraining,
-                                tooltip: 'TPDeselectAll'.tr(),
-                                icon: const Icon(Icons.deselect),
-                              )
-                            : IconButton.filledTonal(
-                                onPressed: _controller.trainings.isEmpty
-                                    ? null
-                                    : _selectAllTraining,
-                                tooltip: 'TPSelectAll'.tr(),
-                                icon: const Icon(Icons.select_all),
+                                    ? () {
+                                        if (controller.isOpen) {
+                                          controller.close();
+                                        } else {
+                                          controller.open();
+                                        }
+                                      }
+                                    : null,
+                                icon: const Icon(Icons.share),
+                                tooltip: 'Show menu',
+                              );
+                            },
+                            menuChildren: [
+                              MenuItemButton(
+                                onPressed: _sendEmail,
+                                child: const Row(
+                                  children: [
+                                    Icon(
+                                      StopwatchIcons.mail,
+                                      color: Colors.amber,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Text('Email'),
+                                  ],
+                                ),
                               ),
-                      ],
+                              MenuItemButton(
+                                onPressed: _sendWhatsApp,
+                                child: const Row(
+                                  children: [
+                                    Icon(
+                                      StopwatchIcons.whatsapp,
+                                      color: Colors.green,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Text('WhatsApp'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton.filledTonal(
+                            focusNode: app.focusNodes[27],
+                            onPressed: _controller.haveTrainingSelected
+                                ? _removeSelected
+                                : null,
+                            tooltip: 'GenericRemove'.tr(),
+                            icon: const Icon(Icons.delete),
+                          ),
+                          _controller.areAllSelecting()
+                              ? IconButton.filledTonal(
+                                  focusNode: app.focusNodes[26],
+                                  onPressed: _controller.haveTrainingSelected
+                                      ? _deselectAllTraining
+                                      : _controller.trainings.isEmpty
+                                          ? null
+                                          : _selectAllTraining,
+                                  tooltip: 'TPDeselectAll'.tr(),
+                                  icon: const Icon(Icons.deselect),
+                                )
+                              : IconButton.filledTonal(
+                                  focusNode: app.focusNodes[26],
+                                  onPressed: _controller.trainings.isEmpty
+                                      ? null
+                                      : _selectAllTraining,
+                                  tooltip: 'TPSelectAll'.tr(),
+                                  icon: const Icon(Icons.select_all),
+                                ),
+                        ],
+                      ),
                     ),
                     Expanded(
                       child: Container(
@@ -275,36 +264,40 @@ class _TrainingsPageState extends State<TrainingsPage> {
                             color: colorScheme.secondaryContainer,
                           ),
                         ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'TPTrainings'.tr(),
-                                style: AppFontStyle.roboto18SemiBold,
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
+                        child: Focus(
+                          focusNode: app.focusNodes[24],
+                          child: Column(
+                            children: [
+                              Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: ListView.builder(
-                                  itemCount: _controller.trainings.length,
-                                  itemBuilder: (context, index) {
-                                    final revIndex =
-                                        trainings.length - index - 1;
-                                    return DismissibleTraining(
-                                      training: trainings[revIndex],
-                                      editTraining: _editTraining,
-                                      removeTraining: _removeTraining,
-                                      onTapSelect: _controller.selectTraining,
-                                      selected: _controller
-                                          .selectedTraining[revIndex].selected,
-                                    );
-                                  },
+                                child: Text(
+                                  'TPTrainings'.tr(),
+                                  style: AppFontStyle.roboto18SemiBold,
                                 ),
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ListView.builder(
+                                    itemCount: _controller.trainings.length,
+                                    itemBuilder: (context, index) {
+                                      final revIndex =
+                                          trainings.length - index - 1;
+                                      return DismissibleTraining(
+                                        training: trainings[revIndex],
+                                        editTraining: _editTraining,
+                                        removeTraining: _removeTraining,
+                                        onTapSelect: _controller.selectTraining,
+                                        selected: _controller
+                                            .selectedTraining[revIndex]
+                                            .selected,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -39,29 +39,33 @@ class HistoryManager {
     }
   }
 
-  Future<void> delete(HistoryModel history) async {
+  Future<void> delete(int historyId) async {
+    int index = findIndex(historyId);
+    final history = _histories[index];
+    final duration = history.duration;
+
+    if (index < 1 || index >= _histories.length) {
+      throw Exception('HistoryManager.delete: Error!');
+    }
+
     final result = await _repository.delete(history);
     if (result > 0) {
-      int index = findIndex(history.id!);
-      if (index < 1) {
-        throw Exception('HistoryManager.delete: Error!');
-      }
-
       _histories.removeAt(index);
+
+      if (index >= _histories.length) return;
+      _histories[index].duration += duration;
+      await _repository.update(_histories[index]);
     } else {
       throw Exception('HistoryManager.delete: Error!');
     }
   }
 
-  int findIndex(int id) {
-    final index = _histories.indexWhere((h) => h.id == id);
-    return index;
-  }
+  Future<void> update(int historyId) async {
+    int index = findIndex(historyId);
+    final history = _histories[index];
 
-  Future<void> update(HistoryModel history) async {
     final result = await _repository.update(history);
     if (result > 0) {
-      int index = findIndex(history.id!);
       if (index < 0) {
         throw Exception('HistoryManager.update: Error!');
       }
@@ -70,5 +74,9 @@ class HistoryManager {
     } else {
       throw Exception('HistoryManager.update: Error!');
     }
+  }
+
+  int findIndex(int historyId) {
+    return _histories.indexWhere((item) => item.id! == historyId);
   }
 }

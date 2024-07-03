@@ -43,28 +43,32 @@ class PersonalTrainingController extends HistoryController {
   }
 
   @override
-  Future<void> deleteHistory(HistoryModel history) async {
+  Future<bool> deleteHistory(int historyId) async {
     try {
       changeState(StateLoading());
-      await stopwatch.controller.deleteHistory(history);
+      await stopwatch.controller.deleteHistory(historyId);
       trainingReport.createMessages();
       changeState(StateSuccess());
+      return true;
     } catch (err) {
       changeState(StateError());
       log('PersonalTrainingController.deleteHistory: $err');
+      return false;
     }
   }
 
   @override
-  Future<void> updateHistory(HistoryModel history) async {
+  Future<bool> updateHistory(int historyId) async {
     try {
       changeState(StateLoading());
-      await stopwatch.controller.updateHistory(history);
+      await stopwatch.controller.updateHistory(historyId);
       trainingReport.createMessages();
       changeState(StateSuccess());
+      return true;
     } catch (err) {
       changeState(StateError());
       log('PersonalTrainingController.updateHistory: $err');
+      return false;
     }
   }
 }
