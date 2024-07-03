@@ -13,8 +13,8 @@ class HistoryListView extends StatefulWidget {
   final UserModel user;
   final TrainingModel training;
   final List<HistoryModel> histories;
-  final Future<void> Function(HistoryModel history) updateHistory;
-  final Future<void> Function(HistoryModel history) deleteHistory;
+  final Future<bool> Function(int historyId) updateHistory;
+  final Future<bool> Function(int historyId) deleteHistory;
   final bool reversed;
 
   const HistoryListView({
@@ -67,9 +67,11 @@ class _HistoryListViewState extends State<HistoryListView> {
                 itemCount: showMsgs.length,
                 itemBuilder: (context, index) => DismissibleHistory(
                   message: showMsgs[index],
-                  enableDelete: showMsgs[index].msgType == MessageType.isSplit
-                      ? true
-                      : false,
+                  enableDelete: index == 0 || index == showMsgs.length - 1
+                      ? false
+                      : showMsgs[index].msgType == MessageType.isSplit
+                          ? true
+                          : false,
                   managerUpdade: widget.updateHistory,
                   managerDelete: widget.deleteHistory,
                 ),

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/icons/stopwatch_icons_icons.dart';
-import '../../../common/models/history_model.dart';
 import '../../../common/models/messages_model.dart';
 import 'dismissible_backgrounds.dart';
 
 class DismissibleHistory extends StatefulWidget {
   final MessagesModel message;
   final bool enableDelete;
-  final Future<void> Function(HistoryModel) managerUpdade;
-  final Future<void> Function(HistoryModel) managerDelete;
+  final Future<bool> Function(int historyId) managerUpdade;
+  final Future<bool> Function(int historyId) managerDelete;
 
   const DismissibleHistory({
     super.key,
@@ -25,21 +24,14 @@ class DismissibleHistory extends StatefulWidget {
 
 class _DismissibleHistoryState extends State<DismissibleHistory> {
   Future<bool> _editHistory() async {
-    // final result = await EditHistoryDialog.open(
-    //   context,
-    //   title: 'title',
-    //   history: widget.history,
-    // );
-
-    // if (result) {
-    //   widget.managerUpdade(widget.history);
-    // }
-
+    await widget.managerUpdade(widget.message.historyId);
     return true;
   }
 
   Future<bool> _deleteHistory() async {
-    return false;
+    if (!widget.enableDelete) return false;
+    final result = await widget.managerDelete(widget.message.historyId);
+    return result;
   }
 
   IconData get iconData {

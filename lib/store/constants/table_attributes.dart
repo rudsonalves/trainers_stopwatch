@@ -37,7 +37,5 @@ const historyTable = 'historyTable';
 const historyTrainingIndex = 'historyTrainingIndex';
 const historyId = 'id';
 const historyTrainingId = 'trainingId';
-const historyLap = 'lap';
-const historySplit = 'split';
 const historyDuration = 'duration';
 const historyComments = 'comments';

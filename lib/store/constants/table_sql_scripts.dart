@@ -46,8 +46,6 @@ const createTrainingDateIndexSQL =
 const createHistoryTableSQL = 'CREATE TABLE IF NOT EXISTS $historyTable ('
     ' $historyId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
     ' $historyTrainingId INTEGER NOT NULL,'
-    ' $historyLap INTEGER,'
-    ' $historySplit INTEGER NOT NULL,'
     ' $historyDuration INTEGER NOT NULL,'
     ' $historyComments TEXT,'
     ' FOREIGN KEY ($historyTrainingId)'

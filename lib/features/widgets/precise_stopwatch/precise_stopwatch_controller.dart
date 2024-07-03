@@ -6,6 +6,7 @@ import '../../../bloc/stopwatch_events.dart';
 import '../../../bloc/stopwatch_state.dart';
 import '../../../common/constants.dart';
 import '../../../common/functions/stopwatch_functions.dart';
+import '../../../common/functions/training_report.dart';
 import '../../../common/models/messages_model.dart';
 import '../../../common/singletons/app_settings.dart';
 import '../../../manager/history_manager.dart';
@@ -41,6 +42,7 @@ class PreciseStopwatchController {
   List<HistoryModel> get histories => _historyManager.histories;
   TrainingModel get training => _training!;
   ValueNotifier<bool> get actionOnPress => _actionOnPress;
+  late final int splitsPerLap;
 
   Future<void> init(UserModel user) async {
     _user = user;
@@ -49,6 +51,7 @@ class PreciseStopwatchController {
     _bloc.splitCounterMax = lapLength ~/ splitLength;
     _trainingManager.init(_user.id!);
     _createNewTraining();
+    splitsPerLap = (training.lapLength / training.splitLength).round();
   }
 
   void dispose() {
@@ -56,12 +59,12 @@ class PreciseStopwatchController {
     _actionOnPress.dispose();
   }
 
-  Future<void> updateHistory(HistoryModel history) async {
-    await _historyManager.update(history);
+  Future<void> updateHistory(int historyId) async {
+    await _historyManager.update(historyId);
   }
 
-  Future<void> deleteHistory(HistoryModel history) async {
-    await _historyManager.delete(history);
+  Future<void> deleteHistory(int historyId) async {
+    await _historyManager.delete(historyId);
   }
 
   void _toggleActionOnPress() {
@@ -120,8 +123,6 @@ class PreciseStopwatchController {
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
       duration: const Duration(milliseconds: 0),
-      lap: 0,
-      split: 0,
       comments: 'PSCStartedMessage'.tr(args: [
         DateFormat.yMd().add_Hms().format(_bloc.startTime),
       ]),
@@ -187,17 +188,15 @@ class PreciseStopwatchController {
     SpeedValue speed;
     (splitMs, speed) = _calculateSplitTimeSpeed();
 
-    int split = _getSplit();
-
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
       duration: Duration(milliseconds: splitMs),
-      split: split,
       comments: 'PSCHistoryComments'.tr(args: [speed.toString()]),
     );
 
+    final hIndex = TrainingReport.getIndex(histories.length - 1, splitsPerLap);
     await _historyManager.insert(history);
-    _sendSplitMessage(history, split, speed);
+    _sendSplitMessage(history, hIndex.splitIndex, speed);
     _toggleActionOnPress();
   }
 
@@ -209,19 +208,12 @@ class PreciseStopwatchController {
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
       duration: Duration(milliseconds: lapMs),
-      lap: lapCounter.value,
-      split: _getSplit(),
       comments: 'PSCHistoryComments'.tr(args: [speed.toString()]),
     );
 
-    // await _historyManager.insert(history);
-    _sendLapMessage(history, history.lap!, speed);
+    final hIndex = TrainingReport.getIndex(histories.length - 1, splitsPerLap);
+    _sendLapMessage(history, hIndex.lapIndex, speed);
     _toggleActionOnPress();
-  }
-
-  int _getSplit() {
-    int split = splitCounter.value;
-    return split == 0 ? bloc.splitCounterMax : split;
   }
 
   void _sendStartedMessage(String comments) {

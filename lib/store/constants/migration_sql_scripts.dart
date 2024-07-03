@@ -8,7 +8,7 @@ class MigrationSqlScripts {
   /// This is the database scheme current version. To futures upgrades
   /// in database increment this value and add a new update script in
   /// _migrationScripts Map.
-  static const schemeVersion = 1005;
+  static const schemeVersion = 1006;
 
   // Retrieves the database schema version in a readable format (e.g., "1.0.07").
   static String get dbSchemeVersion {
@@ -38,6 +38,28 @@ class MigrationSqlScripts {
     ],
     1005: [
       'ALTER TABLE $settingsTable ADD COLUMN $settingsShowTutorial INTEGER DEFAULT 1',
+    ],
+    1006: [
+      'CREATE TABLE IF NOT EXISTS ${historyTable}_new ('
+          ' $historyId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
+          ' $historyTrainingId INTEGER NOT NULL,'
+          ' $historyDuration INTEGER NOT NULL,'
+          ' $historyComments TEXT,'
+          ' FOREIGN KEY ($historyTrainingId)'
+          '   REFERENCES $trainingTable ($trainingId)'
+          '   ON DELETE CASCADE'
+          ')',
+      'INSERT INTO ${historyTable}_new ('
+          ' $historyId,'
+          ' $historyTrainingId,'
+          ' $historyDuration,'
+          ' $historyComments'
+          ')'
+          'SELECT'
+          ' $historyId, $historyTrainingId, $historyDuration, $historyComments'
+          ' FROM $historyTable',
+      'DROP TABLE $historyTable',
+      'ALTER TABLE ${historyTable}_new RENAME TO $historyTable',
     ],
   };
 }

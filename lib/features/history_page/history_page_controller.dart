@@ -30,13 +30,35 @@ class HistoryPageController extends HistoryController {
   }
 
   @override
-  Future<void> updateHistory(HistoryModel history) async {
-    await _historyManager.update(history);
+  Future<bool> updateHistory(int historyId) async {
+    try {
+      changeState(StateLoading());
+      await _historyManager.update(historyId);
+      trainingReport.createMessages();
+      changeState(StateSuccess());
+      return true;
+    } catch (err) {
+      final message = 'HistoryPageController.updateHistory: $err';
+      log(message);
+      changeState(StateError());
+      return false;
+    }
   }
 
   @override
-  Future<void> deleteHistory(HistoryModel history) async {
-    await _historyManager.delete(history);
+  Future<bool> deleteHistory(int historyId) async {
+    try {
+      changeState(StateLoading());
+      await _historyManager.delete(historyId);
+      trainingReport.createMessages();
+      changeState(StateSuccess());
+      return true;
+    } catch (err) {
+      final message = 'HistoryPageController.deleteHistory: $err';
+      log(message);
+      changeState(StateError());
+      return false;
+    }
   }
 
   @override
@@ -67,12 +89,6 @@ class HistoryPageController extends HistoryController {
     double totalLength = 0;
     double totalTime = 0;
 
-    for (final history in histories) {
-      if (history.lap == null) {
-        totalTime += history.duration.inMilliseconds / 1000;
-        totalLength += training.splitLength;
-      }
-    }
     final speed = StopwatchFunctions.speedCalc(
       length: totalLength,
       time: totalTime,

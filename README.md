@@ -20,6 +20,54 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_07_03 - version: 1.0.0+32
+
+
+feat: Implementation of WhatsApp data sending button and enhancements in training management interface
+
+- Added "WhatsApp" button for sending data through the app.
+- Included green-colored WhatsApp icon.
+- Added `IconButton` for removing selected trainings, with updated focus and tooltip.
+- Adjusted logic for selecting and deselecting all trainings.
+- Removed `lap` and `split` columns from the `historyTable`.
+- Updated SQL scripts for creating and handling the `historyTable`.
+- Updated `pubspec.yaml` file to version `1.0.0+32`.
+
+**Detailed Description:**
+
+This commit introduces several significant enhancements to the Trainer’s Stopwatch application, aimed at improving user experience and functionality. The primary focus is on integrating a new feature for sending data via WhatsApp and refining the training management interface. These changes ensure that trainers and athletes can efficiently manage and share their training data, leading to a more streamlined and user-friendly experience.
+
+**WhatsApp Data Sending Functionality:**
+
+- **New Button Implementation:**
+  - A "WhatsApp" button has been added to the application interface, enabling users to send their training data directly through WhatsApp.
+  - This button features a green-colored WhatsApp icon followed by the text "WhatsApp" for clear identification.
+
+**Enhancements in Training Management Interface:**
+
+- **Removal Button for Selected Trainings:**
+  - An `IconButton` has been introduced to allow users to remove selected trainings. This button is equipped with a tooltip 'GenericRemove' and only activates when there are selected trainings.
+  - The button has updated focus management to improve accessibility.
+
+- **Selection and Deselection Logic:**
+  - The logic for selecting and deselecting all trainings has been refined. The button for selecting/deselecting all trainings now correctly handles states based on whether trainings are present and selected.
+
+**Database Schema Updates:**
+
+- **Column Removal:**
+  - The `lap` and `split` columns have been removed from the `historyTable`. This change simplifies the database schema and aligns with the streamlined data management approach.
+  
+- **SQL Script Adjustments:**
+  - Corresponding SQL scripts for creating and managing the `historyTable` have been updated to reflect the removal of the `lap` and `split` columns.
+
+**Project Version Update:**
+
+- **Version Increment:**
+  - The project's version has been updated from `0.9.10+31` to `1.0.0+32` in the `pubspec.yaml` file, indicating a significant update with new features and enhancements.
+
+These updates enhance the functionality and usability of the Trainer’s Stopwatch application, making it more efficient for managing and sharing training data.
+
+
 ## 2024_06_13 - version: 0.9.10+31
 
 Release First Beta Version with Comprehensive Enhancements and Optimizations
