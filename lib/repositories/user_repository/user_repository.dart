@@ -40,4 +40,9 @@ class UserRepository implements AbstractUserRepository {
     final result = await _store.update(user.id!, user.toMap());
     return result;
   }
+
+  @override
+  Future<List<String>> getImagesList() async {
+    return await _store.getImagesList();
+  }
 }

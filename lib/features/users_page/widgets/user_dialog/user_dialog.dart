@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../common/constants.dart';
 import '../../../../common/theme/app_font_style.dart';
 import '../../../../common/models/user_model.dart';
 import '../../../widgets/common/show_athlete_image.dart';
@@ -13,23 +12,27 @@ import 'widgets/custom_text_field.dart';
 class UserDialog extends StatefulWidget {
   final UserModel? user;
   final void Function(UserModel)? addUser;
+  final Future<XFile?> Function(XFile file) resizeAndSaveImage;
 
   const UserDialog({
     super.key,
     this.user,
     this.addUser,
+    required this.resizeAndSaveImage,
   });
 
   static Future<bool?> open(
     BuildContext context, {
     UserModel? user,
     void Function(UserModel)? addUser,
+    required Future<XFile?> Function(XFile file) resizeAndSaveImage,
   }) async {
     final bool result = await showDialog<bool?>(
           context: context,
           builder: (context) => UserDialog(
             user: user,
             addUser: addUser,
+            resizeAndSaveImage: resizeAndSaveImage,
           ),
         ) ??
         false;
@@ -66,13 +69,14 @@ class _UserDialogState extends State<UserDialog> {
   Future<void> _photoImageOnTap() async {
     final ImagePicker picker = ImagePicker();
     final XFile? xfile = await picker.pickImage(
-      maxHeight: photoImageSize * 1.2,
-      maxWidth: photoImageSize,
       source: ImageSource.camera,
     );
 
     if (xfile != null) {
-      _controller.setImage(xfile.path);
+      final resizedFile = await widget.resizeAndSaveImage(xfile);
+      if (resizedFile != null) {
+        _controller.setImage(resizedFile.path);
+      }
     }
   }
 

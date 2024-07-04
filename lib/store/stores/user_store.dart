@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:sqflite/sqflite.dart';
 
 import '../constants/table_attributes.dart';
+import '../constants/table_sql_scripts.dart';
 import '../database/database_manager.dart';
 
 class UserStore {
@@ -91,6 +92,19 @@ class UserStore {
       return result;
     } catch (err) {
       final message = 'UserStore.update: $err';
+      log(message);
+      throw Exception(message);
+    }
+  }
+
+  Future<List<String>> getImagesList() async {
+    try {
+      final database = await _databaseManager.database;
+
+      final result = await database.rawQuery(getUserImagesListSQL);
+      return result.map((item) => item[userPhoto] as String).toList();
+    } catch (err) {
+      final message = 'UserStore.getImagesList: $err';
       log(message);
       throw Exception(message);
     }

@@ -56,3 +56,5 @@ const createHistoryTableSQL = 'CREATE TABLE IF NOT EXISTS $historyTable ('
 const createHistoryTrainingIndexSQL =
     'CREATE INDEX IF NOT EXISTS $historyTrainingIndex'
     ' ON $historyTable ($historyTrainingId)';
+
+const getUserImagesListSQL = 'SELECT $userPhoto FROM $userTable';

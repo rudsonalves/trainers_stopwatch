@@ -1,4 +1,4 @@
-const dbName = 'app_dataBase.db';
+const dbName = 'stopwatch.db';
 const dbVersion = 1;
 
 const settingsTable = 'settingsTable';

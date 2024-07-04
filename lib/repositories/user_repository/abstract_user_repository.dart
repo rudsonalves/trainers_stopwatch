@@ -6,4 +6,5 @@ abstract class AbstractUserRepository {
   Future<List<UserModel>> queryAll();
   Future<int> delete(UserModel user);
   Future<int> update(UserModel user);
+  Future<List<String>> getImagesList();
 }

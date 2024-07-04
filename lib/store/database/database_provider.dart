@@ -12,7 +12,7 @@ class DatabaseProvider {
   Future init() async {
     final database = await _databaseManager.database;
     final app = AppSettings.instance;
-    // app.init();
+    await app.init();
     // final settings = await SettingsManager.query();
 
     final backupDatabase = await DatabaseBackup.backupDatabase();

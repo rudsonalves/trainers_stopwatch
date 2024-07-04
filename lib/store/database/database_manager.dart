@@ -42,6 +42,7 @@ class DatabaseManager {
     final Directory directory = await getApplicationDocumentsDirectory();
     final String path = join(directory.path, dbName);
     // await deleteDatabase(path);
+    log('Database path: $path');
 
     try {
       final database = await openDatabase(
@@ -50,7 +51,7 @@ class DatabaseManager {
         onCreate: _onCreate,
         onConfigure: _onConfiguration,
       );
-
+      log('Database opened successfully');
       return database;
     } catch (err) {
       log('Create table error: $err');

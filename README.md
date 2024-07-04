@@ -20,6 +20,73 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_07_04 - version: 1.0.1+34
+
+Added keystore properties, signing configuration, storage permissions, and new image management functionalities to the project.
+
+**Details:**
+- **File `build.gradle`:**
+  - Introduced a new section to load keystore properties from the `key.properties` file.
+  - Implemented logic to check for the existence of the `key.properties` file and load the properties.
+  - Added signing configuration for release builds using keystore properties.
+  - Included comments to guide future release signing configurations.
+  - Added NDK configuration for full debug symbol level.
+
+- **File `AndroidManifest.xml`:**
+  - Added `WRITE_EXTERNAL_STORAGE` and `READ_EXTERNAL_STORAGE` permissions.
+
+- **New file `assets/icons/stopwatch_512x512.png`:**
+  - Added a new icon for the stopwatch.
+
+- **File `app_info.dart`:**
+  - Incremented app version from `1.0.0+32` to `1.0.0+33`.
+
+- **File `users_page.dart`:**
+  - Added `resizeAndSaveImage` method to the user dialog.
+  - Called `removeUnusedImages` method after updating a user.
+
+- **File `users_page_controller.dart`:**
+  - Implemented the `resizeAndSaveImage` method to resize and save images.
+  - Implemented the `removeUnusedImages` method to remove unused images.
+
+- **File `user_dialog.dart`:**
+  - Added `resizeAndSaveImage` parameter to the user dialog constructor.
+  - Modified `_photoImageOnTap` method to use `resizeAndSaveImage`.
+
+- **File `main.dart`:**
+  - Removed unnecessary calls to `AppSettings`.
+
+- **File `user_manager.dart`:**
+  - Implemented the `getImagesList` method to obtain the list of images.
+
+- **File `abstract_user_repository.dart`:**
+  - Added definition for the `getImagesList` method.
+
+- **File `user_repository.dart`:**
+  - Implemented the `getImagesList` method.
+
+- **File `table_attributes.dart`:**
+  - Changed the database name to `stopwatch.db`.
+
+- **File `table_sql_scripts.dart`:**
+  - Added query to get the list of user images.
+
+- **File `database_manager.dart`:**
+  - Added log for the database path.
+  - Additional log to indicate successful database opening.
+
+- **File `database_provider.dart`:**
+  - Fixed call to `app.init()` method.
+
+- **File `user_store.dart`:**
+  - Implemented the `getImagesList` method.
+
+- **Files `pubspec.lock` and `pubspec.yaml`:**
+  - Added `flutter_image_compress` dependency.
+
+This commit enhances security and release management by adding support for keystore and signing configuration. It also adds new storage permissions, updates icons, increments the app version, introduces functionalities for resizing and cleaning up unused images, and includes general code improvements.
+
+
 ## 2024_07_03 - version: 1.0.0+33
 
 refactor: Update HistoryModel usage and refactor history management

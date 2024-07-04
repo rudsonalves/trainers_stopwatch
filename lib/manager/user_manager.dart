@@ -61,4 +61,8 @@ class UserManager {
     int findIndex = _users.indexWhere((user) => user.id == id);
     return findIndex;
   }
+
+  Future<List<String>> getImagesList() async {
+    return await _repository.getImagesList();
+  }
 }

@@ -69,6 +69,7 @@ class _UsersPageState extends State<UsersPage> {
     final result = await UserDialog.open(
       context,
       addUser: _controller.addUser,
+      resizeAndSaveImage: _controller.resizeAndSaveImage,
     );
 
     await Future.delayed(const Duration(milliseconds: 150));
@@ -114,8 +115,11 @@ class _UsersPageState extends State<UsersPage> {
           context,
           user: user,
           addUser: _controller.updateUser,
+          resizeAndSaveImage: _controller.resizeAndSaveImage,
         ) ??
         false;
+
+    _controller.removeUnusedImages();
     return result;
   }
 
