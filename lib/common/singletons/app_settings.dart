@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:trainers_stopwatch/common/constants.dart';
 
 import '../../manager/settings_manager.dart';
 import '../models/settings_model.dart';
@@ -45,7 +46,7 @@ class AppSettings extends SettingsModel {
 
     // Start app paths
     _appDocDir = await getApplicationDocumentsDirectory();
-    _imagePath = '${_appDocDir.path}/users_images';
+    _imagePath = '${_appDocDir.path}/$usersImages';
     final usersImageDir = Directory(_imagePath);
     // Create usersImageDir in necessary
     if (!await usersImageDir.exists()) {

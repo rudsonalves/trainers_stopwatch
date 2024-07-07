@@ -81,7 +81,7 @@ class UsersPageController extends ChangeNotifier {
   Future<XFile?> resizeAndSaveImage(XFile file) async {
     final appDocDir = await getApplicationDocumentsDirectory();
     final fileName = path.basename(file.path);
-    final imageDir = Directory(path.join(appDocDir.path, 'images'));
+    final imageDir = Directory(path.join(appDocDir.path, usersImages));
     final newFilePath = path.join(imageDir.path, 'resized_$fileName');
 
     if (!await imageDir.exists()) {
@@ -101,7 +101,7 @@ class UsersPageController extends ChangeNotifier {
 
   Future<void> removeUnusedImages() async {
     final appDocDir = await getApplicationDocumentsDirectory();
-    final imageDir = Directory(path.join(appDocDir.path, 'images'));
+    final imageDir = Directory(path.join(appDocDir.path, usersImages));
 
     final imagesInUse = (await _usersManager.getImagesList())
         .map((item) => path.basename(item))
