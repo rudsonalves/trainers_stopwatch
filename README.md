@@ -20,6 +20,51 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_07_07 - version: 1.0.2+36
+
+Bug fix: Corrected image path handling and incremented app version.
+
+**Details:**
+- **File `app_info.dart`:**
+  - Incremented app version from `1.0.0+33` to `1.0.2+35`.
+
+- **File `constants.dart`:**
+  - Added a new constant `usersImages` to centralize the image directory name.
+
+- **File `app_settings.dart`:**
+  - Updated the `_imagePath` initialization to use the new `usersImages` constant for directory naming.
+
+- **File `users_page_controller.dart`:**
+  - Refactored image directory path to use the `usersImages` constant for consistency.
+
+- **File `pubspec.yaml`:**
+  - Updated the version from `1.0.1+34` to `1.0.2+35`.
+
+This commit fixes a bug related to the handling of image paths by centralizing the image directory name into a constant and updates the application version to reflect the changes.
+
+
+## 2024_07_05 - version: 1.0.2+35
+
+Updated app version and refactored image path constants for better maintainability.
+
+**Details:**
+- **File `app_info.dart`:**
+  - Incremented app version from `1.0.0+33` to `1.0.2+35`.
+
+- **File `constants.dart`:**
+  - Added a new constant `usersImages` to centralize the image directory name.
+
+- **File `app_settings.dart`:**
+  - Updated the `_imagePath` initialization to use the new `usersImages` constant for directory naming.
+
+- **File `users_page_controller.dart`:**
+  - Refactored image directory path to use the `usersImages` constant for consistency.
+
+- **File `pubspec.yaml`:**
+  - Updated the version from `1.0.1+34` to `1.0.2+35`.
+
+This commit improves the maintainability of the codebase by centralizing the image directory name in a constant and increments the application version to reflect the changes.
+
 ## 2024_07_04 - version: 1.0.1+34
 
 Added keystore properties, signing configuration, storage permissions, and new image management functionalities to the project.

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 const photoImageSize = 80.0;
 const defaultPhotoImage = 'assets/images/person.png';
+const usersImages = 'users_images';
 
 const double elevationDisable = 0;
 const double elevationEnable = 5;
