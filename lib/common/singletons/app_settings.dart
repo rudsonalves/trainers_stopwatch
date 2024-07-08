@@ -13,6 +13,7 @@ class AppSettings extends SettingsModel {
   AppSettings._();
   static final _instance = AppSettings._();
   static AppSettings get instance => _instance;
+
   final focusNodes = List<FocusNode>.generate(
     maxFocusNode,
     (index) => FocusNode(debugLabel: 'FocusNode id $index'),
