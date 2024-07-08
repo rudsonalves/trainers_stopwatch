@@ -103,7 +103,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   Future<void> _managerStopwatch(int userId) async {
-    final stopwatch = _controller.stopwatchList.firstWhere(
+    final stopwatch = _controller.stopwatchs.firstWhere(
       (stopwatch) => stopwatch.user.id == userId,
     );
     if (!context.mounted) return;
@@ -120,7 +120,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
     final listViewBuilder = ListView.builder(
       itemCount: _controller.stopwatchLength.value,
       itemBuilder: (context, index) => StopwatDismissible(
-        stopwatch: _controller.stopwatchList[index],
+        stopwatch: _controller.stopwatchs[index],
         removeStopwatch: _removeStopwatch,
         managerStopwatch: _managerStopwatch,
       ),

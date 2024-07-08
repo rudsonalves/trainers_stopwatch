@@ -20,6 +20,29 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_07_08 - version: 1.0.3+37
+
+Simplified code and updated image handling logic after evaluating the necessity of adding a provider.
+
+**Details:**
+- **`AndroidManifest.xml`:**
+  - Enabled `OnBackInvokedCallback` by setting `android:enableOnBackInvokedCallback="true"` in the application tag.
+
+- **`app_settings.dart`:**
+  - Added a blank line for code readability.
+
+- **`stopwatch_page.dart`:**
+  - Renamed `_controller.stopwatchList` to `_controller.stopwatchs` for consistency.
+  - Updated the usage of `stopwatchs` instead of `stopwatchList`.
+
+- **`stopwatch_page_controller.dart`:**
+  - Renamed `_stopwatchList` to `_stopwatchs`.
+  - Removed `_stopwatchControllers` as they were not needed.
+  - Updated the logic to use `stopwatchs` instead of `stopwatchList`.
+
+This commit refines the codebase by removing unnecessary elements and renaming variables for consistency. It includes enabling a new Android feature and incrementing the application version to reflect these changes.
+
+
 ## 2024_07_07 - version: 1.0.2+36
 
 Bug fix: Corrected image path handling and incremented app version.

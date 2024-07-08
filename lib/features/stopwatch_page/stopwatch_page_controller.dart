@@ -10,18 +10,16 @@ class StopwatchPageController {
   static final _instance = StopwatchPageController._();
   static StopwatchPageController get instance => _instance;
 
-  final List<PreciseStopwatch> _stopwatchList = [];
+  final List<PreciseStopwatch> _stopwatchs = [];
+
   final _stopwatchLength = ValueNotifier<int>(0);
   final _historyMessage = ValueNotifier<MessagesModel>(MessagesModel());
   final List<UserModel> _usersList = [];
-  final List<PreciseStopwatchController> _stopwatchControllers = [];
   final List<UserModel> _newUsers = [];
 
   List<UserModel> get usersList => _usersList;
   List<UserModel> get newUsers => _newUsers;
-  List<PreciseStopwatch> get stopwatchList => _stopwatchList;
-  List<PreciseStopwatchController> get stopwatchControllers =>
-      _stopwatchControllers;
+  List<PreciseStopwatch> get stopwatchs => _stopwatchs;
   ValueNotifier<int> get stopwatchLength => _stopwatchLength;
   ValueNotifier<MessagesModel> get historyMessage => _historyMessage;
 
@@ -57,8 +55,8 @@ class StopwatchPageController {
   void addStopwatch() {
     for (final user in newUsers) {
       final stopwatchController = PreciseStopwatchController();
-      _stopwatchControllers.add(stopwatchController);
-      _stopwatchList.add(
+
+      _stopwatchs.add(
         PreciseStopwatch(
           key: GlobalKey(),
           user: user,
@@ -68,13 +66,13 @@ class StopwatchPageController {
     }
     mergeUserLists();
 
-    _stopwatchLength.value = _stopwatchList.length;
+    _stopwatchLength.value = _stopwatchs.length;
   }
 
   void removeStopwatch(int userId) {
+    final itemIndex = _stopwatchs.indexWhere((sw) => sw.user.id! == userId);
     _usersList.removeWhere((item) => item.id == userId);
-    _stopwatchList.removeWhere((stopwatch) => stopwatch.user.id == userId);
-
-    _stopwatchLength.value = _stopwatchList.length;
+    _stopwatchs.removeAt(itemIndex);
+    _stopwatchLength.value = _stopwatchs.length;
   }
 }
