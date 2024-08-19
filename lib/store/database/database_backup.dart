@@ -80,8 +80,8 @@ class DatabaseBackup {
       final strDate = DateFormat('yyyy_MM_dd_HHmm').format(DateTime.now());
 
       String dbBackupPath = (destinyDir == null)
-          ? join(dir.path, '${dbName}_bkp')
-          : join(dir.path, '${dbName}_bkp_$strDate');
+          ? join(dir.path, '$dbName.bkp')
+          : join(dir.path, '$dbName.bkp_$strDate');
 
       final dbBackupFile = File(dbBackupPath);
       if (await dbBackupFile.exists()) {
