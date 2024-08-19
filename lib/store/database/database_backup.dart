@@ -85,7 +85,7 @@ class DatabaseBackup {
 
       final dbBackupFile = File(dbBackupPath);
       if (await dbBackupFile.exists()) {
-        dbBackupFile.delete();
+        await dbBackupFile.delete();
       }
 
       final File dbFile = File(dbPath);
