@@ -20,6 +20,39 @@ This thoughtful design ensures that the user interface remains uncluttered and f
 
 # ChangeLog
 
+## 2024_08_27 - version: 1.0.8+42
+
+Transitioned entire project to GPLv3 license and applied code updates.
+
+This commit includes the following changes:
+
+1. LICENSE
+   - Added new `LICENSE` file with GNU General Public License v3 details.
+
+2. Source Files
+   - Added GPLv3 license header to all source files.
+
+3. lib/features/settings/settings_page.dart
+   - Replaced deprecated `onPopInvoked` with `onPopInvokedWithResult`.
+
+4. lib/features/stopwatch_page/stopwatch_overlay.dart
+   - Replaced `ButtonBar` with `OverflowBar` to handle button alignment more effectively.
+
+5. lib/features/trainings_page/trainings_page.dart
+   - Updated from `ButtonBar` to `OverflowBar` for improved button handling.
+
+6. lib/features/users_page/users_page.dart
+   - Replaced deprecated `onPopInvoked` with `onPopInvokedWithResult`.
+
+7. lib/features/widgets/edit_training_dialog/edit_training_dialog.dart
+   - Updated `ButtonBar` to `OverflowBar`.
+
+8. lib/features/widgets/precise_stopwatch/widgets/stopwatch_button_bar.dart
+   - Changed multiple instances of `ButtonBar` to `OverflowBar` for better UI management.
+
+These changes not only transition the project to the GPLv3 license but also include minor code updates for improved functionality and compatibility with Flutter's latest practices.
+
+
 ## 2024_07_08 - version: 1.0.3+37
 
 Simplified code and updated image handling logic after evaluating the necessity of adding a provider.

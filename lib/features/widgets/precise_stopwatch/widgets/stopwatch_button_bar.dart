@@ -1,3 +1,20 @@
+// Copyright (C) 2024 Rudson Alves
+//
+// This file is part of trainers_stopwatch.
+//
+// trainers_stopwatch is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// trainers_stopwatch is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +66,7 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
           builder: (context, state) {
             switch (controller.state) {
               case StopwatchStateInitial():
-                return ButtonBar(
+                return OverflowBar(
                   children: [
                     CustomIconButton(
                       focusNode: app.isTutorial(widget.userId)
@@ -78,7 +95,7 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
               case StopwatchStateRunning():
                 return ValueListenableBuilder(
                   valueListenable: controller.bloc.splitCounter,
-                  builder: (context, value, _) => ButtonBar(
+                  builder: (context, value, _) => OverflowBar(
                     children: [
                       (value == controller.bloc.splitCounterMax - 1)
                           ? CustomIconButton(
@@ -118,7 +135,7 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                   ),
                 );
               case StopwatchStatePaused():
-                return ButtonBar(
+                return OverflowBar(
                   children: [
                     CustomIconButton(
                       focusNode: app.isTutorial(widget.userId)
@@ -153,7 +170,7 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                   ],
                 );
               case StopwatchStateReset():
-                return ButtonBar(
+                return OverflowBar(
                   children: [
                     CustomIconButton(
                       focusNode: app.isTutorial(widget.userId)
@@ -169,7 +186,7 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                   ],
                 );
               default:
-                return ButtonBar(
+                return OverflowBar(
                   children: [
                     CustomIconButton(
                       focusNode: app.isTutorial(widget.userId)
