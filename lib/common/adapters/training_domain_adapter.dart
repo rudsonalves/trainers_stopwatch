@@ -8,7 +8,7 @@ import '../../domain/common/training/values/distance.dart';
 import '../constants.dart';
 import '../models/training_model.dart';
 
-// Temporary legacy bridge. Move persistence mapping to data in backlog 003.
+// Temporary legacy bridge. Remove with the training migration in backlog 006.
 extension TrainingModelDomainAdapter on TrainingModel {
   Result<Training> toDomain() {
     final parsedDistanceUnit = DistanceUnit.fromSymbol(distanceUnit);

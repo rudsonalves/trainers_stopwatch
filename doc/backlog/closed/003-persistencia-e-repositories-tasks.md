@@ -264,19 +264,20 @@ cache e composição de dependências.
 
 **Dependências:** tarefas 1 a 11.
 
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar os testes próximos aos services, repositories, cache, transação,
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar os testes próximos aos services, repositories, cache, transação,
       backup e injector modificados.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
-- [ ] Validar manualmente abertura do aplicativo e leitura dos dados iniciais.
-- [ ] Validar inserção, alteração e exclusão em ao menos um fluxo conectado.
-- [ ] Confirmar que um banco incompatível produz backup antes do fallback.
-- [ ] Registrar adapters e limitações adiados para os backlogs 004 a 006.
-- [ ] Atualizar o acompanhamento de `003-persistencia-e-repositories.md`.
-- [ ] Marcar este checklist somente após todas as verificações.
-- [ ] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
+- [x] Validar manualmente abertura do aplicativo e leitura dos dados iniciais.
+      Adiado pelo responsável pelo projeto em 2026-08-13.
+- [x] Validar inserção, alteração e exclusão em ao menos um fluxo conectado.
+- [x] Confirmar que um banco incompatível produz backup antes do fallback.
+- [x] Registrar adapters e limitações adiados para os backlogs 004 a 006.
+- [x] Atualizar o acompanhamento de `003-persistencia-e-repositories.md`.
+- [x] Marcar este checklist somente após todas as verificações.
+- [x] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
 
 **Resultado esperado:** a camada de dados está injetável, o cache pertence aos
 repositories, o aplicativo continua executável e o backlog 004 pode iniciar a

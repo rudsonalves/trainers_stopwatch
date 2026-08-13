@@ -1,5 +1,75 @@
 # Changelog
 
+## 2026/08/13 - bkl003/task12
+
+This change completes the automated validation and documentation updates for the persistence and repositories backlog while recording the deferred manual application startup check. It also modernizes the iOS integration by migrating Flutter plugin dependencies from CocoaPods to Swift Package Manager and updating the application lifecycle configuration.
+
+The change set additionally updates the iOS deployment target, refreshes image compression support, and aligns repository metadata and temporary adapter documentation with the upcoming migration work.
+
+1. **`.gitignore`**
+
+   * Added `.build/` and `.swiftpm/` to exclude generated build artifacts and local Swift Package Manager state from version control.
+
+2. **`doc/backlog/closed/003-persistencia-e-repositories-tasks.md`**
+
+   * Moved the task checklist from the active backlog folder into `doc/backlog/closed/`.
+   * Marked the formatting, testing, analysis, diff verification, persistence flow, backup fallback, deferred adapter registration, tracking update, and backlog archival tasks as completed.
+   * Recorded that manual application startup and initial data reading were deferred by the project owner on 2026-08-13.
+
+3. **`doc/backlog/closed/003-persistencia-e-repositories.md`**
+
+   * Moved the persistence and repositories backlog document into the closed backlog folder.
+   * Updated its tracking status to report completion of task 12’s automated validations.
+   * Documented that the backlog remains pending the deferred manual application startup and initial-data validation.
+
+4. **`ios/Flutter`**
+
+   * Removed CocoaPods configuration includes from the Debug and Release build settings, leaving Flutter’s generated Xcode configuration as the build source.
+   * Removed the fixed minimum OS version from `AppFrameworkInfo.plist` so the deployment target is managed through the Xcode project configuration.
+
+5. **`ios/Podfile`**
+
+   * Removed the CocoaPods setup, Flutter pod installation hooks, Runner test inheritance, and post-install build configuration now superseded by Swift Package Manager integration.
+
+6. **`ios/Runner.xcodeproj`**
+
+   * Registered Flutter’s generated local Swift package and linked its package product to the Runner target.
+   * Added framework build phases for the application and test targets.
+   * Raised the iOS deployment target from 12.0 to 13.0 across project build configurations.
+   * Added locked Swift package resolutions for SDWebImage, SDWebImageWebPCoder, and libwebp-Xcode.
+   * Added a build pre-action to prepare the Flutter framework before Xcode builds.
+   * Configured Flutter’s generated LLDB initialization file for testing and running, and enabled GPU validation for the launch action.
+
+7. **`ios/Runner.xcworkspace`**
+
+   * Added the Swift Package Manager resolution file with pinned versions and revisions for the image-related native dependencies.
+
+8. **`ios/Runner/AppDelegate.swift`**
+
+   * Migrated the application entry point from `@UIApplicationMain` to `@main`.
+   * Adopted `FlutterImplicitEngineDelegate`.
+   * Moved generated plugin registration to the implicit Flutter engine initialization callback and its plugin registry.
+
+9. **`ios/Runner/Info.plist`**
+
+   * Added the UIKit scene manifest using `FlutterSceneDelegate` and the existing Main storyboard.
+   * Declared that the application does not support multiple scenes.
+   * Preserved the application metadata, localization, launch storyboard, orientation, status bar, frame-duration, and indirect-input settings while reorganizing the property list structure.
+
+10. **`lib/common/adapters`**
+
+   * Updated the history and training domain adapter comments to identify backlog 006 as the point where these temporary legacy bridges will be removed.
+
+11. **`pubspec.yaml`**
+
+   * Upgraded `flutter_image_compress` from `^2.3.0` to `^2.5.1`, aligning the Flutter dependency with the updated native package integration.
+
+### Conclusion
+
+The change set records the completed persistence validation work and archives its backlog documentation while explicitly retaining the deferred manual startup check.
+
+The iOS project now uses Flutter’s Swift Package Manager integration, adopts the implicit-engine and scene-based lifecycle configuration, targets iOS 13, and locks the required native image dependencies.
+
 ## 2026/08/13 - bkl003/task11
 
 This change completes the persistence and repository migration by consolidating SQLite infrastructure under the data layer, composing the full dependency graph through `AutoInjector`, and removing the superseded stores, repositories, managers, and database singleton.

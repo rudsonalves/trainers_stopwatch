@@ -198,6 +198,9 @@ locais de desenvolvimento.
 
 ## Acompanhamento
 
-**Estado:** Tasks 1 a 11 concluídas; validação final organizada na task 12.
+**Estado:** Tasks 1 a 11 concluídas. Validações automatizadas da task 12
+concluídas; abertura e leitura inicial no aplicativo foram adiadas pelo
+responsável pelo projeto em 2026-08-13. O backlog permanece aberto até essa
+validação manual.
 
 **Próximo backlog:** `004-configuracoes-mvvm.md`.
