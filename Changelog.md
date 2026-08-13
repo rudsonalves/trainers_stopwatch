@@ -1,5 +1,90 @@
 # Changelog
 
+## 2026/08/13 - bkl002/task11
+
+This change completes the pure-domain backlog by connecting the new domain types and training-event generation rules to the legacy application through temporary adapters and presentation mappers. Training reports and speed calculations now delegate to reusable domain services while preserving existing application-facing APIs and formatting behavior.
+
+The change also modernizes the Android build configuration, records the completed architectural transition, closes backlog 002, and adds coverage for domain generation, legacy compatibility, mapping, validation, and presentation formatting.
+
+1. **Android build configuration**
+
+   * Migrated the app, root build, and settings scripts from Groovy to Kotlin DSL.
+   * Updated the Android Gradle Plugin to 9.0.1, Kotlin to 2.3.20, and the Gradle wrapper to 9.1.0.
+   * Replaced locally parsed Flutter version values and fixed SDK levels with Flutter-provided configuration values.
+   * Updated Java and Kotlin compilation targets from JVM 1.8 to JVM 17.
+   * Preserved release keystore loading and full native debug-symbol generation.
+   * Migrated build-directory and clean-task configuration to the Gradle layout API.
+   * Increased Gradle memory limits and retained the Flutter template compatibility flags for the new DSL and built-in Kotlin behavior.
+   * Removed obsolete Jetifier and resource-generation compatibility properties.
+   * Added Android CMake output to `.gitignore` and updated the reference-keystore documentation link.
+
+2. **`lib/domain/common/training/services/training_event_generator.dart`**
+
+   * Added a stateless domain service that converts a persisted training and its history entries into an immutable sequence of start, split, and lap events.
+   * Preserved event ordering and split-per-lap rounding behavior.
+   * Accumulated all split durations within each lap and used the accumulated duration for lap speed and event data.
+   * Reset lap accumulation between completed laps and between generator calls.
+   * Returned an empty immutable event list for empty histories and treated the first history entry as the session start without calculating speed.
+   * Added validation for missing training persistence identity, histories belonging to another training, invalid split-to-lap ratios, and zero-duration measurements.
+   * Delegated split and lap speed calculations to `SpeedCalculator` and propagated domain failures through `Result`.
+
+3. **`lib/common/adapters`**
+
+   * Added bidirectional adapters between legacy and domain user, training, history, and settings models.
+   * Preserved persistence identifiers, dates, comments, measurements, limits, units, locale preferences, refresh intervals, and tutorial settings across conversions.
+   * Parsed persisted distance and speed symbols through typed domain units and returned validation failures for unsupported or invalid values.
+   * Kept training colors at the legacy UI boundary and database schema metadata outside the domain settings model.
+   * Documented the adapters as temporary compatibility bridges for removal during the corresponding persistence, settings, and user migrations.
+
+4. **Legacy stopwatch and training-report integration**
+
+   * Refactored `StopwatchFunctions.speedCalc` to convert legacy training data and delegate typed calculations to `SpeedCalculator`.
+   * Converted elapsed seconds to a `Duration` and exposed domain validation failures, including zero elapsed time, through `AppError`.
+   * Refactored `TrainingReport` to generate neutral domain events and map them back to legacy `MessagesModel` instances.
+   * Removed duplicated report state, speed calculations, and split/lap message construction from the legacy implementation.
+   * Preserved the existing `getIndex` API used by active stopwatch code while adding protection for non-positive split counts.
+   * Ensured repeated report generation replaces previous messages instead of accumulating stale output.
+
+5. **`lib/common/presentation`**
+
+   * Added `TrainingEventMessageMapper` to convert neutral start, split, and lap events into presentation-facing messages.
+   * Kept localized start text, visual color, message types, legacy speed values, and `Split[n]` and `Lap[n]` labels outside the domain.
+   * Added `TrainingValueFormatter` for duration and speed display formatting.
+   * Preserved the existing duration output, including its historical formatting for durations above one hour, and retained two-decimal speed formatting at the presentation boundary.
+   * Updated `StopwatchFunctions.formatDuration` to delegate to the presentation formatter.
+
+6. **Domain and compatibility tests**
+
+   * Added generator tests for empty history, start events, incomplete and completed laps, multiple laps, accumulated lap durations, repeated calls, rounded split ratios, persistence requirements, training ownership, and zero-duration failures.
+   * Added adapter round-trip tests for users, trainings, histories, and settings, including unknown units, zero durations, UI colors, and schema metadata boundaries.
+   * Added legacy stopwatch tests covering metric calculations, imperial conversion, and zero-elapsed-time errors.
+   * Added legacy report integration tests covering message ordering, split and lap labels, accumulated lap duration, and continued `getIndex` compatibility.
+   * Added presentation mapper and formatter tests for localized start messages, event labels, colors, message types, duration output, and two-decimal speed display.
+
+7. **Architecture and backlog documentation**
+
+   * Expanded the current architecture document with the delivered core and pure-domain foundations, dependency boundaries, temporary adapter strategy, and current legacy coexistence model.
+   * Marked backlog 002 as completed and moved its backlog and task documents into `doc/backlog/closed`.
+   * Completed the remaining event-generation, presentation-boundary, adapter, purity, verification, and closure checklist items.
+   * Recorded the delivered domain capabilities, validation results, temporary adapters, preserved formatting behavior, and manual emulator-validation limitation.
+   * Updated backlog navigation so persistence backlog 003 now depends on completed backlogs 001 and 002.
+   * Corrected links between closed backlog documents and standardized “Viewmodel” terminology in the MVVM restructuring plan.
+
+8. **`Changelog.md`**
+
+   * Added the task06 changelog entry documenting the immutable domain entities, validation rules, temporal snapshots, training events, tests, and completed domain-purity backlog work.
+
+9. **Project dependencies and formatting**
+
+   * Moved `mockito` from runtime dependencies to development dependencies and updated it from 5.4.4 to 5.6.4.
+   * Normalized trailing whitespace in license headers across PDF, sharing, stopwatch, backup, table-creation, and migration utilities without changing their behavior.
+
+### Conclusion
+
+The pure-domain backlog is now closed with domain training-event generation connected to the legacy application through explicit compatibility and presentation boundaries. Speed and report rules have a single reusable implementation while existing UI-facing models, labels, colors, and formatting remain supported.
+
+The Android project has also been migrated to current Kotlin DSL, Java 17, Kotlin, Android Gradle Plugin, and Gradle configurations, with comprehensive tests and documentation recording the resulting architecture and migration status.
+
 ## 2026/08/13 - bkl002/task06
 
 This change introduces immutable, infrastructure-independent domain entities for users, training sessions, history, settings, stopwatch state, and reporting events. The new models enforce domain invariants through result-based factories and provide value equality for predictable comparisons.
