@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  auto_injector: ^2.2.0
   cupertino_icons: ^1.0.6
   flutter_bloc: ^9.1.1
   sqflite: ^2.3.3

@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -20,8 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'common/constants.dart';
+import 'core/bootstrap/bootstrap.dart';
+import 'core/config/dependencies.dart';
+import 'core/result/errors/app_error.dart';
 import 'my_material_app.dart';
-import 'store/database/database_provider.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -29,8 +31,14 @@ void main() async {
 
   await EasyLocalization.ensureInitialized();
 
-  final dbProvider = DatabaseProvider();
-  await dbProvider.init();
+  setupDependencies();
+  final result = await injector.get<Bootstrap>().initialize();
+
+  if (result.isFailure) {
+    runApp(BootstrapErrorApp(error: result.error!));
+    FlutterNativeSplash.remove();
+    return;
+  }
 
   runApp(
     EasyLocalization(
@@ -40,4 +48,42 @@ void main() async {
       child: MyMaterialApp(),
     ),
   );
+}
+
+class BootstrapErrorApp extends StatelessWidget {
+  final AppError error;
+
+  const BootstrapErrorApp({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Unable to initialize the application.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    error.code.name,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -7,7 +7,9 @@ dependências de Flutter, SQLite, plugins ou apresentação.
 
 ## Dependência
 
-Depende de `001-fundacao-arquitetural.md` para os contratos transversais.
+Depende de
+[`closed/001-fundacao-arquitetural.md`](closed/001-fundacao-arquitetural.md)
+para os contratos transversais.
 
 ## Escopo
 
@@ -55,7 +57,6 @@ Nenhuma decisão adicional aprovada.
 
 **Estado:** Planejado.
 
-**Dependência:** `001-fundacao-arquitetural.md`.
+**Dependência:** backlog 001 concluído.
 
 **Próximo backlog:** `003-persistencia-e-repositories.md`.
-

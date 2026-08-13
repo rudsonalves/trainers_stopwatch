@@ -77,12 +77,8 @@ conversão completa de todos os DAOs e repositories ocorrerá no backlog 003.
 
 ## Questões em aberto
 
-1. O bootstrap deve apresentar uma tela de erro recuperável já nesta etapa ou
-   somente devolver um resultado tipado para a UI atual?
-2. Em falha de backup antes de uma migration, a aplicação deve impedir a
-   migration ou permitir continuação mediante política explícita?
-3. Depois de falha de migration seguida de restauração bem-sucedida, o app deve
-   abrir na versão anterior ou interromper o bootstrap para nova tentativa?
+Nenhuma questão permanece aberta nesta etapa. As decisões de bootstrap estão
+registradas abaixo.
 
 ## Critérios de aceite
 
@@ -148,8 +144,61 @@ taxonomia extensa para features ainda não migradas.
 **Consequências:** adapters traduzirão exceções técnicas; códigos específicos de
 imagem, relatório, compartilhamento e cronômetro serão acrescentados por demanda.
 
+### 2026-08-13 — Fallback mínimo de bootstrap
+
+**Decisão:** falha de inicialização abre uma tela mínima com o código do erro,
+sem nova tentativa nesta etapa.
+
+**Motivo:** o bootstrap precisa parar de encerrar o processo abruptamente, mas o
+fluxo visual recuperável pertence à futura reorganização da UI.
+
+**Consequências:** o usuário recebe um estado explícito; retry e localização da
+mensagem permanecem adiados para um backlog de UI.
+
+### 2026-08-13 — Backup obrigatório antes de migration
+
+**Decisão:** migration pendente não será executada se o backup falhar.
+
+**Motivo:** continuar sem uma cópia válida aumenta o risco de perda de dados.
+
+**Consequências:** o bootstrap retorna `backupFailed` e mantém o banco original
+sem executar scripts.
+
+### 2026-08-13 — Falha de migration interrompe o bootstrap
+
+**Decisão:** mesmo quando a restauração for bem-sucedida, a falha da migration
+interrompe a inicialização atual.
+
+**Motivo:** abrir silenciosamente a versão anterior esconderia uma atualização
+incompleta e repetiria a migration sem apresentar o problema.
+
+**Consequências:** restauração bem-sucedida retorna `migrationFailed`;
+restauração sem consistência confirmada retorna `restoreFailed`.
+
 ## Acompanhamento
 
-**Estado:** Planejado.
+**Estado:** Concluído em 2026-08-13.
 
-**Próximo backlog:** `002-dominio-puro.md`.
+**Implementação entregue:**
+
+- contratos `Result`, `AppError`, `Unit`, `Command0` e `Command1`;
+- catálogo inicial de erros da aplicação;
+- logging transversal de desenvolvimento;
+- composition root idempotente com `AutoInjector`;
+- bootstrap resolvido pelo injector e representado por `AsyncResult<Unit>`;
+- abertura do banco sem `exit(1)`;
+- distinção entre abertura, criação, settings, backup, migration e restauração;
+- fallback visual mínimo para falha de inicialização;
+- 8 testes novos de resultado, Commands e composição;
+- suíte completa com 11 testes aprovada;
+- `flutter analyze` aprovado sem issues.
+
+**Limitações e itens adiados:**
+
+- `DatabaseManager` e `AppSettings` continuam singletons registrados como
+  adapters temporários;
+- a conversão completa dos stores/DAOs ocorrerá no backlog 003;
+- a tela de erro ainda não possui localização nem nova tentativa;
+- erros específicos de features serão criados somente por demanda.
+
+**Próximo backlog:** [`../002-dominio-puro.md`](../002-dominio-puro.md).

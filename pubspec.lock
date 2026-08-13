@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.1"
+  auto_injector:
+    dependency: "direct main"
+    description:
+      name: auto_injector
+      sha256: "81815294ad9a512e294d97819bdbeccc7f93f18daeceac321e0c046a6f25eeb1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   auto_size_text:
     dependency: transitive
     description:

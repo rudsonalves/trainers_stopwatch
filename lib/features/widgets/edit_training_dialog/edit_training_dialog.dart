@@ -17,9 +17,9 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:trainers_stopwatch/common/theme/app_font_style.dart';
 
 import '../../../common/models/training_model.dart';
+import '../../../common/theme/app_font_style.dart';
 import '../common/numeric_field.dart';
 import '../common/simple_spin_box_field.dart';
 import 'widgets/color_dialog.dart';

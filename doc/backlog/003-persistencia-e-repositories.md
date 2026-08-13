@@ -7,7 +7,7 @@ sejam consumidos por contratos injetáveis, preservando o banco existente.
 
 ## Dependências
 
-- `001-fundacao-arquitetural.md`;
+- backlog 001 concluído;
 - `002-dominio-puro.md`.
 
 ## Organização proposta
@@ -75,4 +75,3 @@ migration incremental e validação de backup/restauração.
 **Estado:** Planejado.
 
 **Próximo backlog:** `004-configuracoes-mvvm.md`.
-

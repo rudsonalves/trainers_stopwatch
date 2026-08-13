@@ -12,8 +12,8 @@ migrado estiver funcional.
 
 | Ordem | Backlog | Camada principal | Dependência |
 | --- | --- | --- | --- |
-| 001 | [Fundação arquitetural](001-fundacao-arquitetural.md) | core | nenhuma |
-| 002 | [Domínio puro](002-dominio-puro.md) | domain | 001 |
+| 001 | [Fundação arquitetural](closed/001-fundacao-arquitetural.md) | core | concluído |
+| 002 | [Domínio puro](002-dominio-puro.md) | domain | 001 concluído |
 | 003 | [Persistência e repositories](003-persistencia-e-repositories.md) | data | 001 e 002 |
 | 004 | [Configurações em MVVM](004-configuracoes-mvvm.md) | data + ui piloto | 003 |
 | 005 | [Usuários e imagens](005-usuarios-e-imagens.md) | data + ui | 003 e 004 |
@@ -45,4 +45,3 @@ migrado estiver funcional.
 4. validar análise, testes afetados e fluxo manual correspondente;
 5. registrar limitações e mover os documentos concluídos para
    `doc/backlog/closed/`.
-
