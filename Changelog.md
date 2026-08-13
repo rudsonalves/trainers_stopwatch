@@ -1,5 +1,68 @@
 # Changelog
 
+## 2026/08/13 - bkl002/task04
+
+This change begins the pure-domain extraction by establishing dependency boundaries and introducing typed training units, distance and speed values, and a centralized speed calculation service.
+
+The domain now validates persisted unit symbols, supported unit combinations, numeric invariants, and elapsed time through typed results. Backlog documentation and automated tests capture the architectural decisions and verify the new behavior.
+
+1. **`lib/domain/common/`**
+
+   * Added documentation defining the domain’s permitted dependencies and excluding Flutter, persistence, repositories, localization, navigation, and presentation concerns.
+   * Established a minimal organization strategy that creates domain contexts only when concrete types are implemented.
+
+2. **`lib/domain/common/training/units/`**
+
+   * Added `DistanceUnit` for meters, kilometers, yards, and miles, with meters as the default and explicit conversion factors to meters.
+   * Added `SpeedUnit` for meters per second, kilometers per hour, yards per second, and miles per hour, with meters per second as the default.
+   * Added typed parsing and serialization for the existing persisted unit symbols.
+   * Returned `invalidData` failures for unknown symbols instead of silently applying defaults.
+   * Added the existing distance-to-speed compatibility matrix and an operation for validating unit combinations.
+
+3. **`lib/domain/common/training/values/`**
+
+   * Added immutable `Distance` and `Speed` value objects with value equality.
+   * Added typed factories that reject negative and non-finite values while allowing zero.
+   * Added distance normalization to meters and speed conversion from meters per second without presentation-layer rounding.
+   * Preserved the application’s existing conversion factors for all supported units.
+
+4. **`lib/domain/common/training/services/speed_calculator.dart`**
+
+   * Added a typed speed calculation service that normalizes distance to meters and duration to seconds before converting to the requested output unit.
+   * Added explicit validation for zero and negative durations, incompatible unit combinations, and non-finite calculation results.
+   * Preserved microsecond precision and returned typed `Speed` results without rounding.
+   * Allowed zero distance to produce zero speed while preventing division by zero.
+
+5. **`lib/core/result/errors/app_error_code.dart`**
+
+   * Added the `zeroElapsedTime` error code to distinguish zero-duration speed calculations from general invalid data.
+
+6. **`test/domain/common/training/`**
+
+   * Added unit parsing and serialization tests for every supported distance and speed symbol, including unknown-value failures.
+   * Added coverage for the complete distance and speed compatibility matrix.
+   * Added value-object tests for defaults, zero values, conversion factors, invalid numeric inputs, and equality.
+   * Added speed calculator tests for metric defaults, all supported output units, microsecond precision, zero distance, invalid durations, and incompatible units.
+   * Verified compatibility with the conversion behavior already used by the application.
+
+7. **`doc/backlog/002-dominio-puro.md` and `002-dominio-puro-tasks.md`**
+
+   * Added a detailed implementation checklist for the pure-domain backlog and marked the domain foundation, unit modeling, value objects, and speed calculation tasks as completed.
+   * Resolved the open decisions concerning transient training colors, zero-duration handling, metric defaults, supported unit combinations, and neutral report events.
+   * Documented the consequences for domain isolation, persistence compatibility, presentation formatting, and future report generation.
+   * Linked the backlog document to its implementation task tracker.
+
+8. **`Changelog.md`**
+
+   * Added the completed architectural foundation changelog entry covering typed results, commands, dependency injection, bootstrap error handling, database initialization, logging, tests, and backlog closure.
+   * Removed the obsolete unreleased placeholder from the end of the changelog.
+
+### Conclusion
+
+The project now has a pure-Dart foundation for training units, distance and speed values, and validated speed calculations. Invalid units, numeric values, and elapsed times are represented through explicit typed failures.
+
+The accompanying tests and backlog documentation establish the implemented domain boundaries and preserve existing conversion and compatibility behavior for subsequent domain extraction work.
+
 ## 2026/08/13 - update/backlog-02
 
 This change completes the architectural foundation backlog by introducing typed result and command abstractions, centralized dependency injection, and a structured application bootstrap flow.
