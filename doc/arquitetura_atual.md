@@ -7,6 +7,47 @@
 A arquitetura de destino e a estratégia incremental estão descritas em
 [`plano_reestruturacao_mvvm.md`](plano_reestruturacao_mvvm.md).
 
+## Estado da transição arquitetural
+
+Os backlogs 001 e as tarefas 1 a 10 do backlog 002 introduziram uma fundação
+nova sem remover ainda as camadas legadas.
+
+### Fundação entregue
+
+- `core/result`: `Result`, `AppError`, `Unit` e Commands;
+- `core/config`: composition root com `AutoInjector`;
+- `core/bootstrap`: inicialização tipada da aplicação;
+- logging transversal de desenvolvimento;
+- erros distintos para banco, migration, backup, restauração e storage.
+
+### Domínio entregue
+
+```text
+domain/common/
+├── user/models/User
+├── settings/models/Settings
+├── history/models/HistoryEntry
+├── stopwatch/models/*Snapshot
+└── training/
+    ├── models/Training
+    ├── units/DistanceUnit, SpeedUnit
+    ├── values/Distance, Speed
+    ├── events/TrainingEvent
+    └── services/SpeedCalculator, TrainingEventGenerator
+```
+
+O domínio usa Dart puro e `core/result`. Ele não conhece Flutter, SQLite,
+localização, widgets, repositories ou plugins. Cor permanece estado visual da
+sessão. A versão do schema permanece metadado da persistência.
+
+### Convivência temporária
+
+Adapters em `lib/common/adapters` conectam os models antigos aos tipos novos.
+`StopwatchFunctions.speedCalc` já delega para `SpeedCalculator`, e
+`TrainingReport` já delega para `TrainingEventGenerator`. Esses adapters serão
+removidos conforme dados, configurações e UI forem migrados nos backlogs 003 a
+005.
+
 ## 1. Visão geral
 
 O Trainer's Stopwatch é uma aplicação Flutter local-first para controlar

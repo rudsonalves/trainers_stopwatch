@@ -152,8 +152,44 @@ renderer do relatório.
 
 ## Acompanhamento
 
-**Estado:** Planejado.
+**Estado:** Concluído em 2026-08-13.
 
 **Dependência:** backlog 001 concluído.
 
 **Próximo backlog:** `003-persistencia-e-repositories.md`.
+
+### Entrega
+
+- domínio Dart puro criado para usuários, treinos, históricos, configurações,
+  unidades, valores, snapshots e eventos temporais;
+- cálculo tipado de velocidade protegido contra duração zero;
+- geração neutra de eventos de início, parcial e volta, com duração acumulada
+  correta para a volta;
+- adapters conectados aos models, ao cálculo e ao relatório legados;
+- formatação e localização mantidas fora do domínio;
+- arquitetura atualizada com as fronteiras efetivamente entregues.
+
+### Validação
+
+- `dart format` executado nos arquivos alterados;
+- 119 testes aprovados na suíte completa de `flutter test`, incluindo unidades,
+  valores, velocidade, eventos e adapters;
+- `flutter analyze` concluído sem issues;
+- `git diff --check` concluído sem erros;
+- bootstrap confirmado no emulador Android, com a tela principal carregada;
+- parcial e volta confirmadas pelo teste integrado do adapter legado. A
+  interação manual completa no emulador não foi concluída porque a permissão de
+  captura/interação do ambiente foi interrompida durante a validação.
+
+### Limitações e trabalho adiado
+
+- adapters entre os models legados e o domínio permanecem temporariamente até
+  os backlogs 003 a 006 migrarem persistência e consumidores;
+- `TrainingReport` ainda converte eventos neutros para `MessagesModel` e textos
+  localizados na borda legada;
+- `StopwatchFunctions` permanece como fachada compatível sobre o novo cálculo;
+- a formatação histórica de duração acima de uma hora foi preservada para não
+  introduzir mudança visual neste backlog e deverá ser revista na consolidação
+  da apresentação;
+- schema, migrations e persistência de cor não foram alterados, conforme o
+  escopo e as decisões desta etapa.

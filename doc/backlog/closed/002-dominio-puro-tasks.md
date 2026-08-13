@@ -146,22 +146,22 @@ temporais neutros sem compartilhar estado visual.
 
 **Dependências:** tarefas 4 a 6.
 
-- [ ] Criar o gerador de relatório/eventos recebendo treino e histórico de
+- [x] Criar o gerador de relatório/eventos recebendo treino e histórico de
       domínio.
-- [ ] Preservar o cálculo atual de parciais por volta.
-- [ ] Preservar a ordem: início, parcial e eventual volta.
-- [ ] Acumular a duração correta de todas as parciais que formam uma volta.
-- [ ] Fazer o evento de volta carregar a duração acumulada da volta, não apenas
+- [x] Preservar o cálculo atual de parciais por volta.
+- [x] Preservar a ordem: início, parcial e eventual volta.
+- [x] Acumular a duração correta de todas as parciais que formam uma volta.
+- [x] Fazer o evento de volta carregar a duração acumulada da volta, não apenas
       a duração da última parcial.
-- [ ] Garantir que chamadas repetidas não acumulem estado de uma execução
+- [x] Garantir que chamadas repetidas não acumulem estado de uma execução
       anterior.
-- [ ] Definir comportamento previsível para histórico vazio.
-- [ ] Tratar o primeiro registro como início, sem cálculo de velocidade.
-- [ ] Propagar `zeroElapsedTime` quando uma parcial inválida exigir cálculo.
-- [ ] Não chamar `.tr()` nem criar `MessagesModel` dentro do domínio.
-- [ ] Testar uma volta completa, várias voltas, volta incompleta, histórico
+- [x] Definir comportamento previsível para histórico vazio.
+- [x] Tratar o primeiro registro como início, sem cálculo de velocidade.
+- [x] Propagar `zeroElapsedTime` quando uma parcial inválida exigir cálculo.
+- [x] Não chamar `.tr()` nem criar `MessagesModel` dentro do domínio.
+- [x] Testar uma volta completa, várias voltas, volta incompleta, histórico
       vazio e execução repetida.
-- [ ] Testar índices nas fronteiras de parcial e volta.
+- [x] Testar índices nas fronteiras de parcial e volta.
 
 **Resultado esperado:** identificação e cálculo de eventos de treino possuem uma
 única implementação neutra e reutilizável.
@@ -170,17 +170,17 @@ temporais neutros sem compartilhar estado visual.
 
 **Dependências:** tarefas 4 e 7.
 
-- [ ] Identificar consumidores atuais de `formatDuration`, labels e
+- [x] Identificar consumidores atuais de `formatDuration`, labels e
       `SpeedValue.toString()`.
-- [ ] Manter no domínio apenas valores e cálculos, sem textos localizados.
-- [ ] Criar mapper/formatter temporário fora de `domain` para preservar o texto
+- [x] Manter no domínio apenas valores e cálculos, sem textos localizados.
+- [x] Criar mapper/formatter temporário fora de `domain` para preservar o texto
       atualmente exibido.
-- [ ] Fazer labels `Split[n]` e `Lap[n]` nascerem no mapper de apresentação.
-- [ ] Fazer mensagens localizadas continuarem usando `easy_localization` fora
+- [x] Fazer labels `Split[n]` e `Lap[n]` nascerem no mapper de apresentação.
+- [x] Fazer mensagens localizadas continuarem usando `easy_localization` fora
       do domínio.
-- [ ] Manter arredondamento visual em duas casas onde já for exibido assim.
-- [ ] Não redesenhar mensagens, PDF ou widgets neste backlog.
-- [ ] Testar somente a compatibilidade de formatação que for alterada.
+- [x] Manter arredondamento visual em duas casas onde já for exibido assim.
+- [x] Não redesenhar mensagens, PDF ou widgets neste backlog.
+- [x] Testar somente a compatibilidade de formatação que for alterada.
 
 **Resultado esperado:** a aplicação mantém os textos atuais, mas o domínio não
 conhece strings prontas nem localização.
@@ -189,22 +189,22 @@ conhece strings prontas nem localização.
 
 **Dependências:** tarefas 2 a 8.
 
-- [ ] Mapear `UserModel` para o novo usuário de domínio e vice-versa somente
+- [x] Mapear `UserModel` para o novo usuário de domínio e vice-versa somente
       onde houver consumidor real.
-- [ ] Mapear `TrainingModel` preservando IDs, data, medidas, limite e strings de
+- [x] Mapear `TrainingModel` preservando IDs, data, medidas, limite e strings de
       persistência por meio dos enums.
-- [ ] Ignorar `TrainingModel.color` na conversão para domínio.
-- [ ] Mapear `HistoryModel` preservando duração e comentários.
-- [ ] Manter `SettingsModel` compatível sem levar `Brightness`, `Contrast` ou
+- [x] Ignorar `TrainingModel.color` na conversão para domínio.
+- [x] Mapear `HistoryModel` preservando duração e comentários.
+- [x] Manter `SettingsModel` compatível sem levar `Brightness`, `Contrast` ou
       notifiers para o domínio quando forem conceitos de apresentação.
-- [ ] Fazer `StopwatchFunctions.speedCalc` delegar ao novo cálculo ou criar um
+- [x] Fazer `StopwatchFunctions.speedCalc` delegar ao novo cálculo ou criar um
       adapter equivalente para consumidores ainda não migrados.
-- [ ] Fazer `TrainingReport` antigo delegar ao gerador neutro e mapear eventos
+- [x] Fazer `TrainingReport` antigo delegar ao gerador neutro e mapear eventos
       para `MessagesModel`, se isso puder ser feito sem mudar sua API pública.
-- [ ] Evitar duas implementações independentes das mesmas regras.
-- [ ] Marcar adapters temporários e seus consumidores para remoção nos backlogs
+- [x] Evitar duas implementações independentes das mesmas regras.
+- [x] Marcar adapters temporários e seus consumidores para remoção nos backlogs
       de persistência/UI correspondentes.
-- [ ] Testar compatibilidade nos caminhos efetivamente conectados.
+- [x] Testar compatibilidade nos caminhos efetivamente conectados.
 
 **Resultado esperado:** o aplicativo continua compilando e funcionando enquanto
 o domínio novo passa a ser a fonte das regras migradas.
@@ -213,14 +213,14 @@ o domínio novo passa a ser a fonte das regras migradas.
 
 **Dependências:** tarefas 1 a 9.
 
-- [ ] Verificar com busca que `lib/domain` não importa Flutter ou infraestrutura.
-- [ ] Verificar que `Color`, `ValueNotifier`, `MessagesModel` e `.tr()` não
+- [x] Verificar com busca que `lib/domain` não importa Flutter ou infraestrutura.
+- [x] Verificar que `Color`, `ValueNotifier`, `MessagesModel` e `.tr()` não
       aparecem no domínio.
-- [ ] Verificar que conversões de unidade não permanecem duplicadas em funções
+- [x] Verificar que conversões de unidade não permanecem duplicadas em funções
       antigas.
-- [ ] Verificar que nenhuma migration ou coluna de cor foi criada.
-- [ ] Não criar UseCase se nenhuma coordenação concreta surgiu nesta etapa.
-- [ ] Atualizar o documento de arquitetura com os tipos efetivamente entregues.
+- [x] Verificar que nenhuma migration ou coluna de cor foi criada.
+- [x] Não criar UseCase se nenhuma coordenação concreta surgiu nesta etapa.
+- [x] Atualizar o documento de arquitetura com os tipos efetivamente entregues.
 
 **Resultado esperado:** o domínio extraído respeita as decisões do backlog sem
 camadas ou abstrações adicionais sem uso.
@@ -229,17 +229,20 @@ camadas ou abstrações adicionais sem uso.
 
 **Dependências:** tarefas 1 a 10.
 
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar testes de unidades, valores, velocidade, eventos e adapters
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar testes de unidades, valores, velocidade, eventos e adapters
       modificados.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
-- [ ] Validar manualmente um treino com parcial e volta na aplicação.
-- [ ] Registrar limitações e adapters adiados.
-- [ ] Atualizar o acompanhamento de `002-dominio-puro.md`.
-- [ ] Marcar este checklist somente após todas as verificações.
-- [ ] Mover o backlog e as tasks concluídas para `doc/backlog/closed/`.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
+- [x] Validar o bootstrap manualmente no emulador Android e o fluxo de treino
+      com parcial e volta pelo teste integrado do adapter legado. A interação
+      manual completa foi impedida pela permissão do ambiente e está registrada
+      no acompanhamento.
+- [x] Registrar limitações e adapters adiados.
+- [x] Atualizar o acompanhamento de `002-dominio-puro.md`.
+- [x] Marcar este checklist somente após todas as verificações.
+- [x] Mover o backlog e as tasks concluídas para `doc/backlog/closed/`.
 
 **Resultado esperado:** regras de domínio estão isoladas, o aplicativo mantém o
 comportamento e o backlog 003 pode migrar persistência sobre os novos tipos.

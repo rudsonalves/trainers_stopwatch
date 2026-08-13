@@ -13,8 +13,8 @@ migrado estiver funcional.
 | Ordem | Backlog | Camada principal | Dependência |
 | --- | --- | --- | --- |
 | 001 | [Fundação arquitetural](closed/001-fundacao-arquitetural.md) | core | concluído |
-| 002 | [Domínio puro](002-dominio-puro.md) | domain | 001 concluído |
-| 003 | [Persistência e repositories](003-persistencia-e-repositories.md) | data | 001 e 002 |
+| 002 | [Domínio puro](closed/002-dominio-puro.md) | domain | concluído |
+| 003 | [Persistência e repositories](003-persistencia-e-repositories.md) | data | 001 e 002 concluídos |
 | 004 | [Configurações em MVVM](004-configuracoes-mvvm.md) | data + ui piloto | 003 |
 | 005 | [Usuários e imagens](005-usuarios-e-imagens.md) | data + ui | 003 e 004 |
 | 006 | [Treinos e históricos](006-treinos-e-historicos.md) | domain + data + ui | 003 e 005 |

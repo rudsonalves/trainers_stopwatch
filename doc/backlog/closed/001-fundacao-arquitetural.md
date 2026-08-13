@@ -201,4 +201,4 @@ restauração sem consistência confirmada retorna `restoreFailed`.
 - a tela de erro ainda não possui localização nem nova tentativa;
 - erros específicos de features serão criados somente por demanda.
 
-**Próximo backlog:** [`../002-dominio-puro.md`](../002-dominio-puro.md).
+**Próximo backlog:** [`002-dominio-puro.md`](002-dominio-puro.md).

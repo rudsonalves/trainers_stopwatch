@@ -1,5 +1,80 @@
 # Changelog
 
+## 2026/08/13 - bkl002/task06
+
+This change introduces immutable, infrastructure-independent domain entities for users, training sessions, history, settings, stopwatch state, and reporting events. The new models enforce domain invariants through result-based factories and provide value equality for predictable comparisons.
+
+The accompanying tests cover defaults, validation rules, optional persistence identifiers, zero-duration scenarios, and equality behavior. The domain-purity backlog was updated to mark the corresponding modeling and event tasks as complete.
+
+1. **Android Gradle configuration**
+
+   * Added the Flutter migrator-generated `android.builtInKotlin` and `android.newDsl` compatibility flags.
+   * Explicitly disabled both settings to preserve the current Android build behavior.
+
+2. **User domain model**
+
+   * Added an immutable `User` entity containing domain-relevant identity and contact information.
+   * Kept the identifier optional to support users that have not yet been persisted.
+   * Added value-based equality and hash-code generation without introducing serialization or UI dependencies.
+
+3. **Training domain model**
+
+   * Added an immutable `Training` entity with persisted user association, date, comments, typed split and lap distances, optional lap limit, and typed speed unit.
+   * Added metric defaults of 200 meters per split and 1,000 meters per lap.
+   * Added validation for persisted user IDs, positive lap limits and distances, matching distance units, and compatible distance and speed units.
+   * Kept training identifiers optional and excluded presentation-specific data such as colors.
+
+4. **History domain model**
+
+   * Added an immutable `HistoryEntry` entity associating a persisted training with its duration and optional comments.
+   * Allowed `Duration.zero` for the initial session record while rejecting negative durations and invalid training identifiers.
+   * Added value equality for reliable comparisons.
+
+5. **Settings domain model**
+
+   * Added immutable settings for split and lap distances, brightness, contrast, language, refresh interval, and tutorial visibility.
+   * Introduced typed brightness, contrast, and language preferences with English/United States as the default locale.
+   * Added metric distance defaults, dark brightness, standard contrast, a 66-millisecond refresh interval, and enabled tutorial visibility.
+   * Added validation for positive same-unit distances and positive refresh intervals.
+   * Kept the model free of widget state, focus objects, paths, and other presentation-specific dependencies.
+
+6. **Stopwatch snapshots**
+
+   * Added a sealed snapshot hierarchy for split, lap, and finish states.
+   * Represented elapsed and segment durations, lap counts, and split counts as immutable domain values without notifier dependencies.
+   * Added shared validation for non-negative durations and counters and prevented segment durations from exceeding total elapsed time.
+   * Allowed zero durations and counters so later domain calculations can classify initial states.
+   * Added value equality for every snapshot type.
+
+7. **Training report events**
+
+   * Added a sealed, presentation-neutral `TrainingEvent` hierarchy for session starts, recorded splits, and recorded laps.
+   * Kept start events free of calculated measurement data.
+   * Added measured-event factories carrying typed speed, duration, index, optional history association, and comments.
+   * Added validation for positive event indices and non-negative durations.
+   * Excluded colors, icons, translated labels, and route information while providing value equality.
+
+8. **Domain model and event tests**
+
+   * Added tests for user persistence semantics and value equality.
+   * Added training tests covering metric defaults, invalid user IDs, lap limits, zero distances, mismatched distance units, incompatible speed units, and equality.
+   * Added history tests covering zero-duration initial entries, persisted training requirements, negative-duration rejection, and equality.
+   * Added settings tests covering application defaults, distance and refresh invariants, and equality.
+   * Added stopwatch snapshot tests covering captured timing data, zero durations, invalid durations and counters, elapsed-time constraints, and equality.
+   * Added training event tests covering neutral start events, measured split and lap data, validation failures, and equality.
+
+9. **Domain-purity backlog**
+
+   * Marked the immutable user, training, history, and settings model requirements as complete.
+   * Marked persistence-ID, metric-default, domain-purity, and model-invariant testing requirements as complete.
+   * Marked stopwatch snapshot and neutral training-event requirements, including validation and comparison coverage, as complete.
+
+### Conclusion
+
+The domain layer now provides immutable, validated models for core training data and neutral temporal reporting. These types can be shared by future repositories, use cases, view models, and reports without coupling domain behavior to infrastructure or UI state.
+
+Automated tests establish the expected defaults, invariants, zero-duration behavior, and value semantics across the new model hierarchy.
+
 ## 2026/08/13 - bkl002/task04
 
 This change begins the pure-domain extraction by establishing dependency boundaries and introducing typed training units, distance and speed values, and a centralized speed calculation service.

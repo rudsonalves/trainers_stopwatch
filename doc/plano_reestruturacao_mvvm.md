@@ -135,7 +135,7 @@ Infraestrutura transversal e independente das features:
 - contratos básicos de relógio, arquivos e banco;
 - rotas e configuração global.
 
-`core` não conhece atleta, treino, histórico, página ou ViewModel.
+`core` não conhece atleta, treino, histórico, página ou Viewmodel.
 
 ### `domain`
 
@@ -163,10 +163,10 @@ Implementa repositories e integrações:
 
 ### `ui`
 
-Contém páginas, ViewModels, componentes, tema e o BLoC da feature temporal.
+Contém páginas, Viewmodels, componentes, tema e o BLoC da feature temporal.
 
 - Page: widget tree, `BuildContext`, navegação, dialogs e controllers visuais;
-- ViewModel: comandos, estado de apresentação e coordenação;
+- Viewmodel: comandos, estado de apresentação e coordenação;
 - BLoC: estado temporal do cronômetro;
 - componente: somente valores e callbacks, sem acesso a repository ou singleton.
 
