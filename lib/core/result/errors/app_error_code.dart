@@ -6,6 +6,7 @@ enum AppErrorCode {
   restoreFailed,
   storageReadFailed,
   storageWriteFailed,
+  storageNotFound,
   invalidData,
   zeroElapsedTime,
   unexpected,

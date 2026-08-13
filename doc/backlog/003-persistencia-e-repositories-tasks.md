@@ -118,15 +118,16 @@ camada data.
 
 **Dependências:** tarefas 1 e 2.
 
-- [ ] Substituir `UserStore` por `UserService` em `data/services`.
-- [ ] Receber o serviço de banco pelo construtor.
-- [ ] Implementar inserção, consulta por ID, listagem, alteração e exclusão.
-- [ ] Converter registros SQLite em models antes de devolvê-los.
-- [ ] Manter consulta de imagens dentro da fronteira adequada de dados.
-- [ ] Definir `storageNotFound` para consulta individual sem registro, sem
+- [x] Implementar `UserService` em `data/services` como substituto de
+      `UserStore`; o Store legado será removido após adaptar seus consumidores.
+- [x] Receber o serviço de banco pelo construtor.
+- [x] Implementar inserção, consulta por ID, listagem, alteração e exclusão.
+- [x] Converter registros SQLite em models antes de devolvê-los.
+- [x] Manter consulta de imagens dentro da fronteira adequada de dados.
+- [x] Definir `storageNotFound` para consulta individual sem registro, sem
       retornar exceção crua.
-- [ ] Preservar constraints, índices e comportamento de exclusão atuais.
-- [ ] Testar as operações migradas e seus erros relevantes.
+- [x] Preservar constraints, índices e comportamento de exclusão atuais.
+- [x] Testar as operações migradas e seus erros relevantes.
 
 **Resultado esperado:** o CRUD de usuários é um serviço injetável e não expõe
 maps ou SQLite.
@@ -135,16 +136,17 @@ maps ou SQLite.
 
 **Dependências:** tarefas 1 e 2.
 
-- [ ] Substituir `TrainingStore` por `TrainingService` em `data/services`.
-- [ ] Receber o serviço de banco pelo construtor.
-- [ ] Implementar inserção, consulta por ID, listagem por usuário, alteração e
+- [x] Implementar `TrainingService` em `data/services` como substituto de
+      `TrainingStore`; o Store legado será removido após adaptar consumidores.
+- [x] Receber o serviço de banco pelo construtor.
+- [x] Implementar inserção, consulta por ID, listagem por usuário, alteração e
       exclusão.
-- [ ] Usar os adapters do backlog 002 para converter unidades persistidas em
-      tipos de domínio.
-- [ ] Manter cor fora do registro persistido e do model de domínio.
-- [ ] Preservar IDs, datas, comentários, distâncias, limite e unidades.
-- [ ] Converter unidade desconhecida em `Failure` com `invalidData`.
-- [ ] Testar conversão e CRUD efetivamente migrados.
+- [x] Reutilizar os tipos e parsers do backlog 002 para converter unidades
+      persistidas em tipos de domínio.
+- [x] Manter cor fora do registro persistido e do model de domínio.
+- [x] Preservar IDs, datas, comentários, distâncias, limite e unidades.
+- [x] Converter unidade desconhecida em `Failure` com `invalidData`.
+- [x] Testar conversão e CRUD efetivamente migrados.
 
 **Resultado esperado:** treinos são carregados como models tipados e strings de
 persistência ficam dentro de `data`.
@@ -153,18 +155,20 @@ persistência ficam dentro de `data`.
 
 **Dependências:** tarefas 1, 2 e 6.
 
-- [ ] Substituir `HistoryStore` por `HistoryService` em `data/services`.
-- [ ] Receber o serviço de banco pelo construtor.
-- [ ] Implementar inserção, consulta por ID, listagem por treino, alteração e
+- [x] Implementar `HistoryService` em `data/services` como substituto de
+      `HistoryStore`; o Store legado será removido após adaptar consumidores.
+- [x] Receber o serviço de banco pelo construtor.
+- [x] Implementar inserção, consulta por ID, listagem por treino, alteração e
       exclusão.
-- [ ] Preservar a ordem necessária para geração de parciais e voltas.
-- [ ] Implementar em transação a exclusão que transfere a duração removida para
+- [x] Preservar a ordem necessária para geração de parciais e voltas.
+- [x] Implementar em transação a exclusão que transfere a duração removida para
       o próximo registro.
-- [ ] Impedir a exclusão inválida do registro inicial dentro dessa operação.
-- [ ] Fazer rollback integral se exclusão ou atualização do próximo registro
+- [x] Impedir a exclusão inválida do registro inicial dentro dessa operação.
+- [x] Fazer rollback integral se exclusão ou atualização do próximo registro
       falhar.
-- [ ] Corrigir logs e erros que ainda mencionam `TrainingStore`.
-- [ ] Testar transação bem-sucedida, ausência de próximo registro, tentativa de
+- [x] Usar erros próprios de history no novo service, sem a referência incorreta
+      a `TrainingStore` existente no legado.
+- [x] Testar transação bem-sucedida, ausência de próximo registro, tentativa de
       excluir o início e rollback.
 
 **Resultado esperado:** o histórico possui CRUD explícito e sua alteração
@@ -174,19 +178,19 @@ encadeada é atômica.
 
 **Dependências:** tarefas 4 a 7.
 
-- [ ] Definir contratos orientados ao domínio para settings, users, trainings e
+- [x] Definir contratos orientados ao domínio para settings, users, trainings e
       histories.
-- [ ] Injetar o data service correspondente em cada implementação.
-- [ ] Fazer `SettingsRepository` manter o valor atual das configurações.
-- [ ] Fazer `UserRepository` manter o cache de usuários.
-- [ ] Fazer `TrainingRepository` organizar caches de treinos por usuário.
-- [ ] Fazer `HistoryRepository` organizar caches de históricos por treino.
-- [ ] Expor caches como coleções não modificáveis ou snapshots imutáveis.
-- [ ] Popular ou substituir o cache após leituras bem-sucedidas.
-- [ ] Atualizar o cache somente após escrita bem-sucedida no service.
-- [ ] Manter o cache anterior quando uma operação falhar.
-- [ ] Não armazenar loading, seleção, filtros, mensagens ou controllers de UI.
-- [ ] Testar sincronização entre service e cache nos caminhos alterados.
+- [x] Injetar o data service correspondente em cada implementação.
+- [x] Fazer `SettingsRepository` manter o valor atual das configurações.
+- [x] Fazer `UserRepository` manter o cache de usuários.
+- [x] Fazer `TrainingRepository` organizar caches de treinos por usuário.
+- [x] Fazer `HistoryRepository` organizar caches de históricos por treino.
+- [x] Expor caches como coleções não modificáveis ou snapshots imutáveis.
+- [x] Popular ou substituir o cache após leituras bem-sucedidas.
+- [x] Atualizar o cache somente após escrita bem-sucedida no service.
+- [x] Manter o cache anterior quando uma operação falhar.
+- [x] Não armazenar loading, seleção, filtros, mensagens ou controllers de UI.
+- [x] Testar sincronização entre service e cache nos caminhos alterados.
 
 **Resultado esperado:** repositories são a fonte de verdade em memória sem
 misturar estado visual.

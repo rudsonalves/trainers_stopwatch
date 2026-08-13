@@ -1,5 +1,74 @@
 # Changelog
 
+## 2026/08/13 - bkl003/task08
+
+This change introduces typed persistence services and repository-level caching for users, trainings, histories, and settings. SQLite records are now converted through dedicated mappers, while repositories expose domain-oriented operations and update immutable in-memory state only after successful persistence.
+
+History deletion is made transactional, preserving duration continuity and rolling back failed merges. The dependency configuration, error model, tests, and backlog documentation were updated to support the new data architecture.
+
+1. **`lib/data/services/users`**
+
+   * Added `UserMapper` to convert between SQLite records and `User` models, returning `invalidData` failures for malformed persisted values.
+   * Added `UserService` with database-backed insert, individual lookup, ordered listing, update, deletion, and photo-reference queries.
+   * Added generated-ID handling, immutable list results, missing-ID validation, structured storage errors, and `storageNotFound` responses when records are absent.
+
+2. **`lib/data/services/trainings`**
+
+   * Added `TrainingMapper` to translate persisted dates, distances, limits, comments, and unit symbols into typed `Training` models.
+   * Reused domain parsers for distance and speed units so unknown persisted symbols produce `invalidData` failures.
+   * Kept color outside the persisted training representation and preserved metric and imperial distance values without conversion or rounding.
+   * Added `TrainingService` with insert, lookup, per-user listing, update, and deletion operations, including immutable results and structured validation and storage failures.
+
+3. **`lib/data/services/histories`**
+
+   * Added `HistoryMapper` for converting history records and millisecond durations to and from `HistoryEntry` models.
+   * Added `HistoryService` with insert, lookup, ordered per-training listing, update, and transactional deletion.
+   * Implemented deletion that transfers the removed duration to the following entry when present, permits deletion of the final non-initial entry, and rejects deletion of the initial entry.
+   * Ensured deletion and duration merging roll back together when either database operation fails.
+   * Added history-specific read, write, validation, and not-found errors without references to the legacy training store.
+
+4. **`lib/data/repositories`**
+
+   * Added domain-oriented contracts and implementations for settings, users, trainings, and histories.
+   * Added immutable user caches, per-user training caches, and per-training history caches populated by successful reads.
+   * Updated repository caches only after successful writes, preserving their previous state when persistence fails.
+   * Added settings state management that loads persisted settings or creates and inserts defaults when none exist.
+   * Added history cache synchronization that mirrors successful duration merging after transactional deletion.
+   * Kept user photo-reference access within the user data boundary.
+
+5. **`lib/core/config/dependencies.dart`**
+
+   * Registered the new history, user, and training mappers as dependency instances.
+   * Registered the corresponding persistence services for constructor injection alongside the existing settings service.
+
+6. **`lib/core/result/errors/app_error_code.dart` and `lib/data/services/settings/settings_service.dart`**
+
+   * Added the `storageNotFound` error code for individual persistence operations that cannot locate a requested record.
+   * Made `SettingsService` extensible so repository tests can provide controlled service fakes.
+
+7. **`test/data/services`**
+
+   * Added user service coverage for CRUD behavior, generated IDs, immutable listings, photo-reference filtering, invalid records, missing IDs, and absent records.
+   * Added training service coverage for CRUD behavior, typed unit mapping, immutable listings, missing records and IDs, invalid unit symbols, excluded color data, and preservation of imperial values.
+   * Added history service coverage for CRUD behavior, duration merging, final-entry deletion, initial-entry protection, missing entries, and transactional rollback.
+
+8. **`test/data/repositories`**
+
+   * Added shared database test support for repository service fakes.
+   * Added cache synchronization tests for default settings, failed writes, immutable user collections, per-user training isolation, and history duration merging.
+
+9. **`doc/backlog/003-persistencia-e-repositories-tasks.md`**
+
+   * Marked the user, training, and history service migrations as completed while clarifying that legacy stores remain until their consumers are adapted.
+   * Marked repository contracts, service injection, immutable caching, failure preservation, and synchronization tests as completed.
+   * Updated task wording to reflect the implemented domain parsers and history-specific error handling.
+
+### Conclusion
+
+The data layer now provides injectable, typed services over SQLite and domain-focused repositories with immutable, persistence-synchronized caches. User, training, history, and settings workflows no longer need to expose raw database maps through these new APIs.
+
+Transactional history merging and consistent validation, not-found, read, and write failures improve persistence integrity while the expanded test suite verifies the new behavior.
+
 ## 2026/08/13 - bkl003/task04
 
 This change establishes the new persistence-layer foundation and migrates settings storage toward injectable data services. It introduces centralized database lifecycle, schema, backup, and settings services while documenting the intended dependency boundaries for repositories and data access.

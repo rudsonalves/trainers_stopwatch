@@ -6,8 +6,14 @@ import '../../common/singletons/app_settings.dart';
 import '../../data/services/database/database_backup_service.dart';
 import '../../data/services/database/database_schema.dart';
 import '../../data/services/database/database_service.dart';
+import '../../data/services/histories/history_mapper.dart';
+import '../../data/services/histories/history_service.dart';
 import '../../data/services/settings/settings_mapper.dart';
 import '../../data/services/settings/settings_service.dart';
+import '../../data/services/trainings/training_mapper.dart';
+import '../../data/services/trainings/training_service.dart';
+import '../../data/services/users/user_mapper.dart';
+import '../../data/services/users/user_service.dart';
 import '../../store/database/database_manager.dart';
 import '../../store/database/database_provider.dart';
 import '../bootstrap/bootstrap.dart';
@@ -24,6 +30,9 @@ void setupDependencies() {
       DatabaseBackupService(clock: DateTime.now),
     )
     ..addInstance<SettingsMapper>(const SettingsMapper())
+    ..addInstance<HistoryMapper>(const HistoryMapper())
+    ..addInstance<UserMapper>(const UserMapper())
+    ..addInstance<TrainingMapper>(const TrainingMapper())
     ..addSingleton<DatabaseService>(
       () => DatabaseService(
         databaseDirectoryPath: () async =>
@@ -51,6 +60,9 @@ void setupDependencies() {
       ),
     )
     ..add<SettingsService>(SettingsService.new)
+    ..add<HistoryService>(HistoryService.new)
+    ..add<UserService>(UserService.new)
+    ..add<TrainingService>(TrainingService.new)
     ..addInstance<DatabaseManager>(DatabaseManager.instance)
     ..addInstance<AppSettings>(AppSettings.instance)
     ..add<DatabaseProvider>(DatabaseProvider.new)

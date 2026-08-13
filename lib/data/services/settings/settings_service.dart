@@ -20,7 +20,7 @@ final class SettingsMissing extends SettingsLookup {
   const SettingsMissing();
 }
 
-final class SettingsService {
+class SettingsService {
   final DatabaseService _databaseService;
   final SettingsMapper _mapper;
 
