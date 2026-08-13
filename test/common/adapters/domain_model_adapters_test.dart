@@ -75,7 +75,6 @@ void main() {
       splitLength: 100,
       lapLength: 400,
       lengthUnit: 'yd',
-      dbSchemeVersion: 1006,
       brightness: Brightness.light,
       contrast: Contrast.high,
       language: const Locale('pt', 'BR'),
@@ -84,7 +83,7 @@ void main() {
     );
 
     final domain = legacy.toDomain();
-    final restored = domain.value!.toLegacy(databaseSchemeVersion: 1006);
+    final restored = domain.value!.toLegacy();
 
     expect(domain.isSuccess, isTrue);
     expect(restored.toMap(), legacy.toMap());

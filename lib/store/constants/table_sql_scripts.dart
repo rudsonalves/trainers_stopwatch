@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -22,7 +22,6 @@ const createSettingsSQL = 'CREATE TABLE IF NOT EXISTS $settingsTable ('
     ' $settingsSplitLength REAL DEFAULT 200,'
     ' $settingsLapLength REAL DEFAULT 1000,'
     ' $settingsLengthUnit CHAR(3) DEFAULT "m",'
-    ' $settingsDatabaseSchemeVersion INTEGER NOT NULL,'
     ' $settingsBrightness CHAR(6) DEFAULT "system",'
     ' $settingsContrast CHAR(6) DEFAULT "standard",'
     ' $settingsLanguage CHAR(5) DEFAULT "en_US",'

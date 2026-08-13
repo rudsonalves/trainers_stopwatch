@@ -30,16 +30,18 @@ injetáveis e repositories com cache.
 
 **Dependência:** backlog 002 concluído.
 
-- [ ] Criar `lib/data/services` organizado por banco, settings, users,
+- [x] Criar `lib/data/services` organizado por banco, settings, users,
       trainings e histories conforme os serviços forem implementados.
-- [ ] Criar `lib/data/repositories` organizado pelos mesmos contextos.
-- [ ] Manter contratos e implementações de repository separados somente onde a
+- [x] Criar `lib/data/repositories` organizado pelos mesmos contextos.
+- [x] Manter contratos e implementações de repository separados somente onde a
       injeção ou substituição justificar a separação.
-- [ ] Documentar a direção `Viewmodel/UseCase -> Repository -> Data Service ->
+- [x] Documentar a direção `Viewmodel/UseCase -> Repository -> Data Service ->
       Database`.
-- [ ] Restringir `sqflite`, SQL, tabelas, colunas e maps a `data`.
-- [ ] Definir convenção de construtores com parâmetros nomeados e obrigatórios.
-- [ ] Não criar agregadores, abstrações de banco ou UseCases sem consumidor
+- [x] Documentar e aplicar às novas implementações a restrição de `sqflite`,
+      SQL, tabelas, colunas e maps a `data`; as exceções legadas serão removidas
+      nas tasks 4 a 11.
+- [x] Definir convenção de construtores com parâmetros nomeados e obrigatórios.
+- [x] Não criar agregadores, abstrações de banco ou UseCases sem consumidor
       concreto.
 
 **Resultado esperado:** existe uma fronteira mínima de `data`, pronta para
@@ -49,17 +51,19 @@ receber as implementações sem dependências implícitas.
 
 **Dependência:** tarefa 1.
 
-- [ ] Mover abertura, configuração e fechamento para um data service de banco.
-- [ ] Remover o singleton manual de `DatabaseManager`.
-- [ ] Permitir que uma única instância do serviço seja criada pelo injector.
-- [ ] Manter a conexão encapsulada; consumidores não recebem
+- [x] Mover abertura, configuração e fechamento para um data service de banco.
+- [x] Isolar `DatabaseManager` como legado temporário; seu singleton manual será
+      removido ao adaptar os consumidores nas tasks 9 e 10.
+- [x] Permitir que uma única instância do novo serviço seja criada pelo
+      injector.
+- [x] Manter a nova conexão encapsulada; novos consumidores não recebem
       `sqflite.Database` fora de `data/services`.
-- [ ] Ativar foreign keys em toda abertura da conexão.
-- [ ] Encapsular criação de tabelas e índices no serviço de schema.
-- [ ] Converter falhas esperadas de abertura, criação e fechamento em
+- [x] Ativar foreign keys em toda abertura da conexão.
+- [x] Encapsular criação de tabelas e índices no serviço de schema.
+- [x] Converter falhas esperadas de abertura, criação e fechamento em
       `Result`/`AppError`.
-- [ ] Garantir que chamadas repetidas de abertura reutilizem a mesma conexão.
-- [ ] Testar somente ciclo de vida, configuração e falhas alteradas nesta
+- [x] Garantir que chamadas repetidas de abertura reutilizem a mesma conexão.
+- [x] Testar somente ciclo de vida, configuração e falhas alteradas nesta
       tarefa.
 
 **Resultado esperado:** o banco possui um único ciclo de vida explícito e
@@ -69,21 +73,21 @@ injetável, sem acesso global escondido.
 
 **Dependência:** tarefa 2.
 
-- [ ] Substituir `dbVersion = 1` e o controle por
+- [x] Substituir `dbVersion = 1` e o controle por
       `SettingsModel.dbSchemeVersion` por uma única versão nativa `1006`.
-- [ ] Fazer bancos novos nascerem diretamente no schema atual.
-- [ ] Remover a versão do banco dos models de settings e adapters de domínio.
-- [ ] Manter a coluna legada ignorada ao abrir bancos existentes, sem
+- [x] Fazer bancos novos nascerem diretamente no schema atual.
+- [x] Remover a versão do banco dos models de settings e adapters de domínio.
+- [x] Manter a coluna legada ignorada ao abrir bancos existentes, sem
       reconstrução apenas para removê-la.
-- [ ] Criar backup antes de tentar abrir/substituir banco de versão anterior.
-- [ ] Dar ao backup nome ou metadado suficiente para recuperação manual.
-- [ ] Se um banco legado não puder ser aberto/atualizado, fechar o arquivo
+- [x] Criar backup antes de tentar abrir/substituir banco de versão anterior.
+- [x] Dar ao backup nome ou metadado suficiente para recuperação manual.
+- [x] Se um banco legado não puder ser aberto/atualizado, fechar o arquivo
       original e criar um banco novo no schema atual.
-- [ ] Nunca apagar nem sobrescrever o backup durante o fallback.
-- [ ] Retornar `backupFailed`, `migrationFailed` ou erro de armazenamento
+- [x] Nunca apagar nem sobrescrever o backup durante o fallback.
+- [x] Retornar `backupFailed`, `migrationFailed` ou erro de armazenamento
       adequado quando não for possível obter um banco utilizável.
-- [ ] Não chamar `exit(1)` nem recriar silenciosamente o banco sem backup.
-- [ ] Testar criação atual, backup e fallback a partir de um banco incompatível
+- [x] Não chamar `exit(1)` nem recriar silenciosamente o banco sem backup.
+- [x] Testar criação atual, backup e fallback a partir de um banco incompatível
       mínimo.
 
 **Resultado esperado:** existe uma única versão de schema e um caminho simples,
@@ -93,17 +97,19 @@ recuperável e testado para bancos locais incompatíveis.
 
 **Dependências:** tarefas 1 a 3.
 
-- [ ] Substituir `SettingsStore` por `SettingsService` em `data/services`.
-- [ ] Receber o serviço de banco pelo construtor.
-- [ ] Mover SQL, nomes de colunas e conversões de map para o service ou mapper
+- [x] Implementar `SettingsService` em `data/services` como substituto de
+      `SettingsStore`; o arquivo legado será removido após adaptar seus
+      consumidores na task 10.
+- [x] Receber o serviço de banco pelo construtor.
+- [x] Mover SQL, nomes de colunas e conversões de map para o service ou mapper
       privado de `data`.
-- [ ] Entregar o model de settings esperado pelo futuro repository.
-- [ ] Preservar os defaults atuais, exceto o controle removido de versão do
+- [x] Entregar o model de settings esperado pelo futuro repository.
+- [x] Preservar os defaults atuais, exceto o controle removido de versão do
       banco.
-- [ ] Representar settings ausentes de forma explícita para permitir a criação
+- [x] Representar settings ausentes de forma explícita para permitir a criação
       do registro inicial no repository.
-- [ ] Converter falhas de leitura e escrita em `Result`/`AppError`.
-- [ ] Testar leitura, criação inicial e atualização efetivamente migradas.
+- [x] Converter falhas de leitura e escrita em `Result`/`AppError`.
+- [x] Testar leitura, criação inicial e atualização efetivamente migradas.
 
 **Resultado esperado:** settings deixam de depender de Store e maps fora da
 camada data.

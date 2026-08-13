@@ -19,24 +19,22 @@ import 'dart:developer';
 
 import '../../common/singletons/app_settings.dart';
 import '../../core/result/result.dart';
-import '../constants/migration_sql_scripts.dart';
-import 'database_backup.dart';
-import 'database_manager.dart';
-import 'database_migration.dart';
+import '../../data/services/database/database_service.dart';
 
 class DatabaseProvider {
-  final DatabaseManager _databaseManager;
+  final DatabaseService _databaseService;
   final AppSettings _appSettings;
 
   const DatabaseProvider({
-    required DatabaseManager databaseManager,
+    required DatabaseService databaseService,
     required AppSettings appSettings,
-  })  : _databaseManager = databaseManager,
+  })  : _databaseService = databaseService,
         _appSettings = appSettings;
 
   AsyncResult<Unit> init() async {
     try {
-      final database = await _databaseManager.database;
+      final databaseResult = await _databaseService.open();
+      if (databaseResult.isFailure) return Failure(databaseResult.error!);
 
       try {
         await _appSettings.init();
@@ -47,46 +45,6 @@ class DatabaseProvider {
           AppError(
             code: AppErrorCode.storageReadFailed,
             message: 'Unable to load application settings.',
-            details: (error: error, stackTrace: stackTrace),
-          ),
-        );
-      }
-
-      if (MigrationSqlScripts.schemeVersion <= _appSettings.dbSchemeVersion) {
-        return const Success(unit);
-      }
-
-      final backupDatabase = await DatabaseBackup.backupDatabase();
-      if (backupDatabase == null) {
-        return const Failure(
-          AppError(
-            code: AppErrorCode.backupFailed,
-            message: 'Unable to back up the database before migration.',
-          ),
-        );
-      }
-
-      try {
-        await DatabaseMigration.applyMigrations(
-          db: database,
-          settings: _appSettings,
-        );
-      } catch (error, stackTrace) {
-        final restored = await DatabaseBackup.restoreDatabase(backupDatabase);
-        if (!restored) {
-          return Failure(
-            AppError(
-              code: AppErrorCode.restoreFailed,
-              message: 'Database migration and restoration failed.',
-              details: (error: error, stackTrace: stackTrace),
-            ),
-          );
-        }
-
-        return Failure(
-          AppError(
-            code: AppErrorCode.migrationFailed,
-            message: 'Database migration failed and the backup was restored.',
             details: (error: error, stackTrace: stackTrace),
           ),
         );

@@ -41,12 +41,11 @@ extension SettingsModelDomainAdapter on SettingsModel {
 }
 
 extension SettingsLegacyAdapter on domain.Settings {
-  SettingsModel toLegacy({required int databaseSchemeVersion}) => SettingsModel(
+  SettingsModel toLegacy() => SettingsModel(
         id: id,
         splitLength: splitDistance.value,
         lapLength: lapDistance.value,
         lengthUnit: splitDistance.unit.symbol,
-        dbSchemeVersion: databaseSchemeVersion,
         brightness: brightness == domain.BrightnessPreference.light
             ? Brightness.light
             : Brightness.dark,

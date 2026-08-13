@@ -1,5 +1,132 @@
 # Changelog
 
+## 2026/08/13 - bkl003/task04
+
+This change establishes the new persistence-layer foundation and migrates settings storage toward injectable data services. It introduces centralized database lifecycle, schema, backup, and settings services while documenting the intended dependency boundaries for repositories and data access.
+
+Database versioning is now managed exclusively through SQLite schema version `1006`. Incompatible databases are preserved through timestamped backups before replacement, and settings no longer carry database schema metadata.
+
+1. **`lib/data`**
+
+   * Added architectural documentation for the `Viewmodel/UseCase -> Repository -> Data Service -> Database` dependency direction.
+   * Defined responsibilities and dependency restrictions for repositories and data services.
+   * Documented constructor injection, cache ownership, persistence isolation, incremental module organization, and temporary legacy exceptions.
+
+2. **`lib/data/services/database`**
+
+   * Added `DatabaseService` to encapsulate connection opening, reuse, configuration, and closing.
+   * Enabled SQLite foreign keys whenever a connection is opened.
+   * Added concurrent opening coordination and `Result`-based handling for database lifecycle failures.
+   * Added `DatabaseSchema` to create the current tables and indexes through a single batch operation.
+   * Added `DatabaseBackupService` to preserve incompatible databases using timestamped, recoverable filenames.
+   * Implemented detection of databases whose native SQLite version differs from `1006`, followed by backup and controlled replacement.
+   * Added explicit `backupFailed`, `migrationFailed`, `databaseCreationFailed`, and `databaseUnavailable` error handling.
+
+3. **`lib/data/services/settings`**
+
+   * Added `SettingsService` with injectable database and mapper dependencies.
+   * Implemented settings lookup, insertion, and update operations using domain models and `Result` values.
+   * Added explicit `SettingsFound` and `SettingsMissing` lookup outcomes.
+   * Added `SettingsMapper` to isolate record conversion, apply persisted-value defaults, validate distance values and units, and convert invalid records into `invalidData` errors.
+   * Added storage-specific read and write error handling.
+   * Removed database schema metadata from serialized settings records.
+
+4. **`lib/core/config/dependencies.dart`**
+
+   * Registered the database schema, backup service, database service, settings mapper, and settings service with `AutoInjector`.
+   * Configured `DatabaseService` as the injector-managed singleton responsible for application database access.
+   * Connected the service to the application documents directory and the `sqflite` database factory.
+   * Retained the legacy `DatabaseManager` registration temporarily for consumers not yet migrated.
+
+5. **Settings models and adapters**
+
+   * Removed `dbSchemeVersion` from `SettingsModel`, including construction, copying, serialization, and deserialization.
+   * Simplified the domain-to-legacy settings adapter by removing its database-version parameter.
+   * Updated adapter tests to reflect settings models without schema metadata.
+
+6. **Database constants and schema definitions**
+
+   * Changed the native SQLite database version from `1` to `1006`.
+   * Removed the settings schema-version column constant and excluded that column from new settings tables.
+   * Deleted the historical `MigrationSqlScripts` implementation and its incremental SQL migration definitions.
+   * Deleted the legacy `DatabaseMigration` coordinator that depended on settings-managed version state.
+
+7. **`lib/store/database/database_provider.dart`**
+
+   * Replaced direct use of `DatabaseManager` with the injectable `DatabaseService`.
+   * Propagated database opening failures through the existing `Result` contract.
+   * Removed settings-based version checks, migration execution, backup restoration, and legacy migration orchestration from application initialization.
+   * Preserved application settings initialization after the database becomes available.
+
+8. **Database and settings service tests**
+
+   * Added coverage for identifiable backups, source preservation, and missing-source failures.
+   * Added database lifecycle tests for connection reuse, foreign-key configuration, schema delegation, native version `1006`, opening failures, closing, and reopening.
+   * Added coverage for backing up and replacing incompatible databases while leaving current-version databases unchanged.
+   * Added settings service tests for missing records, domain-model mapping, default insertion, generated IDs, updates, absent schema metadata, failed updates, and database-opening error propagation.
+
+9. **`doc/backlog/003-persistencia-e-repositories-tasks.md`**
+
+   * Marked the data-layer boundary, database lifecycle, schema-version consolidation, backup fallback, and settings-service tasks as completed.
+   * Clarified that legacy database and settings components remain temporarily until their remaining consumers are migrated.
+   * Recorded that new implementations enforce persistence isolation while legacy exceptions will be removed in later tasks.
+
+10. **`Changelog.md`**
+
+   * Added the `bkl003/task01` entry documenting the persistence backlog architecture and execution plan.
+   * Recorded the dependency-injection, repository-cache, database recovery, legacy-adapter, validation, and backlog-closure requirements established by that planning work.
+
+### Conclusion
+
+The application now has an injectable persistence foundation with centralized database lifecycle management, schema creation, backup-based incompatible-database replacement, and domain-oriented settings access.
+
+SQLite versioning is consolidated at version `1006`, settings are decoupled from schema metadata, and the new data-layer boundaries are documented and covered by focused tests.
+
+## 2026/08/13 - bkl003/task01
+
+This change converts the persistence and repository backlog into an implementation-ready plan. It finalizes the architecture for injectable data services, repository-owned caches, centralized dependency composition, and controlled handling of incompatible local databases.
+
+The backlog documentation now reflects the agreed boundaries between ViewModels, repositories, data services, and SQLite, with a detailed task sequence covering implementation, legacy integration, testing, validation, and closure.
+
+1. **`doc/backlog/003-persistencia-e-repositories-tasks.md`**
+
+   * Added a comprehensive execution checklist for establishing the `data/services` and `data/repositories` structure.
+   * Defined the database lifecycle service, including injector-managed singleton scope, connection reuse, foreign-key activation, schema creation, and result-based error handling.
+   * Specified the consolidation of database versioning around native schema version `1006`, with backup and controlled fallback for incompatible databases.
+   * Planned the migration of settings, users, trainings, and histories from legacy Stores to injectable data services.
+   * Defined transactional history deletion behavior, including duration transfer, validation, and rollback requirements.
+   * Established repository cache ownership, immutable cache exposure, and synchronization rules for successful and failed persistence operations.
+   * Documented `AutoInjector` registrations and prohibited hidden dependency lookup or internal construction of persistence dependencies.
+   * Defined temporary legacy-manager adapters that delegate to repositories without retaining duplicate caches.
+   * Added cleanup checks for obsolete Stores, historical migration mechanisms, persistence leakage, service-locator access, and duplicated state.
+   * Added formatting, testing, analysis, manual validation, documentation, and backlog-closure requirements.
+   * Recorded explicit dependencies and expected outcomes for all twelve implementation stages.
+
+2. **`doc/backlog/003-persistencia-e-repositories.md`**
+
+   * Linked the backlog overview to the new implementation task document.
+   * Replaced the proposed DAO boundary with data services responsible for SQLite CRUD and record-to-model conversion.
+   * Refined the scope to preserve the current schema while encapsulating schema management, transactions, migrations, and backup.
+   * Closed the previously open architectural questions and updated the acceptance criteria for services, repositories, backup behavior, and incompatible databases.
+   * Documented constructor-only dependency injection with `AutoInjector` as the sole composition root and the database lifecycle service registered as a singleton.
+   * Assigned application data caches to repositories while keeping presentation and interaction state in ViewModels.
+   * Defined managers as temporary injected compatibility adapters without independent caches.
+   * Unified database versioning on native `sqflite` version `1006`, removing parallel settings-based version control and historical migration support.
+   * Established backup-before-replacement and controlled bootstrap failure behavior without process termination.
+   * Updated the backlog status from planned to tasks defined.
+
+3. **`Changelog.md`**
+
+   * Added the `bkl002/task11` changelog entry covering completion of the pure-domain backlog.
+   * Documented domain training-event generation, legacy adapters, stopwatch and report integration, presentation mapping and formatting, expanded tests, architecture updates, dependency maintenance, and Android Kotlin DSL modernization.
+   * Recorded closure of backlog 002 and the resulting foundation for persistence backlog 003.
+
+### Conclusion
+
+The persistence backlog now has a complete architectural direction and an ordered implementation plan. It establishes explicit dependency injection, SQLite isolation within data services, repository-owned caches, and recoverable handling of incompatible databases.
+
+The changelog also records the completed domain-layer work that this persistence migration builds upon.
+
 ## 2026/08/13 - bkl002/task11
 
 This change completes the pure-domain backlog by connecting the new domain types and training-event generation rules to the legacy application through temporary adapters and presentation mappers. Training reports and speed calculations now delegate to reusable domain services while preserving existing application-facing APIs and formatting behavior.
