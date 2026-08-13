@@ -104,21 +104,21 @@ contra divisão por zero e independente de `TrainingModel`.
 
 **Dependências:** tarefas 2 e 3.
 
-- [ ] Criar o model imutável de usuário apenas com dados significativos ao
+- [x] Criar o model imutável de usuário apenas com dados significativos ao
       domínio.
-- [ ] Criar o model imutável de treino com usuário, data, comentários,
+- [x] Criar o model imutável de treino com usuário, data, comentários,
       distâncias, limite de voltas e unidades tipadas.
-- [ ] Não incluir `Color` no treino de domínio.
-- [ ] Criar o model imutável de histórico com treino, duração e comentários.
-- [ ] Permitir `Duration.zero` no registro que representa início da sessão.
-- [ ] Criar o model de configurações de domínio somente com valores persistidos
+- [x] Não incluir `Color` no treino de domínio.
+- [x] Criar o model imutável de histórico com treino, duração e comentários.
+- [x] Permitir `Duration.zero` no registro que representa início da sessão.
+- [x] Criar o model de configurações de domínio somente com valores persistidos
       que não sejam estado visual de widgets.
-- [ ] Não incluir `ValueNotifier`, `FocusNode`, paths ou estado de tutorial da
+- [x] Não incluir `ValueNotifier`, `FocusNode`, paths ou estado de tutorial da
       sessão nos models de domínio.
-- [ ] Manter IDs opcionais somente quando necessários para representar uma
+- [x] Manter IDs opcionais somente quando necessários para representar uma
       entidade ainda não persistida.
-- [ ] Não adicionar `toMap`, `fromMap`, JSON ou nomes de colunas aos models.
-- [ ] Testar invariantes e defaults métricos introduzidos pelos models.
+- [x] Não adicionar `toMap`, `fromMap`, JSON ou nomes de colunas aos models.
+- [x] Testar invariantes e defaults métricos introduzidos pelos models.
 
 **Resultado esperado:** entidades relevantes podem circular entre futuros
 repositories, UseCases e Viewmodels sem dependência de infraestrutura ou UI.
@@ -127,17 +127,17 @@ repositories, UseCases e Viewmodels sem dependência de infraestrutura ou UI.
 
 **Dependências:** tarefas 3 a 5.
 
-- [ ] Criar snapshots imutáveis para parcial, volta e encerramento.
-- [ ] Representar duração acumulada, índices e contadores sem `ValueNotifier`.
-- [ ] Criar uma hierarquia selada de eventos neutros de relatório.
-- [ ] Criar evento de início sem cálculo de velocidade.
-- [ ] Criar evento de parcial com índice, duração, velocidade e comentário.
-- [ ] Criar evento de volta com índice, duração acumulada, velocidade e
+- [x] Criar snapshots imutáveis para parcial, volta e encerramento.
+- [x] Representar duração acumulada, índices e contadores sem `ValueNotifier`.
+- [x] Criar uma hierarquia selada de eventos neutros de relatório.
+- [x] Criar evento de início sem cálculo de velocidade.
+- [x] Criar evento de parcial com índice, duração, velocidade e comentário.
+- [x] Criar evento de volta com índice, duração acumulada, velocidade e
       comentário.
-- [ ] Manter cor, ícone, label traduzida e nome de rota fora dos eventos.
-- [ ] Definir igualdade ou propriedades suficientes para comparação previsível
+- [x] Manter cor, ícone, label traduzida e nome de rota fora dos eventos.
+- [x] Definir igualdade ou propriedades suficientes para comparação previsível
       nos testes, sem adicionar biblioteca apenas para isso.
-- [ ] Testar construção e invariantes dos snapshots/eventos modificados.
+- [x] Testar construção e invariantes dos snapshots/eventos modificados.
 
 **Resultado esperado:** o futuro BLoC e os relatórios compartilham valores
 temporais neutros sem compartilhar estado visual.
