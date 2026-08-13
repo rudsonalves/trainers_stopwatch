@@ -113,7 +113,6 @@ void main() {
     expect(settings.splitDistance.value, 100);
     expect(settings.splitDistance.unit.symbol, 'yd');
     expect(settings.brightness, BrightnessPreference.light);
-    expect(settings.showTutorial, isFalse);
   });
 
   test('inserts defaults and returns the generated id', () async {

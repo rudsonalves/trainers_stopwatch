@@ -69,7 +69,6 @@ class SettingsService {
         contrast: settings.contrast,
         language: settings.language,
         refreshInterval: settings.refreshInterval,
-        showTutorial: settings.showTutorial,
       );
     } catch (error, stackTrace) {
       return Failure(_writeError(error, stackTrace));

@@ -18,7 +18,8 @@ Depende de `003-persistencia-e-repositories.md`.
 - remover acesso direto a `AppSettings.instance` da página migrada;
 - manter controllers visuais e `BuildContext` na Page;
 - manter Navigator 1.0 no fechamento e navegação da página;
-- preservar valores atuais, defaults e comportamento do tutorial;
+- preservar valores atuais e defaults;
+- manter removido o sistema de tutorial da aplicação durante a migração MVVM;
 - definir adapter temporário para consumidores ainda dependentes de
   `AppSettings`.
 
@@ -31,9 +32,7 @@ Depende de `003-persistencia-e-repositories.md`.
 
 ## Questões em aberto
 
-1. Qual objeto será a fonte observável global de tema e idioma após o singleton?
-2. Alterações serão salvas imediatamente ou confirmadas ao sair da página?
-3. O estado do tutorial pertence às configurações persistidas ou à sessão da UI?
+Nenhuma.
 
 ## Critérios de aceite
 
@@ -48,11 +47,23 @@ Depende de `003-persistencia-e-repositories.md`.
 
 ## Decisões
 
-Nenhuma decisão adicional aprovada.
+- `AppSettingsViewModel`, singleton por registro no `AutoInjector` e recebido
+  por construtor pelo `MyMaterialApp`, será a única fonte observável global de
+  tema, contraste e idioma.
+- `SettingsRepository` permanece responsável pela persistência e pelo cache de
+  domínio.
+- `SettingsViewModel` sincroniza as alterações globais com o
+  `AppSettingsViewModel`.
+- Toda alteração válida feita na `SettingsPage` será persistida imediatamente,
+  sem botão de confirmação e sem depender do fechamento da página.
+- O sistema de tutorial foi removido integralmente da aplicação antes da
+  migração MVVM. Seu estado deixou de fazer parte das configurações persistidas
+  e da UI; a coluna legada do banco permanece apenas por compatibilidade.
+- `AppSettings` permanece como adapter temporário para consumidores legados
+  durante a migração.
 
 ## Acompanhamento
 
 **Estado:** Planejado — primeiro piloto MVVM.
 
 **Próximo backlog:** `005-usuarios-e-imagens.md`.
-

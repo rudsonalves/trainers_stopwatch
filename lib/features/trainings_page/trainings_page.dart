@@ -17,11 +17,9 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/functions/share_functions.dart';
 import '../../common/icons/stopwatch_icons_icons.dart';
-import '../../common/singletons/app_settings.dart';
 import '../../common/theme/app_font_style.dart';
 import '../../common/models/training_model.dart';
 import '../history_page/history_page.dart';
@@ -48,8 +46,6 @@ class TrainingsPage extends StatefulWidget {
 
 class _TrainingsPageState extends State<TrainingsPage> {
   late final _controller = widget.controller;
-  late final OnboardingState? overlay;
-  final app = AppSettings.instance;
 
   List<TrainingModel> get trainings => _controller.trainings;
 
@@ -57,17 +53,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
   void initState() {
     super.initState();
     _controller.init();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        overlay = Onboarding.of(context);
-      },
-    );
-  }
-
-  void _startTutorial() {
-    if (overlay != null) {
-      overlay!.show();
-    }
   }
 
   Future<void> _editTraining(TrainingModel training) async {
@@ -157,22 +142,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
       appBar: AppBar(
         title: Text('TPTitle'.tr()),
         elevation: 5,
-        actions: [
-          PopupMenuButton(
-            icon: const Icon(Icons.menu),
-            itemBuilder: (context) => <PopupMenuEntry>[
-              PopupMenuItem(
-                onTap: () {
-                  _startTutorial();
-                },
-                child: const ListTile(
-                  leading: Icon(Icons.question_mark),
-                  title: Text('Tutorial'),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -200,14 +169,12 @@ class _TrainingsPageState extends State<TrainingsPage> {
                         user: _controller.user!,
                       ),
                     Focus(
-                      focusNode: app.focusNodes[25],
                       child: OverflowBar(
                         alignment: MainAxisAlignment.spaceAround,
                         children: [
                           MenuAnchor(
                             builder: (context, controller, child) {
                               return IconButton.filledTonal(
-                                focusNode: app.focusNodes[28],
                                 onPressed: _controller.haveTrainingSelected
                                     ? () {
                                         if (controller.isOpen) {
@@ -251,7 +218,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
                             ],
                           ),
                           IconButton.filledTonal(
-                            focusNode: app.focusNodes[27],
                             onPressed: _controller.haveTrainingSelected
                                 ? _removeSelected
                                 : null,
@@ -260,7 +226,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
                           ),
                           _controller.areAllSelecting()
                               ? IconButton.filledTonal(
-                                  focusNode: app.focusNodes[26],
                                   onPressed: _controller.haveTrainingSelected
                                       ? _deselectAllTraining
                                       : _controller.trainings.isEmpty
@@ -270,7 +235,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
                                   icon: const Icon(Icons.deselect),
                                 )
                               : IconButton.filledTonal(
-                                  focusNode: app.focusNodes[26],
                                   onPressed: _controller.trainings.isEmpty
                                       ? null
                                       : _selectAllTraining,
@@ -289,7 +253,6 @@ class _TrainingsPageState extends State<TrainingsPage> {
                           ),
                         ),
                         child: Focus(
-                          focusNode: app.focusNodes[24],
                           child: Column(
                             children: [
                               Padding(

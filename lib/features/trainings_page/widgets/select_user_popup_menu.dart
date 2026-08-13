@@ -18,7 +18,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common/singletons/app_settings.dart';
 import '../../../common/theme/app_font_style.dart';
 import '../trainings_page_controller.dart';
 
@@ -34,8 +33,6 @@ class SelectUserPopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = AppSettings.instance;
-
     return Row(
       children: [
         Text(
@@ -53,7 +50,6 @@ class SelectUserPopupMenu extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Focus(
-              focusNode: app.focusNodes[23],
               child: DropdownButton<int>(
                 isExpanded: true,
                 borderRadius: BorderRadius.circular(12),

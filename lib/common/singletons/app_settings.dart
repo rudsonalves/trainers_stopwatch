@@ -25,18 +25,10 @@ import '../adapters/settings_domain_adapter.dart';
 import '../constants.dart';
 import '../models/settings_model.dart';
 
-const int maxFocusNode = 29;
-
 class AppSettings extends SettingsModel {
   AppSettings._();
   static final _instance = AppSettings._();
   static AppSettings get instance => _instance;
-
-  final focusNodes = List<FocusNode>.generate(
-    maxFocusNode,
-    (index) => FocusNode(debugLabel: 'FocusNode id $index'),
-    growable: true,
-  );
 
   late final String _imagePath;
   late final Directory _appDocDir;
@@ -44,13 +36,6 @@ class AppSettings extends SettingsModel {
 
   late final ValueNotifier<Brightness> _brightness;
   late final ValueNotifier<Contrast> _contrast;
-
-  bool tutorialOn = false;
-  int tutorialId = 0;
-
-  bool isTutorial(int userId) {
-    return tutorialOn && tutorialId == userId;
-  }
 
   String get imagePath => _imagePath;
   ValueNotifier<Brightness> get brightnessMode => _brightness;
@@ -77,12 +62,6 @@ class AppSettings extends SettingsModel {
     }
   }
 
-  void disableTutorial() {
-    tutorialOn = false;
-    showTutorial = false;
-    update();
-  }
-
   void setContrast(Contrast contrast) {
     _contrast.value = contrast;
     this.contrast = contrast;
@@ -100,9 +79,6 @@ class AppSettings extends SettingsModel {
   void dispose() {
     _brightness.dispose();
     _contrast.dispose();
-    for (var focus in focusNodes) {
-      focus.dispose();
-    }
   }
 
   void setBrightnessMode(Brightness brightness) {

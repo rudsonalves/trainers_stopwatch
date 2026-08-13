@@ -17,7 +17,6 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/constants.dart';
 import '../../common/singletons/app_settings.dart';
@@ -34,33 +33,12 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final app = AppSettings.instance;
-  late final OnboardingState? overlay;
-
   bool _edited = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        overlay = Onboarding.of(context);
-      },
-    );
-  }
 
   Widget _brightnessIcon(Brightness brightness) {
     return Icon(
       brightness == Brightness.light ? Icons.light_mode : Icons.dark_mode,
     );
-  }
-
-  void _startTutorial() {
-    if (app.tutorialOn) {
-      if (overlay != null) {
-        overlay!.show();
-      }
-    }
   }
 
   @override
@@ -79,23 +57,6 @@ class _SettingsPageState extends State<SettingsPage> {
         appBar: AppBar(
           title: Text('SetPAppBarTitle'.tr()),
           elevation: 5,
-          actions: [
-            PopupMenuButton(
-              icon: const Icon(Icons.menu),
-              itemBuilder: (context) => <PopupMenuEntry>[
-                PopupMenuItem(
-                  onTap: () {
-                    app.tutorialOn = true;
-                    _startTutorial();
-                  },
-                  child: const ListTile(
-                    leading: Icon(Icons.question_mark),
-                    title: Text('Tutorial'),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(12),
@@ -103,7 +64,6 @@ class _SettingsPageState extends State<SettingsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Focus(
-                focusNode: app.focusNodes[19],
                 child: Column(
                   children: [
                     Center(
@@ -128,7 +88,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               const Divider(),
               Focus(
-                focusNode: app.focusNodes[20],
                 child: Column(
                   children: [
                     Row(
@@ -188,7 +147,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               Focus(
-                focusNode: app.focusNodes[21],
                 child: Row(
                   children: [
                     Text('SetPLang'.tr(), style: AppFontStyle.roboto16),
@@ -219,7 +177,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               Focus(
-                focusNode: app.focusNodes[22],
                 child: Row(
                   children: [
                     Text(

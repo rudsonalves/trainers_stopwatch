@@ -22,7 +22,6 @@ void main() {
       expect(settings.contrast, ContrastPreference.standard);
       expect(settings.language, LanguagePreference.englishUnitedStates);
       expect(settings.refreshInterval, const Duration(milliseconds: 66));
-      expect(settings.showTutorial, isTrue);
     });
 
     test('rejects zero default distance', () {

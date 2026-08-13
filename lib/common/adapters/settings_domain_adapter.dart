@@ -35,7 +35,6 @@ extension SettingsModelDomainAdapter on SettingsModel {
         language.countryCode,
       ),
       refreshInterval: Duration(milliseconds: mSecondRefresh),
-      showTutorial: showTutorial,
     );
   }
 }
@@ -56,6 +55,5 @@ extension SettingsLegacyAdapter on domain.Settings {
         },
         language: Locale(language.languageCode, language.countryCode),
         mSecondRefresh: refreshInterval.inMilliseconds,
-        showTutorial: showTutorial,
       );
 }

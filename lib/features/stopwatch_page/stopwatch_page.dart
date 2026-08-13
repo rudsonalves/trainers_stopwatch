@@ -20,7 +20,6 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/models/messages_model.dart';
 import '../../common/singletons/app_settings.dart';
@@ -47,7 +46,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
   late final _controller = widget.controller;
   final app = AppSettings.instance;
   final _messageList = <MessagesModel>[];
-  late final OnboardingState? overlay;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -57,17 +55,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
     _controller.historyMessage.addListener(_onHistoryMessageChanged);
 
     FlutterNativeSplash.remove();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      overlay = Onboarding.of(context);
-      if (app.showTutorial) {
-        if (overlay != null) {
-          app.disableTutorial();
-          app.tutorialOn = true;
-          overlay!.show();
-        }
-      }
-    });
   }
 
   void _onHistoryMessageChanged() {
@@ -89,14 +76,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
     await Navigator.pushNamed(context, UsersOverlay.routeName);
     _controller.addStopwatch();
     setState(() {});
-
-    if (app.tutorialOn) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          overlay?.showFromIndex(11);
-        }
-      });
-    }
   }
 
   Future<bool> _removeStopwatch(int userId) async {
@@ -156,7 +135,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
 
     return Expanded(
       child: Focus(
-        focusNode: app.tutorialOn ? app.focusNodes[17] : null,
         child: Container(
           margin: EdgeInsets.zero,
           decoration: BoxDecoration(
@@ -205,7 +183,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
         title: Text('SPAppBarTitle'.tr()),
         actions: [
           IconButton(
-            focusNode: app.focusNodes[0],
             icon: ValueListenableBuilder(
               valueListenable: app.brightnessMode,
               builder: (context, value, _) => Icon(
@@ -216,14 +193,12 @@ class _StopWatchPageState extends State<StopWatchPage> {
           ),
         ],
         leading: IconButton(
-          focusNode: app.focusNodes[1],
           icon: const Icon(Icons.menu),
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
         ),
       ),
       drawer: StopwatchDrawer(
         addStopwatchs: _addStopwatchs,
-        focusNodes: app.focusNodes,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -235,7 +210,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        focusNode: app.focusNodes[7],
         onPressed: _addStopwatchs,
         child: Icon(
           Icons.group_add,

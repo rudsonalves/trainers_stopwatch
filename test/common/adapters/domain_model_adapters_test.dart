@@ -79,7 +79,6 @@ void main() {
       contrast: Contrast.high,
       language: const Locale('pt', 'BR'),
       mSecondRefresh: 133,
-      showTutorial: false,
     );
 
     final domain = legacy.toDomain();

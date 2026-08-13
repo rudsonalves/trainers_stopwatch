@@ -35,7 +35,6 @@ final class Settings {
   final ContrastPreference contrast;
   final LanguagePreference language;
   final Duration refreshInterval;
-  final bool showTutorial;
 
   const Settings._({
     this.id,
@@ -45,7 +44,6 @@ final class Settings {
     this.contrast = ContrastPreference.standard,
     this.language = LanguagePreference.englishUnitedStates,
     this.refreshInterval = const Duration(milliseconds: 66),
-    this.showTutorial = true,
   });
 
   static Result<Settings> create({
@@ -56,7 +54,6 @@ final class Settings {
     ContrastPreference contrast = ContrastPreference.standard,
     LanguagePreference language = LanguagePreference.englishUnitedStates,
     Duration refreshInterval = const Duration(milliseconds: 66),
-    bool showTutorial = true,
   }) {
     final resolvedSplitDistance = splitDistance ?? defaultSplitDistance;
     final resolvedLapDistance = lapDistance ?? defaultLapDistance;
@@ -98,7 +95,6 @@ final class Settings {
         contrast: contrast,
         language: language,
         refreshInterval: refreshInterval,
-        showTutorial: showTutorial,
       ),
     );
   }
@@ -113,8 +109,7 @@ final class Settings {
           brightness == other.brightness &&
           contrast == other.contrast &&
           language == other.language &&
-          refreshInterval == other.refreshInterval &&
-          showTutorial == other.showTutorial;
+          refreshInterval == other.refreshInterval;
 
   @override
   int get hashCode => Object.hash(
@@ -125,6 +120,5 @@ final class Settings {
         contrast,
         language,
         refreshInterval,
-        showTutorial,
       );
 }

@@ -19,7 +19,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../bloc/stopwatch_state.dart';
-import '../../../common/singletons/app_settings.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 import '../../widgets/precise_stopwatch/precise_stopwatch.dart';
 
@@ -40,8 +39,6 @@ class StopwatDismissible extends StatefulWidget {
 }
 
 class _StopwatDismissibleState extends State<StopwatDismissible> {
-  final app = AppSettings.instance;
-
   @override
   Widget build(BuildContext context) {
     final userId = widget.stopwatch.user.id!;
@@ -49,7 +46,6 @@ class _StopwatDismissibleState extends State<StopwatDismissible> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Focus(
-        focusNode: app.isTutorial(userId) ? app.focusNodes[11] : null,
         child: Dismissible(
           key: GlobalKey(),
           background: DismissibleContainers.background(

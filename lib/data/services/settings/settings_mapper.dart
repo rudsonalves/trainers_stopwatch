@@ -47,7 +47,6 @@ final class SettingsMapper {
         refreshInterval: Duration(
           milliseconds: map[settingsMSecondRefresh] as int? ?? 66,
         ),
-        showTutorial: (map[settingsShowTutorial] as int? ?? 1) == 1,
       );
     } catch (error, stackTrace) {
       return Failure(
@@ -75,7 +74,6 @@ final class SettingsMapper {
       settingsContrast: settings.contrast.name,
       settingsLanguage: language,
       settingsMSecondRefresh: settings.refreshInterval.inMilliseconds,
-      settingsShowTutorial: settings.showTutorial ? 1 : 0,
     };
   }
 }

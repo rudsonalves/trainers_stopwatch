@@ -1,5 +1,88 @@
 # Changelog
 
+## 2026/08/13 - bkl004/totorial-off
+
+This change removes the tutorial and onboarding system from the application, simplifying the stopwatch, user, training, and settings flows to render their pages directly without guided overlays.
+
+Tutorial state was also removed from the settings domain, legacy models, persistence mappings, and tests. The related dependency, localization content, focus-node infrastructure, and UI entry points were cleaned up while retaining the legacy database column for compatibility.
+
+1. **Application translation resources**
+
+   * Removed stopwatch, user management, settings, and training tutorial titles and messages from the English, Spanish, and Brazilian Portuguese translation files.
+   * Preserved the existing localized history dialog title in each language.
+
+2. **Settings domain, legacy model, and adapters**
+
+   * Removed `showTutorial` from the domain `Settings` entity, including creation defaults, equality, and hash calculation.
+   * Removed tutorial state from `SettingsModel`, its copy behavior, serialization, and database-map parsing.
+   * Updated domain and legacy adapters to stop transferring tutorial state between settings representations.
+
+3. **Settings persistence services**
+
+   * Removed tutorial-state mapping from `SettingsMapper` when reading and writing persisted settings.
+   * Updated `SettingsService` to construct settings without the removed tutorial property.
+   * Left the legacy database column outside the active domain and UI model for compatibility.
+
+4. **`AppSettings` legacy adapter**
+
+   * Removed the global tutorial flags, selected tutorial user identifier, tutorial-state checks, and tutorial disabling behavior.
+   * Removed the shared tutorial focus-node collection and its disposal lifecycle.
+   * Retained the singleton as a temporary adapter for remaining legacy settings consumers.
+
+5. **Overlay route widgets**
+
+   * Refactored settings, stopwatch, trainings, and users overlay widgets from stateful onboarding containers into stateless route wrappers.
+   * Removed all onboarding step definitions, localized tutorial content, custom tutorial panels, callback flows, and tutorial image presentations.
+   * Preserved existing page controllers and sharing dependencies while passing them directly to their respective pages.
+
+6. **Stopwatch feature**
+
+   * Removed automatic tutorial startup and continuation after adding users.
+   * Removed tutorial focus assignments from the app bar, drawer, stopwatch list, floating action button, dismissible stopwatch entries, and stopwatch controls.
+   * Removed the tutorial drawer entry and simplified `StopwatchDrawer` by eliminating its focus-node dependency.
+   * Decoupled the stopwatch button bar and dismissible widget from `AppSettings` tutorial state.
+
+7. **Users feature**
+
+   * Removed tutorial initialization, continuation, interruption, and popup-menu entry points from the users page.
+   * Simplified user creation by removing tutorial-specific result handling and delays.
+   * Removed tutorial focus wrappers from user tiles and navigation buttons.
+   * Removed tutorial user tracking from `UsersPageController`.
+
+8. **Trainings feature**
+
+   * Removed tutorial initialization and the tutorial popup-menu action from the trainings page.
+   * Removed tutorial focus assignments from user selection, training lists, bulk controls, deletion, sharing, and selection actions.
+   * Decoupled the user-selection popup from `AppSettings`.
+
+9. **Settings feature**
+
+   * Removed onboarding initialization and the tutorial menu action from the settings page.
+   * Removed tutorial focus assignments from default values, appearance, language, and refresh interval controls.
+   * Kept the existing settings interface and editing behavior intact without tutorial orchestration.
+
+10. **Dependencies**
+
+   * Removed the direct `onboarding_overlay` dependency from `pubspec.yaml`.
+   * Removed `onboarding_overlay` and its transitive `auto_size_text` package entries from the lockfile.
+
+11. **Settings tests**
+
+   * Updated domain model, service, and adapter tests to stop constructing or asserting tutorial state.
+   * Preserved coverage for the remaining settings defaults, conversions, and persistence behavior.
+
+12. **`doc/backlog/004-configuracoes-mvvm.md`**
+
+   * Updated the MVVM migration scope to explicitly maintain the tutorial system’s removal.
+   * Resolved the open architectural questions with decisions covering global observable settings, repository responsibilities, immediate persistence, view-model synchronization, and the temporary legacy adapter.
+   * Documented that tutorial state no longer belongs to persisted settings or the UI while the legacy database column remains for compatibility.
+
+### Conclusion
+
+The application no longer exposes or executes guided tutorials across its primary workflows. Pages now operate without onboarding overlays, tutorial focus management, or tutorial-specific settings state.
+
+The removal simplifies UI composition and settings architecture, eliminates an unused dependency, and prepares the settings feature for its planned MVVM migration while preserving database compatibility.
+
 ## 2026/08/13 - bkl003/task12
 
 This change completes the automated validation and documentation updates for the persistence and repositories backlog while recording the deferred manual application startup check. It also modernizes the iOS integration by migrating Flutter plugin dependencies from CocoaPods to Swift Package Manager and updating the application lifecycle configuration.

@@ -17,9 +17,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:onboarding_overlay/onboarding_overlay.dart';
 
-import '../../common/singletons/app_settings.dart';
 import '../../common/models/user_model.dart';
 import 'widgets/user_dialog/user_dialog.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
@@ -44,33 +42,14 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final app = AppSettings.instance;
   late final _controller = widget.controller;
   final List<UserModel> _selectedUsers = [];
   final List<int> _preSelectedUserIds = [];
-  late final OnboardingState? overlay;
 
   @override
   void initState() {
     super.initState();
     _startingPage();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        overlay = Onboarding.of(context);
-        if (app.showTutorial || app.tutorialOn) {
-          _startTutorial();
-        }
-      },
-    );
-  }
-
-  void _startTutorial() {
-    if (app.tutorialOn) {
-      if (overlay != null) {
-        overlay!.show();
-      }
-    }
   }
 
   Future<void> _startingPage() async {
@@ -88,35 +67,11 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future<void> _addNewUser() async {
-    final result = await UserDialog.open(
+    await UserDialog.open(
       context,
       addUser: _controller.addUser,
       resizeAndSaveImage: _controller.resizeAndSaveImage,
     );
-
-    await Future.delayed(const Duration(milliseconds: 150));
-    if (result != null && result) {
-      _continueTutorial();
-    } else {
-      app.tutorialOn = false;
-    }
-  }
-
-  Future<void> _continueTutorial() async {
-    if (app.tutorialOn && mounted) {
-      final overlay = Onboarding.of(context);
-      if (overlay != null) {
-        if (app.focusNodes[9].context?.mounted ?? false) {
-          overlay.showFromIndex(2);
-        } else {
-          await Future.delayed(const Duration(microseconds: 100), () {
-            if (app.focusNodes[9].context?.mounted ?? false) {
-              overlay.showFromIndex(2);
-            }
-          });
-        }
-      }
-    }
   }
 
   void _backPage() {
@@ -189,23 +144,6 @@ class _UsersPageState extends State<UsersPage> {
         appBar: AppBar(
           elevation: 5,
           title: Text('APUserList'.tr()),
-          actions: [
-            PopupMenuButton(
-              icon: const Icon(Icons.menu),
-              itemBuilder: (context) => <PopupMenuEntry>[
-                PopupMenuItem(
-                  onTap: () {
-                    app.tutorialOn = true;
-                    _startTutorial();
-                  },
-                  child: const ListTile(
-                    leading: Icon(Icons.question_mark),
-                    title: Text('Tutorial'),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -232,19 +170,14 @@ class _UsersPageState extends State<UsersPage> {
                       return Expanded(
                         child: ListView.builder(
                           itemCount: user.length,
-                          itemBuilder: (context, index) => Focus(
-                            focusNode: app.isTutorial(user[index].id!)
-                                ? app.focusNodes[9]
-                                : null,
-                            child: DismissibleUserTile(
-                              user: user[index],
-                              selectUser: selectUser,
-                              editFunction: editUser,
-                              deleteFunction: deleteUser,
-                              blockedUserIds: _preSelectedUserIds,
-                              isChecked: _preSelectedUserIds.contains(
-                                user[index].id!,
-                              ),
+                          itemBuilder: (context, index) => DismissibleUserTile(
+                            user: user[index],
+                            selectUser: selectUser,
+                            editFunction: editUser,
+                            deleteFunction: deleteUser,
+                            blockedUserIds: _preSelectedUserIds,
+                            isChecked: _preSelectedUserIds.contains(
+                              user[index].id!,
                             ),
                           ),
                         ),
@@ -266,7 +199,6 @@ class _UsersPageState extends State<UsersPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FloatingActionButton(
-              focusNode: app.focusNodes[10],
               heroTag: 'fab1',
               onPressed: _backPage,
               child: Icon(
@@ -276,7 +208,6 @@ class _UsersPageState extends State<UsersPage> {
             ),
             const SizedBox(width: 18),
             FloatingActionButton(
-              focusNode: app.focusNodes[8],
               heroTag: 'fab2',
               onPressed: _addNewUser,
               child: Icon(

@@ -24,7 +24,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 import '../../common/constants.dart';
-import '../../common/singletons/app_settings.dart';
 import '../../manager/user_manager.dart';
 import '../../common/models/user_model.dart';
 import 'users_page_state.dart';
@@ -38,8 +37,6 @@ class UsersPageController extends ChangeNotifier {
 
   UsersPageState get state => _state;
   List<UserModel> get users => _usersManager.users;
-
-  final app = AppSettings.instance;
 
   void _changeState(UsersPageState newState) {
     _state = newState;
@@ -66,9 +63,6 @@ class UsersPageController extends ChangeNotifier {
     try {
       _changeState(UsersPageStateLoading());
       await _usersManager.insert(user);
-      if (app.tutorialOn) {
-        app.tutorialId = user.id!;
-      }
       _changeState(UsersPageStateSuccess());
     } catch (err) {
       log('UsersPageState.addUser: $err');
