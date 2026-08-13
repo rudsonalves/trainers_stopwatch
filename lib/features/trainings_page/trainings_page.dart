@@ -33,14 +33,21 @@ import 'widgets/dismissible_training.dart';
 import 'widgets/select_user_popup_menu.dart';
 
 class TrainingsPage extends StatefulWidget {
-  const TrainingsPage({super.key});
+  final TrainingsPageController controller;
+  final AppShare appShare;
+
+  const TrainingsPage({
+    super.key,
+    required this.controller,
+    required this.appShare,
+  });
 
   @override
   State<TrainingsPage> createState() => _TrainingsPageState();
 }
 
 class _TrainingsPageState extends State<TrainingsPage> {
-  final _controller = TrainingsPageController();
+  late final _controller = widget.controller;
   late final OnboardingState? overlay;
   final app = AppSettings.instance;
 
@@ -119,7 +126,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
       }
     }
 
-    AppShare.sendEmail(
+    widget.appShare.sendEmail(
       user: _controller.user!,
       recipient: _controller.user!.email,
       trainings: trainings,
@@ -136,7 +143,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
       }
     }
 
-    AppShare.sendWhatsApp(
+    widget.appShare.sendWhatsApp(
       user: _controller.user!,
       trainings: trainings,
     );

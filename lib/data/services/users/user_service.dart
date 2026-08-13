@@ -3,8 +3,8 @@ import 'package:sqflite/sqflite.dart';
 import '/core/result/result.dart';
 import '/data/services/database/database_service.dart';
 import '/domain/common/user/models/user.dart';
-import '/store/constants/table_attributes.dart';
-import '/store/constants/table_sql_scripts.dart';
+import '../database/table_attributes.dart';
+import '../database/table_sql_scripts.dart';
 import 'user_mapper.dart';
 
 class UserService {

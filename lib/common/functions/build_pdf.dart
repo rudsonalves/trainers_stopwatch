@@ -22,7 +22,8 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../../repositories/history_repository/history_repository.dart';
+import '../../common/adapters/history_domain_adapter.dart';
+import '../../data/repositories/histories/history_repository.dart';
 import '../models/training_model.dart';
 import '../models/user_model.dart';
 import 'stopwatch_functions.dart';
@@ -41,14 +42,18 @@ sealed class BuildPdf {
   static Future<File> makeReport(
     UserModel user,
     List<TrainingModel> trainings,
+    HistoryRepository repository,
   ) async {
-    final repository = HistoryRepository();
     final pdf = pw.Document();
     final imageData = await rootBundle.load('assets/icons/stopwatch.png');
     final image = pw.MemoryImage(imageData.buffer.asUint8List());
 
     for (final training in trainings) {
-      final histories = await repository.queryAllFromTraining(training.id!);
+      final result = await repository.loadForTraining(training.id!);
+      if (result.isFailure) throw result.error!;
+      final histories = result.value!
+          .map((history) => history.toLegacy())
+          .toList(growable: false);
       final report = TrainingReport(
         user: user,
         training: training,

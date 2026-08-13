@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -37,12 +37,19 @@ class TrainingItem {
 }
 
 class TrainingsPageController extends ChangeNotifier {
+  final UserManager _usersManager;
+  final TrainingManager Function() _trainingManagerFactory;
   TrainingsPageState _state = TrainingsPageStateInitial();
 
-  final _usersManager = UserManager.instance;
   TrainingManager? _trainingsManager;
   UserModel? _user;
   final List<TrainingItem> selectedTraining = [];
+
+  TrainingsPageController({
+    required UserManager usersManager,
+    required TrainingManager Function() trainingManagerFactory,
+  })  : _usersManager = usersManager,
+        _trainingManagerFactory = trainingManagerFactory;
 
   TrainingsPageState get state => _state;
   List<UserModel> get users => _usersManager.users;
@@ -109,7 +116,8 @@ class TrainingsPageController extends ChangeNotifier {
     if (_user == null) {
       throw Exception('User id $id not found!');
     }
-    _trainingsManager = await TrainingManager.byUserId(id);
+    _trainingsManager = _trainingManagerFactory();
+    await _trainingsManager!.init(id);
     _updateSelectedList();
   }
 

@@ -21,9 +21,18 @@ import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
 import 'users_page.dart';
+import 'users_page_controller.dart';
+import '../stopwatch_page/stopwatch_page_controller.dart';
 
 class UsersOverlay extends StatefulWidget {
-  const UsersOverlay({super.key});
+  final UsersPageController controller;
+  final StopwatchPageController stopwatchController;
+
+  const UsersOverlay({
+    super.key,
+    required this.controller,
+    required this.stopwatchController,
+  });
 
   static const routeName = '/users';
 
@@ -171,7 +180,10 @@ class _UsersOverlayState extends State<UsersOverlay> {
     return Onboarding(
       key: GlobalKey<OnboardingState>(),
       steps: steps,
-      child: const UsersPage(),
+      child: UsersPage(
+        controller: widget.controller,
+        stopwatchController: widget.stopwatchController,
+      ),
     );
   }
 }

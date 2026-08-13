@@ -21,9 +21,18 @@ import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
 import 'trainings_page.dart';
+import 'trainings_page_controller.dart';
+import '../../common/functions/share_functions.dart';
 
 class TrainingsOverlay extends StatefulWidget {
-  const TrainingsOverlay({super.key});
+  final TrainingsPageController controller;
+  final AppShare appShare;
+
+  const TrainingsOverlay({
+    super.key,
+    required this.controller,
+    required this.appShare,
+  });
 
   static const routeName = '/trainings';
 
@@ -191,7 +200,10 @@ class _TrainingsOverlayState extends State<TrainingsOverlay> {
     return Onboarding(
       key: GlobalKey<OnboardingState>(),
       steps: steps,
-      child: const TrainingsPage(),
+      child: TrainingsPage(
+        controller: widget.controller,
+        appShare: widget.appShare,
+      ),
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '/core/result/result.dart';
 import '/data/services/database/database_service.dart';
 import '/domain/common/history/models/history_entry.dart';
-import '/store/constants/table_attributes.dart';
+import '../database/table_attributes.dart';
 import 'history_mapper.dart';
 
 class HistoryService {

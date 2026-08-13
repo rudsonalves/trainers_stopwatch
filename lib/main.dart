@@ -24,6 +24,11 @@ import 'core/bootstrap/bootstrap.dart';
 import 'core/config/dependencies.dart';
 import 'core/result/errors/app_error.dart';
 import 'my_material_app.dart';
+import 'features/history_page/history_page_controller.dart';
+import 'features/stopwatch_page/stopwatch_page_controller.dart';
+import 'features/trainings_page/trainings_page_controller.dart';
+import 'features/users_page/users_page_controller.dart';
+import 'common/functions/share_functions.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +50,14 @@ void main() async {
       supportedLocales: appLanguages.values.map((item) => item.locale).toList(),
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
-      child: MyMaterialApp(),
+      child: MyMaterialApp(
+        stopwatchController: injector.get<StopwatchPageController>(),
+        usersControllerFactory: () => injector.get<UsersPageController>(),
+        trainingsControllerFactory: () =>
+            injector.get<TrainingsPageController>(),
+        historyControllerFactory: () => injector.get<HistoryPageController>(),
+        appShare: injector.get<AppShare>(),
+      ),
     ),
   );
 }

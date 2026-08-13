@@ -17,19 +17,23 @@
 
 import 'dart:developer';
 
-import '../../common/singletons/app_settings.dart';
-import '../../core/result/result.dart';
-import '../../data/services/database/database_service.dart';
+import '../../../common/singletons/app_settings.dart';
+import '../../../core/result/result.dart';
+import '../../repositories/settings/settings_repository.dart';
+import 'database_service.dart';
 
 class DatabaseProvider {
   final DatabaseService _databaseService;
   final AppSettings _appSettings;
+  final SettingsRepository _settingsRepository;
 
   const DatabaseProvider({
     required DatabaseService databaseService,
     required AppSettings appSettings,
+    required SettingsRepository settingsRepository,
   })  : _databaseService = databaseService,
-        _appSettings = appSettings;
+        _appSettings = appSettings,
+        _settingsRepository = settingsRepository;
 
   AsyncResult<Unit> init() async {
     try {
@@ -37,7 +41,7 @@ class DatabaseProvider {
       if (databaseResult.isFailure) return Failure(databaseResult.error!);
 
       try {
-        await _appSettings.init();
+        await _appSettings.init(_settingsRepository);
       } on AppError {
         rethrow;
       } catch (error, stackTrace) {

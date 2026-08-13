@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -29,9 +29,27 @@ import 'features/users_page/users_overlay.dart';
 import 'features/history_page/history_page.dart';
 import 'features/stopwatch_page/stopwatch_overlay.dart';
 import 'features/personal_training_page/personal_training_page.dart';
+import 'features/history_page/history_page_controller.dart';
+import 'features/stopwatch_page/stopwatch_page_controller.dart';
+import 'features/trainings_page/trainings_page_controller.dart';
+import 'features/users_page/users_page_controller.dart';
+import 'common/functions/share_functions.dart';
 
 class MyMaterialApp extends StatelessWidget {
-  MyMaterialApp({super.key});
+  final StopwatchPageController stopwatchController;
+  final UsersPageController Function() usersControllerFactory;
+  final TrainingsPageController Function() trainingsControllerFactory;
+  final HistoryPageController Function() historyControllerFactory;
+  final AppShare appShare;
+
+  MyMaterialApp({
+    super.key,
+    required this.stopwatchController,
+    required this.usersControllerFactory,
+    required this.trainingsControllerFactory,
+    required this.historyControllerFactory,
+    required this.appShare,
+  });
 
   final app = AppSettings.instance;
 
@@ -74,14 +92,24 @@ class MyMaterialApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: StopwatchOverlay.routeName,
         routes: {
-          StopwatchOverlay.routeName: (context) => const StopwatchOverlay(),
-          UsersOverlay.routeName: (context) => const UsersOverlay(),
+          StopwatchOverlay.routeName: (context) =>
+              StopwatchOverlay(controller: stopwatchController),
+          UsersOverlay.routeName: (context) => UsersOverlay(
+                controller: usersControllerFactory(),
+                stopwatchController: stopwatchController,
+              ),
           PersonalTrainingPage.routeName: (context) =>
               PersonalTrainingPage.fromContext(context),
-          TrainingsOverlay.routeName: (context) => const TrainingsOverlay(),
+          TrainingsOverlay.routeName: (context) => TrainingsOverlay(
+                controller: trainingsControllerFactory(),
+                appShare: appShare,
+              ),
           SettingsOverlay.routeName: (context) => const SettingsOverlay(),
           AboutPage.routeName: (context) => const AboutPage(),
-          HistoryPage.routeName: (context) => HistoryPage.fromContext(context),
+          HistoryPage.routeName: (context) => HistoryPage.fromContext(
+                context,
+                controller: historyControllerFactory(),
+              ),
         },
       ),
     );

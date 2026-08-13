@@ -4,7 +4,7 @@ import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 
 import '/core/result/result.dart';
-import '/store/constants/table_attributes.dart';
+import 'table_attributes.dart';
 import 'database_backup_service.dart';
 import 'database_schema.dart';
 

@@ -21,9 +21,12 @@ import 'package:onboarding_overlay/onboarding_overlay.dart';
 
 import '../../common/singletons/app_settings.dart';
 import 'stopwatch_page.dart';
+import 'stopwatch_page_controller.dart';
 
 class StopwatchOverlay extends StatefulWidget {
-  const StopwatchOverlay({super.key});
+  final StopwatchPageController controller;
+
+  const StopwatchOverlay({super.key, required this.controller});
 
   static const routeName = '/stopwatchs';
 
@@ -397,7 +400,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
     return Onboarding(
       key: GlobalKey<OnboardingState>(),
       steps: steps,
-      child: const StopWatchPage(),
+      child: StopWatchPage(controller: widget.controller),
     );
   }
 }

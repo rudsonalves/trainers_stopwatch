@@ -29,8 +29,13 @@ import 'users_page_state.dart';
 import 'widgets/dismissible_user_tile.dart';
 
 class UsersPage extends StatefulWidget {
+  final UsersPageController controller;
+  final StopwatchPageController stopwatchController;
+
   const UsersPage({
     super.key,
+    required this.controller,
+    required this.stopwatchController,
   });
 
   @override
@@ -40,7 +45,7 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final app = AppSettings.instance;
-  final _controller = UsersPageController();
+  late final _controller = widget.controller;
   final List<UserModel> _selectedUsers = [];
   final List<int> _preSelectedUserIds = [];
   late final OnboardingState? overlay;
@@ -71,7 +76,7 @@ class _UsersPageState extends State<UsersPage> {
   Future<void> _startingPage() async {
     await _controller.init();
 
-    final usersList = StopwatchPageController.instance.usersList;
+    final usersList = widget.stopwatchController.usersList;
 
     _preSelectedUserIds.addAll(
       usersList.map(
@@ -176,13 +181,8 @@ class _UsersPageState extends State<UsersPage> {
 
     return PopScope(
       canPop: true,
-      // onPopInvoked: (didPop) {
-      //   final stopwatchController = StopwatchPageController.instance;
-      //   stopwatchController.addNewUsers(_selectedUsers);
-      // },
       onPopInvokedWithResult: (didPop, _) {
-        final stopwatchController = StopwatchPageController.instance;
-        stopwatchController.addNewUsers(_selectedUsers);
+        widget.stopwatchController.addNewUsers(_selectedUsers);
       },
       child: Scaffold(
         key: scaffoldKey,

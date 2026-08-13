@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import '/core/result/result.dart';
-import '/store/constants/table_sql_scripts.dart';
+import 'table_sql_scripts.dart';
 
 class DatabaseSchema {
   const DatabaseSchema();

@@ -3,7 +3,7 @@ import '/domain/common/training/models/training.dart';
 import '/domain/common/training/units/distance_unit.dart';
 import '/domain/common/training/units/speed_unit.dart';
 import '/domain/common/training/values/distance.dart';
-import '/store/constants/table_attributes.dart';
+import '../database/table_attributes.dart';
 
 final class TrainingMapper {
   const TrainingMapper();

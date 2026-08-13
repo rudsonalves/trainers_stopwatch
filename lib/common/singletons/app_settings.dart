@@ -20,7 +20,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../manager/settings_manager.dart';
+import '../../data/repositories/settings/settings_repository.dart';
+import '../adapters/settings_domain_adapter.dart';
 import '../constants.dart';
 import '../models/settings_model.dart';
 
@@ -39,6 +40,7 @@ class AppSettings extends SettingsModel {
 
   late final String _imagePath;
   late final Directory _appDocDir;
+  late final SettingsRepository _repository;
 
   late final ValueNotifier<Brightness> _brightness;
   late final ValueNotifier<Contrast> _contrast;
@@ -54,9 +56,12 @@ class AppSettings extends SettingsModel {
   ValueNotifier<Brightness> get brightnessMode => _brightness;
   ValueNotifier<Contrast> get contrastMode => _contrast;
 
-  Future<void> init() async {
+  Future<void> init(SettingsRepository repository) async {
+    _repository = repository;
     // Load app Settings
-    final settings = await SettingsManager.query();
+    final result = await _repository.load();
+    if (result.isFailure) throw result.error!;
+    final settings = result.value!.toLegacy();
     copy(settings);
     // Update Brightness & Contrast
     _brightness = ValueNotifier<Brightness>(settings.brightness);
@@ -105,6 +110,9 @@ class AppSettings extends SettingsModel {
   }
 
   Future<void> update() async {
-    SettingsManager.update(this);
+    final settings = toDomain();
+    if (settings.isFailure) throw settings.error!;
+    final result = await _repository.update(settings.value!);
+    if (result.isFailure) throw result.error!;
   }
 }

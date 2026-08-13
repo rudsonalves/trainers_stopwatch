@@ -1,4 +1,4 @@
-import '../../store/database/database_provider.dart';
+import '../../data/services/database/database_provider.dart';
 import '../result/result.dart';
 
 final class Bootstrap {

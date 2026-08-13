@@ -1,6 +1,6 @@
 import '/core/result/result.dart';
 import '/domain/common/user/models/user.dart';
-import '/store/constants/table_attributes.dart';
+import '../database/table_attributes.dart';
 
 final class UserMapper {
   const UserMapper();

@@ -1,6 +1,6 @@
 import '/core/result/result.dart';
 import '/domain/common/history/models/history_entry.dart';
-import '/store/constants/table_attributes.dart';
+import '../database/table_attributes.dart';
 
 final class HistoryMapper {
   const HistoryMapper();

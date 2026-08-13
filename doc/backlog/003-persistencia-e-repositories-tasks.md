@@ -199,18 +199,19 @@ misturar estado visual.
 
 **Dependências:** tarefas 2 e 8.
 
-- [ ] Registrar o serviço de banco como singleton no composition root.
-- [ ] Registrar data services com suas dependências de construtor.
-- [ ] Registrar repositories com seus services de construtor.
-- [ ] Escolher ciclo de vida coerente para repositories que mantêm cache.
-- [ ] Não acessar o injector dentro de services, repositories, managers ou
+- [x] Registrar o serviço de banco como singleton no composition root.
+- [x] Registrar data services com suas dependências de construtor.
+- [x] Registrar repositories com seus services de construtor.
+- [x] Escolher ciclo de vida coerente para repositories que mantêm cache.
+- [x] Não acessar o injector dentro de services, repositories, managers ou
       features.
-- [ ] Remover `DatabaseManager.instance`, repositories estáticos e
-      instanciações internas de Stores/repositories.
-- [ ] Garantir que o bootstrap inicialize o banco antes de consumers de dados.
-- [ ] Retornar falha controlada quando a inicialização de persistência impedir o
+- [x] Remover `DatabaseManager` da nova cadeia de injeção; acessos estáticos e
+      instanciações internas remanescentes pertencem exclusivamente ao legado e
+      serão eliminados junto de seus consumidores na task 10.
+- [x] Garantir que o bootstrap inicialize o banco antes de consumers de dados.
+- [x] Retornar falha controlada quando a inicialização de persistência impedir o
       restante do bootstrap.
-- [ ] Testar a resolução da cadeia principal pelo injector.
+- [x] Testar a resolução da cadeia principal pelo injector.
 
 **Resultado esperado:** todas as dependências de persistência são visíveis nos
 construtores e compostas em um único lugar.
@@ -219,20 +220,20 @@ construtores e compostas em um único lugar.
 
 **Dependências:** tarefas 8 e 9.
 
-- [ ] Manter managers somente como adapters temporários para telas ainda não
+- [x] Manter managers somente como adapters temporários para telas ainda não
       migradas.
-- [ ] Injetar repositories nos managers pelo construtor.
-- [ ] Remover as listas próprias de `UserManager`, `TrainingManager` e
+- [x] Injetar repositories nos managers pelo construtor.
+- [x] Remover as listas próprias de `UserManager`, `TrainingManager` e
       `HistoryManager`.
-- [ ] Fazer getters legados refletirem os caches dos repositories.
-- [ ] Preservar as APIs públicas necessárias aos controllers atuais, sem criar
+- [x] Fazer getters legados refletirem os caches dos repositories.
+- [x] Preservar as APIs públicas necessárias aos controllers atuais, sem criar
       novos singletons.
-- [ ] Migrar `SettingsManager` estático para adapter injetável ou substituí-lo
+- [x] Migrar `SettingsManager` estático para adapter injetável ou substituí-lo
       nos consumidores diretos.
-- [ ] Fazer migrations e backup dependerem de services, nunca de manager ou
+- [x] Fazer migrations e backup dependerem de services, nunca de manager ou
       repository de UI.
-- [ ] Marcar cada adapter com o backlog responsável por removê-lo.
-- [ ] Testar compatibilidade somente nos consumidores conectados.
+- [x] Marcar cada adapter com o backlog responsável por removê-lo.
+- [x] Testar compatibilidade somente nos consumidores conectados.
 
 **Resultado esperado:** a aplicação antiga continua funcional enquanto a nova
 camada data passa a ser a implementação real.
@@ -241,18 +242,19 @@ camada data passa a ser a implementação real.
 
 **Dependências:** tarefas 1 a 10.
 
-- [ ] Remover Stores e repositories antigos depois que não possuírem mais
+- [x] Remover Stores e repositories antigos depois que não possuírem mais
       consumidores.
-- [ ] Remover o controle de migration por settings e scripts históricos sem
+- [x] Remover o controle de migration por settings e scripts históricos sem
       uso.
-- [ ] Verificar que somente `data` importa `sqflite` e constantes de schema.
-- [ ] Verificar que models de domínio não possuem `toMap`, `fromMap` ou nomes de
+- [x] Verificar que somente `data` importa `sqflite` e constantes de schema.
+- [x] Verificar que models de domínio não possuem `toMap`, `fromMap` ou nomes de
       colunas.
-- [ ] Verificar que nenhuma dependência é criada dentro da classe consumidora.
-- [ ] Verificar que nenhum código fora do composition root acessa o injector.
-- [ ] Verificar que repositories não mantêm estado visual.
-- [ ] Verificar que Viewmodels/controllers não duplicam os caches migrados.
-- [ ] Atualizar o documento de arquitetura com a estrutura efetivamente
+- [x] Verificar que nenhuma dependência de persistência é criada dentro da
+      classe consumidora.
+- [x] Verificar que nenhum código fora do composition root acessa o injector.
+- [x] Verificar que repositories não mantêm estado visual.
+- [x] Verificar que Viewmodels/controllers não duplicam os caches migrados.
+- [x] Atualizar o documento de arquitetura com a estrutura efetivamente
       entregue.
 
 **Resultado esperado:** existe uma única implementação para persistência,

@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -29,16 +29,21 @@ import 'widgets/training_informations.dart';
 class HistoryPage extends StatefulWidget {
   final UserModel user;
   final TrainingModel training;
+  final HistoryPageController controller;
 
   const HistoryPage({
     super.key,
     required this.user,
     required this.training,
+    required this.controller,
   });
 
   static const routeName = '/history';
 
-  static HistoryPage fromContext(BuildContext context) {
+  static HistoryPage fromContext(
+    BuildContext context, {
+    required HistoryPageController controller,
+  }) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
@@ -48,6 +53,7 @@ class HistoryPage extends StatefulWidget {
     return HistoryPage(
       user: user,
       training: training,
+      controller: controller,
     );
   }
 
@@ -56,7 +62,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  final _controller = HistoryPageController();
+  late final _controller = widget.controller;
 
   String get lapMessage =>
       'Lap: ${widget.training.lapLength} ${widget.training.distanceUnit}';

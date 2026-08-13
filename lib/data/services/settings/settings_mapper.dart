@@ -2,7 +2,7 @@ import '/core/result/result.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/domain/common/training/units/distance_unit.dart';
 import '/domain/common/training/values/distance.dart';
-import '/store/constants/table_attributes.dart';
+import '../database/table_attributes.dart';
 
 final class SettingsMapper {
   const SettingsMapper();

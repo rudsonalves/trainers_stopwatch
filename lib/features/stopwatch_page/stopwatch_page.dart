@@ -35,14 +35,16 @@ import 'widgets/stopwatch_drawer.dart';
 const double stopWatchHeight = 134;
 
 class StopWatchPage extends StatefulWidget {
-  const StopWatchPage({super.key});
+  final StopwatchPageController controller;
+
+  const StopWatchPage({super.key, required this.controller});
 
   @override
   State<StopWatchPage> createState() => _StopWatchPageState();
 }
 
 class _StopWatchPageState extends State<StopWatchPage> {
-  final _controller = StopwatchPageController.instance;
+  late final _controller = widget.controller;
   final app = AppSettings.instance;
   final _messageList = <MessagesModel>[];
   late final OnboardingState? overlay;

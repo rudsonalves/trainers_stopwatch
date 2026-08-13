@@ -1,5 +1,101 @@
 # Changelog
 
+## 2026/08/13 - bkl003/task11
+
+This change completes the persistence and repository migration by consolidating SQLite infrastructure under the data layer, composing the full dependency graph through `AutoInjector`, and removing the superseded stores, repositories, managers, and database singleton.
+
+Legacy screens remain operational through injected adapters and controllers, while settings, reporting, sharing, and stopwatch workflows now consume the new repository chain. The architecture and backlog documentation were updated to reflect the delivered structure and migration status.
+
+1. **`lib/core/config/dependencies.dart` and `lib/main.dart`**
+
+   * Expanded the composition root to register database services, domain-oriented repositories, temporary managers, sharing services, page controllers, and stopwatch controllers.
+   * Applied singleton lifecycles to the database service, cached repositories, sharing service, and stopwatch page controller while keeping transient services and screen adapters resolvable per use.
+   * Configured stopwatch controller creation through an injected factory.
+   * Updated application startup to resolve entry-point dependencies and pass controller factories and shared services into `MyMaterialApp`.
+
+2. **`lib/data/services/database` and `lib/core/bootstrap/bootstrap.dart`**
+
+   * Moved `DatabaseProvider`, schema constants, and SQL scripts from the legacy `store` hierarchy into the database service module.
+   * Added `database_service_factory.dart` to encapsulate platform-specific database directory and `sqflite` operations outside the composition root.
+   * Updated schema, database service, mappers, CRUD services, and bootstrap imports to use the consolidated data-layer infrastructure.
+   * Extended `DatabaseProvider` to inject `SettingsRepository` and initialize application settings only after the database opens successfully.
+
+3. **`lib/data/repositories` integration**
+
+   * Registered settings, users, trainings, and histories repository implementations against their corresponding data services.
+   * Established repositories as the cache-owning persistence boundary consumed by managers, application settings, reporting, and sharing workflows.
+   * Preserved controlled `Result` failure handling throughout repository-backed operations.
+
+4. **`lib/manager`**
+
+   * Refactored `UserManager`, `TrainingManager`, and `HistoryManager` into temporary constructor-injected UI adapters over the new repositories.
+   * Removed manager-owned entity lists and exposed legacy models by adapting repository caches.
+   * Migrated CRUD, loading, photo-reference lookup, and history merge behavior to repository APIs with explicit failure propagation.
+   * Marked the adapters for removal by their owning future backlogs.
+   * Removed the static `SettingsManager`; settings now access the injected settings repository directly.
+
+5. **`lib/common/singletons/app_settings.dart`**
+
+   * Changed settings initialization to receive a `SettingsRepository`, load domain settings, and convert them through the legacy adapter.
+   * Replaced static manager updates with domain conversion and repository-backed persistence.
+   * Added propagation of conversion, read, and write failures.
+
+6. **`lib/common/functions/build_pdf.dart` and `lib/common/functions/share_functions.dart`**
+
+   * Injected `HistoryRepository` into report generation instead of constructing the removed legacy repository internally.
+   * Loaded report histories through the repository API and converted domain entries to legacy report models.
+   * Refactored `AppShare` from a static utility into an injectable service whose email and WhatsApp workflows share the repository-backed PDF path.
+
+7. **`lib/features/users_page`, `lib/features/trainings_page`, and `lib/features/history_page`**
+
+   * Added constructor injection for page controllers and propagated dependencies through overlays and route builders.
+   * Updated users and trainings controllers to receive managers and factories instead of accessing static instances or constructing dependencies internally.
+   * Passed the shared stopwatch controller into the users flow so selections update the composed stopwatch state.
+   * Injected `AppShare` into the trainings flow for repository-backed email and WhatsApp reporting.
+   * Injected `HistoryPageController` and its history manager into the history screen.
+
+8. **`lib/features/stopwatch_page` and `lib/features/widgets/precise_stopwatch`**
+
+   * Removed the static `StopwatchPageController` singleton API and supplied the composed controller through the overlay and page constructors.
+   * Added an injected precise-stopwatch controller factory for dynamically created stopwatches.
+   * Refactored `PreciseStopwatchController` to receive training, history, and stopwatch dependencies through its constructor.
+   * Ensured training initialization completes asynchronously before creating stopwatch training state.
+
+9. **`lib/my_material_app.dart`**
+
+   * Added application-level dependencies for the stopwatch controller, page-controller factories, and sharing service.
+   * Updated navigation routes to create screens with dependencies supplied from the composition root.
+   * Preserved route-based navigation while eliminating injector access and internal controller construction from feature widgets.
+
+10. **Legacy persistence modules**
+
+   * Removed the old history, settings, training, and user repository contracts and implementations under `lib/repositories`.
+   * Removed `DatabaseManager`, legacy database backup and table-creation helpers, and all entity stores under `lib/store`.
+   * Relocated the remaining schema constants and database provider into the new data service structure, leaving a single persistence implementation.
+
+11. **`test/core/config/dependencies_test.dart` and legacy store tests**
+
+   * Expanded dependency resolution coverage to verify the bootstrap graph and the configured lifecycles of the database service, transient settings service, and cached repositories.
+   * Retained the idempotency check for repeated dependency setup.
+   * Removed the obsolete legacy `DatabaseCreateTable` test alongside the deleted store implementation.
+
+12. **`doc/backlog/003-persistencia-e-repositories*.md`**
+
+   * Marked dependency composition, temporary adapter migration, legacy persistence cleanup, and architecture verification tasks as completed.
+   * Documented the delivered data-service, repository, manager, composition-root, and navigation structure.
+   * Recorded the remaining lifecycle of `AppSettings` and temporary managers under subsequent backlogs.
+   * Updated backlog status to show tasks 1 through 11 completed with final validation assigned to task 12.
+
+13. **Dart source formatting**
+
+   * Normalized whitespace in GPL license headers across bloc, common, feature, widget, model, theme, and controller files without changing their runtime behavior.
+
+### Conclusion
+
+The application now uses a single repository-backed persistence architecture composed centrally through dependency injection. Legacy screens continue to function through temporary adapters while persistence state and SQLite access remain confined to the new data layer.
+
+The obsolete store and repository stack has been removed, and bootstrap, settings, reporting, navigation, controllers, tests, and documentation now reflect the delivered architecture.
+
 ## 2026/08/13 - bkl003/task08
 
 This change introduces typed persistence services and repository-level caching for users, trainings, histories, and settings. SQLite records are now converted through dedicated mappers, while repositories expose domain-oriented operations and update immutable in-memory state only after successful persistence.

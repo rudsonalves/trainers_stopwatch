@@ -24,15 +24,23 @@ import 'package:share_plus/share_plus.dart';
 import '../models/training_model.dart';
 import '../models/user_model.dart';
 import 'build_pdf.dart';
+import '../../data/repositories/histories/history_repository.dart';
 
-sealed class AppShare {
-  AppShare._();
+final class AppShare {
+  final HistoryRepository _historyRepository;
 
-  static Future<void> sendWhatsApp({
+  const AppShare({required HistoryRepository historyRepository})
+      : _historyRepository = historyRepository;
+
+  Future<void> sendWhatsApp({
     required UserModel user,
     required List<TrainingModel> trainings,
   }) async {
-    final pdfFile = await BuildPdf.makeReport(user, trainings);
+    final pdfFile = await BuildPdf.makeReport(
+      user,
+      trainings,
+      _historyRepository,
+    );
     final XFile xfile = XFile(pdfFile.path);
 
     await SharePlus.instance.share(
@@ -43,7 +51,7 @@ sealed class AppShare {
     );
   }
 
-  static Future<void> sendEmail({
+  Future<void> sendEmail({
     required UserModel user,
     required String recipient,
     required List<TrainingModel> trainings,
@@ -51,7 +59,7 @@ sealed class AppShare {
     const subject = 'Training logs';
     final body = _createBody(trainings);
 
-    final file = await BuildPdf.makeReport(user, trainings);
+    final file = await BuildPdf.makeReport(user, trainings, _historyRepository);
 
     final email = Email(
       subject: subject,
@@ -71,7 +79,7 @@ sealed class AppShare {
     }
   }
 
-  static String _createBody(List<TrainingModel> trainings) {
+  String _createBody(List<TrainingModel> trainings) {
     String body = '''
     <html>
     <body>
@@ -101,13 +109,13 @@ sealed class AppShare {
     return body;
   }
 
-  static String _headerLine(String title, [int index = 1, String? style]) {
+  String _headerLine(String title, [int index = 1, String? style]) {
     return style != null
         ? '<h$index style="$style">$title</h$index>\n'
         : '<h$index>$title</h$index>\n';
   }
 
-  static String _line(String title, String value) {
+  String _line(String title, String value) {
     return '<p><strong>$title:</strong> $value</p>\n';
   }
 }

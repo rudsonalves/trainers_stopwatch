@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -35,8 +35,9 @@ import '../../stopwatch_page/stopwatch_page_controller.dart';
 
 class PreciseStopwatchController {
   final _bloc = StopwatchBloc();
-  final _trainingManager = TrainingManager();
-  final _historyManager = HistoryManager();
+  final TrainingManager _trainingManager;
+  final HistoryManager _historyManager;
+  final StopwatchPageController _stopwatchController;
   late final UserModel _user;
   TrainingModel? _training;
   bool isPaused = false;
@@ -45,7 +46,13 @@ class PreciseStopwatchController {
   final _actionOnPress = ValueNotifier<bool>(false);
   bool _isCreatedTraining = false;
 
-  final _stopwatchController = StopwatchPageController.instance;
+  PreciseStopwatchController({
+    required TrainingManager trainingManager,
+    required HistoryManager historyManager,
+    required StopwatchPageController stopwatchController,
+  })  : _trainingManager = trainingManager,
+        _historyManager = historyManager,
+        _stopwatchController = stopwatchController;
 
   Color? lastColor;
 
@@ -66,7 +73,7 @@ class PreciseStopwatchController {
     splitLength = AppSettings.instance.splitLength;
     lapLength = AppSettings.instance.lapLength;
     _bloc.splitCounterMax = lapLength ~/ splitLength;
-    _trainingManager.init(_user.id!);
+    await _trainingManager.init(_user.id!);
     _createNewTraining();
     splitsPerLap = (training.lapLength / training.splitLength).round();
   }

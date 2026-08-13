@@ -13,7 +13,7 @@ As tarefas de implementação estão organizadas em
 - backlog 001 concluído;
 - `002-dominio-puro.md`.
 
-## Organização proposta
+## Organização entregue
 
 ```text
 ViewModel/UseCase
@@ -21,6 +21,24 @@ ViewModel/UseCase
     -> Data Service
       -> Database
 ```
+
+- `lib/data/services/database` concentra ciclo de vida, schema, versão e
+  backup, além da fábrica de infraestrutura usada pelo composition root;
+- `lib/data/services/{settings,users,trainings,histories}` concentra CRUD e
+  conversão de registros SQLite;
+- `lib/data/repositories` contém os contratos orientados ao domínio e as
+  implementações que mantêm os caches;
+- `lib/manager` contém somente adapters temporários para as telas legadas, sem
+  listas próprias;
+- `lib/core/config/dependencies.dart` registra toda a cadeia no
+  `AutoInjector`; `main.dart` apenas resolve as dependências de entrada e as
+  entrega às rotas da navegação 1.0;
+- `Stores`, repositories antigos, `DatabaseManager` e `SettingsManager` foram
+  removidos.
+
+Os acessos legados a `AppSettings.instance` permanecem até o backlog 004. Os
+managers temporários serão eliminados nos backlogs 005 e 006, quando suas telas
+forem convertidas integralmente para Viewmodels.
 
 ## Escopo
 
@@ -180,6 +198,6 @@ locais de desenvolvimento.
 
 ## Acompanhamento
 
-**Estado:** Tarefas definidas.
+**Estado:** Tasks 1 a 11 concluídas; validação final organizada na task 12.
 
 **Próximo backlog:** `004-configuracoes-mvvm.md`.
