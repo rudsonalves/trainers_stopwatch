@@ -4,13 +4,29 @@
 
 import 'package:flutter/material.dart';
 
+import '/ui/pages/settings/settings_view_model.dart';
 import 'settings_page.dart';
 
-class SettingsOverlay extends StatelessWidget {
-  const SettingsOverlay({super.key});
+class SettingsOverlay extends StatefulWidget {
+  final SettingsViewModel viewModel;
+
+  const SettingsOverlay({super.key, required this.viewModel});
 
   static const routeName = '/settings';
 
   @override
-  Widget build(BuildContext context) => const SettingsPage();
+  State<SettingsOverlay> createState() => _SettingsOverlayState();
+}
+
+class _SettingsOverlayState extends State<SettingsOverlay> {
+  @override
+  Widget build(BuildContext context) => SettingsPage(
+        viewModel: widget.viewModel,
+      );
+
+  @override
+  void dispose() {
+    widget.viewModel.dispose();
+    super.dispose();
+  }
 }

@@ -11,7 +11,7 @@ Depende de `003-persistencia-e-repositories.md`.
 
 ## Escopo
 
-- criar `SettingsRepository` e implementação sobre o DAO novo;
+- usar o `SettingsRepository` e a implementação entregues pelo backlog 003;
 - criar `SettingsViewModel` com dependências por construtor;
 - expor Commands para carregar e salvar configurações;
 - separar configurações persistidas do estado observável de tema/idioma;
@@ -47,13 +47,13 @@ Nenhuma.
 
 ## Decisões
 
-- `AppSettingsViewModel`, singleton por registro no `AutoInjector` e recebido
+- `AppAppearanceState`, singleton por registro no `AutoInjector` e recebido
   por construtor pelo `MyMaterialApp`, será a única fonte observável global de
   tema, contraste e idioma.
 - `SettingsRepository` permanece responsável pela persistência e pelo cache de
   domínio.
 - `SettingsViewModel` sincroniza as alterações globais com o
-  `AppSettingsViewModel`.
+  `AppAppearanceState`.
 - Toda alteração válida feita na `SettingsPage` será persistida imediatamente,
   sem botão de confirmação e sem depender do fechamento da página.
 - O sistema de tutorial foi removido integralmente da aplicação antes da
@@ -64,6 +64,7 @@ Nenhuma.
 
 ## Acompanhamento
 
-**Estado:** Planejado — primeiro piloto MVVM.
+**Estado:** Em execução — tarefas organizadas em
+[`004-configuracoes-mvvm-tasks.md`](004-configuracoes-mvvm-tasks.md).
 
 **Próximo backlog:** `005-usuarios-e-imagens.md`.

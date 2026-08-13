@@ -23,7 +23,9 @@ import 'common/constants.dart';
 import 'core/bootstrap/bootstrap.dart';
 import 'core/config/dependencies.dart';
 import 'core/result/errors/app_error.dart';
-import 'my_material_app.dart';
+import 'ui/app/app_appearance_state.dart';
+import 'ui/app/my_material_app.dart';
+import 'ui/pages/settings/settings_view_model.dart';
 import 'features/history_page/history_page_controller.dart';
 import 'features/stopwatch_page/stopwatch_page_controller.dart';
 import 'features/trainings_page/trainings_page_controller.dart';
@@ -57,6 +59,8 @@ void main() async {
             injector.get<TrainingsPageController>(),
         historyControllerFactory: () => injector.get<HistoryPageController>(),
         appShare: injector.get<AppShare>(),
+        appearanceState: injector.get<AppAppearanceState>(),
+        settingsViewModelFactory: () => injector.get<SettingsViewModel>(),
       ),
     ),
   );

@@ -1,7 +1,7 @@
 import 'package:auto_injector/auto_injector.dart';
 
-import '../../common/singletons/app_settings.dart';
 import '../../common/functions/share_functions.dart';
+import '../../common/singletons/app_settings.dart';
 import '../../data/repositories/histories/history_repository.dart';
 import '../../data/repositories/histories/history_repository_impl.dart';
 import '../../data/repositories/settings/settings_repository.dart';
@@ -11,6 +11,7 @@ import '../../data/repositories/trainings/training_repository_impl.dart';
 import '../../data/repositories/users/user_repository.dart';
 import '../../data/repositories/users/user_repository_impl.dart';
 import '../../data/services/database/database_backup_service.dart';
+import '../../data/services/database/database_provider.dart';
 import '../../data/services/database/database_schema.dart';
 import '../../data/services/database/database_service.dart';
 import '../../data/services/database/database_service_factory.dart';
@@ -22,6 +23,7 @@ import '../../data/services/trainings/training_mapper.dart';
 import '../../data/services/trainings/training_service.dart';
 import '../../data/services/users/user_mapper.dart';
 import '../../data/services/users/user_service.dart';
+import '../../domain/common/settings/models/settings.dart';
 import '../../features/history_page/history_page_controller.dart';
 import '../../features/stopwatch_page/stopwatch_page_controller.dart';
 import '../../features/trainings_page/trainings_page_controller.dart';
@@ -30,7 +32,8 @@ import '../../features/widgets/precise_stopwatch/precise_stopwatch_controller.da
 import '../../manager/history_manager.dart';
 import '../../manager/training_manager.dart';
 import '../../manager/user_manager.dart';
-import '../../data/services/database/database_provider.dart';
+import '../../ui/app/app_appearance_state.dart';
+import '../../ui/pages/settings/settings_view_model.dart';
 import '../bootstrap/bootstrap.dart';
 
 final injector = AutoInjector();
@@ -61,6 +64,17 @@ void setupDependencies() {
     ..addSingleton<SettingsRepository>(
       () => SettingsRepositoryImpl(
         service: injector.get<SettingsService>(),
+      ),
+    )
+    ..addSingleton<AppAppearanceState>(
+      () => AppAppearanceState(
+        settings: Settings.create().value!,
+      ),
+    )
+    ..add<SettingsViewModel>(
+      () => SettingsViewModel(
+        repository: injector.get<SettingsRepository>(),
+        appearanceState: injector.get<AppAppearanceState>(),
       ),
     )
     ..addSingleton<UserRepository>(

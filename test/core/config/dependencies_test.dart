@@ -5,9 +5,11 @@ import 'package:trainers_stopwatch/data/repositories/histories/history_repositor
 import 'package:trainers_stopwatch/data/repositories/settings/settings_repository.dart';
 import 'package:trainers_stopwatch/data/repositories/trainings/training_repository.dart';
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
+import 'package:trainers_stopwatch/data/services/database/database_provider.dart';
 import 'package:trainers_stopwatch/data/services/database/database_service.dart';
 import 'package:trainers_stopwatch/data/services/settings/settings_service.dart';
-import 'package:trainers_stopwatch/data/services/database/database_provider.dart';
+import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/settings_view_model.dart';
 
 void main() {
   test('setupDependencies is idempotent and resolves the bootstrap graph', () {
@@ -19,6 +21,9 @@ void main() {
     final userRepository = injector.get<UserRepository>();
     final trainingRepository = injector.get<TrainingRepository>();
     final historyRepository = injector.get<HistoryRepository>();
+    final appearanceState = injector.get<AppAppearanceState>();
+    final settingsViewModel = injector.get<SettingsViewModel>();
+    addTearDown(settingsViewModel.dispose);
 
     setupDependencies();
     final bootstrap = injector.get<Bootstrap>();
@@ -31,5 +36,9 @@ void main() {
     expect(injector.get<UserRepository>(), same(userRepository));
     expect(injector.get<TrainingRepository>(), same(trainingRepository));
     expect(injector.get<HistoryRepository>(), same(historyRepository));
+    expect(injector.get<AppAppearanceState>(), same(appearanceState));
+    final nextSettingsViewModel = injector.get<SettingsViewModel>();
+    addTearDown(nextSettingsViewModel.dispose);
+    expect(nextSettingsViewModel, isNot(same(settingsViewModel)));
   });
 }

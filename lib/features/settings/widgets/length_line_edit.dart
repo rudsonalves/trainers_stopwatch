@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
@@ -25,12 +27,16 @@ class LengthLineEdit extends StatefulWidget {
   final String lengthLabel;
   final double length;
   final String lengthUnit;
+  final ValueChanged<double> onLengthChanged;
+  final ValueChanged<String> onUnitChanged;
 
   const LengthLineEdit({
     super.key,
     required this.lengthLabel,
     required this.length,
     required this.lengthUnit,
+    required this.onLengthChanged,
+    required this.onUnitChanged,
   });
 
   @override
@@ -38,19 +44,45 @@ class LengthLineEdit extends StatefulWidget {
 }
 
 class _LengthLineEditState extends State<LengthLineEdit> {
-  final lenghtController = TextEditingController();
-  final unitController = TextEditingController();
+  final lengthController = TextEditingController();
+  Timer? _lengthDebounce;
 
   @override
   void initState() {
     super.initState();
-    unitController.text = widget.lengthUnit;
+  }
+
+  @override
+  void didUpdateWidget(covariant LengthLineEdit oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.length == widget.length) return;
+    final current = double.tryParse(lengthController.text);
+    if (current != widget.length) {
+      lengthController.text = widget.length.toString();
+    }
+  }
+
+  void _scheduleLengthChange(String text) {
+    _lengthDebounce?.cancel();
+    final value = double.tryParse(text);
+    if (value == null || value <= 0 || value == widget.length) return;
+    _lengthDebounce = Timer(
+      const Duration(milliseconds: 400),
+      () => widget.onLengthChanged(value),
+    );
+  }
+
+  void _submitLength(String text) {
+    _lengthDebounce?.cancel();
+    final value = double.tryParse(text);
+    if (value == null || value <= 0 || value == widget.length) return;
+    widget.onLengthChanged(value);
   }
 
   @override
   void dispose() {
-    lenghtController.dispose();
-    unitController.dispose();
+    _lengthDebounce?.cancel();
+    lengthController.dispose();
     super.dispose();
   }
 
@@ -73,13 +105,15 @@ class _LengthLineEditState extends State<LengthLineEdit> {
             width: 120,
             child: NumericField(
               value: widget.length,
-              controller: lenghtController,
+              controller: lengthController,
+              onChanged: _scheduleLengthChange,
+              onSubmitted: _submitLength,
             ),
           ),
           DropdownButton<String>(
             dropdownColor: colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(12),
-            value: unitController.text,
+            value: widget.lengthUnit,
             items: distanceUnits
                 .map(
                   (item) => DropdownMenuItem<String>(
@@ -92,7 +126,7 @@ class _LengthLineEditState extends State<LengthLineEdit> {
                 .toList(),
             onChanged: (value) {
               if (value != null) {
-                unitController.text = value;
+                widget.onUnitChanged(value);
               }
             },
           ),

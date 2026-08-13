@@ -1,5 +1,104 @@
 # Changelog
 
+## 2026/08/13 - bkl004/task-07
+
+This change advances the settings feature to an MVVM architecture with explicit dependency injection, observable global appearance state, immediate persistence, and controlled failure handling.
+
+The settings UI now operates through a dedicated ViewModel, while application-level theme, contrast, and locale updates are coordinated through a single presentation-state object. The change also adds implementation tracking, behavioral tests, and removes the Linux desktop runner.
+
+1. **`doc/backlog/004-configuracoes-mvvm-tasks.md`**
+
+   * Added a detailed task plan for migrating settings to MVVM.
+   * Recorded architectural decisions, dependencies, expected outcomes, completed work, and validation results.
+   * Documented the remaining legacy-adapter, testing, and final-delivery tasks.
+
+2. **`doc/backlog/004-configuracoes-mvvm.md`**
+
+   * Updated the scope to reuse the settings repository delivered by backlog 003.
+   * Renamed the planned global presentation component from `AppSettingsViewModel` to `AppAppearanceState`.
+   * Changed the backlog status from planned to in progress and linked the task checklist.
+
+3. **`lib/ui/app/app_appearance_state.dart`**
+
+   * Added a global `ChangeNotifier` dedicated to brightness, contrast, and locale.
+   * Added explicit synchronization from domain `Settings` and consolidated presentation updates into a single notification.
+   * Introduced `AppContrast` and conversions between domain preferences and Flutter presentation types.
+
+4. **`lib/ui/pages/settings/`**
+
+   * Added `SettingsFormData` as an immutable UI model with conversions to and from domain settings.
+   * Added `SettingsViewModel` with constructor-injected repository and appearance-state dependencies.
+   * Added commands for loading and saving settings, including observable loading, success, and failure states.
+   * Implemented immediate optimistic updates for distances, units, appearance, locale, and refresh interval.
+   * Serialized rapid edits by retaining the latest pending valid state during active persistence.
+   * Added rollback to the repository’s last persisted state when validation or storage updates fail.
+   * Added explicit disposal of command resources.
+
+5. **`lib/core/config/dependencies.dart` and `lib/main.dart`**
+
+   * Registered `AppAppearanceState` as a singleton initialized from default domain settings.
+   * Registered `SettingsViewModel` as a transient dependency with explicit constructor injection.
+   * Passed the shared appearance state and the settings ViewModel factory into the application root.
+   * Updated application imports to use the relocated `MyMaterialApp`.
+
+6. **`lib/data/services/database/database_provider.dart`**
+
+   * Injected `AppAppearanceState` into the database bootstrap provider.
+   * Synchronized global appearance values from the settings repository cache after legacy settings initialization.
+   * Reused the existing loaded settings instead of initiating another repository read.
+
+7. **`lib/ui/app/my_material_app.dart` and `lib/my_material_app.dart`**
+
+   * Relocated `MyMaterialApp` into the UI application module.
+   * Refactored the application root into a stateful widget that observes the injected `AppAppearanceState`.
+   * Removed direct dependence on the legacy `AppSettings` singleton.
+   * Derived the active theme from observable brightness and contrast values.
+   * Synchronized the observed locale with `EasyLocalization` after frame rendering.
+   * Preserved the existing initial route, named routes, Navigator 1.0 behavior, themes, and supported localization configuration.
+   * Added route-level creation of transient settings ViewModels.
+
+8. **`lib/features/settings/settings_overlay.dart`**
+
+   * Changed the overlay to receive a `SettingsViewModel` through its constructor.
+   * Converted the overlay to a stateful composition boundary.
+   * Passed the ViewModel into `SettingsPage` and disposed it when the overlay leaves the widget tree.
+
+9. **`lib/features/settings/settings_page.dart`**
+
+   * Removed direct access to `AppSettings` and the deferred save-on-navigation behavior.
+   * Loaded settings through the ViewModel during page initialization.
+   * Added observation of the ViewModel and its load and save commands.
+   * Added progress and error presentation for loading and immediate persistence operations.
+   * Bound distance, unit, brightness, contrast, locale, and refresh controls to immutable form state.
+   * Routed every valid settings change through the ViewModel while retaining visual controllers and Flutter context in the UI layer.
+
+10. **`lib/features/settings/widgets/length_line_edit.dart`**
+
+   * Added callbacks for distance and unit changes.
+   * Replaced the local unit controller with the unit supplied by the parent state.
+   * Corrected the length controller naming and synchronized it when external values change.
+   * Added a 400-millisecond debounce for valid positive distance edits and immediate handling on submission.
+   * Prevented invalid, unchanged, or incomplete values from being emitted.
+   * Added cleanup for the debounce timer and text controller.
+
+11. **Settings MVVM and dependency tests**
+
+   * Added unit tests for `AppAppearanceState` initialization, synchronization, notification behavior, and no-op updates.
+   * Added ViewModel tests for successful and failed loading, immediate persistence, domain conversions, queued edits, rollback, and invalid input.
+   * Extended dependency configuration tests to verify singleton identity for the appearance state and transient lifecycle for settings ViewModels.
+   * Added widget tests covering debounced positive distance changes and common unit selection.
+
+12. **`linux/`**
+
+   * Removed the Linux Flutter runner, CMake configuration, generated plugin registration files, application sources, and Linux-specific ignore rule.
+   * Removed the project’s checked-in Linux desktop build target and its plugin wiring.
+
+### Conclusion
+
+The settings flow now has an MVVM foundation with explicit composition, immutable presentation data, immediate serialized persistence, and a single observable source for application appearance and locale.
+
+The application root and settings page no longer depend directly on the legacy settings singleton for presentation behavior, and the altered flows are covered by focused unit, widget, and dependency-lifecycle tests. The Linux desktop runner has also been removed from the project.
+
 ## 2026/08/13 - bkl004/totorial-off
 
 This change removes the tutorial and onboarding system from the application, simplifying the stopwatch, user, training, and settings flows to render their pages directly without guided overlays.
