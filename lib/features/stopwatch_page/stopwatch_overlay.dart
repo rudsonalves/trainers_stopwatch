@@ -49,7 +49,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle01'.tr(),
         bodyText: 'tutorSWMsg01'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blue.withOpacity(0.9),
+        overlayColor: Colors.blue.withValues(alpha: 0.9),
         shape: const CircleBorder(),
         overlayShape: const CircleBorder(),
       ),
@@ -58,7 +58,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle02'.tr(),
         bodyText: 'tutorSWMsg02'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blue.withOpacity(0.9),
+        overlayColor: Colors.blue.withValues(alpha: 0.9),
         shape: const CircleBorder(),
         overlayShape: const CircleBorder(),
         showPulseAnimation: true,
@@ -68,7 +68,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         focusNode: app.focusNodes[1],
         titleText: 'tutorSWTitle03'.tr(),
         bodyText: 'tutorSWMsg03'.tr(),
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         fullscreen: false,
         shape: const CircleBorder(),
         overlayShape: const CircleBorder(),
@@ -85,7 +85,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle04'.tr(),
         bodyText: 'tutorSWMsg04'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
@@ -93,7 +93,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle05'.tr(),
         bodyText: 'tutorSWMsg05'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
@@ -101,7 +101,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle06'.tr(),
         bodyText: 'tutorSWMsg06'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
@@ -109,7 +109,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle08'.tr(),
         bodyText: 'tutorSWMsg08'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
@@ -117,7 +117,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle07'.tr(),
         bodyText: 'tutorSWMsg07'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
         onTapCallback: (area, next, close) {
           Navigator.pop(context);
@@ -129,7 +129,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle09'.tr(),
         bodyText: 'tutorSWMsg09'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         shape: const CircleBorder(),
         overlayShape: const CircleBorder(),
         showPulseAnimation: true,
@@ -149,7 +149,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.blue.withOpacity(0.9),
+                color: Colors.blue.withValues(alpha: 0.9),
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -192,7 +192,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle11'.tr(),
         bodyText: 'tutorSWMsg11'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         shape: const CircleBorder(),
         overlayShape: const CircleBorder(),
         showPulseAnimation: true,
@@ -210,7 +210,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle12'.tr(),
         bodyText: 'tutorSWMsg12'.tr(),
         fullscreen: true,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[13],
@@ -218,14 +218,14 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         bodyText: 'tutorSWMsg12'.tr(),
         fullscreen: true,
         // overlayShape: const CircleBorder(),
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
       ),
       OnboardingStep(
         focusNode: FocusNode(),
         titleText: 'tutorSWTitle13'.tr(),
         bodyText: 'tutorSWMsg13'.tr(),
         fullscreen: true,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         onTapCallback: (area, next, close) => next(),
         stepBuilder: (context, renderInfo) => fullScreenMessage(
           context: context,
@@ -239,7 +239,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle14'.tr(),
         bodyText: 'tutorSWMsg14'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
         overlayBehavior: HitTestBehavior.translucent,
         showPulseAnimation: true,
@@ -254,13 +254,13 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle15'.tr(),
         bodyText: 'tutorSWMsg15'.tr(),
         fullscreen: true,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
       ),
       OnboardingStep(
         focusNode: app.focusNodes[14],
         titleText: 'tutorSWTitle16'.tr(),
         bodyText: 'tutorSWMsg16'.tr(),
-        overlayColor: Colors.blueAccent.withOpacity(0.8),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.8),
         fullscreen: false,
         overlayShape: const CircleBorder(),
         overlayBehavior: HitTestBehavior.translucent,
@@ -276,7 +276,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle17'.tr(),
         bodyText: 'tutorSWMsg17'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
@@ -284,7 +284,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle18'.tr(),
         bodyText: 'tutorSWMsg18'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
         overlayBehavior: HitTestBehavior.translucent,
         showPulseAnimation: true,
@@ -299,7 +299,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle18'.tr(),
         bodyText: 'tutorSWMsg18'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
       ),
       OnboardingStep(
@@ -307,7 +307,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle20'.tr(),
         bodyText: 'tutorSWMsg20'.tr(),
         fullscreen: false,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
         overlayBehavior: HitTestBehavior.translucent,
         showPulseAnimation: true,
@@ -322,7 +322,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle21'.tr(),
         bodyText: 'tutorSWMsg21'.tr(),
         fullscreen: true,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
         showPulseAnimation: true,
         onTapCallback: (area, next, close) => next(),
@@ -337,7 +337,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
         titleText: 'tutorSWTitle22'.tr(),
         bodyText: 'tutorSWMsg22'.tr(),
         fullscreen: true,
-        overlayColor: Colors.blueAccent.withOpacity(0.9),
+        overlayColor: Colors.blueAccent.withValues(alpha: 0.9),
         overlayShape: const CircleBorder(),
         overlayBehavior: HitTestBehavior.translucent,
         showPulseAnimation: true,
@@ -365,7 +365,7 @@ class _StopwatchOverlayState extends State<StopwatchOverlay> {
       height: 400,
       child: Material(
         child: Container(
-          color: Colors.blueAccent.withOpacity(0.9),
+          color: Colors.blueAccent.withValues(alpha: 0.9),
           child: SingleChildScrollView(
             child: Column(
               children: [

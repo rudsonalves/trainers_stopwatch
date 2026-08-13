@@ -271,7 +271,7 @@ class _UsersPageState extends State<UsersPage> {
               onPressed: _backPage,
               child: Icon(
                 Icons.arrow_back,
-                color: primary.withOpacity(.5),
+                color: primary.withValues(alpha: .5),
               ),
             ),
             const SizedBox(width: 18),
@@ -281,7 +281,7 @@ class _UsersPageState extends State<UsersPage> {
               onPressed: _addNewUser,
               child: Icon(
                 Icons.person_add,
-                color: primary.withOpacity(.5),
+                color: primary.withValues(alpha: .5),
               ),
             ),
           ],

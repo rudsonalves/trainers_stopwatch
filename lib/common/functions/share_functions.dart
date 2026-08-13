@@ -35,9 +35,11 @@ sealed class AppShare {
     final pdfFile = await BuildPdf.makeReport(user, trainings);
     final XFile xfile = XFile(pdfFile.path);
 
-    await Share.shareXFiles(
-      [xfile],
-      subject: 'Training',
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [xfile],
+        subject: 'Training',
+      ),
     );
   }
 

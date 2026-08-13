@@ -1,17 +1,17 @@
 // Copyright (C) 2024 Rudson Alves
-// 
+//
 // This file is part of trainers_stopwatch.
-// 
+//
 // trainers_stopwatch is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // trainers_stopwatch is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -36,7 +36,7 @@ class DismissibleContainers {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: color.withOpacity(0.3),
+        color: color.withValues(alpha: 0.3),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -45,13 +45,13 @@ class DismissibleContainers {
           children: [
             Icon(
               iconData,
-              color: enable ? null : primary.withOpacity(0.3),
+              color: enable ? null : primary.withValues(alpha: 0.3),
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: AppFontStyle.roboto16.copyWith(
-                color: enable ? null : primary.withOpacity(0.3),
+                color: enable ? null : primary.withValues(alpha: 0.3),
               ),
             ),
           ],
@@ -73,7 +73,7 @@ class DismissibleContainers {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: color.withOpacity(0.3),
+        color: color.withValues(alpha: 0.3),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -83,13 +83,13 @@ class DismissibleContainers {
             Text(
               label,
               style: AppFontStyle.roboto16.copyWith(
-                color: enable ? null : primary.withOpacity(0.3),
+                color: enable ? null : primary.withValues(alpha: 0.3),
               ),
             ),
             const SizedBox(width: 8),
             Icon(
               iconData,
-              color: enable ? null : primary.withOpacity(0.3),
+              color: enable ? null : primary.withValues(alpha: 0.3),
             ),
           ],
         ),

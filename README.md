@@ -1,5 +1,17 @@
 # Trainer's Stopwatch
 
+## Project documentation
+
+The current architecture, application flows, dependencies, and state management
+are documented in
+[`doc/arquitetura_atual.md`](doc/arquitetura_atual.md).
+
+The proposed incremental migration to MVVM, keeping BLoC for the stopwatch core,
+is documented in
+[`doc/plano_reestruturacao_mvvm.md`](doc/plano_reestruturacao_mvvm.md).
+
+Implementation increments are tracked in [`doc/backlog`](doc/backlog/README.md).
+
 The **Trainer's Stopwatch** app leverages the **Flutter** framework and the **Bloc (Business Logic Component)** pattern to manage the stopwatch's state and facilitate the implementation of complex functionalities. The structure based on **events** and **states** allows for robust control logic, which is essential for ensuring the stopwatch's accuracy under various conditions.
 
 ## Technical Implementation

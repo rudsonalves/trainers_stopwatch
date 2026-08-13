@@ -197,7 +197,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: currentColor.value.withOpacity(0.2),
+                      color: currentColor.value.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Center(

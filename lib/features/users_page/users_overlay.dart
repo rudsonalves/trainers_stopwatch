@@ -43,7 +43,7 @@ class _UsersOverlayState extends State<UsersOverlay> {
   }
 
   void initSteps() {
-    final baseColor = Colors.green.withOpacity(0.9);
+    final baseColor = Colors.green.withValues(alpha: 0.9);
 
     steps = [
       OnboardingStep(
