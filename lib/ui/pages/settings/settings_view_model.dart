@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '/core/result/command.dart';
+import '/common/adapters/legacy_settings_sink.dart';
 import '/data/repositories/settings/settings_repository.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/domain/common/training/units/distance_unit.dart';
@@ -10,6 +11,7 @@ import 'models/settings_form_data.dart';
 final class SettingsViewModel extends ChangeNotifier {
   final SettingsRepository _repository;
   final AppAppearanceState _appearanceState;
+  final LegacySettingsSink _legacySettings;
 
   late final Command0<Settings> loadCommand;
   late final Command1<Unit, SettingsFormData?> saveCommand;
@@ -20,8 +22,10 @@ final class SettingsViewModel extends ChangeNotifier {
   SettingsViewModel({
     required SettingsRepository repository,
     required AppAppearanceState appearanceState,
+    required LegacySettingsSink legacySettings,
   })  : _repository = repository,
-        _appearanceState = appearanceState {
+        _appearanceState = appearanceState,
+        _legacySettings = legacySettings {
     final current = repository.current;
     if (current != null) {
       _state = SettingsFormData.fromDomain(current);
@@ -62,6 +66,7 @@ final class SettingsViewModel extends ChangeNotifier {
     final settings = result.value!;
     _state = SettingsFormData.fromDomain(settings);
     _appearanceState.synchronize(settings);
+    _legacySettings.synchronize(settings);
     notifyListeners();
     return Success(settings);
   }
@@ -117,6 +122,8 @@ final class SettingsViewModel extends ChangeNotifier {
         _restoreLastPersisted();
         return Failure(result.error!);
       }
+
+      _legacySettings.synchronize(domain.value!);
 
       final pending = _pendingState;
       if (pending == null) return const Success(unit);

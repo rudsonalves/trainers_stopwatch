@@ -50,6 +50,7 @@ class UserController {
   Future<void> setImage(String imagePath) async {
     final originFile = File(imagePath);
     final fileName = p.basename(imagePath);
+    // Legacy settings bridge; replace with an injected path service in 005.
     final destinyPath = AppSettings.instance.imagePath;
     File? oldImageFile;
 

@@ -21,11 +21,15 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../data/repositories/settings/settings_repository.dart';
+import '../../domain/common/settings/models/settings.dart';
+import '../../ui/app/app_appearance_state.dart';
+import '../adapters/legacy_settings_sink.dart';
 import '../adapters/settings_domain_adapter.dart';
 import '../constants.dart';
 import '../models/settings_model.dart';
 
-class AppSettings extends SettingsModel {
+/// Temporary adapter for consumers migrated in backlogs 005, 007 and 010.
+class AppSettings extends SettingsModel implements LegacySettingsSink {
   AppSettings._();
   static final _instance = AppSettings._();
   static AppSettings get instance => _instance;
@@ -33,24 +37,23 @@ class AppSettings extends SettingsModel {
   late final String _imagePath;
   late final Directory _appDocDir;
   late final SettingsRepository _repository;
+  late final AppAppearanceState _appearanceState;
 
-  late final ValueNotifier<Brightness> _brightness;
-  late final ValueNotifier<Contrast> _contrast;
+  final ValueNotifier<Brightness> _brightness = ValueNotifier(Brightness.dark);
 
   String get imagePath => _imagePath;
   ValueNotifier<Brightness> get brightnessMode => _brightness;
-  ValueNotifier<Contrast> get contrastMode => _contrast;
 
-  Future<void> init(SettingsRepository repository) async {
+  Future<void> init(
+    SettingsRepository repository,
+    AppAppearanceState appearanceState,
+  ) async {
     _repository = repository;
+    _appearanceState = appearanceState;
     // Load app Settings
     final result = await _repository.load();
     if (result.isFailure) throw result.error!;
-    final settings = result.value!.toLegacy();
-    copy(settings);
-    // Update Brightness & Contrast
-    _brightness = ValueNotifier<Brightness>(settings.brightness);
-    _contrast = ValueNotifier<Contrast>(settings.contrast);
+    synchronize(result.value!);
 
     // Start app paths
     _appDocDir = await getApplicationDocumentsDirectory();
@@ -62,33 +65,38 @@ class AppSettings extends SettingsModel {
     }
   }
 
-  void setContrast(Contrast contrast) {
-    _contrast.value = contrast;
-    this.contrast = contrast;
-    update();
-  }
-
-  void toggleBrightnessMode() {
-    _brightness.value = _brightness.value == Brightness.dark
+  Future<void> toggleBrightnessMode() async {
+    final nextBrightness = _brightness.value == Brightness.dark
         ? Brightness.light
         : Brightness.dark;
-    brightness = _brightness.value;
-    update();
+    final legacy = SettingsModel(
+      id: id,
+      splitLength: splitLength,
+      lapLength: lapLength,
+      lengthUnit: lengthUnit,
+      brightness: nextBrightness,
+      contrast: contrast,
+      language: language,
+      mSecondRefresh: mSecondRefresh,
+    );
+    final settings = legacy.toDomain();
+    if (settings.isFailure) throw settings.error!;
+    final result = await _repository.update(settings.value!);
+    if (result.isFailure) throw result.error!;
+    synchronize(settings.value!);
+    _appearanceState.synchronize(settings.value!);
   }
 
   void dispose() {
     _brightness.dispose();
-    _contrast.dispose();
   }
 
-  void setBrightnessMode(Brightness brightness) {
-    _brightness.value = brightness;
-  }
-
-  Future<void> update() async {
-    final settings = toDomain();
-    if (settings.isFailure) throw settings.error!;
-    final result = await _repository.update(settings.value!);
-    if (result.isFailure) throw result.error!;
+  @override
+  void synchronize(Settings settings) {
+    final legacy = settings.toLegacy();
+    copy(legacy);
+    if (_brightness.value != legacy.brightness) {
+      _brightness.value = legacy.brightness;
+    }
   }
 }

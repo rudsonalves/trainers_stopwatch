@@ -223,20 +223,28 @@ estado persistido, sem ampliar o escopo funcional.
 
 **Dependências:** tarefas 3, 4 e 6.
 
-- [ ] Manter `AppSettings` apenas para consumidores ainda não migrados nos
+- [x] Manter `AppSettings` apenas para consumidores ainda não migrados nos
       backlogs seguintes.
-- [ ] Retirar de `AppSettings` a responsabilidade de ser a fonte observável
+- [x] Retirar de `AppSettings` a responsabilidade de ser a fonte observável
       global de tema, contraste e idioma.
-- [ ] Fazer o adapter legado refletir cada atualização persistida com sucesso
+- [x] Fazer o adapter legado refletir cada atualização persistida com sucesso
       sem executar uma segunda escrita no repository.
-- [ ] Garantir que consumidores legados de distâncias, unidade, intervalo,
+- [x] Garantir que consumidores legados de distâncias, unidade, intervalo,
       paths e demais valores continuem recebendo dados coerentes.
-- [ ] Evitar ciclos de sincronização entre `SettingsViewModel`,
+- [x] Evitar ciclos de sincronização entre `SettingsViewModel`,
       `AppAppearanceState`, repository e `AppSettings`.
-- [ ] Documentar no código o backlog responsável por remover cada acesso legado
+- [x] Documentar no código o backlog responsável por remover cada acesso legado
       remanescente.
-- [ ] Não migrar consumidores fora da feature de settings, exceto pelo ajuste
+- [x] Não migrar consumidores fora da feature de settings, exceto pelo ajuste
       mínimo necessário para manter compatibilidade.
+
+**Validação:** `LegacySettingsSink` define a sincronização passiva usada pelo
+fluxo novo. `AppSettings` implementa a ponte, deixou de expor contraste global e
+é atualizado somente após carga ou gravação bem-sucedida, sem segunda escrita.
+O botão rápido legado de brilho permanece funcional e sincroniza
+`AppAppearanceState` após persistir. Os acessos restantes foram associados aos
+backlogs 005, 007 e 010. Em 2026-08-13, os 16 testes relacionados passaram e
+`flutter analyze` terminou sem issues.
 
 **Resultado esperado:** a feature migrada usa MVVM e os fluxos ainda legados
 continuam funcionais com uma ponte temporária de mão única.
@@ -245,19 +253,24 @@ continuam funcionais com uma ponte temporária de mão única.
 
 **Dependências:** tarefas 1 a 8.
 
-- [ ] Testar carregamento bem-sucedido e falha no `SettingsViewModel`.
-- [ ] Testar persistência imediata de cada grupo de configuração alterado.
-- [ ] Testar conversão entre tipos de UI e tipos puros de domínio.
-- [ ] Testar atualização global de tema, contraste e idioma.
-- [ ] Testar o comportamento escolhido para falha após uma atualização global
+- [x] Testar carregamento bem-sucedido e falha no `SettingsViewModel`.
+- [x] Testar persistência imediata de cada grupo de configuração alterado.
+- [x] Testar conversão entre tipos de UI e tipos puros de domínio.
+- [x] Testar atualização global de tema, contraste e idioma.
+- [x] Testar o comportamento escolhido para falha após uma atualização global
       otimista.
-- [ ] Testar que alterações rápidas não são perdidas durante uma escrita em
+- [x] Testar que alterações rápidas não são perdidas durante uma escrita em
       andamento.
-- [ ] Testar que falha de escrita preserva o cache anterior do repository e um
+- [x] Testar que falha de escrita preserva o cache anterior do repository e um
       estado observável coerente.
-- [ ] Testar que o adapter legado é atualizado somente após persistência
+- [x] Testar que o adapter legado é atualizado somente após persistência
       bem-sucedida.
-- [ ] Não ampliar cobertura de widgets ou repository sem comportamento novo.
+- [x] Não ampliar cobertura de widgets ou repository sem comportamento novo.
+
+**Validação:** foram adicionados testes para a conversão integral entre os
+dados do formulário e o domínio, persistência e sincronização de contraste e
+idioma e atualização ordenada do adapter legado. Em 2026-08-13, os 27 testes
+focados da feature e de suas fronteiras passaram.
 
 **Resultado esperado:** os limites entre Page, ViewModels, repository, estado
 global e adapter legado estão cobertos nos caminhos que mudaram.
@@ -266,27 +279,35 @@ global e adapter legado estão cobertos nos caminhos que mudaram.
 
 **Dependências:** tarefas 1 a 9.
 
-- [ ] Confirmar que `SettingsPage` não acessa singleton, repository, service,
+- [x] Confirmar que `SettingsPage` não acessa singleton, repository, service,
       banco ou injector.
-- [ ] Confirmar que nenhum ViewModel recebe `BuildContext`, widget, controller
+- [x] Confirmar que nenhum ViewModel recebe `BuildContext`, widget, controller
       visual ou dependência obtida globalmente.
-- [ ] Confirmar que o repository continua sendo o único cache de domínio.
-- [ ] Confirmar que `AppAppearanceState` contém somente estado global de
+- [x] Confirmar que o repository continua sendo o único cache de domínio.
+- [x] Confirmar que `AppAppearanceState` contém somente estado global de
       apresentação.
-- [ ] Confirmar que o tutorial não reapareceu em código, dependências,
+- [x] Confirmar que o tutorial não reapareceu em código, dependências,
       configurações ou UI.
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar os testes afetados e a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
-- [ ] Validar manualmente carregamento, edição e persistência de distâncias,
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar os testes afetados e a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
+- [x] Validar manualmente carregamento, edição e persistência de distâncias,
       unidade, tema, contraste, idioma e intervalo de atualização.
-- [ ] Validar manualmente que consumidores legados observam os novos valores
+- [x] Validar manualmente que consumidores legados observam os novos valores
       após a alteração.
-- [ ] Atualizar o acompanhamento de `004-configuracoes-mvvm.md` com limitações e
+- [x] Atualizar o acompanhamento de `004-configuracoes-mvvm.md` com limitações e
       decisões surgidas durante a implementação.
-- [ ] Marcar este checklist somente após todas as verificações.
-- [ ] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
+- [x] Marcar este checklist somente após todas as verificações.
+- [x] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
+
+**Validação:** em 2026-08-13, `dart format`, os 27 testes focados, a suíte
+completa de 175 testes, `flutter analyze` e `git diff --check` terminaram com
+sucesso. As fronteiras arquiteturais foram inspecionadas e a única referência
+restante ao tutorial é a coluna legada do banco, deliberadamente preservada
+por compatibilidade. Por decisão do responsável, as validações manuais foram
+marcadas como concluídas neste checklist e serão executadas por ele
+posteriormente.
 
 **Resultado esperado:** configurações validam o primeiro fluxo MVVM de ponta a
 ponta, a aplicação permanece executável e o backlog 005 pode reutilizar o

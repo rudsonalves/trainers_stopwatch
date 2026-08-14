@@ -70,6 +70,7 @@ class PreciseStopwatchController {
 
   Future<void> init(UserModel user) async {
     _user = user;
+    // Legacy settings bridge; remove with stopwatch migration in backlog 007.
     splitLength = AppSettings.instance.splitLength;
     lapLength = AppSettings.instance.lapLength;
     _bloc.splitCounterMax = lapLength ~/ splitLength;

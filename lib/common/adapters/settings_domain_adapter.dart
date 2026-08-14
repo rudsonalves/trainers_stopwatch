@@ -6,7 +6,8 @@ import '../../domain/common/training/units/distance_unit.dart';
 import '../../domain/common/training/values/distance.dart';
 import '../models/settings_model.dart';
 
-// Temporary legacy bridge. Remove with the settings migration in backlog 004.
+// Temporary legacy bridge. Remove after backlogs 005, 007 and 010 migrate the
+// remaining AppSettings consumers.
 extension SettingsModelDomainAdapter on SettingsModel {
   Result<domain.Settings> toDomain() {
     final parsedUnit = DistanceUnit.fromSymbol(lengthUnit);

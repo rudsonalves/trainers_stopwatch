@@ -45,7 +45,7 @@ class DatabaseProvider {
       if (databaseResult.isFailure) return Failure(databaseResult.error!);
 
       try {
-        await _appSettings.init(_settingsRepository);
+        await _appSettings.init(_settingsRepository, _appearanceState);
         _appearanceState.synchronize(_settingsRepository.current!);
       } on AppError {
         rethrow;

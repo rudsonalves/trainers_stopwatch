@@ -64,7 +64,11 @@ Nenhuma.
 
 ## Acompanhamento
 
-**Estado:** Em execução — tarefas organizadas em
+**Estado:** Concluído em 2026-08-13 — tarefas e validações registradas em
 [`004-configuracoes-mvvm-tasks.md`](004-configuracoes-mvvm-tasks.md).
+
+As validações automatizadas foram concluídas. Por decisão do responsável, as
+validações manuais foram consideradas concluídas para o fechamento do backlog e
+serão executadas posteriormente por ele.
 
 **Próximo backlog:** `005-usuarios-e-imagens.md`.

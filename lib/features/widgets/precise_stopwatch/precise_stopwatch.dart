@@ -47,6 +47,7 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
   late final PreciseStopwatchController _controller;
   final ValueNotifier<int?> maxLaps = ValueNotifier<int?>(null);
   final trainingColor = ValueNotifier<Color>(primaryColor);
+  // Legacy settings bridge; remove with stopwatch migration in backlog 007.
   final app = AppSettings.instance;
 
   String name = 'Name';

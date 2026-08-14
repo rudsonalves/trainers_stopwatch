@@ -44,6 +44,7 @@ class StopWatchPage extends StatefulWidget {
 
 class _StopWatchPageState extends State<StopWatchPage> {
   late final _controller = widget.controller;
+  // Legacy settings bridge; remove with stopwatch migration in backlog 007.
   final app = AppSettings.instance;
   final _messageList = <MessagesModel>[];
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();

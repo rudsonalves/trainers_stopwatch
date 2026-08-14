@@ -37,6 +37,7 @@ class SpeedUnitRow extends StatefulWidget {
 }
 
 class _SpeedUnitRowState extends State<SpeedUnitRow> {
+  // Legacy settings bridge; remove with stopwatch/training UI migration in 007.
   final app = AppSettings.instance;
 
   @override

@@ -38,6 +38,7 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Legacy settings bridge; remove during UI consolidation in backlog 010.
     final app = AppSettings.instance;
     final colorScheme = Theme.of(context).colorScheme;
 

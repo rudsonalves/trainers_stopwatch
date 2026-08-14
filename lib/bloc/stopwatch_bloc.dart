@@ -84,6 +84,7 @@ class StopwatchBloc extends Bloc<StopwatchEvents, StopwatchState> {
 
     _timer = Timer.periodic(
         Duration(
+          // Legacy settings bridge; remove with stopwatch migration in 007.
           milliseconds: AppSettings.instance.mSecondRefresh,
         ), (timer) {
       _durationTrainingSignal.value = DateTime.now().difference(_startTime!);

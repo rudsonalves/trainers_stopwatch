@@ -1,5 +1,69 @@
 # Changelog
 
+## 2026/08/14 - bkl004/task-08
+
+This change completes the settings MVVM backlog by introducing a one-way compatibility bridge between the new settings flow and consumers that still depend on `AppSettings`.
+
+It updates dependency wiring, persistence synchronization, appearance handling, and validation coverage while documenting the remaining legacy access points and closing the associated backlog records.
+
+1. **`lib/common/adapters`**
+
+   * Added `LegacySettingsSink` as a temporary interface for synchronizing successfully loaded or persisted domain settings with legacy consumers.
+   * Updated the settings domain adapter documentation to associate its eventual removal with backlogs 005, 007, and 010.
+
+2. **`lib/common/singletons/app_settings.dart`**
+
+   * Refactored `AppSettings` into an implementation of `LegacySettingsSink`.
+   * Removed its global contrast notifier and direct generic update methods, leaving appearance ownership with `AppAppearanceState`.
+   * Changed initialization to receive the appearance state and synchronize loaded domain settings through the compatibility bridge.
+   * Converted the legacy brightness toggle into an asynchronous persistence flow that updates legacy and global appearance state only after a successful repository write.
+   * Preserved legacy settings values and brightness notifications without triggering a second repository write.
+
+3. **Settings dependency and initialization flow**
+
+   * Registered `AppSettings` as the `LegacySettingsSink` implementation in `lib/core/config/dependencies.dart`.
+   * Injected the bridge into `SettingsViewModel`.
+   * Updated `DatabaseProvider` to initialize `AppSettings` with both the settings repository and `AppAppearanceState`.
+   * Standardized dependency imports to package-root paths.
+
+4. **`lib/ui/pages/settings/settings_view_model.dart`**
+
+   * Added the legacy settings sink as an explicit dependency.
+   * Synchronized legacy consumers after successful settings loads.
+   * Synchronized each successfully persisted update with the legacy adapter.
+   * Kept failed writes from changing the legacy settings cache.
+
+5. **Remaining legacy settings consumers**
+
+   * Documented the planned migration backlog beside remaining `AppSettings` usage in the stopwatch BLoC, stopwatch page, precise stopwatch components, training speed-unit UI, user image controller, and shared icon button.
+   * Associated stopwatch and training settings access with backlog 007, image-path access with backlog 005, and shared UI appearance access with backlog 010.
+
+6. **Settings conversion and synchronization tests**
+
+   * Added `settings_form_data_test.dart` to verify complete round-trip conversion between domain settings and UI form data, including distances, units, brightness, contrast, locale, and refresh interval.
+   * Added coverage ensuring invalid form values are rejected before persistence.
+   * Extended `settings_view_model_test.dart` with a fake legacy sink and assertions for load synchronization, successful persistence, contrast and locale changes, ordered rapid updates, and failed-write isolation.
+   * Updated dependency configuration tests to verify that `LegacySettingsSink` resolves to the registered `AppSettings` instance.
+
+7. **`doc/backlog/closed/004-configuracoes-mvvm*.md`**
+
+   * Moved the settings MVVM backlog and task checklist into the closed backlog folder.
+   * Marked the compatibility, testing, architectural, formatting, analysis, and validation tasks as completed.
+   * Recorded successful focused and full test runs, static analysis, formatting, and diff validation.
+   * Documented the decision to close the backlog while deferring the listed manual validation execution to the responsible maintainer.
+   * Updated the backlog status to completed on 2026-08-13.
+
+8. **`doc/backlog/README.md`**
+
+   * Updated backlog 004 to link to its closed document.
+   * Changed its status from dependency-based tracking to completed.
+
+### Conclusion
+
+The settings feature now completes its MVVM migration while maintaining one-way compatibility for consumers scheduled for later backlogs. Persisted settings consistently update both global appearance state and legacy consumers without duplicate writes or synchronization cycles.
+
+The implementation is covered across conversion, persistence, dependency registration, synchronization, and failure behavior, and backlog 004 is formally closed with its validation results recorded.
+
 ## 2026/08/13 - bkl004/task-07
 
 This change advances the settings feature to an MVVM architecture with explicit dependency injection, observable global appearance state, immediate persistence, and controlled failure handling.
