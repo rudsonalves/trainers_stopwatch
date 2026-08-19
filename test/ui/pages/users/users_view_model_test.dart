@@ -133,6 +133,21 @@ void main() {
     expect(viewModel.lastError, isNull);
   });
 
+  test('preserves loaded cache when a later reload fails', () async {
+    await viewModel.load();
+    final cached = viewModel.users;
+    repository.loadError = const AppError(
+      code: AppErrorCode.storageReadFailed,
+      message: 'reload failed',
+    );
+
+    await viewModel.load();
+
+    expect(viewModel.loadCommand.isFailure, isTrue);
+    expect(viewModel.users, same(cached));
+    expect(viewModel.users.single.name, 'Ana');
+  });
+
   test('can explicitly clear the last error', () async {
     repository.loadError = const AppError(
       code: AppErrorCode.storageReadFailed,

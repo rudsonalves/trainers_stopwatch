@@ -9,9 +9,14 @@ import 'package:trainers_stopwatch/data/repositories/trainings/training_reposito
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
 import 'package:trainers_stopwatch/data/services/database/database_provider.dart';
 import 'package:trainers_stopwatch/data/services/database/database_service.dart';
+import 'package:trainers_stopwatch/data/services/images/image_compression_service.dart';
+import 'package:trainers_stopwatch/data/services/images/image_selection_service.dart';
+import 'package:trainers_stopwatch/data/services/images/user_image_storage_service.dart';
 import 'package:trainers_stopwatch/data/services/settings/settings_service.dart';
+import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
 import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/settings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/users/users_view_model_factory.dart';
 
 void main() {
   test('setupDependencies is idempotent and resolves the bootstrap graph', () {
@@ -26,7 +31,14 @@ void main() {
     final appearanceState = injector.get<AppAppearanceState>();
     final settingsViewModel = injector.get<SettingsViewModel>();
     final legacySettings = injector.get<LegacySettingsSink>();
+    final imageSelection = injector.get<ImageSelectionService>();
+    final imageCompression = injector.get<ImageCompressionService>();
+    final imageStorage = injector.get<UserImageStorageService>();
+    final usersUseCase = injector.get<UsersUseCase>();
+    final usersViewModelFactory = injector.get<UsersViewModelFactory>();
+    final usersViewModel = usersViewModelFactory.create(const [7]);
     addTearDown(settingsViewModel.dispose);
+    addTearDown(usersViewModel.dispose);
 
     setupDependencies();
     final bootstrap = injector.get<Bootstrap>();
@@ -44,5 +56,18 @@ void main() {
     addTearDown(nextSettingsViewModel.dispose);
     expect(nextSettingsViewModel, isNot(same(settingsViewModel)));
     expect(legacySettings, same(injector.get<AppSettings>()));
+    expect(injector.get<ImageSelectionService>(), same(imageSelection));
+    expect(injector.get<ImageCompressionService>(), same(imageCompression));
+    expect(injector.get<UserImageStorageService>(), same(imageStorage));
+    expect(injector.get<UsersUseCase>(), isNot(same(usersUseCase)));
+    expect(
+      injector.get<UsersViewModelFactory>(),
+      same(usersViewModelFactory),
+    );
+    final nextUsersViewModel = usersViewModelFactory.create(const [8]);
+    addTearDown(nextUsersViewModel.dispose);
+    expect(nextUsersViewModel, isNot(same(usersViewModel)));
+    expect(usersViewModel.activeUserIds, {7});
+    expect(nextUsersViewModel.activeUserIds, {8});
   });
 }

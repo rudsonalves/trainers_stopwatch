@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
 import 'package:trainers_stopwatch/data/services/images/image_compression_service.dart';
 import 'package:trainers_stopwatch/data/services/images/image_selection_service.dart';
 import 'package:trainers_stopwatch/data/services/images/user_image_storage_service.dart';
+import 'package:trainers_stopwatch/data/services/images/user_image_storage_service_impl.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/models/image_preparation.dart';
 import 'package:trainers_stopwatch/domain/models/image_selection.dart';
@@ -172,6 +175,47 @@ void main() {
     expect(storage.events, ['promote', 'clean:$_storedReference']);
   });
 
+  test('successful update removes old file and keeps new referenced file',
+      () async {
+    final directory = await Directory.systemTemp.createTemp('usecase-images-');
+    addTearDown(() => directory.delete(recursive: true));
+    final imageDirectory = Directory('${directory.path}/users_images');
+    await imageDirectory.create();
+    final oldImage = File('${imageDirectory.path}/old.jpg');
+    final temporaryImage = File('${directory.path}/prepared.jpg');
+    await oldImage.writeAsString('old');
+    await temporaryImage.writeAsString('new');
+    final repository = _UserRepositoryFake(
+      initialUsers: [
+        User(
+          id: 1,
+          name: 'Ana',
+          email: 'ana@example.com',
+          photoReference: oldImage.path,
+        ),
+      ],
+    );
+    final storage = UserImageStorageServiceImpl(
+      documentsDirectoryProvider: () async => directory,
+      clock: () => DateTime.fromMicrosecondsSinceEpoch(321),
+    );
+    final useCase = _useCase(repository, storage);
+
+    final result = await useCase.update(
+      user: repository.users.single,
+      preparedImage: PreparedUserImage(
+        temporaryReference: temporaryImage.path,
+        fileName: 'new.jpg',
+      ),
+    );
+
+    final newReference = repository.users.single.photoReference!;
+    expect(result.isSuccess, isTrue);
+    expect(await oldImage.exists(), isFalse);
+    expect(newReference, endsWith('321-new.jpg'));
+    expect(await File(newReference).readAsString(), 'new');
+  });
+
   test('deletes from repository before cleaning unreferenced images', () async {
     final events = <String>[];
     final repository = _UserRepositoryFake(externalEvents: events)
@@ -223,7 +267,12 @@ final class _UserRepositoryFake implements UserRepository {
   User? inserted;
   User? updated;
 
-  _UserRepositoryFake({this.externalEvents});
+  _UserRepositoryFake({
+    this.externalEvents,
+    List<User>? initialUsers,
+  }) {
+    if (initialUsers != null) _users = List.of(initialUsers);
+  }
 
   @override
   List<User> get users => _users;
@@ -265,7 +314,14 @@ final class _UserRepositoryFake implements UserRepository {
   @override
   AsyncResult<List<String>> readPhotoReferences() async {
     externalEvents?.add('readReferences');
-    return Success(photoReferences);
+    return Success(
+      photoReferences.isNotEmpty
+          ? photoReferences
+          : _users
+              .map((user) => user.photoReference)
+              .nonNulls
+              .toList(growable: false),
+    );
   }
 }
 

@@ -9,7 +9,7 @@ domínio e os repositories novos.
 
 - `002-dominio-puro.md`;
 - [`003-persistencia-e-repositories.md`](closed/003-persistencia-e-repositories.md), concluído;
-- `005-usuarios-e-imagens.md`.
+- [`005-usuarios-e-imagens.md`](closed/005-usuarios-e-imagens.md), concluído.
 
 ## Escopo
 

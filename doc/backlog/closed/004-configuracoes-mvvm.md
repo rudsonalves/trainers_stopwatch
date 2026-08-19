@@ -71,4 +71,4 @@ As validações automatizadas foram concluídas. Por decisão do responsável, a
 validações manuais foram consideradas concluídas para o fechamento do backlog e
 serão executadas posteriormente por ele.
 
-**Próximo backlog:** `005-usuarios-e-imagens.md`.
+**Próximo backlog:** [`005-usuarios-e-imagens.md`](005-usuarios-e-imagens.md).

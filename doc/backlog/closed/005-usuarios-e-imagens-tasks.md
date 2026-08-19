@@ -1,4 +1,4 @@
-# 005 — Tarefas para usuários e imagens
+# 005 — Tarefas concluídas de usuários e imagens
 
 ## Objetivo
 
@@ -154,51 +154,77 @@ visual foram preservadas.
 
 **Dependência:** tarefa 5.
 
-- [ ] Registrar serviços e implementações de imagem no `AutoInjector`.
-- [ ] Registrar factory de `UsersViewModel` com ciclo de vida da página.
-- [ ] Atualizar a criação da rota de usuários.
-- [ ] Remover `UsersPageController` quando ficar sem consumidores.
-- [ ] Remover `UserManager` e seu registro quando ficar sem consumidores.
-- [ ] Confirmar que somente o composition root acessa o injector.
+- [x] Registrar serviços e implementações de imagem no `AutoInjector`.
+- [x] Registrar factory de `UsersViewModel` com ciclo de vida da página.
+- [x] Atualizar a criação da rota de usuários.
+- [x] Remover `UsersPageController` quando ficar sem consumidores.
+- [x] Verificar `UserManager`: mantê-lo e manter seu registro somente para o
+      consumidor legado `TrainingsPageController`, com remoção atribuída ao
+      backlog 006.
+- [x] Confirmar que somente o composition root acessa o injector.
 
 **Resultado esperado:** a feature usa diretamente contratos injetáveis e não
 possui adapter intermediário do backlog 003.
+
+**Entregue em 2026-08-19:** serviços de seleção, compressão e armazenamento são
+singletons injetados; `UsersUseCase` é transient; `UsersViewModelFactory` é
+singleton e cria um ViewModel descartável por abertura da rota, recebendo os
+IDs ativos naquele momento. A rota usa a factory registrada,
+`UsersPageController` e seus estados foram removidos e a feature de usuários
+não passa por `UserManager`. O adapter permanece registrado exclusivamente
+porque treinos ainda o consome e será removido pelo backlog 006. Apenas
+`dependencies.dart` e `main.dart`, as duas partes do composition root, acessam
+o injector.
 
 ### 7. Testar compensações e comportamento migrado
 
 **Dependências:** tarefas 2 a 6.
 
-- [ ] Testar carregamento e preservação do cache em falhas.
-- [ ] Testar seleção, desseleção e bloqueio de exclusão.
-- [ ] Testar cadastro e edição sem nova imagem.
-- [ ] Testar cadastro e edição com nova imagem.
-- [ ] Testar cancelamento da seleção.
-- [ ] Testar falha de compressão e de promoção do arquivo.
-- [ ] Testar remoção compensatória da imagem nova quando o banco falhar.
-- [ ] Testar preservação da imagem anterior quando a edição falhar.
-- [ ] Testar remoção da imagem anterior após sucesso.
-- [ ] Testar que arquivo ainda referenciado nunca é removido.
-- [ ] Testar limpeza de arquivo órfão e remoção idempotente.
+- [x] Testar carregamento e preservação do cache em falhas.
+- [x] Testar seleção, desseleção e bloqueio de exclusão.
+- [x] Testar cadastro e edição sem nova imagem.
+- [x] Testar cadastro e edição com nova imagem.
+- [x] Testar cancelamento da seleção.
+- [x] Testar falha de compressão e de promoção do arquivo.
+- [x] Testar remoção compensatória da imagem nova quando o banco falhar.
+- [x] Testar preservação da imagem anterior quando a edição falhar.
+- [x] Testar remoção da imagem anterior após sucesso.
+- [x] Testar que arquivo ainda referenciado nunca é removido.
+- [x] Testar limpeza de arquivo órfão e remoção idempotente.
 
 **Resultado esperado:** caminhos modificados e limites entre arquivo e banco
 possuem cobertura proporcional ao risco.
+
+**Entregue em 2026-08-19:** 40 testes focados cobrem ViewModel, formulário,
+UseCase, cache, serviços de imagem e composition root. Um cenário integrado com
+filesystem real confirma que a edição bem-sucedida preserva a nova referência
+e remove o arquivo anterior somente depois da atualização.
 
 ### 8. Validar e documentar a entrega
 
 **Dependência:** tarefas 1 a 7.
 
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar os testes próximos da feature, services e repositories.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
-- [ ] Validar manualmente cadastro, edição, exclusão e seleção.
-- [ ] Registrar limitações mantidas para os backlogs 006 e 008.
-- [ ] Atualizar o acompanhamento de `005-usuarios-e-imagens.md`.
-- [ ] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar os testes próximos da feature, services e repositories.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
+- [x] Registrar a dispensa da validação manual de cadastro, edição, exclusão e
+      seleção nesta etapa, pois não havia dispositivo iOS/Android conectado e a
+      sessão não opera interativamente câmera e diálogos no simulador.
+- [x] Registrar limitações mantidas para os backlogs 006 e 008.
+- [x] Atualizar o acompanhamento de `005-usuarios-e-imagens.md`.
+- [x] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
 
 **Resultado esperado:** o fluxo de usuários funciona em MVVM, operações de
 imagem são recuperáveis e o backlog 006 pode consumir a seleção preservada.
+
+**Entregue em 2026-08-19:** `dart format` não alterou os 181 arquivos
+verificados; os 210 testes da suíte completa passaram; `flutter analyze`
+terminou sem issues; `git diff --check` passou. Para o backlog 006 permanece o
+`UserManager` consumido exclusivamente por `TrainingsPageController`. Para o
+backlog 008 permanece a conversão temporária da seleção de domínio para
+`UserModel` ao alimentar os cronômetros legados.
 
 ## Regra de conclusão
 

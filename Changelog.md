@@ -1,5 +1,62 @@
 # Changelog
 
+## 2026/08/19 - bkl005/task-08
+
+This change completes the users and images backlog, finalizing its MVVM integration, dependency registration, and automated validation. The composition root is reorganized into focused registration modules, the legacy users controller is removed, and user ViewModels are now created through an injected factory.
+
+Backlog documentation is closed with delivery evidence, transferred limitations, validation results, and corrected navigation links.
+
+1. **`doc/backlog/`**
+
+   * Marked backlog 005 as completed in the backlog index and updated backlog 006 to reference the closed users and images documentation.
+   * Corrected links between completed backlogs and their successor documents.
+   * Moved the backlog 005 specification and task list into `doc/backlog/closed/`.
+   * Recorded completion of dependency registration, migration cleanup, automated tests, and delivery validation.
+   * Documented the deferred removal of `UserManager`, the temporary legacy `UserModel` conversion, and the reason manual mobile validation was waived.
+
+2. **`lib/core/config/dependencies.dart` and `lib/core/config/dependencies/`**
+
+   * Refactored the composition root into separate service, repository, use-case, ViewModel, and application dependency registration modules.
+   * Preserved the idempotent setup flow and centralized the final injector commit and stopwatch configuration.
+   * Registered image selection, compression, and storage services as singletons.
+   * Registered `UsersUseCase` as a transient dependency and `UsersViewModelFactory` as a singleton.
+   * Retained legacy managers and controllers required by training, history, stopwatch, database, and bootstrap flows.
+
+3. **Users page legacy controller**
+
+   * Removed `UsersPageController` and its state hierarchy after migrating user operations and image coordination to the MVVM-based users feature.
+   * Eliminated the controller’s direct image compression, filesystem cleanup, and `UserManager` coordination responsibilities.
+
+4. **`lib/ui/pages/users/users_view_model_factory.dart` and `lib/main.dart`**
+
+   * Added `UsersViewModelFactory` to create a fresh `UsersViewModel` and transient `UsersUseCase` for each users route opening.
+   * Passed the current active user IDs into each newly created ViewModel.
+   * Updated application startup to resolve the registered factory instead of constructing the users ViewModel and use case directly.
+
+5. **`lib/manager/user_manager.dart`**
+
+   * Updated the adapter documentation to clarify that `UserManager` remains only for the legacy training flow and is scheduled for removal in backlog 006.
+
+6. **`test/application/users/users_use_case_test.dart`**
+
+   * Added an integration-style filesystem test verifying that a successful user image update preserves the promoted image and removes the previous file.
+   * Extended the repository fake to accept initial users and derive stored photo references from its user cache when explicit references are absent.
+
+7. **`test/core/config/dependencies_test.dart`**
+
+   * Expanded composition-root coverage for image services, `UsersUseCase`, and `UsersViewModelFactory`.
+   * Verified singleton lifetimes for image services and the factory, transient lifetimes for the use case and generated ViewModels, and preservation of route-specific active user IDs.
+
+8. **`test/ui/pages/users/users_view_model_test.dart`**
+
+   * Added coverage confirming that a failed reload reports failure without discarding the previously loaded user cache.
+
+### Conclusion
+
+The users and images backlog is formally closed with its MVVM dependency graph integrated into the composition root and its obsolete page controller removed. Dependency lifetimes and per-route ViewModel creation are now explicitly managed and tested.
+
+The expanded tests validate cache preservation and real filesystem image replacement behavior, while remaining legacy training and stopwatch boundaries are documented for subsequent backlogs.
+
 ## 2026/08/19 - bkl005/task-03
 
 This change introduces a dedicated user use case that coordinates repository mutations with image selection, compression, promotion, rollback, and cleanup. It protects persisted user data and image references when storage or database operations fail.

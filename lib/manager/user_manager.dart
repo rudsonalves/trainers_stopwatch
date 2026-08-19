@@ -2,7 +2,7 @@ import '/common/adapters/user_domain_adapter.dart';
 import '/common/models/user_model.dart';
 import '/data/repositories/users/user_repository.dart';
 
-// Temporary UI adapter. Remove in backlog 005.
+// Temporary adapter for the legacy trainings flow. Remove in backlog 006.
 final class UserManager {
   final UserRepository _repository;
   bool _started = false;

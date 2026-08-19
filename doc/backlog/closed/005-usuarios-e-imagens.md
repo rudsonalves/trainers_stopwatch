@@ -5,14 +5,14 @@
 Migrar cadastro, edição, exclusão e seleção de atletas para MVVM, isolando banco,
 sistema de arquivos, seleção e compressão de imagens.
 
-As tarefas de implementação estão organizadas em
+As tarefas concluídas estão registradas em
 [`005-usuarios-e-imagens-tasks.md`](005-usuarios-e-imagens-tasks.md).
 
 ## Dependências
 
-- [`003-persistencia-e-repositories.md`](closed/003-persistencia-e-repositories.md), concluído;
+- [`003-persistencia-e-repositories.md`](003-persistencia-e-repositories.md), concluído;
 - padrão validado em
-  [`004-configuracoes-mvvm.md`](closed/004-configuracoes-mvvm.md), concluído.
+  [`004-configuracoes-mvvm.md`](004-configuracoes-mvvm.md), concluído.
 
 ## Escopo
 
@@ -127,6 +127,13 @@ absorver regras de coordenação entre fontes de dados ou compensações extensa
 
 ## Acompanhamento
 
-**Estado:** Em execução desde 2026-08-19.
+**Estado:** Concluído em 2026-08-19. As oito tasks foram entregues; os 40 testes
+focados e os 210 testes da suíte completa passaram, `flutter analyze` terminou
+sem issues e `git diff --check` passou. A validação manual foi dispensada para
+este encerramento por indisponibilidade de dispositivo móvel interativo.
 
-**Próximo backlog:** `006-treinos-e-historicos.md`.
+**Limitações transferidas:** `UserManager` permanece apenas para o fluxo legado
+de treinos e será removido no backlog 006. A seleção ainda é convertida para
+`UserModel` na fronteira com os cronômetros legados até o backlog 008.
+
+**Próximo backlog:** [`006-treinos-e-historicos.md`](../006-treinos-e-historicos.md).
