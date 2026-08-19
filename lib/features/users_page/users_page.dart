@@ -160,27 +160,30 @@ class _UsersPageState extends State<UsersPage> {
             builder: (context, child) => _buildBody(),
           ),
         ),
-        floatingActionButton: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FloatingActionButton(
-              heroTag: 'fab1',
-              onPressed: _backPage,
-              child: Icon(
-                Icons.arrow_back,
-                color: primary.withValues(alpha: .5),
+        floatingActionButton: ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, child) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FloatingActionButton(
+                heroTag: 'fab1',
+                onPressed: _backPage,
+                child: Icon(
+                  Icons.arrow_back,
+                  color: primary.withValues(alpha: .5),
+                ),
               ),
-            ),
-            const SizedBox(width: 18),
-            FloatingActionButton(
-              heroTag: 'fab2',
-              onPressed: viewModel.isLoading ? null : _addNewUser,
-              child: Icon(
-                Icons.person_add,
-                color: primary.withValues(alpha: .5),
+              const SizedBox(width: 18),
+              FloatingActionButton(
+                heroTag: 'fab2',
+                onPressed: viewModel.isLoading ? null : _addNewUser,
+                child: Icon(
+                  Icons.person_add,
+                  color: primary.withValues(alpha: .5),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

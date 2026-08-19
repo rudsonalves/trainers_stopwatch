@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026/08/19 - bkl005/task-08-ajuste
+
+This change updates the users page so its floating action buttons react to view-model state changes, ensuring the add-user action reflects the current loading status. It also refreshes several application dependencies.
+
+1. **`lib/features/users_page/users_page.dart`**
+
+   * Wrapped the floating action button group in a `ListenableBuilder` connected to the users page view model.
+   * Enabled reactive rebuilding of the add-user button when `isLoading` changes.
+   * Preserved the existing back-navigation and add-user actions, layout, icons, and hero tags.
+
+2. **`pubspec.yaml`**
+
+   * Updated `image_picker` from `1.0.7` to `1.2.3`.
+   * Updated `easy_localization` from `3.0.5` to `3.0.8`.
+   * Updated `url_launcher` from `6.3.0` to `6.3.2`.
+   * Updated `flutter_native_splash` from `2.4.1` to `2.4.8`.
+
+### Conclusion
+
+The users page now keeps its floating actions synchronized with loading-state notifications, while key Flutter dependencies have been upgraded to newer compatible versions.
+
 ## 2026/08/19 - bkl005/task-08
 
 This change completes the users and images backlog, finalizing its MVVM integration, dependency registration, and automated validation. The composition root is reorganized into focused registration modules, the legacy users controller is removed, and user ViewModels are now created through an injected factory.
