@@ -29,33 +29,44 @@ UI o acesso a banco, diretórios, arquivos, seleção e compressão de imagens.
 
 **Dependência:** backlog 003 concluído.
 
-- [ ] Definir contratos para selecionar, comprimir, promover e remover imagens.
-- [ ] Representar uma imagem preparada sem confundi-la com referência
+- [x] Definir contratos para selecionar, comprimir, promover e remover imagens.
+- [x] Representar uma imagem preparada sem confundi-la com referência
       persistida.
-- [ ] Definir caminhos temporário e definitivo sem expor `Directory` à UI.
-- [ ] Mapear falhas de seleção, compressão e arquivo para `AppError`
+- [x] Definir caminhos temporário e definitivo sem expor `Directory` à UI.
+- [x] Mapear falhas de seleção, compressão e arquivo para `AppError`
       distinguível.
-- [ ] Manter cancelamento do picker como resultado esperado, não como erro.
+- [x] Manter cancelamento do picker como resultado esperado, não como erro.
 
 **Resultado esperado:** operações de imagem possuem fronteiras injetáveis e não
 dependem de widgets ou controllers.
+
+**Entregue em 2026-08-19:** contratos separados de seleção, compressão e
+armazenamento; tipos distintos para seleção cancelada, imagem selecionada,
+imagem temporária preparada e imagem persistida; referências opacas sem tipos
+de filesystem; códigos próprios de `AppError` para seleção, compressão, leitura,
+escrita e remoção de imagens.
 
 ### 2. Implementar serviços de imagem em data
 
 **Dependência:** tarefa 1.
 
-- [ ] Encapsular `image_picker` em uma implementação de seleção.
-- [ ] Encapsular `flutter_image_compress` em uma implementação de compressão.
-- [ ] Encapsular `path_provider`, diretórios e arquivos em serviço de
+- [x] Encapsular `image_picker` em uma implementação de seleção.
+- [x] Encapsular `flutter_image_compress` em uma implementação de compressão.
+- [x] Encapsular `path_provider`, diretórios e arquivos em serviço de
       armazenamento.
-- [ ] Criar diretórios sob demanda.
-- [ ] Preparar imagens em localização temporária.
-- [ ] Promover imagens para nomes definitivos sem sobrescrever arquivo vigente.
-- [ ] Remover arquivos de forma idempotente quando apropriado.
-- [ ] Listar e limpar somente imagens não referenciadas.
+- [x] Criar diretórios sob demanda.
+- [x] Preparar imagens em localização temporária.
+- [x] Promover imagens para nomes definitivos sem sobrescrever arquivo vigente.
+- [x] Remover arquivos de forma idempotente quando apropriado.
+- [x] Listar e limpar somente imagens não referenciadas.
 
 **Resultado esperado:** nenhum fluxo de usuários fora de `data` acessa APIs de
 arquivo, diretório ou compressão.
+
+**Entregue em 2026-08-19:** implementações substituíveis para galeria e
+compressão, preparação em diretório temporário, armazenamento definitivo sob o
+diretório de documentos, nomes resistentes a colisão, promoção sem sobrescrita,
+remoção idempotente e limpeza por referências persistidas.
 
 ### 3. Implementar a coordenação de persistência e compensação
 

@@ -22,6 +22,9 @@ um repository dentro de sua implementação.
 - `users`: usuários e referências de imagem;
 - `trainings`: treinos por usuário;
 - `histories`: registros e transações de histórico.
+- `images`: seleção, compressão e armazenamento de imagens de usuários; seus
+  contratos expõem referências opacas e não entregam `XFile`, `File` ou
+  `Directory` aos consumidores.
 
 Cada diretório será criado junto da primeira classe concreta correspondente.
 Não haverá uma camada DAO adicional.

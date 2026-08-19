@@ -1,5 +1,70 @@
 # Changelog
 
+## 2026/08/19 - bkl005/task-02
+
+This change introduces injectable image selection, compression, and storage boundaries for user images. It separates picker output, prepared temporary images, and persisted references while keeping filesystem and plugin types confined to the data layer.
+
+The implementation adds collision-resistant temporary and permanent storage workflows, explicit image-related error codes, cleanup behavior, and test coverage for the new contracts and services.
+
+1. **`lib/core/result/errors/app_error_code.dart`**
+
+   * Added distinct error codes for image selection, compression, storage reads, storage writes, and deletion.
+   * Kept image-processing failures distinguishable from existing database storage failures.
+
+2. **`lib/data/services/images` contracts and models**
+
+   * Added interfaces for selecting, compressing, promoting, removing, and cleaning user images.
+   * Introduced separate value types for canceled selections, selected images, prepared temporary images, and stored images.
+   * Exposed opaque string references instead of leaking `XFile`, `File`, or `Directory` through service contracts.
+   * Added value equality for selected, prepared, and stored image models.
+
+3. **`lib/data/services/images/image_selection_service_impl.dart`**
+
+   * Added an injectable gallery-selection implementation backed by `image_picker`.
+   * Mapped valid picker output into the image selection model.
+   * Represented picker cancellation as a successful expected result.
+   * Validated picker references and mapped selection exceptions to dedicated application errors.
+
+4. **`lib/data/services/images/image_compression_service_impl.dart`**
+
+   * Added an injectable compression implementation backed by `flutter_image_compress`.
+   * Created a dedicated temporary image directory on demand.
+   * Generated collision-resistant target names using timestamps and numeric suffixes.
+   * Applied the configured image quality and minimum height during compression.
+   * Removed partial output after compression failures and mapped directory, inspection, and compression failures to appropriate image error codes.
+
+5. **`lib/data/services/images/user_image_storage_service_impl.dart`**
+
+   * Added permanent user-image storage under the application documents directory.
+   * Promoted prepared images by copying them to collision-resistant destinations without overwriting existing files.
+   * Removed temporary source files after successful promotion without invalidating the stored result when temporary cleanup fails.
+   * Added idempotent image removal.
+   * Added cleanup of unreferenced image files while preserving files matched by persisted reference names.
+   * Mapped missing sources and storage access, write, and deletion failures to dedicated application errors.
+
+6. **`test/data/services/images`**
+
+   * Added contract tests for cancellation semantics, model value equality, and distinct image error codes.
+   * Added selection tests covering picker mapping, cancellation, and exception handling.
+   * Added compression tests covering temporary output, compression parameters, and partial-file cleanup.
+   * Added storage tests covering promotion, temporary-file removal, collision handling, idempotent deletion, orphan cleanup, and missing prepared images.
+
+7. **`lib/data/services/README.md`**
+
+   * Documented the image services area and its responsibility for user-image selection, compression, and storage.
+   * Clarified that filesystem and picker-specific types remain hidden from consumers.
+
+8. **`doc/backlog/005-usuarios-e-imagens-tasks.md`**
+
+   * Marked the image contract and data-service tasks as completed.
+   * Documented the delivered boundaries, model distinctions, error mapping, temporary preparation, permanent storage, collision handling, idempotent removal, and reference-based cleanup.
+
+### Conclusion
+
+The change establishes a replaceable image-processing infrastructure with clear boundaries between selection, preparation, and persistence. User-image workflows now avoid exposing platform filesystem and picker types outside the data layer.
+
+Dedicated failure mapping, safe promotion and cleanup behavior, and focused automated tests provide a reliable foundation for subsequent user persistence coordination.
+
 ## 2026/08/19 - bkl005/task-01
 
 This change starts the users and images backlog by converting its open design questions into explicit architectural decisions and an ordered implementation plan. It defines how user selection, image lifecycle, persistence compensation, MVVM responsibilities, and optional UseCase coordination will be handled.
