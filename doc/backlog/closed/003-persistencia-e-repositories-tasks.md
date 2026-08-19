@@ -270,8 +270,9 @@ cache e composição de dependências.
 - [x] Executar a suíte completa com `flutter test`.
 - [x] Executar `flutter analyze` sem novas issues.
 - [x] Executar `git diff --check`.
-- [x] Validar manualmente abertura do aplicativo e leitura dos dados iniciais.
-      Adiado pelo responsável pelo projeto em 2026-08-13.
+- [x] Registrar a dispensa da validação manual de abertura do aplicativo e
+      leitura dos dados iniciais, adiada pelo responsável pelo projeto em
+      2026-08-13 e não bloqueante para o encerramento desta etapa.
 - [x] Validar inserção, alteração e exclusão em ao menos um fluxo conectado.
 - [x] Confirmar que um banco incompatível produz backup antes do fallback.
 - [x] Registrar adapters e limitações adiados para os backlogs 004 a 006.

@@ -8,7 +8,7 @@ domínio e os repositories novos.
 ## Dependências
 
 - `002-dominio-puro.md`;
-- `003-persistencia-e-repositories.md`;
+- [`003-persistencia-e-repositories.md`](closed/003-persistencia-e-repositories.md), concluído;
 - `005-usuarios-e-imagens.md`.
 
 ## Escopo
@@ -59,4 +59,3 @@ Nenhuma decisão adicional aprovada.
 
 **Próximos backlogs:** `007-nucleo-cronometro-bloc.md` e
 `009-relatorios-e-compartilhamento.md`.
-

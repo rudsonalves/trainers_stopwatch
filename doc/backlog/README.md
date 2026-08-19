@@ -14,7 +14,7 @@ migrado estiver funcional.
 | --- | --- | --- | --- |
 | 001 | [Fundação arquitetural](closed/001-fundacao-arquitetural.md) | core | concluído |
 | 002 | [Domínio puro](closed/002-dominio-puro.md) | domain | concluído |
-| 003 | [Persistência e repositories](003-persistencia-e-repositories.md) | data | 001 e 002 concluídos |
+| 003 | [Persistência e repositories](closed/003-persistencia-e-repositories.md) | data | concluído |
 | 004 | [Configurações em MVVM](closed/004-configuracoes-mvvm.md) | data + ui piloto | concluído |
 | 005 | [Usuários e imagens](005-usuarios-e-imagens.md) | data + ui | 003 e 004 |
 | 006 | [Treinos e históricos](006-treinos-e-historicos.md) | domain + data + ui | 003 e 005 |

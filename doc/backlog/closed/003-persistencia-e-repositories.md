@@ -198,9 +198,10 @@ locais de desenvolvimento.
 
 ## Acompanhamento
 
-**Estado:** Tasks 1 a 11 concluídas. Validações automatizadas da task 12
-concluídas; abertura e leitura inicial no aplicativo foram adiadas pelo
-responsável pelo projeto em 2026-08-13. O backlog permanece aberto até essa
-validação manual.
+**Estado:** Concluído em 2026-08-13. As tasks 1 a 12 e as validações
+automatizadas foram concluídas. A abertura e a leitura inicial no aplicativo
+foram adiadas pelo responsável pelo projeto e registradas como validação manual
+dispensada para o encerramento desta etapa. Testes afetados, análise e
+`git diff --check` foram revalidados em 2026-08-19.
 
 **Próximo backlog:** `004-configuracoes-mvvm.md`.

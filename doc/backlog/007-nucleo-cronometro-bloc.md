@@ -8,7 +8,9 @@ separando tempo decorrido, persistência e apresentação.
 ## Dependências
 
 - `002-dominio-puro.md`;
-- contratos de persistência de `003-persistencia-e-repositories.md`.
+- contratos de persistência de
+  [`003-persistencia-e-repositories.md`](closed/003-persistencia-e-repositories.md),
+  concluído.
 
 ## Escopo
 
@@ -68,4 +70,3 @@ tela, mas não mede o tempo.
 **Estado:** Planejado.
 
 **Próximo backlog:** `008-sessoes-multiplos-cronometros.md`.
-

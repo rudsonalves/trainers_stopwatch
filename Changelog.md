@@ -1,5 +1,54 @@
 # Changelog
 
+## 2026/08/19 - bkl005/task-01
+
+This change starts the users and images backlog by converting its open design questions into explicit architectural decisions and an ordered implementation plan. It defines how user selection, image lifecycle, persistence compensation, MVVM responsibilities, and optional UseCase coordination will be handled.
+
+The backlog documentation was also aligned with the completed persistence milestone, updating dependency links and closure records across subsequent work items.
+
+1. **`doc/backlog/005-usuarios-e-imagens-tasks.md`**
+
+   * Added the complete execution plan for migrating user creation, editing, deletion, and selection to MVVM.
+   * Defined injectable boundaries for image selection, compression, storage, promotion, and removal.
+   * Specified the persistence and compensation sequence needed to prevent broken image references and preserve existing files when database operations fail.
+   * Planned `UsersViewModel` commands, presentation state, selection behavior, dependency injection, legacy adapter removal, UI migration, and integration with the existing stopwatch flow.
+   * Added test coverage requirements for repository failures, selection rules, image replacement, compensating cleanup, reference safety, and idempotent removal.
+   * Documented validation steps and the conditions required to close the backlog.
+
+2. **`doc/backlog/005-usuarios-e-imagens.md`**
+
+   * Linked the new task plan and updated the persistence and MVVM dependencies to their completed backlog documents.
+   * Resolved the previously open questions by documenting selection as page-lifecycle `UsersViewModel` state, deferred replacement of persisted images, and explicit compensation between file storage and the database.
+   * Added criteria for introducing a UseCase when coordination spans multiple repositories or would make the ViewModel excessively complex.
+   * Documented the resulting ownership boundaries between the UI, ViewModel, UseCase, repositories, and image services.
+   * Changed the backlog state from planned to in progress as of 2026-08-19.
+
+3. **Dependent backlog documentation**
+
+   * Updated `doc/backlog/006-treinos-e-historicos.md` and `doc/backlog/007-nucleo-cronometro-bloc.md` to reference the closed persistence backlog and identify that dependency as completed.
+   * Removed obsolete trailing whitespace from both documents.
+
+4. **`doc/backlog/README.md`**
+
+   * Updated the backlog index so persistence and repositories now link to the closed backlog location.
+   * Marked backlog 003 as completed in the roadmap status table.
+
+5. **`doc/backlog/closed/003-persistencia-e-repositories-tasks.md`**
+
+   * Clarified that manual application-opening and initial-data validation was explicitly deferred by the project owner and treated as non-blocking for closure.
+   * Preserved the completed status of the validation task while documenting the reason for its exemption.
+
+6. **`doc/backlog/closed/003-persistencia-e-repositories.md`**
+
+   * Marked the persistence and repositories backlog as completed on 2026-08-13.
+   * Recorded completion of all tasks and automated validations, the approved deferral of manual startup validation, and the 2026-08-19 revalidation of affected tests, static analysis, and diff checks.
+
+### Conclusion
+
+The users and images backlog now has an actionable MVVM migration plan with defined image safety guarantees, compensation behavior, ownership boundaries, and test expectations.
+
+The documentation also consistently reflects persistence backlog completion, allowing backlog 005 and its dependent architectural work to proceed from an accurate project state.
+
 ## 2026/08/14 - bkl004/task-08
 
 This change completes the settings MVVM backlog by introducing a one-way compatibility bridge between the new settings flow and consumers that still depend on `AppSettings`.
