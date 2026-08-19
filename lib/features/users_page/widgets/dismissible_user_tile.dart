@@ -17,16 +17,16 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../common/models/user_model.dart';
+import '../../../domain/common/user/models/user.dart';
 import '../../widgets/common/generic_dialog.dart';
 import '../../widgets/common/user_card.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 
-class DismissibleUserTile extends StatefulWidget {
-  final UserModel user;
-  final void Function(bool, UserModel)? selectUser;
-  final Future<bool> Function(UserModel)? editFunction;
-  final Future<bool> Function(UserModel)? deleteFunction;
+class DismissibleUserTile extends StatelessWidget {
+  final User user;
+  final void Function(bool, User)? selectUser;
+  final Future<bool> Function(User)? editFunction;
+  final Future<bool> Function(User)? deleteFunction;
   final bool isChecked;
   final List<int> blockedUserIds;
 
@@ -40,31 +40,10 @@ class DismissibleUserTile extends StatefulWidget {
     required this.blockedUserIds,
   });
 
-  @override
-  State<DismissibleUserTile> createState() => _DismissibleUserTileState();
-}
-
-class _DismissibleUserTileState extends State<DismissibleUserTile> {
-  late final ValueNotifier<bool> isChecked;
-
-  @override
-  void initState() {
-    isChecked = ValueNotifier(widget.isChecked);
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    isChecked.dispose();
-    super.dispose();
-  }
-
-  void _onTap() {
-    if (!widget.blockedUserIds.contains(widget.user.id!)) {
-      isChecked.value = !isChecked.value;
-      if (widget.selectUser != null) {
-        widget.selectUser!(isChecked.value, widget.user);
+  void _onTap(BuildContext context) {
+    if (!blockedUserIds.contains(user.id!)) {
+      if (selectUser != null) {
+        selectUser!(!isChecked, user);
       }
     } else {
       GenericDialog.open(
@@ -83,23 +62,22 @@ class _DismissibleUserTileState extends State<DismissibleUserTile> {
     return Dismissible(
       background: DismissibleContainers.background(context),
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
-      key: GlobalKey(),
-      child: ValueListenableBuilder(
-        valueListenable: isChecked,
-        builder: (context, value, _) => UserCard(
-          isChecked: value,
-          user: widget.user,
-          onTap: _onTap,
-        ),
+      key: ValueKey(user.id),
+      child: UserCard(
+        isChecked: isChecked,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        photoReference: user.photoReference,
+        onTap: () => _onTap(context),
       ),
       confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd &&
-            widget.editFunction != null) {
-          await widget.editFunction!(widget.user);
+        if (direction == DismissDirection.startToEnd && editFunction != null) {
+          await editFunction!(user);
           return false;
         } else if (direction == DismissDirection.endToStart &&
-            widget.deleteFunction != null) {
-          bool action = await widget.deleteFunction!(widget.user);
+            deleteFunction != null) {
+          bool action = await deleteFunction!(user);
           return action;
         }
         return false;

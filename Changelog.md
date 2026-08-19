@@ -1,5 +1,102 @@
 # Changelog
 
+## 2026/08/19 - bkl005/task-03
+
+This change introduces a dedicated user use case that coordinates repository mutations with image selection, compression, promotion, rollback, and cleanup. It protects persisted user data and image references when storage or database operations fail.
+
+The users interface now operates on domain models through a command-based ViewModel. Image previews remain temporary until submission, selection state is centralized, and the existing stopwatch integration and named route are preserved.
+
+1. **`lib/domain/models`**
+
+   * Moved image selection, prepared-image, and stored-image models from the data layer into the shared domain layer.
+   * Added `ImagePreparation` results to distinguish canceled selection from successfully prepared images.
+
+2. **`lib/domain/usecases/users/users_use_case.dart`**
+
+   * Added `UsersUseCase` to coordinate the user repository with image selection, compression, and storage services.
+   * Added image preparation and explicit temporary-image disposal operations.
+   * Promoted prepared images before user insertion or update and prevented repository mutations when promotion fails.
+   * Added compensating image removal when insertion or update fails after promotion.
+   * Preserved the primary repository error when compensation succeeds and included both primary and compensation failures when rollback fails.
+   * Cleaned unused images only after successful updates and deletions, using current persisted photo references.
+   * Rejected deletion requests for users without persisted IDs.
+
+3. **`lib/data/services/images`**
+
+   * Updated image service contracts and implementations to consume the relocated domain image models.
+   * Added a camera-backed `ImageSelectionServiceImpl` factory using `ImagePicker`.
+   * Preserved injectable selection, compression, directory, and storage behaviors for testing and platform composition.
+
+4. **`lib/core/config/dependencies.dart`**
+
+   * Registered camera image selection, platform image compression, and platform user-image storage services.
+   * Registered `UsersUseCase` with its repository and service dependencies.
+
+5. **`lib/ui/pages/users/users_view_model.dart`**
+
+   * Added a command-based `UsersViewModel` for loading, adding, editing, deleting, preparing images, and discarding temporary images.
+   * Exposed users directly from the use-case-backed repository cache.
+   * Consolidated loading and latest-error state across all commands.
+   * Initialized active and selected user IDs from the stopwatch state and exposed immutable selection collections.
+   * Added persisted-user selection management and prevented selected users from being deleted.
+   * Added command listener and disposal handling for the ViewModel lifecycle.
+
+6. **`lib/ui/pages/users/models/user_form_result.dart` and user dialog controller**
+
+   * Added `UserFormResult` to return a domain `User` together with an optional prepared image.
+   * Refactored `UserController` to use domain models and removed direct file operations and global image-path access.
+   * Kept persisted image references separate from temporary preview images.
+   * Returned replaced temporary images so callers can discard obsolete previews safely.
+
+7. **Users page and overlay**
+
+   * Replaced the legacy users page controller and duplicated page selection state with `UsersViewModel`.
+   * Connected loading, mutation, image preparation, image disposal, selection, and error rendering to ViewModel commands.
+   * Preserved dialogs, list interactions, deletion confirmation, route behavior, and the legacy stopwatch handoff through domain-to-legacy conversion.
+   * Added ViewModel disposal ownership to `UsersOverlay`.
+   * Disabled user creation while an operation is running and retained cached users when later operations report errors.
+
+8. **User dialog and user list widgets**
+
+   * Migrated the dialog and dismissible user tile from legacy user models to domain `User` models.
+   * Moved camera selection and image preparation behind injected callbacks.
+   * Added cleanup of replaced or canceled temporary images and prevented barrier or back dismissal from bypassing that cleanup.
+   * Converted `DismissibleUserTile` to a stateless widget driven by ViewModel selection state and stable user ID keys.
+   * Refactored `UserCard` to receive display fields directly, allowing both domain and legacy consumers to use it.
+
+9. **Application composition and training integration**
+
+   * Replaced the users controller factory with a `UsersViewModel` factory initialized from active stopwatch user IDs.
+   * Updated the named users route to create the ViewModel and pass it through the overlay.
+   * Adapted the training page to the field-based `UserCard` interface without changing its displayed user information.
+
+10. **User use case tests**
+
+   * Added coverage for image preparation, canceled selection, promotion before insertion, promotion failure isolation, and insertion rollback.
+   * Added coverage for compensation failures, preservation of existing images during failed updates, post-update cleanup, and deletion-before-cleanup ordering.
+   * Verified that failed deletions do not trigger image cleanup.
+
+11. **Users ViewModel and form-controller tests**
+
+   * Added coverage for command loading state, repository-cache exposure, immutable selection, selection changes, and ignored draft-user selection.
+   * Verified add, edit, and delete command behavior, selected-user deletion protection, and latest-error lifecycle.
+   * Verified separation of persisted image references from prepared previews and cleanup support when previews are replaced.
+
+12. **Existing image service tests**
+
+   * Updated image contract and service tests to import the relocated domain image models.
+
+13. **`doc/backlog/005-usuarios-e-imagens-tasks.md`**
+
+   * Marked the use-case coordination, ViewModel, and users-page migration tasks as completed.
+   * Documented the delivered rollback, cleanup, cache-preservation, selection, temporary-preview, and legacy stopwatch integration behavior.
+
+### Conclusion
+
+The user workflow now has explicit domain coordination for repository and image-storage consistency, including compensating cleanup and structured failure reporting.
+
+Presentation state and user operations are centralized in a testable ViewModel, while the migrated UI preserves its existing navigation, visual behavior, and stopwatch integration.
+
 ## 2026/08/19 - bkl005/task-02
 
 This change introduces injectable image selection, compression, and storage boundaries for user images. It separates picker output, prepared temporary images, and persisted references while keeping filesystem and plugin types confined to the data layer.

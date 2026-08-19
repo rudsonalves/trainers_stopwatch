@@ -5,8 +5,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '/common/constants.dart';
 import '/core/result/result.dart';
-import 'models/prepared_user_image.dart';
-import 'models/stored_user_image.dart';
+import '/domain/models/prepared_user_image.dart';
+import '/domain/models/stored_user_image.dart';
 import 'user_image_storage_service.dart';
 
 typedef DocumentsDirectoryProvider = Future<Directory> Function();

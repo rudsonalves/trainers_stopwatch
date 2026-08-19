@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/services/images/image_selection_service.dart';
-import 'package:trainers_stopwatch/data/services/images/models/image_selection.dart';
-import 'package:trainers_stopwatch/data/services/images/models/prepared_user_image.dart';
-import 'package:trainers_stopwatch/data/services/images/models/stored_user_image.dart';
+import 'package:trainers_stopwatch/domain/models/image_selection.dart';
+import 'package:trainers_stopwatch/domain/models/prepared_user_image.dart';
+import 'package:trainers_stopwatch/domain/models/stored_user_image.dart';
 
 void main() {
   test('canceled selection is a successful expected result', () async {

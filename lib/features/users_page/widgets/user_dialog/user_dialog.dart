@@ -17,45 +17,43 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../common/theme/app_font_style.dart';
-import '../../../../common/models/user_model.dart';
+import '../../../../domain/common/user/models/user.dart';
+import '../../../../domain/models/prepared_user_image.dart';
+import '../../../../ui/pages/users/models/user_form_result.dart';
 import '../../../widgets/common/show_athlete_image.dart';
 import 'user_controller.dart';
 import 'validator.dart';
 import 'widgets/custom_text_field.dart';
 
 class UserDialog extends StatefulWidget {
-  final UserModel? user;
-  final void Function(UserModel)? addUser;
-  final Future<XFile?> Function(XFile file) resizeAndSaveImage;
+  final User? user;
+  final Future<PreparedUserImage?> Function() prepareImage;
+  final Future<void> Function(PreparedUserImage image) discardImage;
 
   const UserDialog({
     super.key,
     this.user,
-    this.addUser,
-    required this.resizeAndSaveImage,
+    required this.prepareImage,
+    required this.discardImage,
   });
 
-  static Future<bool?> open(
+  static Future<UserFormResult?> open(
     BuildContext context, {
-    UserModel? user,
-    void Function(UserModel)? addUser,
-    required Future<XFile?> Function(XFile file) resizeAndSaveImage,
-  }) async {
-    final bool result = await showDialog<bool?>(
-          context: context,
-          builder: (context) => UserDialog(
-            user: user,
-            addUser: addUser,
-            resizeAndSaveImage: resizeAndSaveImage,
-          ),
-        ) ??
-        false;
-
-    return result;
-  }
+    User? user,
+    required Future<PreparedUserImage?> Function() prepareImage,
+    required Future<void> Function(PreparedUserImage image) discardImage,
+  }) =>
+      showDialog<UserFormResult?>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => UserDialog(
+          user: user,
+          prepareImage: prepareImage,
+          discardImage: discardImage,
+        ),
+      );
 
   @override
   State<UserDialog> createState() => _UserDialogState();
@@ -84,17 +82,11 @@ class _UserDialogState extends State<UserDialog> {
   }
 
   Future<void> _photoImageOnTap() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? xfile = await picker.pickImage(
-      source: ImageSource.camera,
-    );
+    final prepared = await widget.prepareImage();
+    if (!mounted || prepared == null) return;
 
-    if (xfile != null) {
-      final resizedFile = await widget.resizeAndSaveImage(xfile);
-      if (resizedFile != null) {
-        _controller.setImage(resizedFile.path);
-      }
-    }
+    final previous = _controller.setPreparedImage(prepared);
+    if (previous != null) await widget.discardImage(previous);
   }
 
   void _addButton() {
@@ -103,82 +95,75 @@ class _UserDialogState extends State<UserDialog> {
 
     if (!valit) return;
 
-    Navigator.pop(context, true);
-
-    final id = isAddUser ? null : widget.user!.id;
-
-    final user = UserModel(
-      id: id,
-      name: _controller.name.text,
-      email: _controller.email.text,
-      photo: _controller.image.value,
-      phone: _controller.phone.text,
-    );
-
-    if (widget.addUser != null) {
-      widget.addUser!(user);
-    }
+    Navigator.pop(context, _controller.buildResult());
   }
 
-  void _cancelButton() => Navigator.pop(context, false);
+  Future<void> _cancelButton() async {
+    final prepared = _controller.preparedImage;
+    if (prepared != null) await widget.discardImage(prepared);
+    if (mounted) Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Text(
-                    isAddUser ? 'ADNew'.tr() : 'ADEdit'.tr(),
-                    style: AppFontStyle.roboto18SemiBold,
+    return PopScope(
+      canPop: false,
+      child: Dialog(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Center(
+                    child: Text(
+                      isAddUser ? 'ADNew'.tr() : 'ADEdit'.tr(),
+                      style: AppFontStyle.roboto18SemiBold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: _photoImageOnTap,
-                  child: ValueListenableBuilder(
-                    valueListenable: _controller.image,
-                    builder: (context, value, _) => ShowUserImage(value),
+                  const SizedBox(height: 12),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: _photoImageOnTap,
+                    child: ValueListenableBuilder(
+                      valueListenable: _controller.image,
+                      builder: (context, value, _) => ShowUserImage(value),
+                    ),
                   ),
-                ),
-                CustomTextField(
-                  controller: _controller.name,
-                  validator: Validador.name,
-                  label: 'ADName'.tr(),
-                ),
-                CustomTextField(
-                  controller: _controller.email,
-                  validator: Validador.email,
-                  label: 'ADEmail'.tr(),
-                ),
-                CustomTextField(
-                  controller: _controller.phone,
-                  label: 'ADPhone'.tr(),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 12),
-                OverflowBar(
-                  children: [
-                    FilledButton.tonal(
-                      onPressed: _addButton,
-                      child: Text(
-                        isAddUser ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
+                  CustomTextField(
+                    controller: _controller.name,
+                    validator: Validador.name,
+                    label: 'ADName'.tr(),
+                  ),
+                  CustomTextField(
+                    controller: _controller.email,
+                    validator: Validador.email,
+                    label: 'ADEmail'.tr(),
+                  ),
+                  CustomTextField(
+                    controller: _controller.phone,
+                    label: 'ADPhone'.tr(),
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 12),
+                  OverflowBar(
+                    children: [
+                      FilledButton.tonal(
+                        onPressed: _addButton,
+                        child: Text(
+                          isAddUser ? 'GenericAdd'.tr() : 'GenericUpdate'.tr(),
+                        ),
                       ),
-                    ),
-                    FilledButton.tonal(
-                      onPressed: _cancelButton,
-                      child: Text('GenericCancel'.tr()),
-                    ),
-                  ],
-                ),
-              ],
+                      FilledButton.tonal(
+                        onPressed: _cancelButton,
+                        child: Text('GenericCancel'.tr()),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

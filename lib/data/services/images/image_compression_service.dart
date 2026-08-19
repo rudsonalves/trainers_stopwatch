@@ -1,6 +1,6 @@
 import '/core/result/result.dart';
-import 'models/image_selection.dart';
-import 'models/prepared_user_image.dart';
+import '/domain/models/image_selection.dart';
+import '/domain/models/prepared_user_image.dart';
 
 abstract interface class ImageCompressionService {
   /// Compresses the selected image to a prepared image.

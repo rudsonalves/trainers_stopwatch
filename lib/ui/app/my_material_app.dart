@@ -31,13 +31,14 @@ import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/features/trainings_page/trainings_overlay.dart';
 import '/features/trainings_page/trainings_page_controller.dart';
 import '/features/users_page/users_overlay.dart';
-import '/features/users_page/users_page_controller.dart';
 import '/ui/pages/settings/settings_view_model.dart';
+import '/ui/pages/users/users_view_model.dart';
 import 'app_appearance_state.dart';
 
 class MyMaterialApp extends StatefulWidget {
   final StopwatchPageController stopwatchController;
-  final UsersPageController Function() usersControllerFactory;
+  final UsersViewModel Function(Iterable<int> activeUserIds)
+      usersViewModelFactory;
   final TrainingsPageController Function() trainingsControllerFactory;
   final HistoryPageController Function() historyControllerFactory;
   final AppShare appShare;
@@ -47,7 +48,7 @@ class MyMaterialApp extends StatefulWidget {
   const MyMaterialApp({
     super.key,
     required this.stopwatchController,
-    required this.usersControllerFactory,
+    required this.usersViewModelFactory,
     required this.trainingsControllerFactory,
     required this.historyControllerFactory,
     required this.appShare,
@@ -141,7 +142,11 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
         StopwatchOverlay.routeName: (context) =>
             StopwatchOverlay(controller: widget.stopwatchController),
         UsersOverlay.routeName: (context) => UsersOverlay(
-              controller: widget.usersControllerFactory(),
+              viewModel: widget.usersViewModelFactory(
+                widget.stopwatchController.usersList
+                    .map((user) => user.id)
+                    .nonNulls,
+              ),
               stopwatchController: widget.stopwatchController,
             ),
         PersonalTrainingPage.routeName: (context) =>

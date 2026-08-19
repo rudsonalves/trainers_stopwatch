@@ -166,7 +166,10 @@ class _TrainingsPageState extends State<TrainingsPage> {
                     if (_controller.user != null)
                       UserCard(
                         isChecked: true,
-                        user: _controller.user!,
+                        name: _controller.user!.name,
+                        email: _controller.user!.email,
+                        phone: _controller.user!.phone,
+                        photoReference: _controller.user!.photo,
                       ),
                     Focus(
                       child: OverflowBar(

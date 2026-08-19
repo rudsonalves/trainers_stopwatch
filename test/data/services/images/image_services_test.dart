@@ -5,9 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/services/images/image_compression_service_impl.dart';
 import 'package:trainers_stopwatch/data/services/images/image_selection_service_impl.dart';
-import 'package:trainers_stopwatch/data/services/images/models/image_selection.dart';
-import 'package:trainers_stopwatch/data/services/images/models/prepared_user_image.dart';
 import 'package:trainers_stopwatch/data/services/images/user_image_storage_service_impl.dart';
+import 'package:trainers_stopwatch/domain/models/image_selection.dart';
+import 'package:trainers_stopwatch/domain/models/prepared_user_image.dart';
 
 void main() {
   group('ImageSelectionServiceImpl', () {

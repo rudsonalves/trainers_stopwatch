@@ -4,25 +4,36 @@
 
 import 'package:flutter/material.dart';
 
+import '/ui/pages/users/users_view_model.dart';
 import '../stopwatch_page/stopwatch_page_controller.dart';
 import 'users_page.dart';
-import 'users_page_controller.dart';
 
-class UsersOverlay extends StatelessWidget {
-  final UsersPageController controller;
+class UsersOverlay extends StatefulWidget {
+  final UsersViewModel viewModel;
   final StopwatchPageController stopwatchController;
 
   const UsersOverlay({
     super.key,
-    required this.controller,
+    required this.viewModel,
     required this.stopwatchController,
   });
 
   static const routeName = '/users';
 
   @override
+  State<UsersOverlay> createState() => _UsersOverlayState();
+}
+
+class _UsersOverlayState extends State<UsersOverlay> {
+  @override
   Widget build(BuildContext context) => UsersPage(
-        controller: controller,
-        stopwatchController: stopwatchController,
+        viewModel: widget.viewModel,
+        stopwatchController: widget.stopwatchController,
       );
+
+  @override
+  void dispose() {
+    widget.viewModel.dispose();
+    super.dispose();
+  }
 }

@@ -2,8 +2,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 
 import '/core/result/result.dart';
+import '/domain/models/image_selection.dart';
 import 'image_selection_service.dart';
-import 'models/image_selection.dart';
 
 typedef PickImage = Future<XFile?> Function();
 
@@ -17,6 +17,13 @@ final class ImageSelectionServiceImpl implements ImageSelectionService {
     final imagePicker = picker ?? ImagePicker();
     return ImageSelectionServiceImpl(
       pickImage: () => imagePicker.pickImage(source: ImageSource.gallery),
+    );
+  }
+
+  factory ImageSelectionServiceImpl.camera({ImagePicker? picker}) {
+    final imagePicker = picker ?? ImagePicker();
+    return ImageSelectionServiceImpl(
+      pickImage: () => imagePicker.pickImage(source: ImageSource.camera),
     );
   }
 

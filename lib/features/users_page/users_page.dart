@@ -1,38 +1,25 @@
 // Copyright (C) 2024 Rudson Alves
 //
 // This file is part of trainers_stopwatch.
-//
-// trainers_stopwatch is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// trainers_stopwatch is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/models/user_model.dart';
-import 'widgets/user_dialog/user_dialog.dart';
-import '../stopwatch_page/stopwatch_page_controller.dart';
-import '../widgets/common/generic_dialog.dart';
-import 'users_page_controller.dart';
-import 'users_page_state.dart';
+import '/common/adapters/user_domain_adapter.dart';
+import '/domain/common/user/models/user.dart';
+import '/features/stopwatch_page/stopwatch_page_controller.dart';
+import '/features/widgets/common/generic_dialog.dart';
+import '/ui/pages/users/users_view_model.dart';
 import 'widgets/dismissible_user_tile.dart';
+import 'widgets/user_dialog/user_dialog.dart';
 
 class UsersPage extends StatefulWidget {
-  final UsersPageController controller;
+  final UsersViewModel viewModel;
   final StopwatchPageController stopwatchController;
 
   const UsersPage({
     super.key,
-    required this.controller,
+    required this.viewModel,
     required this.stopwatchController,
   });
 
@@ -42,71 +29,51 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  late final _controller = widget.controller;
-  final List<UserModel> _selectedUsers = [];
-  final List<int> _preSelectedUserIds = [];
+
+  UsersViewModel get viewModel => widget.viewModel;
 
   @override
   void initState() {
     super.initState();
-    _startingPage();
-  }
-
-  Future<void> _startingPage() async {
-    await _controller.init();
-
-    final usersList = widget.stopwatchController.usersList;
-
-    _preSelectedUserIds.addAll(
-      usersList.map(
-        (user) => user.id!,
-      ),
-    );
-
-    _selectedUsers.addAll(usersList);
+    viewModel.load();
   }
 
   Future<void> _addNewUser() async {
-    await UserDialog.open(
+    final result = await UserDialog.open(
       context,
-      addUser: _controller.addUser,
-      resizeAndSaveImage: _controller.resizeAndSaveImage,
+      prepareImage: viewModel.prepareImage,
+      discardImage: viewModel.discardPreparedImage,
+    );
+    if (result == null) return;
+    await viewModel.add(
+      user: result.user,
+      preparedImage: result.preparedImage,
     );
   }
 
-  void _backPage() {
-    // overlay!.deactivate();
-    Navigator.pop(context);
-  }
+  void _backPage() => Navigator.pop(context);
 
-  void selectUser(bool select, UserModel user) {
-    if (select) {
-      _selectedUsers.add(user);
-    } else {
-      _selectedUsers.removeWhere((item) => item.id == user.id);
-    }
-  }
+  void _selectUser(bool selected, User user) =>
+      viewModel.setSelected(user, selected: selected);
 
-  Future<bool> editUser(UserModel user) async {
+  Future<bool> _editUser(User user) async {
     final result = await UserDialog.open(
-          context,
-          user: user,
-          addUser: _controller.updateUser,
-          resizeAndSaveImage: _controller.resizeAndSaveImage,
-        ) ??
-        false;
+      context,
+      user: user,
+      prepareImage: viewModel.prepareImage,
+      discardImage: viewModel.discardPreparedImage,
+    );
+    if (result == null) return false;
 
-    _controller.removeUnusedImages();
-    return result;
+    await viewModel.edit(
+      user: result.user,
+      preparedImage: result.preparedImage,
+    );
+    return viewModel.editCommand.isSuccess;
   }
 
-  bool isSelected(UserModel user) {
-    final list = _selectedUsers.map((u) => u.id).toList();
-    return list.contains(user.id!);
-  }
-
-  Future<bool> deleteUser(UserModel user) async {
-    if (isSelected(user)) {
+  Future<bool> _deleteUser(User user) async {
+    if (viewModel.isSelected(user)) {
       await GenericDialog.open(
         context,
         title: 'APBlockedTitle'.tr(),
@@ -116,18 +83,56 @@ class _UsersPageState extends State<UsersPage> {
       return false;
     }
 
-    final result = await GenericDialog.open(
+    final confirmed = await GenericDialog.open(
       context,
       title: 'APDeleteUser'.tr(),
       message: 'APDeleteUserMsg'.tr(),
       actions: DialogActions.yesNo,
     );
-    if (result) {
-      _controller.deleteUser(user);
-      return true;
-    } else {
-      return false;
+    if (!confirmed) return false;
+
+    await viewModel.delete(user);
+    return viewModel.deleteCommand.isSuccess;
+  }
+
+  Widget _buildBody() {
+    if (viewModel.loadCommand.isRunning && viewModel.users.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
     }
+
+    if (viewModel.loadCommand.isFailure && viewModel.users.isEmpty) {
+      return Center(child: Text('TPError'.tr()));
+    }
+
+    if (viewModel.users.isEmpty) {
+      return Center(child: Text('APRegisterSome'.tr()));
+    }
+
+    return Column(
+      children: [
+        if (viewModel.lastError != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text('TPError'.tr()),
+          ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: viewModel.users.length,
+            itemBuilder: (context, index) {
+              final user = viewModel.users[index];
+              return DismissibleUserTile(
+                user: user,
+                selectUser: _selectUser,
+                editFunction: _editUser,
+                deleteFunction: _deleteUser,
+                blockedUserIds: viewModel.activeUserIds.toList(),
+                isChecked: viewModel.isSelected(user),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -137,7 +142,10 @@ class _UsersPageState extends State<UsersPage> {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {
-        widget.stopwatchController.addNewUsers(_selectedUsers);
+        if (!didPop) return;
+        widget.stopwatchController.addNewUsers(
+          viewModel.selectedUsers.map((user) => user.toLegacy()).toList(),
+        );
       },
       child: Scaffold(
         key: scaffoldKey,
@@ -147,52 +155,9 @@ class _UsersPageState extends State<UsersPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListenableBuilder(
-                listenable: _controller,
-                builder: (context, child) {
-                  switch (_controller.state) {
-                    // Users Page State Loading
-                    case UsersPageStateLoading():
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    // Users Page State Success
-                    case UsersPageStateSuccess():
-                      final user = _controller.users;
-                      if (user.isEmpty) {
-                        return Center(
-                          child: Text('APRegisterSome'.tr()),
-                        );
-                      }
-                      return Expanded(
-                        child: ListView.builder(
-                          itemCount: user.length,
-                          itemBuilder: (context, index) => DismissibleUserTile(
-                            user: user[index],
-                            selectUser: selectUser,
-                            editFunction: editUser,
-                            deleteFunction: deleteUser,
-                            blockedUserIds: _preSelectedUserIds,
-                            isChecked: _preSelectedUserIds.contains(
-                              user[index].id!,
-                            ),
-                          ),
-                        ),
-                      );
-                    // Users Page State Error
-                    default:
-                      return Center(
-                        child: Text(
-                          'TPError'.tr(),
-                        ),
-                      );
-                  }
-                },
-              ),
-            ],
+          child: ListenableBuilder(
+            listenable: viewModel,
+            builder: (context, child) => _buildBody(),
           ),
         ),
         floatingActionButton: Row(
@@ -209,7 +174,7 @@ class _UsersPageState extends State<UsersPage> {
             const SizedBox(width: 18),
             FloatingActionButton(
               heroTag: 'fab2',
-              onPressed: _addNewUser,
+              onPressed: viewModel.isLoading ? null : _addNewUser,
               child: Icon(
                 Icons.person_add,
                 color: primary.withValues(alpha: .5),

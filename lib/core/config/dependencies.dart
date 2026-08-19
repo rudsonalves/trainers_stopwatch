@@ -18,6 +18,12 @@ import '/data/services/database/database_service.dart';
 import '/data/services/database/database_service_factory.dart';
 import '/data/services/histories/history_mapper.dart';
 import '/data/services/histories/history_service.dart';
+import '/data/services/images/image_compression_service.dart';
+import '/data/services/images/image_compression_service_impl.dart';
+import '/data/services/images/image_selection_service.dart';
+import '/data/services/images/image_selection_service_impl.dart';
+import '/data/services/images/user_image_storage_service.dart';
+import '/data/services/images/user_image_storage_service_impl.dart';
 import '/data/services/settings/settings_mapper.dart';
 import '/data/services/settings/settings_service.dart';
 import '/data/services/trainings/training_mapper.dart';
@@ -25,6 +31,7 @@ import '/data/services/trainings/training_service.dart';
 import '/data/services/users/user_mapper.dart';
 import '/data/services/users/user_service.dart';
 import '/domain/common/settings/models/settings.dart';
+import '/domain/usecases/users/users_use_case.dart';
 import '/features/history_page/history_page_controller.dart';
 import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/features/trainings_page/trainings_page_controller.dart';
@@ -82,6 +89,16 @@ void setupDependencies() {
     ..addSingleton<UserRepository>(
       () => UserRepositoryImpl(service: injector.get<UserService>()),
     )
+    ..addSingleton<ImageSelectionService>(
+      ImageSelectionServiceImpl.camera,
+    )
+    ..addSingleton<ImageCompressionService>(
+      ImageCompressionServiceImpl.platform,
+    )
+    ..addSingleton<UserImageStorageService>(
+      UserImageStorageServiceImpl.platform,
+    )
+    ..add<UsersUseCase>(UsersUseCase.new)
     ..addSingleton<TrainingRepository>(
       () => TrainingRepositoryImpl(service: injector.get<TrainingService>()),
     )

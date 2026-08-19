@@ -1,6 +1,6 @@
 import '/core/result/result.dart';
-import 'models/prepared_user_image.dart';
-import 'models/stored_user_image.dart';
+import '/domain/models/prepared_user_image.dart';
+import '/domain/models/stored_user_image.dart';
 
 abstract interface class UserImageStorageService {
   /// Promotes a prepared image to a stored image.

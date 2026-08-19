@@ -22,14 +22,15 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'common/constants.dart';
 import 'core/bootstrap/bootstrap.dart';
 import 'core/config/dependencies.dart';
+import 'domain/usecases/users/users_use_case.dart';
 import 'core/result/errors/app_error.dart';
 import 'ui/app/app_appearance_state.dart';
 import 'ui/app/my_material_app.dart';
+import 'ui/pages/users/users_view_model.dart';
 import 'ui/pages/settings/settings_view_model.dart';
 import 'features/history_page/history_page_controller.dart';
 import 'features/stopwatch_page/stopwatch_page_controller.dart';
 import 'features/trainings_page/trainings_page_controller.dart';
-import 'features/users_page/users_page_controller.dart';
 import 'common/functions/share_functions.dart';
 
 void main() async {
@@ -54,7 +55,10 @@ void main() async {
       fallbackLocale: const Locale('en', 'US'),
       child: MyMaterialApp(
         stopwatchController: injector.get<StopwatchPageController>(),
-        usersControllerFactory: () => injector.get<UsersPageController>(),
+        usersViewModelFactory: (activeUserIds) => UsersViewModel(
+          useCase: injector.get<UsersUseCase>(),
+          initiallySelectedUserIds: activeUserIds,
+        ),
         trainingsControllerFactory: () =>
             injector.get<TrainingsPageController>(),
         historyControllerFactory: () => injector.get<HistoryPageController>(),

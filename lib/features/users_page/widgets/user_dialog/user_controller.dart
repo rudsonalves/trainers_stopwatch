@@ -15,14 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
 
 import '../../../../common/constants.dart';
-import '../../../../common/singletons/app_settings.dart';
-import '../../../../common/models/user_model.dart';
+import '../../../../domain/common/user/models/user.dart';
+import '../../../../domain/models/prepared_user_image.dart';
+import '../../../../ui/pages/users/models/user_form_result.dart';
 
 class UserController {
   final name = TextEditingController();
@@ -30,13 +28,18 @@ class UserController {
   final phone = TextEditingController();
 
   final image = ValueNotifier<String>(defaultPhotoImage);
+  PreparedUserImage? _preparedImage;
+  User? _originalUser;
 
-  void init(UserModel? user) {
+  PreparedUserImage? get preparedImage => _preparedImage;
+
+  void init(User? user) {
+    _originalUser = user;
     if (user != null) {
       name.text = user.name;
       email.text = user.email;
       phone.text = user.phone ?? '';
-      image.value = user.photo ?? defaultPhotoImage;
+      image.value = user.photoReference ?? defaultPhotoImage;
     }
   }
 
@@ -47,24 +50,21 @@ class UserController {
     image.dispose();
   }
 
-  Future<void> setImage(String imagePath) async {
-    final originFile = File(imagePath);
-    final fileName = p.basename(imagePath);
-    // Legacy settings bridge; replace with an injected path service in 005.
-    final destinyPath = AppSettings.instance.imagePath;
-    File? oldImageFile;
-
-    if (image.value.isNotEmpty && image.value != defaultPhotoImage) {
-      oldImageFile = File(image.value);
-    }
-
-    final finalPath = '$destinyPath/$fileName';
-    await originFile.copy(finalPath);
-
-    image.value = finalPath;
-
-    if (oldImageFile != null) {
-      await oldImageFile.delete();
-    }
+  PreparedUserImage? setPreparedImage(PreparedUserImage image) {
+    final previous = _preparedImage;
+    _preparedImage = image;
+    this.image.value = image.temporaryReference;
+    return previous;
   }
+
+  UserFormResult buildResult() => UserFormResult(
+        user: User(
+          id: _originalUser?.id,
+          name: name.text,
+          email: email.text,
+          phone: phone.text,
+          photoReference: _originalUser?.photoReference,
+        ),
+        preparedImage: _preparedImage,
+      );
 }

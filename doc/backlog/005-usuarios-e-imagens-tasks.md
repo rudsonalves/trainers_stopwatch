@@ -72,61 +72,83 @@ remoção idempotente e limpeza por referências persistidas.
 
 **Dependências:** tarefas 1 e 2.
 
-- [ ] Coordenar cadastro com promoção da imagem e inserção no repository.
-- [ ] Remover a imagem promovida se a inserção falhar.
-- [ ] Coordenar edição preservando imagem e referência anteriores até o sucesso.
-- [ ] Remover a imagem promovida se a atualização falhar.
-- [ ] Após atualização bem-sucedida, remover a imagem anterior somente se não
+- [x] Coordenar cadastro com promoção da imagem e inserção no repository.
+- [x] Remover a imagem promovida se a inserção falhar.
+- [x] Coordenar edição preservando imagem e referência anteriores até o sucesso.
+- [x] Remover a imagem promovida se a atualização falhar.
+- [x] Após atualização bem-sucedida, remover a imagem anterior somente se não
       estiver referenciada.
-- [ ] Persistir exclusão antes de limpar sua imagem sem referência.
-- [ ] Preservar o cache anterior quando repository ou compensação principal
+- [x] Persistir exclusão antes de limpar sua imagem sem referência.
+- [x] Preservar o cache anterior quando repository ou compensação principal
       falhar.
-- [ ] Avaliar a complexidade da coordenação antes de implementá-la no
+- [x] Avaliar a complexidade da coordenação antes de implementá-la no
       `UsersViewModel`.
-- [ ] Criar um UseCase específico se houver acesso a mais de um repository ou
+- [x] Criar um UseCase específico se houver acesso a mais de um repository ou
       se as regras de compensação tornarem o ViewModel complexo.
-- [ ] Quando criado, fazer o UseCase receber repositories e serviços por
+- [x] Quando criado, fazer o UseCase receber repositories e serviços por
       construtor e devolver `Result`/`AppError` ao ViewModel.
-- [ ] Não criar UseCase que seja apenas encaminhamento sem coordenação ou regra
+- [x] Não criar UseCase que seja apenas encaminhamento sem coordenação ou regra
       própria.
 
 **Resultado esperado:** banco nunca referencia uma imagem que não chegou ao
 armazenamento definitivo, e falhas não destroem a imagem vigente.
 
+**Entregue em 2026-08-19:** `UsersUseCase`, em `domain/usecases/users`, coordena
+o repository e o serviço de armazenamento. Promoção falha antes de alcançar
+banco e cache; falha de escrita remove a imagem nova; falha da própria
+compensação preserva como detalhe o erro primário; edição e exclusão limpam
+somente depois da persistência e usando a lista atual de referências. Falha na
+limpeza posterior é devolvida ao consumidor, embora a mutação principal já
+esteja persistida. Modelos compartilhados de imagem ficam em `domain/models`.
+
 ### 4. Criar UsersViewModel e Commands
 
 **Dependências:** tarefas 1 a 3 e padrão do backlog 004.
 
-- [ ] Criar `UsersViewModel` com dependências recebidas por construtor,
+- [x] Criar `UsersViewModel` com dependências recebidas por construtor,
       consumindo o UseCase quando a tarefa 3 indicar sua necessidade.
-- [ ] Expor Commands para carregar, adicionar, editar e excluir usuários.
-- [ ] Expor models de domínio a partir do cache do `UserRepository`.
-- [ ] Representar loading e último `AppError` sem estados paralelos legados.
-- [ ] Inicializar a seleção com os IDs dos atletas ativos.
-- [ ] Expor seleção como coleção não modificável.
-- [ ] Implementar seleção, desseleção e consulta de seleção.
-- [ ] Impedir exclusão de usuário selecionado.
-- [ ] Não armazenar `BuildContext`, widgets ou `TextEditingController`.
+- [x] Expor Commands para carregar, adicionar, editar e excluir usuários.
+- [x] Expor models de domínio a partir do cache do `UserRepository`.
+- [x] Representar loading e último `AppError` sem estados paralelos legados.
+- [x] Inicializar a seleção com os IDs dos atletas ativos.
+- [x] Expor seleção como coleção não modificável.
+- [x] Implementar seleção, desseleção e consulta de seleção.
+- [x] Impedir exclusão de usuário selecionado.
+- [x] Não armazenar `BuildContext`, widgets ou `TextEditingController`.
 
 **Resultado esperado:** operações e estado de apresentação da página ficam em
 um ViewModel testável.
+
+**Entregue em 2026-08-19:** `UsersViewModel` recebe `UsersUseCase` e os IDs
+inicialmente ativos, expõe Commands de carga, cadastro, edição e exclusão,
+reflete o cache de domínio sem duplicá-lo, consolida loading e último
+`AppError`, mantém seleção imutável para consumidores e bloqueia exclusão de
+qualquer usuário selecionado.
 
 ### 5. Migrar formulário e página
 
 **Dependência:** tarefa 4.
 
-- [ ] Manter controllers de texto e validação no formulário visual.
-- [ ] Remover `File` e `AppSettings.instance.imagePath` de `UserController`.
-- [ ] Fazer o formulário distinguir imagem persistida de imagem preparada.
-- [ ] Manter preview sem apagar ou substituir antecipadamente o arquivo antigo.
-- [ ] Fazer `UsersPage` consumir o `UsersViewModel` e seus Commands.
-- [ ] Remover `_selectedUsers` e outros estados duplicados da Page.
-- [ ] Manter dialogs, picker visual e Navigator 1.0 na Page.
-- [ ] Entregar a seleção final ao cronômetro legado ao sair.
-- [ ] Preservar layout, campos e mensagens atuais.
+- [x] Manter controllers de texto e validação no formulário visual.
+- [x] Remover `File` e `AppSettings.instance.imagePath` de `UserController`.
+- [x] Fazer o formulário distinguir imagem persistida de imagem preparada.
+- [x] Manter preview sem apagar ou substituir antecipadamente o arquivo antigo.
+- [x] Fazer `UsersPage` consumir o `UsersViewModel` e seus Commands.
+- [x] Remover `_selectedUsers` e outros estados duplicados da Page.
+- [x] Manter dialogs, picker visual e Navigator 1.0 na Page.
+- [x] Entregar a seleção final ao cronômetro legado ao sair.
+- [x] Preservar layout, campos e mensagens atuais.
 
 **Resultado esperado:** a UI coordena interação visual, mas não acessa
 persistência nem sistema de arquivos.
+
+**Entregue em 2026-08-19:** formulário e lista operam com `User` de domínio e
+`UsersViewModel`; controllers e validação permanecem visuais; a câmera é
+acionada pela interação do diálogo através do ViewModel e do UseCase; preview
+temporário permanece separado da referência persistida e é descartado ao ser
+substituído ou cancelado; seleção pertence somente ao ViewModel e é convertida
+para o adapter legado ao retornar ao cronômetro. A rota nomeada e a composição
+visual foram preservadas.
 
 ### 6. Atualizar injeção e remover o adapter legado
 

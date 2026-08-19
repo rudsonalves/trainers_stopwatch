@@ -18,18 +18,23 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/constants.dart';
-import '../../../common/models/user_model.dart';
 import 'show_athlete_image.dart';
 
 class UserCard extends StatelessWidget {
   final bool isChecked;
-  final UserModel user;
+  final String name;
+  final String email;
+  final String? phone;
+  final String? photoReference;
   final void Function()? onTap;
 
   const UserCard({
     super.key,
     required this.isChecked,
-    required this.user,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.photoReference,
     this.onTap,
   });
 
@@ -47,16 +52,19 @@ class UserCard extends StatelessWidget {
       ),
       child: ListTile(
         title: Text(
-          user.name,
+          name,
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Text(
-          '${user.email}\n${user.phone}',
+          '$email\n${phone ?? ''}',
         ),
         leading: SizedBox(
           width: photoImageSize,
           height: photoImageSize,
-          child: ShowUserImage(user.photo!, size: 40),
+          child: ShowUserImage(
+            photoReference ?? defaultPhotoImage,
+            size: 40,
+          ),
         ),
         onTap: onTap,
       ),
