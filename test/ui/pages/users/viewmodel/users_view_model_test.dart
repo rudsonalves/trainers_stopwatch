@@ -11,7 +11,7 @@ import 'package:trainers_stopwatch/domain/models/image_selection.dart';
 import 'package:trainers_stopwatch/domain/models/prepared_user_image.dart';
 import 'package:trainers_stopwatch/domain/models/stored_user_image.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
-import 'package:trainers_stopwatch/ui/pages/users/users_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/users/viewmodel/users_view_model.dart';
 
 void main() {
   late _UserRepositoryFake repository;

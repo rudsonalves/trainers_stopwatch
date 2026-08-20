@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-import '/ui/pages/users/users_view_model.dart';
-import '../stopwatch_page/stopwatch_page_controller.dart';
+import '/features/stopwatch_page/stopwatch_page_controller.dart';
+import 'viewmodel/users_view_model.dart';
 import 'users_page.dart';
 
 class UsersOverlay extends StatefulWidget {

@@ -17,10 +17,10 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../domain/common/user/models/user.dart';
-import '../../widgets/common/generic_dialog.dart';
-import '../../widgets/common/user_card.dart';
-import '../../widgets/common/dismissible_backgrounds.dart';
+import '/domain/common/user/models/user.dart';
+import '/features/widgets/common/dismissible_backgrounds.dart';
+import '/features/widgets/common/generic_dialog.dart';
+import '/features/widgets/common/user_card.dart';
 
 class DismissibleUserTile extends StatelessWidget {
   final User user;

@@ -9,8 +9,8 @@ import '/common/constants.dart';
 import '/common/theme/app_font_style.dart';
 import '/domain/common/training/units/distance_unit.dart';
 import '/ui/app/app_appearance_state.dart';
-import '/ui/pages/settings/models/settings_form_data.dart';
-import '/ui/pages/settings/settings_view_model.dart';
+import 'viewmodel/models/settings_form_data.dart';
+import 'viewmodel/settings_view_model.dart';
 import 'widgets/length_line_edit.dart';
 
 class SettingsPage extends StatefulWidget {

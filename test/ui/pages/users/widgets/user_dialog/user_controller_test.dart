@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/models/prepared_user_image.dart';
-import 'package:trainers_stopwatch/features/users_page/widgets/user_dialog/user_controller.dart';
+import 'package:trainers_stopwatch/ui/pages/users/widgets/user_dialog/user_controller.dart';
 
 void main() {
   test('keeps persisted image separate from a prepared preview', () {

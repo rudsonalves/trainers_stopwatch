@@ -10,7 +10,7 @@ import '/common/adapters/user_domain_adapter.dart';
 import '/domain/common/user/models/user.dart';
 import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/features/widgets/common/generic_dialog.dart';
-import '/ui/pages/users/users_view_model.dart';
+import 'viewmodel/users_view_model.dart';
 import 'widgets/dismissible_user_tile.dart';
 import 'widgets/user_dialog/user_dialog.dart';
 

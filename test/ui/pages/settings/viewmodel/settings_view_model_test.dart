@@ -8,7 +8,7 @@ import 'package:trainers_stopwatch/data/repositories/settings/settings_repositor
 import 'package:trainers_stopwatch/domain/common/settings/models/settings.dart';
 import 'package:trainers_stopwatch/domain/common/training/units/distance_unit.dart';
 import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
-import 'package:trainers_stopwatch/ui/pages/settings/settings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
 
 class _SettingsRepositoryFake implements SettingsRepository {
   Settings? stored;

@@ -1,5 +1,168 @@
 # Changelog
 
+## 2026/08/20 - bkl006/task-05
+
+This change establishes feature-local UI boundaries for migrated pages, introduces command-based training presentation state, and coordinates training initialization with its required history entry.
+
+Settings and users pages now colocate their pages, overlays, ViewModels, form models, and widgets under `lib/ui/pages`. Training creation and selection behavior gain explicit, testable application boundaries, with routing, dependency composition, documentation, and tests updated accordingly.
+
+1. **Training initialization use case**
+
+   * Added `CreateTrainingUseCase` to persist a training before creating its zero-duration initial history entry.
+   * Added compensation through training deletion when initial-history creation or persistence fails.
+   * Preserved both primary and compensation errors, including the persisted training identity, when rollback fails.
+   * Added `TrainingInitialization` as the typed result containing the persisted training and initial history.
+   * Rejected successful training insertions that do not return a persistence identity.
+
+2. **Stopwatch training-start flow**
+
+   * Replaced separate training and initial-history writes with `CreateTrainingUseCase`.
+   * Converted the legacy training model to its domain representation before initialization.
+   * Passed the localized start message into the coordinated initial-history creation.
+   * Synchronized the generated training identity back into the legacy model and retained history-manager initialization for subsequent stopwatch operations.
+   * Normalized stopwatch widget imports to project-root paths.
+
+3. **TrainingsViewModel**
+
+   * Added a command-based ViewModel backed by `UserRepository` and `TrainingRepository`.
+   * Added commands for loading users, loading a selected user’s trainings, updating, deleting, and deleting the current selection.
+   * Exposed repository-backed users and trainings while keeping selected-user and selected-training IDs as transient UI state.
+   * Added immutable selection access, individual selection, select-all, clear-selection, and derived selected-training state.
+   * Reconciled selection after user changes, reloads, deletions, partial batch failures, and removal of the selected user.
+   * Consolidated loading and latest-error reporting across commands and disposed command listeners with the ViewModel.
+
+4. **Settings page module**
+
+   * Moved the settings page and overlay from `lib/features/settings` to `lib/ui/pages/settings`.
+   * Moved `SettingsViewModel` and `SettingsFormData` into the local `viewmodel` hierarchy.
+   * Moved the page-specific length editor into the settings `widgets` directory.
+   * Updated bootstrap, routing, dependency registration, page imports, and shared-widget references for the new layout.
+
+5. **Users page module**
+
+   * Moved the users page and overlay from `lib/features/users_page` to `lib/ui/pages/users`.
+   * Grouped `UsersViewModel`, its factory, and `UserFormResult` under the local `viewmodel` hierarchy.
+   * Moved the dismissible user tile and complete user-dialog widget tree under the users page module.
+   * Updated routing, application bootstrap, dependency composition, and internal references to the relocated files.
+
+6. **Dependency composition and routing**
+
+   * Registered `CreateTrainingUseCase` in the use-case dependency module with transient resolution.
+   * Updated settings and users ViewModel registrations to their new feature-local paths.
+   * Updated main routes to load the migrated settings and users overlays and ViewModels from `lib/ui/pages`.
+   * Updated application entry-point and material-app imports to match the reorganized presentation layout.
+
+7. **Automated tests**
+
+   * Added use-case coverage for persistence order, training insertion failure, history insertion failure, successful compensation, failed compensation, and missing persistence identity.
+   * Added `TrainingsViewModel` coverage for loading, invalid users, immutable selection, user changes, cache reconciliation, mutations, partial batch deletion, error state, and selected-user removal.
+   * Extended dependency-composition coverage to verify transient `CreateTrainingUseCase` resolution.
+   * Moved settings and users tests to mirror the new application layout and updated their imports.
+
+8. **Architecture and backlog documentation**
+
+   * Updated the architecture guide to document `lib/ui/pages/<feature>` as the destination for migrated presentation modules while preserving temporary legacy locations.
+   * Marked the coordinated training-creation and `TrainingsViewModel` backlog tasks as completed.
+   * Documented delivered failure handling, repository boundaries, transient selection behavior, and command-based state management.
+   * Added changelog entries covering the training initialization, training ViewModel, and migrated page layout work.
+
+### Conclusion
+
+The change set provides safer training initialization, testable training-list state, and clearer feature-local presentation boundaries. Migrated settings and users modules now follow a consistent UI structure, while dependency composition and routing reflect the new architecture.
+
+## 2026/08/20 - migrated-pages-layout
+
+This change colocates each migrated page with its local ViewModels, form
+models, overlays, and widgets under `lib/ui/pages`.
+
+1. **Settings page**
+
+   * Moved the page and overlay to `ui/pages/settings`.
+   * Grouped its ViewModel and form model under `viewmodel`.
+   * Moved the page-specific length editor under `widgets`.
+
+2. **Users page**
+
+   * Moved the page and overlay to `ui/pages/users`.
+   * Grouped the ViewModel, factory, and form result under `viewmodel`.
+   * Moved the user tile and complete user-dialog tree under local `widgets`.
+
+3. **Training ViewModel and tests**
+
+   * Placed the new `TrainingsViewModel` in its final `viewmodel` directory
+     while leaving the legacy page in `features` until its migration task.
+   * Mirrored the application layout in the affected UI tests.
+   * Updated routing, dependency composition, bootstrap, and all imports.
+
+### Conclusion
+
+Migrated pages now have feature-local, predictable UI boundaries, while truly
+shared legacy components remain separate until UI consolidation.
+
+## 2026/08/20 - bkl006/task-04
+
+This change introduces the command-based `TrainingsViewModel` and moves
+training-list presentation state behind a testable MVVM boundary.
+
+1. **TrainingsViewModel**
+
+   * Added injected user and training repository dependencies.
+   * Added commands for loading users, loading a selected user's trainings,
+     updating, deleting, and deleting the current selection.
+   * Exposed repository-backed domain users and trainings without duplicating
+     their caches.
+   * Consolidated loading and the latest `AppError` across all commands.
+
+2. **Transient UI selection**
+
+   * Added immutable selected-training IDs and derived selected entities.
+   * Added individual selection, select-all, and clear operations.
+   * Reconciled selection after user changes, reloads, deletions, partial batch
+     failures, and removal of the selected user.
+
+3. **Tests**
+
+   * Added coverage for loading, invalid users, immutable selection, user
+     changes, cache reconciliation, mutations, partial deletion, error state,
+     and removal of the selected user.
+
+### Conclusion
+
+Training-list operations and transient selection are ready for page migration
+without managers, legacy models, or widget-owned business state.
+
+## 2026/08/20 - bkl006/task-03
+
+This change makes training initialization a recoverable operation coordinated
+across training and history repositories.
+
+1. **Training initialization use case**
+
+   * Added `CreateTrainingUseCase` for inserting a training followed by its
+     zero-duration initial history entry.
+   * Added cascade-based compensation when initial-history persistence fails.
+   * Preserved primary and compensation errors when rollback also fails.
+   * Added `TrainingInitialization` as the typed successful result.
+
+2. **Stopwatch integration and composition**
+
+   * Replaced separate legacy writes at timer start with the coordinated use
+     case.
+   * Kept later split writes and simple operations directly on their existing
+     repository boundaries.
+   * Registered the use case with transient lifetime and covered it in the
+     composition-root test.
+
+3. **Tests**
+
+   * Covered operation order, training failure, history failure, successful
+     compensation, failed compensation, and a missing persistence identity.
+
+### Conclusion
+
+Starting a training no longer leaves an orphan training when its fundamental
+initial event cannot be persisted.
+
 ## 2026/08/20 - bkl006/task-02
 
 This change establishes centralized declarative routing with `go_router`, strengthens training-history domain semantics, and validates repository cache and SQLite relationship contracts.

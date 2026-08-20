@@ -13,10 +13,11 @@ import 'package:trainers_stopwatch/data/services/images/image_compression_servic
 import 'package:trainers_stopwatch/data/services/images/image_selection_service.dart';
 import 'package:trainers_stopwatch/data/services/images/user_image_storage_service.dart';
 import 'package:trainers_stopwatch/data/services/settings/settings_service.dart';
+import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
 import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
-import 'package:trainers_stopwatch/ui/pages/settings/settings_view_model.dart';
-import 'package:trainers_stopwatch/ui/pages/users/users_view_model_factory.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/users/viewmodel/users_view_model_factory.dart';
 
 void main() {
   test('setupDependencies is idempotent and resolves the bootstrap graph', () {
@@ -35,6 +36,7 @@ void main() {
     final imageCompression = injector.get<ImageCompressionService>();
     final imageStorage = injector.get<UserImageStorageService>();
     final usersUseCase = injector.get<UsersUseCase>();
+    final createTrainingUseCase = injector.get<CreateTrainingUseCase>();
     final usersViewModelFactory = injector.get<UsersViewModelFactory>();
     final usersViewModel = usersViewModelFactory.create(const [7]);
     addTearDown(settingsViewModel.dispose);
@@ -60,6 +62,10 @@ void main() {
     expect(injector.get<ImageCompressionService>(), same(imageCompression));
     expect(injector.get<UserImageStorageService>(), same(imageStorage));
     expect(injector.get<UsersUseCase>(), isNot(same(usersUseCase)));
+    expect(
+      injector.get<CreateTrainingUseCase>(),
+      isNot(same(createTrainingUseCase)),
+    );
     expect(
       injector.get<UsersViewModelFactory>(),
       same(usersViewModelFactory),

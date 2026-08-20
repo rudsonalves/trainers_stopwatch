@@ -27,8 +27,8 @@ import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/features/trainings_page/trainings_page_controller.dart';
 import '/core/routing/router.dart';
 import '/core/routing/routes/main_routes.dart';
-import '/ui/pages/settings/settings_view_model.dart';
-import '/ui/pages/users/users_view_model.dart';
+import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/users/viewmodel/users_view_model.dart';
 import 'app_appearance_state.dart';
 
 class MyMaterialApp extends StatefulWidget {

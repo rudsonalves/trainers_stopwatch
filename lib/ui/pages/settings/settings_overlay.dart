@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import '/ui/pages/settings/settings_view_model.dart';
+import 'viewmodel/settings_view_model.dart';
 import 'settings_page.dart';
 
 class SettingsOverlay extends StatefulWidget {

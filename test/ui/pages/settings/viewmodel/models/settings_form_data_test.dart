@@ -5,7 +5,7 @@ import 'package:trainers_stopwatch/domain/common/settings/models/settings.dart';
 import 'package:trainers_stopwatch/domain/common/training/units/distance_unit.dart';
 import 'package:trainers_stopwatch/domain/common/training/values/distance.dart';
 import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
-import 'package:trainers_stopwatch/ui/pages/settings/models/settings_form_data.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/models/settings_form_data.dart';
 
 void main() {
   test('converts every settings value between domain and UI', () {

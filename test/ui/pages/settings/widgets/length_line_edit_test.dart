@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/features/settings/widgets/length_line_edit.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/widgets/length_line_edit.dart';
 
 void main() {
   testWidgets('reports only a complete positive length after debounce', (

@@ -5,8 +5,8 @@ import '/data/repositories/settings/settings_repository.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/domain/usecases/users/users_use_case.dart';
 import '/ui/app/app_appearance_state.dart';
-import '/ui/pages/settings/settings_view_model.dart';
-import '/ui/pages/users/users_view_model_factory.dart';
+import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/users/viewmodel/users_view_model_factory.dart';
 
 void registerViewModelsDependencies(AutoInjector injector) {
   injector

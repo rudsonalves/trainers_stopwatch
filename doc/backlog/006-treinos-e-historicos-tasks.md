@@ -83,35 +83,56 @@ treino.
 
 **Dependências:** tarefas 1 e 2.
 
-- [ ] Mapear as operações que escrevem treino e histórico no mesmo fluxo.
-- [ ] Criar um UseCase somente para operações que exijam essa coordenação.
-- [ ] Garantir que a criação de treino e de seu marco inicial preserve
+- [x] Mapear as operações que escrevem treino e histórico no mesmo fluxo.
+- [x] Criar um UseCase somente para operações que exijam essa coordenação.
+- [x] Garantir que a criação de treino e de seu marco inicial preserve
       consistência em falhas parciais.
-- [ ] Fazer o UseCase receber dependências por construtor e devolver
+- [x] Fazer o UseCase receber dependências por construtor e devolver
       `Result`/`AppError`.
-- [ ] Delegar operações simples diretamente ao repository quando não houver
+- [x] Delegar operações simples diretamente ao repository quando não houver
       regra ou coordenação adicional.
-- [ ] Não criar UseCase para repetir a exclusão em cascata.
+- [x] Não criar UseCase para repetir a exclusão em cascata.
 
 **Resultado esperado:** operações compostas têm uma fronteira explícita, sem
 transformar cada chamada simples de repository em um UseCase vazio.
+
+**Entregue em 2026-08-20:** `CreateTrainingUseCase` coordena exclusivamente a
+inserção do treino e de seu marco inicial com duração zero. Se a inserção do
+histórico falhar, o treino recém-criado é removido e a cascata mantém a
+persistência consistente; se essa compensação também falhar, o `AppError`
+preserva os erros primário e compensatório e a identidade do treino. O resultado
+de sucesso retorna `TrainingInitialization` com as duas entidades persistidas.
+O UseCase é transient, recebe ambos os repositories por construtor e já é usado
+pelo fluxo real de início do cronômetro. Carga, atualização, exclusão e inserção
+de parciais continuam delegadas diretamente aos respectivos repositories.
 
 ### 4. Criar TrainingsViewModel e estado de seleção
 
 **Dependências:** tarefas 2 e 3 e padrão MVVM do backlog 005.
 
-- [ ] Criar `TrainingsViewModel` com dependências recebidas por construtor.
-- [ ] Expor Commands para carregar, atualizar e excluir treinos.
-- [ ] Expor seleção de usuário e carregamento dos treinos relacionados.
-- [ ] Manter a seleção múltipla como estado transitório da UI.
-- [ ] Expor IDs selecionados como coleção não modificável.
-- [ ] Implementar selecionar, desselecionar, selecionar todos e limpar seleção.
-- [ ] Reconciliar a seleção após troca de usuário, recarga e exclusão.
-- [ ] Consolidar loading e último `AppError` sem estados paralelos legados.
-- [ ] Não armazenar `BuildContext`, widgets ou `TextEditingController`.
+- [x] Criar `TrainingsViewModel` com dependências recebidas por construtor.
+- [x] Expor Commands para carregar, atualizar e excluir treinos.
+- [x] Expor seleção de usuário e carregamento dos treinos relacionados.
+- [x] Manter a seleção múltipla como estado transitório da UI.
+- [x] Expor IDs selecionados como coleção não modificável.
+- [x] Implementar selecionar, desselecionar, selecionar todos e limpar seleção.
+- [x] Reconciliar a seleção após troca de usuário, recarga e exclusão.
+- [x] Consolidar loading e último `AppError` sem estados paralelos legados.
+- [x] Não armazenar `BuildContext`, widgets ou `TextEditingController`.
 
 **Resultado esperado:** a página de treinos possui estado e operações testáveis
 sem depender de managers ou models legados.
+
+**Entregue em 2026-08-20:** `TrainingsViewModel` recebe `UserRepository` e
+`TrainingRepository` por construtor e expõe Commands para carregar usuários,
+carregar os treinos do usuário selecionado, atualizar, excluir e excluir a
+seleção. Os caches de domínio continuam nos repositories; o ViewModel mantém
+somente o usuário selecionado, IDs selecionados, loading e último `AppError`.
+A seleção é imutável para consumidores, ignora entidades indisponíveis e é
+reconciliada em troca de usuário, recarga, exclusão individual, exclusão em lote
+e remoção do usuário selecionado. Falhas preservam o último cache válido, e uma
+falha no meio da exclusão em lote mantém selecionados apenas os itens ainda
+existentes. O ViewModel não contém contexto, widgets ou controllers visuais.
 
 ### 5. Criar HistoryViewModel e apresentação derivada
 

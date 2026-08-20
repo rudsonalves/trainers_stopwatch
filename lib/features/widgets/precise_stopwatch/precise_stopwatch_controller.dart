@@ -18,25 +18,28 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../bloc/stopwatch_bloc.dart';
-import '../../../bloc/stopwatch_events.dart';
-import '../../../bloc/stopwatch_state.dart';
-import '../../../common/constants.dart';
-import '../../../common/functions/stopwatch_functions.dart';
-import '../../../common/functions/training_report.dart';
-import '../../../common/models/messages_model.dart';
-import '../../../common/singletons/app_settings.dart';
-import '../../../manager/history_manager.dart';
-import '../../../manager/training_manager.dart';
-import '../../../common/models/user_model.dart';
-import '../../../common/models/history_model.dart';
-import '../../../common/models/training_model.dart';
+import '/bloc/stopwatch_bloc.dart';
+import '/bloc/stopwatch_events.dart';
+import '/bloc/stopwatch_state.dart';
+import '/common/adapters/training_domain_adapter.dart';
+import '/common/constants.dart';
+import '/common/functions/stopwatch_functions.dart';
+import '/common/functions/training_report.dart';
+import '/common/models/history_model.dart';
+import '/common/models/messages_model.dart';
+import '/common/models/training_model.dart';
+import '/common/models/user_model.dart';
+import '/common/singletons/app_settings.dart';
+import '/domain/usecases/trainings/create_training_use_case.dart';
+import '/manager/history_manager.dart';
+import '/manager/training_manager.dart';
 import '../../stopwatch_page/stopwatch_page_controller.dart';
 
 class PreciseStopwatchController {
   final _bloc = StopwatchBloc();
   final TrainingManager _trainingManager;
   final HistoryManager _historyManager;
+  final CreateTrainingUseCase _createTrainingUseCase;
   final StopwatchPageController _stopwatchController;
   late final UserModel _user;
   TrainingModel? _training;
@@ -49,9 +52,11 @@ class PreciseStopwatchController {
   PreciseStopwatchController({
     required TrainingManager trainingManager,
     required HistoryManager historyManager,
+    required CreateTrainingUseCase createTrainingUseCase,
     required StopwatchPageController stopwatchController,
   })  : _trainingManager = trainingManager,
         _historyManager = historyManager,
+        _createTrainingUseCase = createTrainingUseCase,
         _stopwatchController = stopwatchController;
 
   Color? lastColor;
@@ -107,7 +112,7 @@ class PreciseStopwatchController {
     _isCreatedTraining = true;
   }
 
-  Future<void> _insertTraining() async {
+  Future<void> _insertTraining(String initialComments) async {
     if (_training!.id != null) {
       throw Exception('Error!!!');
     }
@@ -115,8 +120,18 @@ class PreciseStopwatchController {
       _training!.color = lastColor!;
     }
     _training!.date = bloc.startTime;
-    await _trainingManager.insert(_training!);
-    _historyManager.init(_training!.id!);
+    final domainTraining = _training!.toDomain();
+    if (domainTraining.isFailure) throw domainTraining.error!;
+
+    final initialization = await _createTrainingUseCase.execute(
+      training: domainTraining.value!,
+      initialComments: initialComments,
+    );
+    if (initialization.isFailure) throw initialization.error!;
+
+    final initialized = initialization.value!;
+    _training!.id = initialized.training.id;
+    _historyManager.init(initialized.training.id!);
     lastColor = _training!.color;
   }
 
@@ -143,19 +158,12 @@ class PreciseStopwatchController {
     if (!_isCreatedTraining) {
       _createNewTraining();
     }
-    await _insertTraining();
-
-    HistoryModel history = HistoryModel(
-      trainingId: _training!.id!,
-      duration: const Duration(milliseconds: 0),
-      comments: 'PSCStartedMessage'.tr(args: [
-        DateFormat.yMd().add_Hms().format(_bloc.startTime),
-      ]),
-    );
-
-    await _historyManager.insert(history);
+    final startedComments = 'PSCStartedMessage'.tr(args: [
+      DateFormat.yMd().add_Hms().format(_bloc.startTime),
+    ]);
+    await _insertTraining(startedComments);
     _toggleActionOnPress();
-    _sendStartedMessage(history.comments!);
+    _sendStartedMessage(startedComments);
   }
 
   Future<void> blocPauseTimer() async {

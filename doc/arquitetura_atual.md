@@ -118,8 +118,12 @@ temas e entrega a navegação ao `GoRouter`. A rota inicial é `/stopwatch`.
 
 ## 4. Apresentação e navegação
 
-A camada de apresentação fica em `lib/features`. Cada funcionalidade pode conter
-página, overlay de tutorial, controller e widgets próprios.
+A apresentação migrada fica em `lib/ui/pages/<feature>`, com construção da
+página e overlay na raiz da feature e subdiretórios `viewmodel`, `widgets` e
+outros agrupamentos locais necessários. Configurações e usuários já seguem esse
+formato. Features ainda não migradas permanecem temporariamente em
+`lib/features`; componentes compartilhados legados continuam em
+`lib/features/widgets/common` até a consolidação da UI.
 
 | Funcionalidade | Rota | Responsabilidade |
 | --- | --- | --- |

@@ -19,9 +19,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../common/constants.dart';
-import '../../../common/theme/app_font_style.dart';
-import '../../widgets/common/numeric_field.dart';
+import '/common/constants.dart';
+import '/common/theme/app_font_style.dart';
+import '/features/widgets/common/numeric_field.dart';
 
 class LengthLineEdit extends StatefulWidget {
   final String lengthLabel;

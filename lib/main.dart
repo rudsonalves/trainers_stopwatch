@@ -29,8 +29,8 @@ import 'features/trainings_page/trainings_page_controller.dart';
 import 'ui/app/app_appearance_state.dart';
 import 'ui/app/bootstrap_error_app.dart';
 import 'ui/app/my_material_app.dart';
-import 'ui/pages/settings/settings_view_model.dart';
-import 'ui/pages/users/users_view_model_factory.dart';
+import 'ui/pages/settings/viewmodel/settings_view_model.dart';
+import 'ui/pages/users/viewmodel/users_view_model_factory.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
