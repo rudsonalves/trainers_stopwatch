@@ -12,7 +12,7 @@ Depende da conclusão dos backlogs 004 a 009.
 ## Escopo
 
 - revisar todas as Pages e ViewModels contra as regras arquiteturais;
-- centralizar nomes de rotas e tipar argumentos mantendo Navigator 1.0;
+- revisar nomes, paths e argumentos já centralizados no `go_router`;
 - manter navegação, dialogs, snackbars, focus e controllers nas Pages;
 - garantir loading, vazio, sucesso e erro nos fluxos relevantes;
 - mover widgets compartilháveis para `ui/components` somente quando houver uso
@@ -28,7 +28,7 @@ Depende da conclusão dos backlogs 004 a 009.
 ## Fora de escopo
 
 - redesenho visual completo;
-- Navigator 2.0;
+- trocar `go_router` por outra solução de navegação;
 - novas funcionalidades de produto;
 - abstrações de componentes sem reutilização concreta.
 
@@ -44,7 +44,7 @@ Depende da conclusão dos backlogs 004 a 009.
 - páginas dependem somente de ViewModels/BLoCs e componentes adequados;
 - nenhum ViewModel possui `BuildContext`, widget ou controller visual;
 - nenhum fluxo migrado depende de manager/store/singleton legado;
-- rotas nomeadas e argumentos estão centralizados e permanecem no Navigator 1.0;
+- rotas nomeadas e argumentos permanecem centralizados no `go_router`;
 - estados de tela importantes são explícitos;
 - imports e dependências não utilizados são removidos;
 - documentação descreve a arquitetura efetivamente entregue;
@@ -60,4 +60,3 @@ Nenhuma decisão adicional aprovada.
 **Estado:** Planejado — encerramento da reestruturação arquitetural.
 
 **Próximo backlog:** a definir conforme prioridades funcionais do produto.
-

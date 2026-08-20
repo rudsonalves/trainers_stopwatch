@@ -25,7 +25,8 @@ migrado estiver funcional.
 
 ## Regras de execução
 
-- Navigator 1.0 e rotas nomeadas serão mantidos.
+- `go_router` centraliza paths e nomes; Pages iniciam navegação e ViewModels não
+  recebem `BuildContext`.
 - ViewModels não recebem `BuildContext` nem armazenam widgets.
 - Dependências novas são recebidas por construtor.
 - UseCases só são criados quando coordenam operações relevantes.

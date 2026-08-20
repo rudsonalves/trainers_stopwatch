@@ -301,31 +301,29 @@ compartilhamento. Não é necessário modelar antecipadamente códigos sem uso.
 
 ## 9. Navegação
 
-A aplicação manterá o Navigator 1.0 durante esta reestruturação. O conjunto
-atual de rotas é pequeno e predominantemente linear, portanto Router API,
-delegates e roteamento declarativo não oferecem benefício proporcional agora.
+A aplicação usa `go_router`, organizado conforme o padrão de
+`go-list2/mobile/lib/core/routing`.
 
 O padrão será:
 
-- rotas nomeadas registradas no `MaterialApp`;
-- `Navigator.pushNamed`, `pushReplacementNamed` e `pop` conforme o fluxo;
+- `MaterialApp.router` recebe uma configuração central de `GoRouter`;
+- enums centralizam nomes e paths das rotas;
+- arquivos de rotas agrupam builders e composição de dependências;
+- transições e `RouteObserver` ficam em `core/routing`;
+- Pages usam `pushNamed`/`pop` pelas extensões de `go_router`;
 - argumentos tipados por classes próprias quando o contrato da rota exigir mais
   clareza;
 - navegação, dialogs, snackbars e leitura de `BuildContext` permanecem na Page;
 - ViewModels expõem resultado e estado, mas nunca chamam `Navigator`;
 - Commands não retornam nomes de rotas: a Page decide o destino após o sucesso;
-- nomes e paths das rotas ficam centralizados para evitar strings espalhadas.
-
-Não será criada uma abstração genérica de router em `core`. Ela só deve ser
-considerada se surgir uma necessidade concreta, como deep links, navegação web,
-guards ou restauração de estado.
+- `Navigator.pop` direto permanece somente para fechar rotas modais.
 
 ```text
 Page executa Command
   -> ViewModel processa operação
   -> Command termina com Success
   -> Page observa Success
-  -> Page chama Navigator 1.0
+  -> Page navega pelo go_router
 ```
 
 ## 10. Estratégia de migração
@@ -339,7 +337,7 @@ verticais. Não se recomenda mover todos os arquivos de uma vez.
 - usar a nomenclatura `Viewmodel`, alinhada ao projeto de referência;
 - usar `AutoInjector` no composition root;
 - definir plataformas que continuarão suportadas;
-- preservar Navigator 1.0 e rotas nomeadas durante a reestruturação;
+- preservar a navegação nas Pages e centralizar rotas no `go_router`;
 - congelar novas dependências arquiteturais durante a transição.
 
 Resultado: arquitetura de destino acordada, sem mudança funcional.
@@ -493,7 +491,7 @@ ativas da mesma feature por longo período.
 A reestruturação estará concluída quando:
 
 - páginas não acessarem SQLite, arquivos, repositories concretos ou singletons;
-- navegação com Navigator 1.0 permanecer restrita às Pages;
+- navegação com `go_router` permanecer restrita às Pages;
 - ViewModels receberem dependências por construtor e expuserem Commands/estado;
 - modelos de domínio não importarem Flutter ou `sqflite`;
 - repositories esconderem persistência e retornarem `Result`;

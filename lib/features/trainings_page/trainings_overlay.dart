@@ -18,8 +18,6 @@ class TrainingsOverlay extends StatelessWidget {
     required this.appShare,
   });
 
-  static const routeName = '/trainings';
-
   @override
   Widget build(BuildContext context) => TrainingsPage(
         controller: controller,

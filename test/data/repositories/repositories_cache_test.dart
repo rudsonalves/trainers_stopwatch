@@ -78,6 +78,7 @@ class _UserServiceFake extends UserService {
 
 class _TrainingServiceFake extends TrainingService {
   List<Training> stored = const [];
+  bool failReads = false;
   bool failWrites = false;
 
   _TrainingServiceFake()
@@ -87,14 +88,28 @@ class _TrainingServiceFake extends TrainingService {
         );
 
   @override
-  AsyncResult<List<Training>> readAllFromUser(int userId) async =>
-      Success(stored);
+  AsyncResult<List<Training>> readAllFromUser(int userId) async => failReads
+      ? const Failure(
+          AppError(
+            code: AppErrorCode.storageReadFailed,
+            message: 'failed',
+          ),
+        )
+      : Success(stored);
 
   @override
-  AsyncResult<Training> insert(Training training) async => Success(
-        Training.create(id: 3, userId: training.userId, date: training.date)
-            .value!,
-      );
+  AsyncResult<Training> insert(Training training) async => failWrites
+      ? const Failure(
+          AppError(code: AppErrorCode.storageWriteFailed, message: 'failed'),
+        )
+      : Success(
+          Training.create(
+            id: 3,
+            userId: training.userId,
+            date: training.date,
+            comments: training.comments,
+          ).value!,
+        );
 
   @override
   AsyncResult<Unit> update(Training training) async =>
@@ -107,7 +122,8 @@ class _TrainingServiceFake extends TrainingService {
 
 class _HistoryServiceFake extends HistoryService {
   List<HistoryEntry> stored = const [];
-  bool failDelete = false;
+  bool failReads = false;
+  bool failWrites = false;
 
   _HistoryServiceFake()
       : super(
@@ -117,23 +133,39 @@ class _HistoryServiceFake extends HistoryService {
 
   @override
   AsyncResult<List<HistoryEntry>> readAllFromTraining(int trainingId) async =>
-      Success(stored);
+      failReads
+          ? const Failure(
+              AppError(
+                code: AppErrorCode.storageReadFailed,
+                message: 'failed',
+              ),
+            )
+          : Success(stored);
 
   @override
-  AsyncResult<HistoryEntry> insert(HistoryEntry entry) async => Success(
-        HistoryEntry.create(
-          id: 4,
-          trainingId: entry.trainingId,
-          duration: entry.duration,
-        ).value!,
-      );
+  AsyncResult<HistoryEntry> insert(HistoryEntry entry) async => failWrites
+      ? const Failure(
+          AppError(code: AppErrorCode.storageWriteFailed, message: 'failed'),
+        )
+      : Success(
+          HistoryEntry.create(
+            id: 4,
+            trainingId: entry.trainingId,
+            duration: entry.duration,
+            comments: entry.comments,
+          ).value!,
+        );
+
+  @override
+  AsyncResult<Unit> update(HistoryEntry entry) async =>
+      failWrites ? failure : const Success(unit);
 
   @override
   AsyncResult<Unit> deleteAndMergeNext({
     required int trainingId,
     required int historyEntryId,
   }) async =>
-      failDelete ? failure : const Success(unit);
+      failWrites ? failure : const Success(unit);
 }
 
 void main() {
@@ -185,6 +217,67 @@ void main() {
     expect(repository.trainingsForUser(2).single.id, 2);
   });
 
+  test('training cache is immutable and survives failed reads and writes',
+      () async {
+    final cachedTraining = Training.create(
+      id: 1,
+      userId: 1,
+      date: DateTime(2026),
+      comments: 'cached',
+    ).value!;
+    final service = _TrainingServiceFake()..stored = [cachedTraining];
+    final repository = TrainingRepositoryImpl(service: service);
+    await repository.loadForUser(1);
+    final snapshot = repository.trainingsForUser(1);
+    service
+      ..failReads = true
+      ..failWrites = true;
+
+    final reload = await repository.loadForUser(1);
+    final update = await repository.update(
+      Training.create(
+        id: 1,
+        userId: 1,
+        date: DateTime(2026),
+        comments: 'changed',
+      ).value!,
+    );
+    final deletion = await repository.delete(cachedTraining);
+
+    expect(reload.isFailure, isTrue);
+    expect(update.isFailure, isTrue);
+    expect(deletion.isFailure, isTrue);
+    expect(repository.trainingsForUser(1), same(snapshot));
+    expect(repository.trainingsForUser(1).single.comments, 'cached');
+    expect(
+      () => repository.trainingsForUser(1).add(cachedTraining),
+      throwsUnsupportedError,
+    );
+  });
+
+  test('training cache reflects a persisted comment update', () async {
+    final original = Training.create(
+      id: 1,
+      userId: 1,
+      date: DateTime(2026),
+      comments: 'before',
+    ).value!;
+    final changed = Training.create(
+      id: 1,
+      userId: 1,
+      date: DateTime(2026),
+      comments: 'after',
+    ).value!;
+    final service = _TrainingServiceFake()..stored = [original];
+    final repository = TrainingRepositoryImpl(service: service);
+    await repository.loadForUser(1);
+
+    final result = await repository.update(changed);
+
+    expect(result.isSuccess, isTrue);
+    expect(repository.trainingsForUser(1).single, changed);
+  });
+
   test('history cache mirrors duration merge after transaction success',
       () async {
     HistoryEntry entry(int id, int seconds) => HistoryEntry.create(
@@ -206,5 +299,64 @@ void main() {
     expect(repository.historiesForTraining(9).map((item) => item.id), [1, 3]);
     expect(repository.historiesForTraining(9).last.duration,
         const Duration(seconds: 3));
+  });
+
+  test('history cache is immutable and survives failed reads and writes',
+      () async {
+    final cachedEntry = HistoryEntry.create(
+      id: 1,
+      trainingId: 9,
+      duration: Duration.zero,
+      comments: 'cached',
+    ).value!;
+    final service = _HistoryServiceFake()..stored = [cachedEntry];
+    final repository = HistoryRepositoryImpl(service: service);
+    await repository.loadForTraining(9);
+    final snapshot = repository.historiesForTraining(9);
+    service
+      ..failReads = true
+      ..failWrites = true;
+
+    final reload = await repository.loadForTraining(9);
+    final update = await repository.update(
+      HistoryEntry.create(
+        id: 1,
+        trainingId: 9,
+        duration: Duration.zero,
+        comments: 'changed',
+      ).value!,
+    );
+
+    expect(reload.isFailure, isTrue);
+    expect(update.isFailure, isTrue);
+    expect(repository.historiesForTraining(9), same(snapshot));
+    expect(repository.historiesForTraining(9).single.comments, 'cached');
+    expect(
+      () => repository.historiesForTraining(9).add(cachedEntry),
+      throwsUnsupportedError,
+    );
+  });
+
+  test('history cache reflects a persisted comment update', () async {
+    final original = HistoryEntry.create(
+      id: 1,
+      trainingId: 9,
+      duration: Duration.zero,
+      comments: 'before',
+    ).value!;
+    final changed = HistoryEntry.create(
+      id: 1,
+      trainingId: 9,
+      duration: Duration.zero,
+      comments: 'after',
+    ).value!;
+    final service = _HistoryServiceFake()..stored = [original];
+    final repository = HistoryRepositoryImpl(service: service);
+    await repository.loadForTraining(9);
+
+    final result = await repository.update(changed);
+
+    expect(result.isSuccess, isTrue);
+    expect(repository.historiesForTraining(9).single, changed);
   });
 }

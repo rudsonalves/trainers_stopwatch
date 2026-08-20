@@ -15,6 +15,9 @@ void main() {
 
     expect(event.historyId, 1);
     expect(event.comments, 'started');
+    expect(event.origin, TrainingEventOrigin.persisted);
+    expect(event.isPersisted, isTrue);
+    expect(event.isDerived, isFalse);
   });
 
   group('SplitRecorded', () {
@@ -31,6 +34,7 @@ void main() {
       expect(result.value?.splitIndex, 1);
       expect(result.value?.duration, const Duration(seconds: 20));
       expect(result.value?.speed, speed);
+      expect(result.value?.origin, TrainingEventOrigin.persisted);
     });
 
     test('rejects a non-positive index', () {
@@ -59,6 +63,8 @@ void main() {
       expect(result.value?.lapIndex, 2);
       expect(result.value?.duration, const Duration(seconds: 40));
       expect(result.value?.speed, speed);
+      expect(result.value?.origin, TrainingEventOrigin.derived);
+      expect(result.value?.isDerived, isTrue);
     });
 
     test('rejects negative duration', () {

@@ -38,25 +38,6 @@ class HistoryPage extends StatefulWidget {
     required this.controller,
   });
 
-  static const routeName = '/history';
-
-  static HistoryPage fromContext(
-    BuildContext context, {
-    required HistoryPageController controller,
-  }) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
-    final user = args['user']! as UserModel;
-    final training = args['training']! as TrainingModel;
-
-    return HistoryPage(
-      user: user,
-      training: training,
-      controller: controller,
-    );
-  }
-
   @override
   State<HistoryPage> createState() => _HistoryPageState();
 }

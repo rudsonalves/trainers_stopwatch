@@ -17,20 +17,16 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '/common/functions/share_functions.dart';
 import '/common/theme/theme.dart';
 import '/common/theme/util.dart';
-import '/features/about_page/about_page.dart';
-import '/features/history_page/history_page.dart';
 import '/features/history_page/history_page_controller.dart';
-import '/features/personal_training_page/personal_training_page.dart';
-import '/features/settings/settings_overlay.dart';
-import '/features/stopwatch_page/stopwatch_overlay.dart';
 import '/features/stopwatch_page/stopwatch_page_controller.dart';
-import '/features/trainings_page/trainings_overlay.dart';
 import '/features/trainings_page/trainings_page_controller.dart';
-import '/features/users_page/users_overlay.dart';
+import '/core/routing/router.dart';
+import '/core/routing/routes/main_routes.dart';
 import '/ui/pages/settings/settings_view_model.dart';
 import '/ui/pages/users/users_view_model.dart';
 import 'app_appearance_state.dart';
@@ -62,12 +58,23 @@ class MyMaterialApp extends StatefulWidget {
 
 class _MyMaterialAppState extends State<MyMaterialApp> {
   bool _localeSyncScheduled = false;
+  late final GoRouter _router;
 
   AppAppearanceState get appearanceState => widget.appearanceState;
 
   @override
   void initState() {
     super.initState();
+    _router = createRouter(
+      MainRouteDependencies(
+        stopwatchController: widget.stopwatchController,
+        usersViewModelFactory: widget.usersViewModelFactory,
+        trainingsControllerFactory: widget.trainingsControllerFactory,
+        historyControllerFactory: widget.historyControllerFactory,
+        appShare: widget.appShare,
+        settingsViewModelFactory: widget.settingsViewModelFactory,
+      ),
+    );
     appearanceState.addListener(_onAppearanceChanged);
   }
 
@@ -86,6 +93,30 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
     _scheduleLocaleSync();
   }
 
+  @override
+  void dispose() {
+    appearanceState.removeListener(_onAppearanceChanged);
+    _router.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = createTextTheme(context, "Roboto", "Actor");
+    MaterialTheme theme = MaterialTheme(textTheme);
+
+    return MaterialApp.router(
+      routerConfig: _router,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: appearanceState.locale,
+      theme: appearanceState.brightness == Brightness.light
+          ? _lightContrast(theme, appearanceState.contrast)
+          : _darkContrast(theme, appearanceState.contrast),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+
   void _onAppearanceChanged() {
     if (!mounted) return;
     setState(() {});
@@ -102,7 +133,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
     });
   }
 
-  ThemeData lightContrast(MaterialTheme theme, AppContrast contrast) {
+  ThemeData _lightContrast(MaterialTheme theme, AppContrast contrast) {
     switch (contrast) {
       case AppContrast.standard:
         return theme.light();
@@ -113,7 +144,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
     }
   }
 
-  ThemeData darkContrast(MaterialTheme theme, AppContrast contrast) {
+  ThemeData _darkContrast(MaterialTheme theme, AppContrast contrast) {
     switch (contrast) {
       case AppContrast.standard:
         return theme.dark();
@@ -122,54 +153,5 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
       case AppContrast.high:
         return theme.darkHighContrast();
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    TextTheme textTheme = createTextTheme(context, "Roboto", "Actor");
-    MaterialTheme theme = MaterialTheme(textTheme);
-
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: appearanceState.locale,
-      theme: appearanceState.brightness == Brightness.light
-          ? lightContrast(theme, appearanceState.contrast)
-          : darkContrast(theme, appearanceState.contrast),
-      debugShowCheckedModeBanner: false,
-      initialRoute: StopwatchOverlay.routeName,
-      routes: {
-        StopwatchOverlay.routeName: (context) =>
-            StopwatchOverlay(controller: widget.stopwatchController),
-        UsersOverlay.routeName: (context) => UsersOverlay(
-              viewModel: widget.usersViewModelFactory(
-                widget.stopwatchController.usersList
-                    .map((user) => user.id)
-                    .nonNulls,
-              ),
-              stopwatchController: widget.stopwatchController,
-            ),
-        PersonalTrainingPage.routeName: (context) =>
-            PersonalTrainingPage.fromContext(context),
-        TrainingsOverlay.routeName: (context) => TrainingsOverlay(
-              controller: widget.trainingsControllerFactory(),
-              appShare: widget.appShare,
-            ),
-        SettingsOverlay.routeName: (context) => SettingsOverlay(
-              viewModel: widget.settingsViewModelFactory(),
-            ),
-        AboutPage.routeName: (context) => const AboutPage(),
-        HistoryPage.routeName: (context) => HistoryPage.fromContext(
-              context,
-              controller: widget.historyControllerFactory(),
-            ),
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    appearanceState.removeListener(_onAppearanceChanged);
-    super.dispose();
   }
 }

@@ -24,8 +24,6 @@ import '../../common/theme/app_font_style.dart';
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
 
-  static const routeName = '/about';
-
   @override
   State<AboutPage> createState() => _AboutPageState();
 }

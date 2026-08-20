@@ -32,19 +32,6 @@ class PersonalTrainingPage extends StatefulWidget {
     required this.stopwatch,
   });
 
-  static const routeName = '/training';
-
-  static PersonalTrainingPage fromContext(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
-    final stopwatch = args['stopwatch']! as PreciseStopwatch;
-
-    return PersonalTrainingPage(
-      stopwatch: stopwatch,
-    );
-  }
-
   @override
   State<PersonalTrainingPage> createState() => _PersonalTrainingPageState();
 }

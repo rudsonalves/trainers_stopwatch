@@ -20,17 +20,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'common/constants.dart';
+import 'common/functions/share_functions.dart';
 import 'core/bootstrap/bootstrap.dart';
 import 'core/config/dependencies.dart';
-import 'core/result/errors/app_error.dart';
-import 'ui/app/app_appearance_state.dart';
-import 'ui/app/my_material_app.dart';
-import 'ui/pages/users/users_view_model_factory.dart';
-import 'ui/pages/settings/settings_view_model.dart';
 import 'features/history_page/history_page_controller.dart';
 import 'features/stopwatch_page/stopwatch_page_controller.dart';
 import 'features/trainings_page/trainings_page_controller.dart';
-import 'common/functions/share_functions.dart';
+import 'ui/app/app_appearance_state.dart';
+import 'ui/app/bootstrap_error_app.dart';
+import 'ui/app/my_material_app.dart';
+import 'ui/pages/settings/settings_view_model.dart';
+import 'ui/pages/users/users_view_model_factory.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -64,42 +64,4 @@ void main() async {
       ),
     ),
   );
-}
-
-class BootstrapErrorApp extends StatelessWidget {
-  final AppError error;
-
-  const BootstrapErrorApp({super.key, required this.error});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline, size: 48),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Unable to initialize the application.',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    error.code.name,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

@@ -1,15 +1,27 @@
 import '/core/result/result.dart';
 import '../values/speed.dart';
 
+enum TrainingEventOrigin { persisted, derived }
+
 sealed class TrainingEvent {
   final int? historyId;
   final String? comments;
+  final TrainingEventOrigin origin;
 
-  const TrainingEvent({this.historyId, this.comments});
+  const TrainingEvent({
+    this.historyId,
+    this.comments,
+    required this.origin,
+  });
+
+  bool get isPersisted => origin == TrainingEventOrigin.persisted;
+
+  bool get isDerived => origin == TrainingEventOrigin.derived;
 }
 
 final class TrainingStarted extends TrainingEvent {
-  const TrainingStarted({super.historyId, super.comments});
+  const TrainingStarted({super.historyId, super.comments})
+      : super(origin: TrainingEventOrigin.persisted);
 
   @override
   bool operator ==(Object other) =>
@@ -33,7 +45,7 @@ final class SplitRecorded extends TrainingEvent {
     required this.splitIndex,
     required this.duration,
     required this.speed,
-  });
+  }) : super(origin: TrainingEventOrigin.persisted);
 
   static Result<SplitRecorded> create({
     int? historyId,
@@ -82,7 +94,7 @@ final class LapRecorded extends TrainingEvent {
     required this.lapIndex,
     required this.duration,
     required this.speed,
-  });
+  }) : super(origin: TrainingEventOrigin.derived);
 
   static Result<LapRecorded> create({
     int? historyId,

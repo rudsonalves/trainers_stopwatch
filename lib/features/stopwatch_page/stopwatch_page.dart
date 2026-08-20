@@ -20,11 +20,12 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/models/messages_model.dart';
 import '../../common/singletons/app_settings.dart';
-import '../personal_training_page/personal_training_page.dart';
-import '../users_page/users_overlay.dart';
+import '../../core/routing/route_arguments.dart';
+import '../../core/routing/routes.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'stopwatch_page_controller.dart';
 import 'widgets/message_row.dart';
@@ -74,7 +75,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   }
 
   Future<void> _addStopwatchs() async {
-    await Navigator.pushNamed(context, UsersOverlay.routeName);
+    await context.pushNamed(MainRoutes.users.routeName);
     _controller.addStopwatch();
     setState(() {});
   }
@@ -106,12 +107,9 @@ class _StopWatchPageState extends State<StopWatchPage> {
       (stopwatch) => stopwatch.user.id == userId,
     );
     if (!context.mounted) return;
-    await Navigator.pushNamed(
-      context,
-      PersonalTrainingPage.routeName,
-      arguments: {
-        'stopwatch': stopwatch,
-      },
+    await context.pushNamed(
+      MainRoutes.personalTraining.routeName,
+      extra: PersonalTrainingRouteArguments(stopwatch: stopwatch),
     );
   }
 

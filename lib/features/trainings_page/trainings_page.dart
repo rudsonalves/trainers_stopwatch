@@ -17,14 +17,16 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/functions/share_functions.dart';
 import '../../common/icons/stopwatch_icons_icons.dart';
-import '../../common/theme/app_font_style.dart';
 import '../../common/models/training_model.dart';
-import '../history_page/history_page.dart';
-import '../widgets/common/user_card.dart';
+import '../../common/theme/app_font_style.dart';
+import '../../core/routing/route_arguments.dart';
+import '../../core/routing/routes.dart';
 import '../widgets/common/generic_dialog.dart';
+import '../widgets/common/user_card.dart';
 import 'trainings_page_controller.dart';
 import 'trainings_page_state.dart';
 import 'widgets/dismissible_training.dart';
@@ -56,13 +58,12 @@ class _TrainingsPageState extends State<TrainingsPage> {
   }
 
   Future<void> _editTraining(TrainingModel training) async {
-    Navigator.pushNamed(
-      context,
-      HistoryPage.routeName,
-      arguments: {
-        'user': _controller.user,
-        'training': training,
-      },
+    await context.pushNamed(
+      MainRoutes.history.routeName,
+      extra: HistoryRouteArguments(
+        user: _controller.user!,
+        training: training,
+      ),
     );
   }
 

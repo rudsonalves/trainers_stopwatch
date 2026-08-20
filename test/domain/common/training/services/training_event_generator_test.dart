@@ -70,6 +70,7 @@ void main() {
       expect(result.value, [
         const TrainingStarted(historyId: 1, comments: 'started'),
       ]);
+      expect(result.value!.single.isPersisted, isTrue);
     });
 
     test('creates ordered splits for an incomplete lap', () {
@@ -104,6 +105,9 @@ void main() {
       expect(lap.lapIndex, 1);
       expect(lap.duration, const Duration(seconds: 100));
       expect(lap.speed.value, closeTo(10, 1e-12));
+      expect(lap.isDerived, isTrue);
+      expect(lap.historyId, 6);
+      expect(lap.comments, 'entry 5');
     });
 
     test('resets accumulated lap duration across multiple laps', () {
@@ -134,14 +138,57 @@ void main() {
       expect(second.value, first.value);
     });
 
-    test('propagates zeroElapsedTime for a zero duration split', () {
+    test('rejects a zero duration persisted split', () {
       final result = generator.generate(
         training: training(),
         histories: historiesWithSplits([Duration.zero]),
       );
 
       expect(result.isFailure, isTrue);
-      expect(result.error?.code, AppErrorCode.zeroElapsedTime);
+      expect(result.error?.code, AppErrorCode.invalidData);
+    });
+
+    test('rejects a missing initial marker', () {
+      final result = generator.generate(
+        training: training(),
+        histories: [
+          history(id: 1, duration: const Duration(seconds: 20)),
+        ],
+      );
+
+      expect(result.isFailure, isTrue);
+      expect(result.error?.code, AppErrorCode.invalidData);
+      expect(result.error?.message, contains('start marker'));
+    });
+
+    test('rejects histories outside persistence order', () {
+      final result = generator.generate(
+        training: training(),
+        histories: [
+          history(id: 2, duration: Duration.zero),
+          history(id: 1, duration: const Duration(seconds: 20)),
+        ],
+      );
+
+      expect(result.isFailure, isTrue);
+      expect(result.error?.code, AppErrorCode.invalidData);
+      expect(result.error?.message, contains('ordered'));
+    });
+
+    test('accepts repeated split durations as independent measurements', () {
+      final result = generator.generate(
+        training: training(),
+        histories: historiesWithSplits([
+          const Duration(seconds: 20),
+          const Duration(seconds: 20),
+        ]),
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(
+        result.value!.whereType<SplitRecorded>().map((event) => event.duration),
+        [const Duration(seconds: 20), const Duration(seconds: 20)],
+      );
     });
 
     test('rejects a training without persistence identity when history exists',

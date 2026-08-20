@@ -1,5 +1,219 @@
 # Changelog
 
+## 2026/08/20 - bkl006/task-02
+
+This change establishes centralized declarative routing with `go_router`, strengthens training-history domain semantics, and validates repository cache and SQLite relationship contracts.
+
+Application composition, page navigation, typed route arguments, domain event generation, repository tests, and the backlog architecture documentation were updated to reflect the delivered boundaries.
+
+1. **`lib/core/routing`**
+
+   * Added centralized route names and paths for stopwatch, users, trainings, settings, about, personal training, and history.
+   * Added a `GoRouter` factory with `/stopwatch` as the initial location, debug diagnostics, and a shared route observer.
+   * Added grouped route construction and explicit dependency composition for controllers, ViewModels, and sharing services.
+   * Added typed argument classes for personal-training and history navigation.
+   * Added a shared fade-and-scale transition with dedicated forward and reverse durations.
+
+2. **Application composition and bootstrap**
+
+   * Migrated `MyMaterialApp` from the Navigator 1.0 route table to `MaterialApp.router`.
+   * Created and retained a stable `GoRouter` instance for the application lifecycle and disposed it with the app state.
+   * Moved route dependency composition out of the widget build method.
+   * Renamed theme contrast helpers as private implementation details.
+   * Extracted `BootstrapErrorApp` from `main.dart` into its own UI module.
+
+3. **Feature navigation**
+
+   * Replaced page-level `Navigator.pushNamed` calls with named `go_router` navigation.
+   * Passed personal-training and history data through typed route argument objects instead of dynamic maps.
+   * Removed duplicated route constants and `ModalRoute` argument factories from feature widgets.
+   * Updated the stopwatch drawer to close itself before navigating through the centralized router.
+   * Updated the users page to use `go_router` for page dismissal while retaining direct `Navigator.pop` for modal drawer handling.
+   * Changed the stopwatch route from `/stopwatchs` to `/stopwatch`.
+
+4. **Training event domain**
+
+   * Added persisted and derived origin metadata to training events.
+   * Classified training starts and splits as persisted events and laps as derived events.
+   * Added convenience properties for checking whether an event is persisted or derived.
+   * Added timeline validation requiring a zero-duration start marker, positive split durations, and increasing persistence identities.
+   * Preserved repeated positive split durations as independent measurements.
+   * Continued deriving laps from accumulated persisted split durations while retaining the closing split identity and comment.
+
+5. **Repository cache and database relation tests**
+
+   * Added failed-read and failed-write scenarios for training and history repositories.
+   * Verified that failures preserve the last valid immutable cache snapshot.
+   * Added coverage for successful training and history comment updates in repository caches.
+   * Preserved history-duration merge coverage after successful deletion transactions.
+   * Added schema-contract tests for user-to-training and training-to-history delete cascades.
+
+6. **Routing and domain tests**
+
+   * Added coverage confirming centralized route names and paths are unique.
+   * Added coverage for typed history route arguments and custom transition timing.
+   * Added persisted and derived event-origin assertions.
+   * Added timeline-generation coverage for missing start markers, zero-duration splits, invalid persistence order, repeated split durations, and derived lap metadata.
+
+7. **Dependencies**
+
+   * Added `go_router` as a direct application dependency and updated the lockfile with the resolved package version.
+
+8. **Architecture and restructuring documentation**
+
+   * Updated the current architecture and MVVM restructuring plan to describe `MaterialApp.router`, centralized routing, typed arguments, route transitions, and Page-owned navigation.
+   * Clarified that ViewModels remain independent of `BuildContext` and navigation APIs.
+   * Updated the backlog execution rules and later backlog boundaries to use the centralized `go_router` configuration instead of Navigator 1.0.
+
+9. **Backlog 006 planning and tracking**
+
+   * Added the ordered task plan for migrating trainings and histories to domain-oriented repositories, coordinated operations, ViewModels, and typed UI contracts.
+   * Documented the decisions to rely on persistence cascades, persist fundamental timeline events, derive laps in the domain, and keep multi-training selection as transient UI state.
+   * Marked the domain-semantics and repository-boundary tasks as delivered with their associated validation evidence.
+   * Linked the main backlog document to its task plan and closed its outstanding architectural questions.
+
+10. **`Changelog.md`**
+
+   * Added entries documenting the routing migration, repository-boundary validation, training-event semantics, and backlog 006 planning decisions.
+
+### Conclusion
+
+The application now uses a centralized, typed, and observable declarative routing boundary while preserving navigation ownership in Pages. Training timelines explicitly distinguish persisted events from derived laps and reject invalid persisted sequences.
+
+Repository and schema tests provide evidence that cache failures preserve valid state and that relational deletion behavior remains enforced by SQLite cascades. Documentation now reflects these routing, domain, persistence, and backlog decisions.
+
+## 2026/08/20 - go-router-migration
+
+This change replaces the Navigator 1.0 route table with a centralized
+`go_router` configuration modeled after `go-list2/mobile/lib/core/routing`.
+
+1. **Routing foundation**
+
+   * Added centralized route names and paths, a `GoRouter` factory, grouped main
+     routes, a shared route observer, and the reference fade/scale transition.
+   * Made `/stopwatch` the declarative initial location.
+   * Added `go_router` as an application dependency.
+
+2. **Typed navigation**
+
+   * Replaced page-level `Navigator.pushNamed` calls with named `go_router`
+     navigation.
+   * Replaced dynamic argument maps for personal training and history with
+     dedicated typed argument classes.
+   * Kept direct `Navigator.pop` only for modal routes such as dialogs and the
+     drawer.
+
+3. **Application composition**
+
+   * Migrated `MyMaterialApp` to `MaterialApp.router` with a stable router
+     lifecycle.
+   * Moved route dependency composition out of the widget's build method.
+   * Removed duplicated route-name constants from feature widgets.
+
+4. **Tests and documentation**
+
+   * Added coverage for unique centralized routes, typed history arguments, and
+     custom transition timing.
+   * Updated active architecture, migration plan, and backlog documents to
+     reflect the superseding routing decision.
+
+### Conclusion
+
+Page navigation now has one declarative, observable, and typed routing boundary
+while ViewModels remain independent of `BuildContext` and navigation APIs.
+
+## 2026/08/20 - bkl006/task-02
+
+This change completes the repository-boundary task for trainings and histories
+by validating typed domain contracts, cache behavior, comment updates, and the
+SQLite cascade contract.
+
+1. **Repository cache tests**
+
+   * Added failed-read and failed-write scenarios for training and history
+     repositories.
+   * Confirmed that the last valid immutable snapshot is preserved on failure.
+   * Covered successful training and history comment updates in their caches.
+   * Preserved coverage for cache isolation and history-duration merging.
+
+2. **Database relation tests**
+
+   * Added schema-contract coverage for the user-to-training delete cascade.
+   * Added schema-contract coverage for the training-to-history delete cascade.
+   * Reused the existing database-service coverage that enables SQLite foreign
+     keys for every opened connection.
+
+3. **Backlog documentation**
+
+   * Recorded that repository boundaries expose only domain models and keep
+     SQLite maps inside data mappers and services.
+   * Marked task 2 as delivered with cache and relational-integrity evidence.
+
+### Conclusion
+
+Training and history repositories now have explicit evidence that failures do
+not corrupt their caches and that training deletion can rely on SQLite cascade
+without coordinating individual history deletions.
+
+## 2026/08/20 - bkl006/task-01
+
+This change completes the first task of backlog 006 by making persisted and
+derived training events explicit and validating the fundamental history
+timeline before generating splits and laps.
+
+1. **Training domain events and generation**
+
+   * Added event-origin metadata that marks starts and splits as persisted and
+     laps as derived.
+   * Required a zero-duration start marker before measured splits.
+   * Rejected zero-duration splits and histories outside persistence order.
+   * Preserved repeated positive split durations as valid independent
+     measurements.
+   * Kept laps derived from the sum of the persisted splits in each lap cycle.
+
+2. **Domain tests**
+
+   * Covered persisted and derived event classification.
+   * Covered missing starts, zero-duration splits, invalid persistence order,
+     repeated durations, and derived lap metadata.
+
+3. **Backlog documentation**
+
+   * Marked task 1 as delivered with its domain rules and validation evidence.
+   * Clarified that persisted split durations are segment durations and that a
+     lap is their derived sum.
+
+### Conclusion
+
+Fundamental history events now have an explicit, validated domain boundary,
+and derived laps cannot be confused with additional persisted records.
+
+## 2026/08/20 - bkl006/planejamento
+
+This change prepares backlog 006 for execution by resolving its architectural
+questions and splitting the migration of trainings and histories into ordered,
+verifiable tasks.
+
+1. **`doc/backlog/006-treinos-e-historicos.md`**
+
+   * Recorded that training deletion relies on the persistence cascade.
+   * Established that fundamental events are persisted and remaining history
+     representations are derived by the domain.
+   * Assigned multiple-training selection to transient UI state.
+   * Closed the backlog's open questions and linked its task plan.
+
+2. **`doc/backlog/006-treinos-e-historicos-tasks.md`**
+
+   * Added nine ordered tasks covering domain semantics, repositories,
+     coordinated operations, ViewModels, UI migration, dependency injection,
+     legacy removal, tests, and delivery validation.
+   * Added explicit dependencies, expected results, and a completion rule.
+
+### Conclusion
+
+Backlog 006 is ready for incremental execution with its persistence, domain,
+and UI ownership decisions documented.
+
 ## 2026/08/19 - bkl005/task-08-ajuste
 
 This change updates the users page so its floating action buttons react to view-model state changes, ensuring the add-user action reflects the current loading status. It also refreshes several application dependencies.

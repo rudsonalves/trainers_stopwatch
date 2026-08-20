@@ -113,8 +113,8 @@ O ponto de entrada é `lib/main.dart`:
    erro;
 7. monta `MyMaterialApp` dentro de `EasyLocalization`.
 
-`MyMaterialApp` observa brilho e contraste em `AppSettings`, cria os temas e
-registra as rotas nomeadas. A rota inicial é `/stopwatchs`.
+`MyMaterialApp` observa brilho e contraste em `AppAppearanceState`, cria os
+temas e entrega a navegação ao `GoRouter`. A rota inicial é `/stopwatch`.
 
 ## 4. Apresentação e navegação
 
@@ -123,7 +123,7 @@ página, overlay de tutorial, controller e widgets próprios.
 
 | Funcionalidade | Rota | Responsabilidade |
 | --- | --- | --- |
-| cronômetros | `/stopwatchs` | selecionar atletas e controlar vários cronômetros |
+| cronômetros | `/stopwatch` | selecionar atletas e controlar vários cronômetros |
 | usuários | `/users` | cadastrar, editar, excluir e selecionar atletas |
 | treino ativo | `/training` | exibir o histórico ligado a um cronômetro |
 | treinos | `/trainings` | consultar, selecionar e compartilhar treinos salvos |
@@ -132,8 +132,10 @@ página, overlay de tutorial, controller e widgets próprios.
 | sobre | `/about` | apresentar informações e links externos |
 
 Os overlays envolvem algumas páginas para implementar o onboarding com
-`onboarding_overlay`. A navegação usa `Navigator` e rotas nomeadas; objetos são
-passados por `arguments` ou recuperados a partir do contexto.
+`onboarding_overlay`. O `go_router` centraliza paths, nomes, observer e
+transições em `lib/core/routing`. As Pages navegam por nome e passam objetos em
+classes de argumentos tipadas; ViewModels não conhecem navegação. O `Navigator`
+direto permanece apenas para fechar rotas modais, como dialogs e drawer.
 
 ### Estado da interface
 

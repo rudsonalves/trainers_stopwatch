@@ -17,11 +17,10 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../common/theme/app_font_style.dart';
-import '../../about_page/about_page.dart';
-import '../../settings/settings_overlay.dart';
-import '../../trainings_page/trainings_overlay.dart';
+import '../../../core/routing/routes.dart';
 
 class StopwatchDrawer extends StatelessWidget {
   final Future<void> Function() addStopwatchs;
@@ -67,24 +66,27 @@ class StopwatchDrawer extends StatelessWidget {
             leading: const Icon(Icons.directions_run),
             title: Text('SPDItemTrainings'.tr()),
             onTap: () {
+              final router = GoRouter.of(context);
               Navigator.pop(context);
-              Navigator.pushNamed(context, TrainingsOverlay.routeName);
+              router.pushNamed(MainRoutes.trainings.routeName);
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: Text('SPDItemSettings'.tr()),
             onTap: () {
+              final router = GoRouter.of(context);
               Navigator.pop(context);
-              Navigator.pushNamed(context, SettingsOverlay.routeName);
+              router.pushNamed(MainRoutes.settings.routeName);
             },
           ),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text('SPDItemAbout'.tr()),
             onTap: () {
+              final router = GoRouter.of(context);
               Navigator.pop(context);
-              Navigator.pushNamed(context, AboutPage.routeName);
+              router.pushNamed(MainRoutes.about.routeName);
             },
           ),
         ],

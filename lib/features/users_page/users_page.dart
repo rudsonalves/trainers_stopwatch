@@ -4,6 +4,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '/common/adapters/user_domain_adapter.dart';
 import '/domain/common/user/models/user.dart';
@@ -51,7 +52,7 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  void _backPage() => Navigator.pop(context);
+  void _backPage() => context.pop();
 
   void _selectUser(bool selected, User user) =>
       viewModel.setSelected(user, selected: selected);

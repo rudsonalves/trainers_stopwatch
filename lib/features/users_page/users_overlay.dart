@@ -18,8 +18,6 @@ class UsersOverlay extends StatefulWidget {
     required this.stopwatchController,
   });
 
-  static const routeName = '/users';
-
   @override
   State<UsersOverlay> createState() => _UsersOverlayState();
 }

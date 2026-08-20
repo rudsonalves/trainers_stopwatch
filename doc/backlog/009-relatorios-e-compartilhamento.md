@@ -26,7 +26,7 @@ Depende de `006-treinos-e-historicos.md` e do domínio puro do backlog 002.
 - redesenhar visualmente o PDF sem requisito próprio;
 - fazer repository conhecer plugins de compartilhamento;
 - colocar widgets ou `BuildContext` nos serviços;
-- alterar Navigator 1.0.
+- alterar a configuração central do `go_router`.
 
 ## Questões em aberto
 
@@ -56,4 +56,3 @@ Nenhuma decisão adicional aprovada.
 **Estado:** Planejado.
 
 **Próximo backlog:** `010-consolidacao-ui-e-legado.md`.
-

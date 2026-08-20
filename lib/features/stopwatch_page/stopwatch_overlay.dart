@@ -12,8 +12,6 @@ class StopwatchOverlay extends StatelessWidget {
 
   const StopwatchOverlay({super.key, required this.controller});
 
-  static const routeName = '/stopwatchs';
-
   @override
   Widget build(BuildContext context) => StopWatchPage(controller: controller);
 }

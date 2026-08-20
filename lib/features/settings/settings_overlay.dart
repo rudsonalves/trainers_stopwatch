@@ -12,8 +12,6 @@ class SettingsOverlay extends StatefulWidget {
 
   const SettingsOverlay({super.key, required this.viewModel});
 
-  static const routeName = '/settings';
-
   @override
   State<SettingsOverlay> createState() => _SettingsOverlayState();
 }

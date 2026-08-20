@@ -36,6 +36,9 @@ final class TrainingEventGenerator {
       );
     }
 
+    final timelineError = _validateTimeline(histories);
+    if (timelineError != null) return Failure(timelineError);
+
     final splitsPerLapResult = _splitsPerLap(training);
     if (splitsPerLapResult.isFailure) {
       return Failure(splitsPerLapResult.error!);
@@ -100,6 +103,41 @@ final class TrainingEventGenerator {
     }
 
     return Success(List.unmodifiable(events));
+  }
+
+  AppError? _validateTimeline(List<HistoryEntry> histories) {
+    if (histories.first.duration != Duration.zero) {
+      return AppError(
+        code: AppErrorCode.invalidData,
+        message: 'The first history entry must be the training start marker.',
+        details: histories.first.duration,
+      );
+    }
+
+    for (var index = 1; index < histories.length; index++) {
+      final previous = histories[index - 1];
+      final current = histories[index];
+
+      if (current.duration == Duration.zero) {
+        return AppError(
+          code: AppErrorCode.invalidData,
+          message: 'A persisted split duration must be greater than zero.',
+          details: current.id,
+        );
+      }
+
+      final previousId = previous.id;
+      final currentId = current.id;
+      if (previousId != null && currentId != null && currentId <= previousId) {
+        return AppError(
+          code: AppErrorCode.invalidData,
+          message: 'History entries must be ordered by persistence identity.',
+          details: [previousId, currentId],
+        );
+      }
+    }
+
+    return null;
   }
 
   Result<int> _splitsPerLap(Training training) {
