@@ -39,6 +39,12 @@ class _UsersPageState extends State<UsersPage> {
     viewModel.load();
   }
 
+  @override
+  void dispose() {
+    viewModel.dispose();
+    super.dispose();
+  }
+
   Future<void> _addNewUser() async {
     final result = await UserDialog.open(
       context,

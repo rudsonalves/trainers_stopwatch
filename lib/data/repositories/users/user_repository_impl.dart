@@ -3,7 +3,7 @@ import '/data/services/users/user_service.dart';
 import '/domain/common/user/models/user.dart';
 import 'user_repository.dart';
 
-final class UserRepositoryImpl implements UserRepository {
+class UserRepositoryImpl implements UserRepository {
   final UserService _service;
   List<User> _users = const [];
 

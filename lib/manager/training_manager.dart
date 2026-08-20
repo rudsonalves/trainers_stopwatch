@@ -2,8 +2,8 @@ import '/common/adapters/training_domain_adapter.dart';
 import '/common/models/training_model.dart';
 import '/data/repositories/trainings/training_repository.dart';
 
-// Temporary UI adapter. Remove in backlog 006.
-final class TrainingManager {
+// Temporary session adapter. Replace with StopwatchSessionViewModel in backlog 008.
+class TrainingManager {
   final TrainingRepository _repository;
   int? _userId;
 

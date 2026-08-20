@@ -1,7 +1,7 @@
 import '/domain/common/history/models/history_entry.dart';
 import '/domain/common/training/models/training.dart';
 
-final class TrainingInitialization {
+class TrainingInitialization {
   final Training training;
   final HistoryEntry initialHistory;
 

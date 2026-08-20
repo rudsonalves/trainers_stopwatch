@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 enum LogLevel { error, warning, info }
 
-final class ConsoleLog {
+class ConsoleLog {
   final String context;
 
   const ConsoleLog(this.context);

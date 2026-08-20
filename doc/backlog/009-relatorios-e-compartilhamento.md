@@ -7,7 +7,9 @@ e-mail e compartilhamento atrás de serviços injetáveis.
 
 ## Dependência
 
-Depende de `006-treinos-e-historicos.md` e do domínio puro do backlog 002.
+Depende do backlog
+[`006-treinos-e-historicos.md`](closed/006-treinos-e-historicos.md), concluído,
+e do domínio puro do backlog 002.
 
 ## Escopo
 
@@ -20,6 +22,9 @@ Depende de `006-treinos-e-historicos.md` e do domínio puro do backlog 002.
 - tratar falhas esperadas como `AppError`;
 - garantir limpeza previsível dos arquivos temporários;
 - manter textos localizados na fronteira de apresentação/renderização.
+- fazer relatório e compartilhamento receberem apenas `User`, `Training`,
+  `HistoryEntry` e eventos de domínio, removendo suas dependências dos adapters
+  e models legados ainda compartilhados com o cronômetro;
 
 ## Fora de escopo
 

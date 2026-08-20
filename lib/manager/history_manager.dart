@@ -2,8 +2,8 @@ import '/common/adapters/history_domain_adapter.dart';
 import '/common/models/history_model.dart';
 import '/data/repositories/histories/history_repository.dart';
 
-// Temporary UI adapter. Remove in backlog 006.
-final class HistoryManager {
+// Temporary session adapter. Replace with StopwatchSessionViewModel in backlog 008.
+class HistoryManager {
   final HistoryRepository _repository;
   int? _trainingId;
 

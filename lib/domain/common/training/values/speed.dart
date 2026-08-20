@@ -1,7 +1,7 @@
 import '/core/result/result.dart';
 import '../units/speed_unit.dart';
 
-final class Speed {
+class Speed {
   final double value;
   final SpeedUnit unit;
 

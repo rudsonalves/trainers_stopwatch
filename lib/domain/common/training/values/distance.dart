@@ -1,7 +1,7 @@
 import '/core/result/result.dart';
 import '../units/distance_unit.dart';
 
-final class Distance {
+class Distance {
   final double value;
   final DistanceUnit unit;
 

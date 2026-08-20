@@ -13,7 +13,7 @@ typedef UserMutation = ({
   PreparedUserImage? preparedImage,
 });
 
-final class UsersViewModel extends ChangeNotifier {
+class UsersViewModel extends ChangeNotifier {
   final UsersUseCase _useCase;
   final Set<int> _activeUserIds;
   final Set<int> _selectedUserIds;

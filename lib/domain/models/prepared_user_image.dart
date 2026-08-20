@@ -1,4 +1,4 @@
-final class PreparedUserImage {
+class PreparedUserImage {
   final String temporaryReference;
   final String fileName;
 

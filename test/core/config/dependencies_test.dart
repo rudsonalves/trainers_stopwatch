@@ -15,9 +15,9 @@ import 'package:trainers_stopwatch/data/services/images/user_image_storage_servi
 import 'package:trainers_stopwatch/data/services/settings/settings_service.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
+import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/precise_stopwatch_controller.dart';
 import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
-import 'package:trainers_stopwatch/ui/pages/users/viewmodel/users_view_model_factory.dart';
 
 void main() {
   test('setupDependencies is idempotent and resolves the bootstrap graph', () {
@@ -37,10 +37,11 @@ void main() {
     final imageStorage = injector.get<UserImageStorageService>();
     final usersUseCase = injector.get<UsersUseCase>();
     final createTrainingUseCase = injector.get<CreateTrainingUseCase>();
-    final usersViewModelFactory = injector.get<UsersViewModelFactory>();
-    final usersViewModel = usersViewModelFactory.create(const [7]);
+    final stopwatchSession = injector.get<PreciseStopwatchController>();
+    final nextStopwatchSession = injector.get<PreciseStopwatchController>();
+    addTearDown(stopwatchSession.dispose);
+    addTearDown(nextStopwatchSession.dispose);
     addTearDown(settingsViewModel.dispose);
-    addTearDown(usersViewModel.dispose);
 
     setupDependencies();
     final bootstrap = injector.get<Bootstrap>();
@@ -67,13 +68,8 @@ void main() {
       isNot(same(createTrainingUseCase)),
     );
     expect(
-      injector.get<UsersViewModelFactory>(),
-      same(usersViewModelFactory),
+      nextStopwatchSession,
+      isNot(same(stopwatchSession)),
     );
-    final nextUsersViewModel = usersViewModelFactory.create(const [8]);
-    addTearDown(nextUsersViewModel.dispose);
-    expect(nextUsersViewModel, isNot(same(usersViewModel)));
-    expect(usersViewModel.activeUserIds, {7});
-    expect(nextUsersViewModel.activeUserIds, {8});
   });
 }

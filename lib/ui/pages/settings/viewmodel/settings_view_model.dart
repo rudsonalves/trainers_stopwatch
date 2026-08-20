@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '/core/result/command.dart';
 import '/common/adapters/legacy_settings_sink.dart';
+import '/core/result/command.dart';
 import '/data/repositories/settings/settings_repository.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/domain/common/training/units/distance_unit.dart';
 import '/ui/app/app_appearance_state.dart';
 import 'models/settings_form_data.dart';
 
-final class SettingsViewModel extends ChangeNotifier {
+class SettingsViewModel extends ChangeNotifier {
   final SettingsRepository _repository;
   final AppAppearanceState _appearanceState;
   final LegacySettingsSink _legacySettings;

@@ -4,7 +4,7 @@ import 'package:trainers_stopwatch/data/services/database/database_backup_servic
 import 'package:trainers_stopwatch/data/services/database/database_schema.dart';
 import 'package:trainers_stopwatch/data/services/database/database_service.dart';
 
-final class UnusedDatabaseService extends DatabaseService {
+class UnusedDatabaseService extends DatabaseService {
   UnusedDatabaseService()
       : super(
           databaseDirectoryPath: () async => '',

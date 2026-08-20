@@ -167,9 +167,10 @@ visual foram preservadas.
 possui adapter intermediário do backlog 003.
 
 **Entregue em 2026-08-19:** serviços de seleção, compressão e armazenamento são
-singletons injetados; `UsersUseCase` é transient; `UsersViewModelFactory` é
-singleton e cria um ViewModel descartável por abertura da rota, recebendo os
-IDs ativos naquele momento. A rota usa a factory registrada,
+singletons injetados; `UsersUseCase` é transient. A criação do ViewModel por
+abertura da rota recebe os IDs ativos naquele momento (a classe intermediária
+`UsersViewModelFactory`, usada originalmente, foi removida no backlog 006 em
+favor de um callback tipado no composition root). A rota usa essa função,
 `UsersPageController` e seus estados foram removidos e a feature de usuários
 não passa por `UserManager`. O adapter permanece registrado exclusivamente
 porque treinos ainda o consome e será removido pelo backlog 006. Apenas

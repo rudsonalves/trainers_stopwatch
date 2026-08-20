@@ -5,7 +5,7 @@ enum BrightnessPreference { light, dark }
 
 enum ContrastPreference { standard, medium, high }
 
-final class LanguagePreference {
+class LanguagePreference {
   final String languageCode;
   final String? countryCode;
 
@@ -24,7 +24,7 @@ final class LanguagePreference {
   int get hashCode => Object.hash(languageCode, countryCode);
 }
 
-final class Settings {
+class Settings {
   static final defaultSplitDistance = Distance.create(value: 200).value!;
   static final defaultLapDistance = Distance.create(value: 1000).value!;
 

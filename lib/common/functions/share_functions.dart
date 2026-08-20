@@ -21,24 +21,26 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../models/training_model.dart';
-import '../models/user_model.dart';
-import 'build_pdf.dart';
+import '/common/adapters/training_domain_adapter.dart';
+import '/common/adapters/user_domain_adapter.dart';
+import '/domain/common/training/models/training.dart';
+import '/domain/common/user/models/user.dart';
 import '../../data/repositories/histories/history_repository.dart';
+import 'build_pdf.dart';
 
-final class AppShare {
+class AppShare {
   final HistoryRepository _historyRepository;
 
   const AppShare({required HistoryRepository historyRepository})
       : _historyRepository = historyRepository;
 
   Future<void> sendWhatsApp({
-    required UserModel user,
-    required List<TrainingModel> trainings,
+    required User user,
+    required List<Training> trainings,
   }) async {
     final pdfFile = await BuildPdf.makeReport(
-      user,
-      trainings,
+      user.toLegacy(),
+      trainings.map((training) => training.toLegacy()).toList(),
       _historyRepository,
     );
     final XFile xfile = XFile(pdfFile.path);
@@ -52,14 +54,18 @@ final class AppShare {
   }
 
   Future<void> sendEmail({
-    required UserModel user,
+    required User user,
     required String recipient,
-    required List<TrainingModel> trainings,
+    required List<Training> trainings,
   }) async {
     const subject = 'Training logs';
     final body = _createBody(trainings);
 
-    final file = await BuildPdf.makeReport(user, trainings, _historyRepository);
+    final file = await BuildPdf.makeReport(
+      user.toLegacy(),
+      trainings.map((training) => training.toLegacy()).toList(),
+      _historyRepository,
+    );
 
     final email = Email(
       subject: subject,
@@ -79,7 +85,7 @@ final class AppShare {
     }
   }
 
-  String _createBody(List<TrainingModel> trainings) {
+  String _createBody(List<Training> trainings) {
     String body = '''
     <html>
     <body>
@@ -88,10 +94,10 @@ final class AppShare {
     body += _headerLine('Training Logs', 1, 'font-size: 24px; color: #333;');
 
     for (final training in trainings) {
-      final unit = training.distanceUnit;
+      final unit = training.splitDistance.unit.symbol;
       final date = DateFormat.yMd().add_Hms().format(training.date);
-      final lap = training.lapLength;
-      final split = training.splitLength;
+      final lap = training.lapDistance.value;
+      final split = training.splitDistance.value;
 
       body += '<div class="training-block">\n';
       body += _headerLine('Training', 2);

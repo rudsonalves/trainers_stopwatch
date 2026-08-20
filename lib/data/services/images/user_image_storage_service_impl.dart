@@ -11,7 +11,7 @@ import 'user_image_storage_service.dart';
 
 typedef DocumentsDirectoryProvider = Future<Directory> Function();
 
-final class UserImageStorageServiceImpl implements UserImageStorageService {
+class UserImageStorageServiceImpl implements UserImageStorageService {
   final DocumentsDirectoryProvider _documentsDirectoryProvider;
   final DateTime Function() _clock;
 

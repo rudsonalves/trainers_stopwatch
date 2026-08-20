@@ -3,7 +3,7 @@ import '../units/speed_unit.dart';
 import '../units/unit_compatibility.dart';
 import '../values/distance.dart';
 
-final class Training {
+class Training {
   static final defaultSplitDistance = Distance.create(value: 200).value!;
   static final defaultLapDistance = Distance.create(value: 1000).value!;
 

@@ -1,7 +1,7 @@
 import '../../data/services/database/database_provider.dart';
 import '../result/result.dart';
 
-final class Bootstrap {
+class Bootstrap {
   final DatabaseProvider _databaseProvider;
 
   const Bootstrap({required DatabaseProvider databaseProvider})

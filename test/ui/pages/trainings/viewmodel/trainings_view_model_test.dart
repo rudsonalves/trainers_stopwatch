@@ -15,7 +15,7 @@ const writeFailure = AppError(
   message: 'write failed',
 );
 
-final class _UserRepositoryFake implements UserRepository {
+class _UserRepositoryFake implements UserRepository {
   List<User> stored = const [];
   List<User> _cache = const [];
   bool failLoad = false;
@@ -43,7 +43,7 @@ final class _UserRepositoryFake implements UserRepository {
   AsyncResult<List<String>> readPhotoReferences() async => const Success([]);
 }
 
-final class _TrainingRepositoryFake implements TrainingRepository {
+class _TrainingRepositoryFake implements TrainingRepository {
   final Map<int, List<Training>> stored = {};
   final Map<int, List<Training>> _cache = {};
   bool failLoad = false;

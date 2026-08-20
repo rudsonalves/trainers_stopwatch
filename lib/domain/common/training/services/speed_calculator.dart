@@ -4,7 +4,7 @@ import '../units/unit_compatibility.dart';
 import '../values/distance.dart';
 import '../values/speed.dart';
 
-final class SpeedCalculator {
+class SpeedCalculator {
   const SpeedCalculator();
 
   Result<Speed> calculate({

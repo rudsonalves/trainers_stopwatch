@@ -1,6 +1,6 @@
 import '../../domain/common/training/values/speed.dart';
 
-final class TrainingValueFormatter {
+class TrainingValueFormatter {
   const TrainingValueFormatter._();
 
   static String formatDuration(Duration duration) {

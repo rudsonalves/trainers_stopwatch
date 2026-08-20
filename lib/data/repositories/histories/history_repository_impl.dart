@@ -3,7 +3,7 @@ import '/data/services/histories/history_service.dart';
 import '/domain/common/history/models/history_entry.dart';
 import 'history_repository.dart';
 
-final class HistoryRepositoryImpl implements HistoryRepository {
+class HistoryRepositoryImpl implements HistoryRepository {
   final HistoryService _service;
   final Map<int, List<HistoryEntry>> _cache = {};
 

@@ -7,7 +7,7 @@ import 'image_selection_service.dart';
 
 typedef PickImage = Future<XFile?> Function();
 
-final class ImageSelectionServiceImpl implements ImageSelectionService {
+class ImageSelectionServiceImpl implements ImageSelectionService {
   final PickImage _pickImage;
 
   ImageSelectionServiceImpl({required PickImage pickImage})

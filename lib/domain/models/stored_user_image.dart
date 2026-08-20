@@ -1,4 +1,4 @@
-final class StoredUserImage {
+class StoredUserImage {
   final String reference;
 
   const StoredUserImage({required this.reference}) : assert(reference != '');

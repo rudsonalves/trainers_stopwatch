@@ -19,7 +19,7 @@ const compensationFailure = AppError(
   message: 'compensation failed',
 );
 
-final class _TrainingRepositoryFake implements TrainingRepository {
+class _TrainingRepositoryFake implements TrainingRepository {
   final List<String> operations;
   Result<Training>? insertionResult;
   Result<Unit> deletionResult = const Success(unit);
@@ -63,7 +63,7 @@ final class _TrainingRepositoryFake implements TrainingRepository {
   AsyncResult<Unit> update(Training training) async => const Success(unit);
 }
 
-final class _HistoryRepositoryFake implements HistoryRepository {
+class _HistoryRepositoryFake implements HistoryRepository {
   final List<String> operations;
   Result<HistoryEntry>? insertionResult;
   HistoryEntry? insertedHistory;

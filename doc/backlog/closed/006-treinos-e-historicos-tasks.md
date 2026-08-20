@@ -138,95 +138,161 @@ existentes. O ViewModel não contém contexto, widgets ou controllers visuais.
 
 **Dependências:** tarefas 1 a 3.
 
-- [ ] Criar `HistoryViewModel` com dependências recebidas por construtor.
-- [ ] Expor Commands para carregar, atualizar comentários e excluir históricos.
-- [ ] Expor históricos persistidos e voltas derivadas usando o domínio.
-- [ ] Atualizar informações e estatísticas após cada mutação bem-sucedida.
-- [ ] Consolidar loading e último `AppError` sem estados paralelos legados.
-- [ ] Preservar o comportamento das páginas de histórico e treino pessoal.
-- [ ] Não armazenar `BuildContext`, widgets ou `TextEditingController`.
+- [x] Criar `HistoryViewModel` com dependências recebidas por construtor.
+- [x] Expor Commands para carregar, atualizar comentários e excluir históricos.
+- [x] Expor históricos persistidos e voltas derivadas usando o domínio.
+- [x] Atualizar informações e estatísticas após cada mutação bem-sucedida.
+- [x] Consolidar loading e último `AppError` sem estados paralelos legados.
+- [x] Preservar o comportamento das páginas de histórico e treino pessoal.
+- [x] Não armazenar `BuildContext`, widgets ou `TextEditingController`.
 
 **Resultado esperado:** consulta e edição de históricos usam uma única regra de
 derivação e não dependem de `HistoryController` ou `HistoryManager`.
+
+**Entregue em 2026-08-20:** `HistoryViewModel` recebe o treino e o contrato de
+`HistoryRepository` por construtor e expõe Commands para carga, atualização de
+comentários e exclusão com merge da próxima parcial. Históricos persistidos
+continuam vindo do cache imutável do repository, enquanto eventos, parciais,
+voltas e estatísticas são recalculados exclusivamente pelo
+`TrainingEventGenerator` após cada mutação bem-sucedida. A apresentação válida
+anterior é preservada em falhas, loading e último `AppError` são consolidados,
+e as restrições atuais de exclusão do marco inicial e da última medição foram
+mantidas. O ViewModel não contém dependências visuais; a conexão das páginas e
+do fluxo pessoal permanece reservada à tarefa 6.
 
 ### 6. Migrar páginas, widgets e rotas
 
 **Dependências:** tarefas 4 e 5.
 
-- [ ] Fazer a página de treinos consumir `TrainingsViewModel` e seus Commands.
-- [ ] Fazer as páginas de histórico consumirem `HistoryViewModel` e seus
+- [x] Fazer a página de treinos consumir `TrainingsViewModel` e seus Commands.
+- [x] Fazer as páginas de histórico consumirem `HistoryViewModel` e seus
       Commands.
-- [ ] Adequar widgets compartilhados de lista, edição e remoção para receber
+- [x] Adequar widgets compartilhados de lista, edição e remoção para receber
       estado e callbacks tipados.
-- [ ] Remover das páginas o acesso a managers, stores e repositories concretos.
-- [ ] Operar com `User`, `Training` e `HistoryEntry` de domínio nos fluxos
+- [x] Remover das páginas o acesso a managers, stores e repositories concretos.
+- [x] Operar com `User`, `Training` e `HistoryEntry` de domínio nos fluxos
       migrados.
-- [ ] Manter dialogs, controllers de texto e confirmação de gesto na UI.
-- [ ] Preservar layout, mensagens, edição de comentários e seleção atuais.
+- [x] Manter dialogs, controllers de texto e confirmação de gesto na UI.
+- [x] Preservar layout, mensagens, edição de comentários e seleção atuais.
+- [x] Remover os arquivos `page-name_overlay.dart` remanescentes de settings,
+      users, stopwatch e trainings, pois o sistema de ajuda por overlay já foi
+      removido.
+- [x] Fazer as rotas construírem diretamente suas Pages e transferir para essa
+      composição a criação e o descarte das dependências antes pertencentes aos
+      wrappers de overlay.
 - [x] Manter rotas nomeadas no `go_router` e definir argumentos tipados para
       entidades relacionadas.
 
 **Resultado esperado:** a UI coordena somente interação e navegação, consumindo
 ViewModels e tipos de domínio.
 
+**Entregue em 2026-08-20:** as páginas de treinos, histórico salvo e treino
+pessoal foram movidas para `lib/ui/pages` e agora consomem
+`TrainingsViewModel`/`HistoryViewModel`, Commands e entidades de domínio. Lista,
+seleção, edição de comentários e exclusão usam callbacks tipados; dialogs e
+controllers de texto permanecem restritos aos widgets. O compartilhamento
+passou a receber `User` e `Training` na fronteira da UI. Settings, users,
+stopwatch e trainings deixaram de usar wrappers `*_overlay.dart`; o
+`go_router` constrói diretamente cada Page, que assume o descarte de seus
+ViewModels descartáveis. Os controllers e managers agora sem consumidores de
+página permanecem fisicamente no projeto somente para a limpeza de composição
+prevista na tarefa 7; o fluxo temporal do cronômetro não foi alterado.
+
 ### 7. Atualizar injeção e remover adapters legados
 
 **Dependência:** tarefa 6.
 
-- [ ] Registrar factories dos ViewModels e eventual UseCase no composition
+- [x] Registrar factories dos ViewModels e eventual UseCase no composition
       root com ciclos de vida apropriados.
-- [ ] Atualizar a criação das rotas de treinos e históricos.
-- [ ] Remover `TrainingsPageController` e `HistoryPageController` quando ficarem
+- [x] Remover a classe trivial `UsersViewModelFactory`; manter a criação por
+      callback tipado no composition root para aceitar os IDs conhecidos em
+      tempo de navegação.
+- [x] Atualizar a criação das rotas de treinos e históricos.
+- [x] Remover `TrainingsPageController` e `HistoryPageController` quando ficarem
       sem consumidores.
-- [ ] Remover `HistoryController` quando todas as subclasses forem migradas.
-- [ ] Remover `TrainingManager`, `HistoryManager` e seus registros quando
+- [x] Remover `HistoryController` quando todas as subclasses forem migradas.
+- [x] Remover `TrainingManager`, `HistoryManager` e seus registros quando
       ficarem sem consumidores.
-- [ ] Remover `UserManager` após migrar seu último consumidor no fluxo de
+- [x] Remover `UserManager` após migrar seu último consumidor no fluxo de
       treinos.
-- [ ] Verificar adapters usados pelo cronômetro e transferir ao backlog 008
+- [x] Verificar adapters usados pelo cronômetro e transferir ao backlog 008
       somente os que ainda pertencerem ao fluxo de sessões.
-- [ ] Confirmar que somente o composition root acessa o injector.
+- [x] Confirmar que somente o composition root acessa o injector.
 
 **Resultado esperado:** os fluxos migrados são compostos por contratos,
 UseCases quando necessários e ViewModels, sem adapters temporários do backlog
 003.
 
+**Entregue em 2026-08-20:** os callbacks tipados que criam
+`TrainingsViewModel`, `HistoryViewModel`, `UsersViewModel` e
+`SettingsViewModel` ficam no composition root e produzem instâncias com ciclo
+de vida da rota, sem classes Factory intermediárias. Foram removidos
+`TrainingsPageController`, `HistoryPageController`,
+`PersonalTrainingController`, `HistoryController`, seus estados e registros,
+além de `UserManager`. `TrainingManager` e `HistoryManager` não puderam ser
+removidos porque ainda compõem `PreciseStopwatchController`; sua substituição,
+junto aos adapters de sessão, foi explicitada no backlog 008. Conversões ainda
+usadas pelo PDF foram registradas no backlog 009. O acesso ao injector permanece
+restrito a `main.dart` e `lib/core/config`, que formam o composition root.
+
 ### 8. Testar regras, coordenações e comportamento migrado
 
 **Dependências:** tarefas 1 a 7.
 
-- [ ] Testar derivação da primeira volta e das voltas seguintes.
-- [ ] Testar entradas vazias, ausentes, repetidas, fora de ordem ou regressivas.
-- [ ] Testar carga, atualização, exclusão e preservação de cache em falhas.
-- [ ] Testar cascata de treino para históricos em integração com a
+- [x] Testar derivação da primeira volta e das voltas seguintes.
+- [x] Testar entradas vazias, ausentes, repetidas, fora de ordem ou regressivas.
+- [x] Testar carga, atualização, exclusão e preservação de cache em falhas.
+- [x] Testar cascata de treino para históricos em integração com a
       persistência.
-- [ ] Testar coordenação e compensação de operações compostas.
-- [ ] Testar seleção individual, seleção total, troca de usuário, recarga e
+- [x] Testar coordenação e compensação de operações compostas.
+- [x] Testar seleção individual, seleção total, troca de usuário, recarga e
       exclusão de item selecionado.
-- [ ] Testar edição de comentários e atualização das informações derivadas.
-- [ ] Testar factories, ciclos de vida e argumentos tipados das rotas.
+- [x] Testar edição de comentários e atualização das informações derivadas.
+- [x] Testar factories, ciclos de vida e argumentos tipados das rotas.
+- [x] Testar a construção direta das Pages pelas rotas após a remoção dos
+      wrappers `*_overlay.dart`.
 
 **Resultado esperado:** regras modificadas e fronteiras entre domínio,
 persistência, aplicação e UI possuem cobertura proporcional ao risco.
+
+**Entregue em 2026-08-20:** testes de domínio cobrem marco inicial, primeira
+volta, múltiplas voltas, entradas vazias, repetidas, inválidas e fora de ordem.
+Repositories e persistência cobrem caches, falhas, comentários, merge e
+cascata. UseCase cobre ordem e compensação da criação composta. ViewModels
+cobrem carga, seleção, troca de usuário, recarga, exclusões e atualização das
+informações derivadas. A composição cobre ciclos de vida transient, argumentos
+de domínio e construção direta de Settings, Users, Trainings e Stopwatch Pages
+sem wrappers de overlay.
 
 ### 9. Validar e documentar a entrega
 
 **Dependência:** tarefas 1 a 8.
 
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar os testes focados de domínio, repositories, UseCases e
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar os testes focados de domínio, repositories, UseCases e
       ViewModels.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
-- [ ] Validar manualmente consulta, troca de usuário, seleção, edição e
-      exclusão de treinos e históricos.
-- [ ] Registrar limitações mantidas para os backlogs 008 e 009.
-- [ ] Atualizar arquitetura, changelog e acompanhamento do backlog 006.
-- [ ] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
+- [x] Delegar ao usuário a validação exploratória de consulta, troca de usuário,
+      seleção, edição e exclusão; problemas encontrados serão tratados como
+      correções posteriores.
+- [x] Registrar limitações mantidas para os backlogs 008 e 009.
+- [x] Atualizar arquitetura e acompanhamento do backlog 006; `Changelog.md` é
+      gerenciado por outra aplicação e não foi alterado.
+- [x] Mover backlog e tasks concluídos para `doc/backlog/closed/`.
 
 **Resultado esperado:** os fluxos de treinos e históricos funcionam em MVVM e
 os backlogs 008 e 009 recebem fronteiras de domínio estáveis.
+
+**Entregue em 2026-08-20:** `dart format` não produziu alterações,
+`flutter analyze` terminou sem issues, os 245 testes passaram e
+`git diff --check` não encontrou erros. O aplicativo também compilou, instalou
+e iniciou em um Android físico, exibindo a tela inicial e o drawer esperado.
+A exploração completa dos fluxos no dispositivo ficou com o usuário. As
+dependências temporárias de sessão foram registradas no backlog 008 e as de
+relatório/compartilhamento no backlog 009. O changelog permanece fora do escopo
+deste processo.
 
 ## Regra de conclusão
 

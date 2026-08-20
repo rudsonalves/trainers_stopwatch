@@ -9,7 +9,7 @@ enum AppContrast { standard, medium, high }
 /// Persistence and operation state belong to the settings repository and page
 /// ViewModel. This object deliberately keeps only the values required to
 /// rebuild the application theme and locale.
-final class AppAppearanceState extends ChangeNotifier {
+class AppAppearanceState extends ChangeNotifier {
   Brightness _brightness;
   AppContrast _contrast;
   Locale _locale;

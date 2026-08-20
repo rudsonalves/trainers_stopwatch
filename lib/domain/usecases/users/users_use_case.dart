@@ -9,7 +9,7 @@ import '/domain/models/image_selection.dart';
 import '/domain/models/prepared_user_image.dart';
 import '/domain/models/stored_user_image.dart';
 
-final class UsersUseCase {
+class UsersUseCase {
   final UserRepository _repository;
   final ImageSelectionService _imageSelection;
   final ImageCompressionService _imageCompression;

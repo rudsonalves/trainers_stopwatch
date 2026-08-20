@@ -1,16 +1,16 @@
-import '/common/models/training_model.dart';
-import '/common/models/user_model.dart';
+import '/domain/common/training/models/training.dart';
+import '/domain/common/user/models/user.dart';
 import '/features/widgets/precise_stopwatch/precise_stopwatch.dart';
 
-final class PersonalTrainingRouteArguments {
+class PersonalTrainingRouteArguments {
   final PreciseStopwatch stopwatch;
 
   const PersonalTrainingRouteArguments({required this.stopwatch});
 }
 
-final class HistoryRouteArguments {
-  final UserModel user;
-  final TrainingModel training;
+class HistoryRouteArguments {
+  final User user;
+  final Training training;
 
   const HistoryRouteArguments({
     required this.user,

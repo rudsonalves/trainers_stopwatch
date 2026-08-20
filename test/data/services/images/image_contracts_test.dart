@@ -61,7 +61,7 @@ void main() {
   });
 }
 
-final class _CanceledImageSelectionService implements ImageSelectionService {
+class _CanceledImageSelectionService implements ImageSelectionService {
   @override
   AsyncResult<ImageSelection> select() async =>
       const Success(ImageSelectionCanceled());

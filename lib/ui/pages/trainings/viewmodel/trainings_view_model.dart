@@ -8,7 +8,7 @@ import '/data/repositories/users/user_repository.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
 
-final class TrainingsViewModel extends ChangeNotifier {
+class TrainingsViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final TrainingRepository _trainingRepository;
   final Set<int> _selectedTrainingIds = {};

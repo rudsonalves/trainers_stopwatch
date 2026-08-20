@@ -161,7 +161,7 @@ void main() {
   });
 }
 
-final class _UserRepositoryFake implements UserRepository {
+class _UserRepositoryFake implements UserRepository {
   List<User> _users = const [];
   Completer<void>? loadBlocker;
   AppError? loadError;
@@ -213,7 +213,7 @@ final class _UserRepositoryFake implements UserRepository {
   AsyncResult<List<String>> readPhotoReferences() async => const Success([]);
 }
 
-final class _ImageStorageFake implements UserImageStorageService {
+class _ImageStorageFake implements UserImageStorageService {
   @override
   AsyncResult<StoredUserImage> promote(PreparedUserImage image) async =>
       const Success(StoredUserImage(reference: '/stored/image.jpg'));
@@ -226,13 +226,13 @@ final class _ImageStorageFake implements UserImageStorageService {
       const Success(unit);
 }
 
-final class _ImageSelectionFake implements ImageSelectionService {
+class _ImageSelectionFake implements ImageSelectionService {
   @override
   AsyncResult<ImageSelection> select() async =>
       const Success(ImageSelectionCanceled());
 }
 
-final class _ImageCompressionFake implements ImageCompressionService {
+class _ImageCompressionFake implements ImageCompressionService {
   @override
   AsyncResult<PreparedUserImage> compress(ImageSelected image) async =>
       const Success(

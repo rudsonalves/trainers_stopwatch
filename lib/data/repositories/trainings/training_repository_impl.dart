@@ -3,7 +3,7 @@ import '/data/services/trainings/training_service.dart';
 import '/domain/common/training/models/training.dart';
 import 'training_repository.dart';
 
-final class TrainingRepositoryImpl implements TrainingRepository {
+class TrainingRepositoryImpl implements TrainingRepository {
   final TrainingService _service;
   final Map<int, List<Training>> _cache = {};
 

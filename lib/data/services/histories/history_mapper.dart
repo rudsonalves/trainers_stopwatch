@@ -2,7 +2,7 @@ import '/core/result/result.dart';
 import '/domain/common/history/models/history_entry.dart';
 import '../database/table_attributes.dart';
 
-final class HistoryMapper {
+class HistoryMapper {
   const HistoryMapper();
 
   Result<HistoryEntry> fromMap(Map<String, Object?> map) {

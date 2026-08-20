@@ -1,6 +1,6 @@
 import '/core/result/result.dart';
 
-final class HistoryEntry {
+class HistoryEntry {
   final int? id;
   final int trainingId;
   final Duration duration;

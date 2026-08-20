@@ -4,7 +4,7 @@ import '../../domain/common/training/events/training_event.dart';
 import '../functions/stopwatch_functions.dart';
 import '../models/messages_model.dart';
 
-final class TrainingEventMessageMapper {
+class TrainingEventMessageMapper {
   const TrainingEventMessageMapper();
 
   MessagesModel map({

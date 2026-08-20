@@ -18,7 +18,7 @@ typedef CompressImage = Future<XFile?> Function(
   required int minHeight,
 });
 
-final class ImageCompressionServiceImpl implements ImageCompressionService {
+class ImageCompressionServiceImpl implements ImageCompressionService {
   final TemporaryDirectoryProvider _temporaryDirectoryProvider;
   final CompressImage _compressImage;
   final DateTime Function() _clock;

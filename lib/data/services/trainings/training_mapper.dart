@@ -5,7 +5,7 @@ import '/domain/common/training/units/speed_unit.dart';
 import '/domain/common/training/values/distance.dart';
 import '../database/table_attributes.dart';
 
-final class TrainingMapper {
+class TrainingMapper {
   const TrainingMapper();
 
   Result<Training> fromMap(Map<String, Object?> map) {

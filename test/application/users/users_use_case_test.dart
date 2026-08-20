@@ -250,7 +250,7 @@ void main() {
   });
 }
 
-final class _UserRepositoryFake implements UserRepository {
+class _UserRepositoryFake implements UserRepository {
   final List<String>? externalEvents;
   List<User> _users = const [
     User(
@@ -325,7 +325,7 @@ final class _UserRepositoryFake implements UserRepository {
   }
 }
 
-final class _ImageSelectionFake implements ImageSelectionService {
+class _ImageSelectionFake implements ImageSelectionService {
   final ImageSelection selection;
 
   _ImageSelectionFake({
@@ -336,7 +336,7 @@ final class _ImageSelectionFake implements ImageSelectionService {
   AsyncResult<ImageSelection> select() async => Success(selection);
 }
 
-final class _ImageCompressionFake implements ImageCompressionService {
+class _ImageCompressionFake implements ImageCompressionService {
   ImageSelected? received;
 
   @override
@@ -346,7 +346,7 @@ final class _ImageCompressionFake implements ImageCompressionService {
   }
 }
 
-final class _ImageStorageFake implements UserImageStorageService {
+class _ImageStorageFake implements UserImageStorageService {
   final List<String> events = [];
   final List<String>? externalEvents;
   bool failPromotion = false;

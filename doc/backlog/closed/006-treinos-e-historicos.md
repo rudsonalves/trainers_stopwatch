@@ -11,8 +11,8 @@ As tarefas planejadas estão registradas em
 ## Dependências
 
 - `002-dominio-puro.md`;
-- [`003-persistencia-e-repositories.md`](closed/003-persistencia-e-repositories.md), concluído;
-- [`005-usuarios-e-imagens.md`](closed/005-usuarios-e-imagens.md), concluído.
+- [`003-persistencia-e-repositories.md`](003-persistencia-e-repositories.md), concluído;
+- [`005-usuarios-e-imagens.md`](005-usuarios-e-imagens.md), concluído.
 
 ## Escopo
 
@@ -114,7 +114,8 @@ da página e não altera a identidade nem a persistência dos treinos.
 
 ## Acompanhamento
 
-**Estado:** Planejado.
+**Estado:** Concluído em 2026-08-20.
 
-**Próximos backlogs:** `007-nucleo-cronometro-bloc.md` e
-`009-relatorios-e-compartilhamento.md`.
+**Próximos backlogs:** [`007-nucleo-cronometro-bloc.md`](../007-nucleo-cronometro-bloc.md),
+[`008-sessoes-multiplos-cronometros.md`](../008-sessoes-multiplos-cronometros.md)
+e [`009-relatorios-e-compartilhamento.md`](../009-relatorios-e-compartilhamento.md).

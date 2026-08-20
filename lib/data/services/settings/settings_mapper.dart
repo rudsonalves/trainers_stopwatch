@@ -4,7 +4,7 @@ import '/domain/common/training/units/distance_unit.dart';
 import '/domain/common/training/values/distance.dart';
 import '../database/table_attributes.dart';
 
-final class SettingsMapper {
+class SettingsMapper {
   const SettingsMapper();
 
   Result<Settings> fromMap(Map<String, Object?> map) {

@@ -77,9 +77,9 @@ main.dart
   |
   +-- MyMaterialApp --------- tema, idioma e rotas
           |
-          +-- Pages / Overlays / Widgets
+          +-- Pages / Widgets
                     |
-                    +-- Page Controllers / HistoryController
+                    +-- ViewModels / StopwatchPageController
                     |         |
                     |         +-- Managers
                     |                   |
@@ -118,10 +118,10 @@ temas e entrega a navegação ao `GoRouter`. A rota inicial é `/stopwatch`.
 
 ## 4. Apresentação e navegação
 
-A apresentação migrada fica em `lib/ui/pages/<feature>`, com construção da
-página e overlay na raiz da feature e subdiretórios `viewmodel`, `widgets` e
-outros agrupamentos locais necessários. Configurações e usuários já seguem esse
-formato. Features ainda não migradas permanecem temporariamente em
+A apresentação migrada fica em `lib/ui/pages/<feature>`, com a construção da
+página na raiz da feature e subdiretórios `viewmodel`, `widgets` e outros
+agrupamentos locais necessários. Configurações, usuários, treinos e históricos
+já seguem esse formato. Features ainda não migradas permanecem temporariamente em
 `lib/features`; componentes compartilhados legados continuam em
 `lib/features/widgets/common` até a consolidação da UI.
 
@@ -132,22 +132,23 @@ formato. Features ainda não migradas permanecem temporariamente em
 | treino ativo | `/training` | exibir o histórico ligado a um cronômetro |
 | treinos | `/trainings` | consultar, selecionar e compartilhar treinos salvos |
 | histórico | `/history` | detalhar e editar registros de um treino |
-| configurações | `/settings` | alterar unidades, distâncias, tema, idioma e tutorial |
+| configurações | `/settings` | alterar unidades, distâncias, tema e idioma |
 | sobre | `/about` | apresentar informações e links externos |
 
-Os overlays envolvem algumas páginas para implementar o onboarding com
-`onboarding_overlay`. O `go_router` centraliza paths, nomes, observer e
-transições em `lib/core/routing`. As Pages navegam por nome e passam objetos em
-classes de argumentos tipadas; ViewModels não conhecem navegação. O `Navigator`
-direto permanece apenas para fechar rotas modais, como dialogs e drawer.
+O sistema de ajuda baseado em `onboarding_overlay` e os wrappers de rota
+`*_overlay.dart` foram removidos. O `go_router` constrói as Pages diretamente e
+centraliza paths, nomes, observer e transições
+em `lib/core/routing`. As Pages navegam por nome e passam objetos em classes de
+argumentos tipadas; ViewModels não conhecem navegação. O `Navigator` direto
+permanece apenas para fechar rotas modais, como dialogs e drawer.
 
 ### Estado da interface
 
 Não existe um mecanismo único de estado para toda a apresentação:
 
 - `StatefulWidget` controla estado estritamente visual;
-- `ChangeNotifier` representa os estados de usuários e treinos;
-- `HistoryController` define uma base comum para páginas de histórico;
+- `ChangeNotifier` representa os ViewModels de configurações, usuários, treinos
+  e históricos;
 - `ValueNotifier` atualiza contadores, mensagens, configurações e ações pontuais;
 - `StopwatchBloc` controla exclusivamente o ciclo do cronômetro;
 - alguns controllers são instâncias locais, enquanto outros são singletons.
@@ -379,9 +380,9 @@ Botão parcial/volta
 
 ```text
 TrainingsPage
-  -> TrainingsPageController
-  -> UserManager / TrainingManager
-  -> Repository -> Store -> SQLite
+  -> TrainingsViewModel
+  -> UserRepository / TrainingRepository
+  -> Services -> SQLite
   -> seleção de treinos
   -> AppShare -> BuildPdf
   -> HistoryRepository -> SQLite

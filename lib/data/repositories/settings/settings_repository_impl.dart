@@ -3,7 +3,7 @@ import '/data/services/settings/settings_service.dart';
 import '/domain/common/settings/models/settings.dart';
 import 'settings_repository.dart';
 
-final class SettingsRepositoryImpl implements SettingsRepository {
+class SettingsRepositoryImpl implements SettingsRepository {
   final SettingsService _service;
   Settings? _current;
 

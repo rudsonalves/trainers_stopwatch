@@ -22,12 +22,13 @@ import 'package:go_router/go_router.dart';
 import '/common/functions/share_functions.dart';
 import '/common/theme/theme.dart';
 import '/common/theme/util.dart';
-import '/features/history_page/history_page_controller.dart';
 import '/features/stopwatch_page/stopwatch_page_controller.dart';
-import '/features/trainings_page/trainings_page_controller.dart';
 import '/core/routing/router.dart';
 import '/core/routing/routes/main_routes.dart';
+import '/domain/common/training/models/training.dart';
+import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import '/ui/pages/users/viewmodel/users_view_model.dart';
 import 'app_appearance_state.dart';
 
@@ -35,8 +36,8 @@ class MyMaterialApp extends StatefulWidget {
   final StopwatchPageController stopwatchController;
   final UsersViewModel Function(Iterable<int> activeUserIds)
       usersViewModelFactory;
-  final TrainingsPageController Function() trainingsControllerFactory;
-  final HistoryPageController Function() historyControllerFactory;
+  final TrainingsViewModel Function() trainingsViewModelFactory;
+  final HistoryViewModel Function(Training training) historyViewModelFactory;
   final AppShare appShare;
   final AppAppearanceState appearanceState;
   final SettingsViewModel Function() settingsViewModelFactory;
@@ -45,8 +46,8 @@ class MyMaterialApp extends StatefulWidget {
     super.key,
     required this.stopwatchController,
     required this.usersViewModelFactory,
-    required this.trainingsControllerFactory,
-    required this.historyControllerFactory,
+    required this.trainingsViewModelFactory,
+    required this.historyViewModelFactory,
     required this.appShare,
     required this.appearanceState,
     required this.settingsViewModelFactory,
@@ -69,8 +70,8 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
       MainRouteDependencies(
         stopwatchController: widget.stopwatchController,
         usersViewModelFactory: widget.usersViewModelFactory,
-        trainingsControllerFactory: widget.trainingsControllerFactory,
-        historyControllerFactory: widget.historyControllerFactory,
+        trainingsViewModelFactory: widget.trainingsViewModelFactory,
+        historyViewModelFactory: widget.historyViewModelFactory,
         appShare: widget.appShare,
         settingsViewModelFactory: widget.settingsViewModelFactory,
       ),

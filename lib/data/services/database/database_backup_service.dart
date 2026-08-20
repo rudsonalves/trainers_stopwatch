@@ -6,7 +6,7 @@ import '/core/result/result.dart';
 
 typedef BackupClock = DateTime Function();
 
-final class DatabaseBackupService {
+class DatabaseBackupService {
   final BackupClock _clock;
 
   const DatabaseBackupService({required BackupClock clock}) : _clock = clock;

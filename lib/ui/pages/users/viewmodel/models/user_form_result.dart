@@ -1,7 +1,7 @@
 import '/domain/common/user/models/user.dart';
 import '/domain/models/prepared_user_image.dart';
 
-final class UserFormResult {
+class UserFormResult {
   final User user;
   final PreparedUserImage? preparedImage;
 

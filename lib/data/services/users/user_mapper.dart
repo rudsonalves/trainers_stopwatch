@@ -2,7 +2,7 @@ import '/core/result/result.dart';
 import '/domain/common/user/models/user.dart';
 import '../database/table_attributes.dart';
 
-final class UserMapper {
+class UserMapper {
   const UserMapper();
 
   Result<User> fromMap(Map<String, Object?> map) {

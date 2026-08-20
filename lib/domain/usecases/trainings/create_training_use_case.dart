@@ -5,7 +5,7 @@ import '/domain/common/history/models/history_entry.dart';
 import '/domain/common/training/models/training.dart';
 import 'training_initialization.dart';
 
-final class CreateTrainingUseCase {
+class CreateTrainingUseCase {
   final TrainingRepository _trainingRepository;
   final HistoryRepository _historyRepository;
 

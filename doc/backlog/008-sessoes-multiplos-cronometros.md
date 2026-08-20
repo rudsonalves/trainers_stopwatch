@@ -7,7 +7,8 @@ sessões de estado, eliminando widgets armazenados em controller global.
 
 ## Dependências
 
-- `006-treinos-e-historicos.md`;
+- [`006-treinos-e-historicos.md`](closed/006-treinos-e-historicos.md),
+  concluído;
 - `007-nucleo-cronometro-bloc.md`.
 
 ## Escopo
@@ -19,6 +20,11 @@ sessões de estado, eliminando widgets armazenados em controller global.
 - construir widgets na Page a partir de IDs/chaves estáveis;
 - coordenar criação do treino antes do primeiro início;
 - capturar snapshots e persistir parcial, volta e encerramento;
+- substituir `TrainingManager` e `HistoryManager` por dependências de sessão
+  orientadas a domínio e remover seus registros do composition root;
+- remover do fluxo temporal os adapters legados de `UserModel`,
+  `TrainingModel` e `HistoryModel`, incluindo a conversão de treino feita na
+  rota de treino pessoal;
 - definir tratamento recuperável para falha de persistência durante medição;
 - substituir o canal global de mensagens por estado de apresentação explícito;
 - garantir descarte independente de BLoC, ticker e Commands por atleta;
@@ -46,6 +52,7 @@ sessões de estado, eliminando widgets armazenados em controller global.
 - falha de persistência não apaga o tempo medido;
 - parciais não são duplicadas em nova tentativa;
 - múltiplos cronômetros mantêm o comportamento funcional atual;
+- managers e adapters legados de sessão não possuem consumidores restantes;
 - navegação continua sob responsabilidade das Pages;
 - testes acompanham coordenação, independência e descarte modificados;
 - análise termina sem novos erros.
@@ -59,4 +66,3 @@ Nenhuma decisão adicional aprovada.
 **Estado:** Planejado.
 
 **Próximo backlog:** `009-relatorios-e-compartilhamento.md`.
-

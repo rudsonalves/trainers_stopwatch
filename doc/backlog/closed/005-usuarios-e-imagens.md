@@ -136,4 +136,5 @@ este encerramento por indisponibilidade de dispositivo móvel interativo.
 de treinos e será removido no backlog 006. A seleção ainda é convertida para
 `UserModel` na fronteira com os cronômetros legados até o backlog 008.
 
-**Próximo backlog:** [`006-treinos-e-historicos.md`](../006-treinos-e-historicos.md).
+**Próximo backlog:** [`006-treinos-e-historicos.md`](006-treinos-e-historicos.md),
+concluído.

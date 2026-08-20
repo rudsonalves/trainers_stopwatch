@@ -4,7 +4,7 @@ import '../events/training_event.dart';
 import '../models/training.dart';
 import '../services/speed_calculator.dart';
 
-final class TrainingEventGenerator {
+class TrainingEventGenerator {
   final SpeedCalculator _speedCalculator;
 
   const TrainingEventGenerator({

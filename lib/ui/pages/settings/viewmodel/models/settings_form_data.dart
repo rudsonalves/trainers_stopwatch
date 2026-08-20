@@ -6,7 +6,7 @@ import '/domain/common/training/units/distance_unit.dart';
 import '/domain/common/training/values/distance.dart';
 import '/ui/app/app_appearance_state.dart';
 
-final class SettingsFormData {
+class SettingsFormData {
   final int? id;
   final double splitDistance;
   final double lapDistance;

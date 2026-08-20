@@ -1,5 +1,89 @@
 # Changelog
 
+## 2026/08/20 - bkl006/task-09
+
+This change completes the migration of training and history flows to an MVVM architecture based on domain entities, repositories, Commands, and route-scoped ViewModels. Legacy page controllers, shared history abstractions, UI managers, overlays, and model-based presentation paths were removed where they no longer had consumers.
+
+Routing and dependency composition now construct Pages directly with typed domain arguments and disposable ViewModels. Documentation and tests were updated to close backlog 006, record remaining stopwatch-session and reporting bridges, and verify the migrated behavior.
+
+1. **`lib/ui/pages/history`**
+
+   * Added `HistoryPage` and `HistoryViewModel` using `Training`, `User`, `HistoryEntry`, repository contracts, and Commands.
+   * Added loading, comment updates, guarded deletion, adjacent-duration merging, error preservation, and regeneration of splits, laps, and statistics through `TrainingEventGenerator`.
+   * Added immutable history statistics and typed comment-update models.
+   * Rebuilt history list, dismissible entry, edit dialog, and training information widgets around domain entities and typed callbacks.
+   * Kept text controllers, dialogs, gesture confirmation, and navigation concerns within the UI.
+
+2. **`lib/ui/pages/personal_training`**
+
+   * Replaced the legacy personal-training page and controller with a Page backed by `HistoryViewModel`.
+   * Connected stopwatch actions to history reloads while preserving reversed event presentation and stopwatch controls.
+   * Added explicit listener cleanup and ViewModel disposal for the route lifecycle.
+
+3. **`lib/ui/pages/trainings`**
+
+   * Replaced the legacy training Page, controller, state classes, and widgets with `TrainingsPage`, `TrainingsViewModel`, and domain-oriented widgets.
+   * Migrated user selection, training selection, bulk selection, deletion, history navigation, and sharing to `User` and `Training` entities.
+   * Added typed callbacks for training rows and user selection while retaining confirmation dialogs and current list interactions.
+   * Moved the feature from `lib/features/trainings_page` into the consolidated UI structure.
+
+4. **History and training legacy presentation modules**
+
+   * Removed `HistoryController`, `HistoryPageController`, `PersonalTrainingController`, `TrainingsPageController`, their state types, and the associated model-based Pages and widgets.
+   * Removed the legacy shared history list, dismissible history entry, and edit-history dialog after replacing them with domain-based UI components.
+   * Removed `UserManager` because the migrated training flow now accesses `UserRepository` through its ViewModel.
+   * Retained `TrainingManager` and `HistoryManager` only as temporary stopwatch-session adapters, with removal reassigned to backlog 008.
+
+5. **`lib/core/routing`**
+
+   * Changed history route arguments from legacy models to `User` and `Training` domain entities.
+   * Updated route dependencies to accept factories for `TrainingsViewModel` and `HistoryViewModel`.
+   * Changed settings, users, trainings, and stopwatch routes to construct their Pages directly.
+   * Added domain conversion for personal-training route data before creating its history ViewModel.
+   * Removed the settings, users, trainings, and stopwatch overlay wrappers.
+
+6. **Application composition and ViewModel lifecycle**
+
+   * Updated `main.dart`, `MyMaterialApp`, and `MainRouteDependencies` to create route-scoped users, trainings, history, and settings ViewModels through typed callbacks.
+   * Removed registrations for legacy training and history page controllers and `UserManager`.
+   * Removed the intermediate `UsersViewModelFactory`; users ViewModels are now constructed directly from runtime active-user IDs.
+   * Moved ViewModel disposal into the settings, users, trainings, history, and personal-training Pages.
+   * Preserved transient creation of stopwatch-session controllers and singleton registration where still required.
+
+7. **Sharing and legacy adapters**
+
+   * Updated `AppShare` to receive domain `User` and `Training` values for email and WhatsApp sharing.
+   * Kept conversion to legacy models only at the PDF-generation boundary.
+   * Updated adapter documentation to identify their remaining stopwatch-session and report consumers in backlogs 008 and 009.
+   * Updated training email content generation to read distance values and units from domain value objects.
+
+8. **Domain, data, bootstrap, and presentation types**
+
+   * Removed `final` class modifiers across affected domain models, value objects, services, repositories, mappers, use cases, ViewModels, formatters, logging, bootstrap, and test fakes.
+   * Applied the same class declaration change to route argument and dependency types used by the migrated architecture.
+   * Preserved existing constructors, contracts, caching behavior, and service implementations.
+
+9. **Tests**
+
+   * Added comprehensive `HistoryViewModel` tests covering loading, derived splits and laps, statistics, comment updates, deletion with duration merging, invalid deletions, persisted-training requirements, and cache preservation after failures.
+   * Expanded routing tests to verify typed domain arguments, direct Page construction, route transitions, and recreation of route-scoped ViewModels.
+   * Updated dependency tests to reflect removal of `UsersViewModelFactory` and verify transient stopwatch-session controller creation.
+   * Updated existing repository, image, user, training, and ViewModel test fakes to match the revised class declarations.
+
+10. **Architecture and backlog documentation**
+
+   * Updated the current architecture to describe direct Page routing, ViewModel-based presentation state, removal of onboarding overlays, and repository-based training flow.
+   * Marked backlog 006 and all remaining tasks as completed, documented delivered behavior and validation results, and moved its planning files into `doc/backlog/closed`.
+   * Updated the backlog index and dependent backlog links to reference the closed backlog.
+   * Expanded backlogs 008 and 009 with the remaining session-manager, legacy-adapter, report, and sharing migration work.
+   * Clarified the earlier users backlog documentation after removal of the users ViewModel factory.
+
+### Conclusion
+
+Training and history presentation now operate through domain entities, repositories, Commands, and disposable ViewModels, removing the legacy controller and manager dependencies from migrated UI flows.
+
+Routes construct Pages directly, sharing accepts domain data at its UI boundary, and the remaining legacy adapters are explicitly limited to future stopwatch-session and reporting migrations. Backlog 006 is documented as complete with corresponding coverage for the new architecture and behavior.
+
 ## 2026/08/20 - bkl006/task-05
 
 This change establishes feature-local UI boundaries for migrated pages, introduces command-based training presentation state, and coordinates training initialization with its required history entry.

@@ -1,7 +1,7 @@
 import '../../domain/common/user/models/user.dart';
 import '../models/user_model.dart';
 
-// Temporary legacy bridge. Remove with the user migration in backlog 005.
+// Temporary stopwatch-session bridge. Remove in backlog 008.
 extension UserModelDomainAdapter on UserModel {
   User toDomain() => User(
         id: id,
