@@ -40,10 +40,7 @@ sessões de estado, eliminando widgets armazenados em controller global.
 
 ## Questões em aberto
 
-1. A sessão iniciada deve continuar ativa ao navegar para outra página?
-2. Como reapresentar uma escrita de parcial que falhou sem duplicá-la?
-3. Remover um cronômetro ativo exige confirmação e encerramento do treino?
-4. Mensagens da sessão serão uma lista global ou agrupadas por atleta?
+Todas as questões foram decididas antes da implementação.
 
 ## Critérios de aceite
 
@@ -60,11 +57,32 @@ sessões de estado, eliminando widgets armazenados em controller global.
 
 ## Decisões
 
-Nenhuma decisão adicional aprovada.
+- uma sessão iniciada continua ativa durante a navegação; abrir outra página,
+  retornar à página principal ou reconstruir a Page não pausa nem encerra seu
+  `Stopwatch`;
+- somente uma ação temporal explícita ou o descarte confirmado da sessão altera
+  o ciclo de vida da medição;
+- cada escrita produzida por snapshot usa a identidade idempotente formada pelo
+  treino persistido e por `snapshotRevision`;
+- uma escrita que falhar permanece pendente e toda nova tentativa reutiliza a
+  mesma identidade e o mesmo conteúdo; encontrar essa identidade já persistida
+  equivale a sucesso, sem criar outra parcial;
+- remover uma sessão em execução ou pausada exige confirmação; ao confirmar, a
+  sessão encerra a medição, persiste os registros finais e só é removida depois
+  do sucesso da persistência;
+- cancelar a confirmação preserva a sessão, e uma falha de persistência impede
+  sua remoção e mantém a escrita pendente para nova tentativa;
+- sessões `idle`, ou `finished` sem escrita pendente, podem ser removidas
+  diretamente; eventual descarte sem salvar deverá ser uma ação separada e
+  explícita, não um efeito implícito da remoção;
+- mensagens pertencem à sessão do atleta e carregam identidade e ordem
+  estáveis; uma lista global, quando exibida, é somente uma projeção cronológica
+  das mensagens das sessões existentes.
 
 ## Acompanhamento
 
-**Estado:** Planejado.
+**Estado:** Em execução; decisões fechadas e tarefas preparadas em
+[`008-sessoes-multiplos-cronometros-tasks.md`](008-sessoes-multiplos-cronometros-tasks.md).
 
 **Fronteiras recebidas do backlog 007:** `PreciseStopwatchController` ainda
 coordena criação do treino, persistência de parciais, mensagens e adapters

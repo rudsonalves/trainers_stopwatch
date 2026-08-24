@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026/08/24 - bkl008/task-01
+
+This change formalizes the implementation plan for migrating stopwatch management to independent MVVM sessions while retaining `StopwatchBloc` as the temporal core.
+
+It also closes the backlog’s architectural questions around navigation, idempotent persistence, safe session removal, and message ownership, and links the backlog to the new execution checklist.
+
+1. **`doc/backlog/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Added a phased task plan for modeling stable session identities, immutable operational state, pending snapshot writes, and session-scoped messages.
+   * Defined the persistence work required to make snapshot writes idempotent by training ID and `snapshotRevision`, including schema constraints, migrations, retries, and conflicting-content handling.
+   * Specified the responsibilities and lifecycle of `StopwatchSessionViewModel` and `StopwatchPageViewModel`, including session ownership, BLoC coordination, global message projection, and asynchronous disposal.
+   * Documented safe removal behavior for idle, finished, running, paused, synchronized, and persistence-failed sessions.
+   * Planned the migration of widgets, selection flows, routes, dependency composition, and training configuration from legacy controllers and managers to session ViewModels.
+   * Defined the removal scope for obsolete controllers, managers, adapters, widget collections, global keys, message channels, and duplicated temporal flags.
+   * Added comprehensive testing requirements covering session independence, persistence ordering and retry behavior, navigation, removal confirmation, resource disposal, messaging, and widget integration.
+   * Added delivery validation steps for formatting, focused and complete test suites, static analysis, diff verification, manual scenarios, dependency searches, and backlog closure.
+   * Established a completion rule requiring independent persistent sessions, stable widget identities, idempotent writes, safe active-session removal, session-owned messages, legacy architecture cleanup, and successful validation.
+
+2. **`doc/backlog/008-sessoes-multiplos-cronometros.md`**
+
+   * Replaced the open architectural questions with confirmation that the decisions were resolved before implementation.
+   * Documented that active sessions persist through navigation and are changed only by explicit temporal actions or confirmed disposal.
+   * Defined snapshot persistence identity and retry semantics, including reuse of immutable content and successful reconciliation with an existing persisted write.
+   * Established confirmation and final-persistence requirements for removing running or paused sessions, while allowing direct removal of idle or synchronized finished sessions.
+   * Clarified that persistence failures retain the session and pending write, and that discarding without saving cannot occur implicitly.
+   * Assigned messages to individual athlete sessions and defined the global log as a chronological projection of messages from active sessions.
+   * Updated the backlog status to in progress and linked it to the newly prepared task plan.
+
+### Conclusion
+
+The backlog now has explicit architectural decisions and an ordered implementation plan for replacing global stopwatch composition with persistent, independent MVVM sessions.
+
+The documented delivery scope covers idempotent persistence, safe lifecycle management, UI and routing migration, legacy cleanup, and deterministic validation.
+
 ## 2026/08/24 - bkl007/task-02
 
 This change completes the stopwatch temporal-core migration to an application-layer BLoC backed by `dart:core Stopwatch`. The new immutable state is the single source of elapsed duration, counters, lifecycle status, civil timestamps, and revisioned split, lap, and finish snapshots.
