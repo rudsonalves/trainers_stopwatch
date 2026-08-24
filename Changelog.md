@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026/08/24 - bkl008/task-04
+
+This change adds safe stopwatch session removal to the page view model. It introduces confirmation handling for active sessions, preserves sessions when final persistence fails, and prevents concurrent removal operations for the same session.
+
+The related backlog task was updated to reflect completion of the removal lifecycle requirements.
+
+1. **`lib/ui/pages/stopwatch/stopwatch_page_view_model.dart`**
+
+   * Added tracking for sessions currently being removed and exposed `isRemoving()` so the UI can reflect or restrict in-progress removal operations.
+   * Added `requiresRemovalConfirmation()` to identify running and paused sessions that require explicit user confirmation.
+   * Added `removeSession()` with validation for closed view models, missing sessions, duplicate removal requests, and unconfirmed active-session removal.
+   * Added graceful finishing of confirmed running or paused sessions before removal.
+   * Prevented sessions with pending writes or failed final persistence from being removed, preserving their state for a later retry.
+   * Removed session listeners, collection entries, and session resources only after the session is synchronized and safe to close.
+   * Added listener notifications around the removal lifecycle and cleared removal tracking during shutdown.
+   * Refactored disposal placement while preserving asynchronous page view-model closure and idempotent notifier disposal.
+
+2. **`doc/backlog/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Marked the session-removal task requirements as completed, including confirmation decisions, safe finalization, pending-write preservation, cancellation behavior, disposal ordering, and concurrency protection.
+
+### Conclusion
+
+Stopwatch sessions can now be removed through a guarded lifecycle that protects active timing state and pending persistence work. The page view model exposes the information needed for UI confirmation while retaining responsibility for synchronization, cleanup, and concurrent-operation control.
+
 ## 2026/08/24 - bkl008/task-03
 
 This change introduces page-level lifecycle management for stopwatch sessions. The new view model owns active sessions, prevents duplicates, aggregates session messages, propagates updates, and coordinates asynchronous cleanup.

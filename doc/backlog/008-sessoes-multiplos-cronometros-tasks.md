@@ -134,18 +134,18 @@ não controla manualmente o ciclo de vida de cada cronômetro.
 
 **Dependências:** tarefas 3 e 4.
 
-- [ ] Expor no `StopwatchPageViewModel` uma consulta de remoção que informe se a
+- [x] Expor no `StopwatchPageViewModel` uma consulta de remoção que informe se a
       Page deve pedir confirmação, mantendo o diálogo sob responsabilidade da
       UI.
-- [ ] Remover diretamente uma sessão `idle`, ou `finished` sem escrita pendente.
-- [ ] Ao confirmar a remoção de uma sessão `running` ou `paused`, solicitar seu
+- [x] Remover diretamente uma sessão `idle`, ou `finished` sem escrita pendente.
+- [x] Ao confirmar a remoção de uma sessão `running` ou `paused`, solicitar seu
       encerramento e aguardar todas as escritas finais.
-- [ ] Somente retirar a sessão da coleção e executar `dispose()` depois que ela
+- [x] Somente retirar a sessão da coleção e executar `dispose()` depois que ela
       estiver encerrada e sincronizada.
-- [ ] Se o usuário cancelar, não despachar evento temporal nem alterar a sessão.
-- [ ] Se alguma escrita falhar, manter a sessão na coleção com o erro e a escrita
+- [x] Se o usuário cancelar, não despachar evento temporal nem alterar a sessão.
+- [x] Se alguma escrita falhar, manter a sessão na coleção com o erro e a escrita
       pendente disponíveis para nova tentativa.
-- [ ] Impedir comandos concorrentes de remoção, encerramento e `retry` para a
+- [x] Impedir comandos concorrentes de remoção, encerramento e `retry` para a
       mesma sessão.
 
 **Resultado esperado:** remover um atleta nunca perde silenciosamente uma

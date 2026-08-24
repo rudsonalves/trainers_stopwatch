@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 
+import '/application/stopwatch/bloc/stopwatch_state.dart';
 import '/application/stopwatch/session/stopwatch_session_id.dart';
 import '/application/stopwatch/session/stopwatch_session_message.dart';
 import '/application/stopwatch/session/stopwatch_session_view_model.dart';
@@ -22,6 +23,10 @@ class StopwatchPageViewModel extends ChangeNotifier {
       LinkedHashMap();
 
   final Map<StopwatchSessionId, VoidCallback> _sessionListeners = {};
+
+  final Set<StopwatchSessionId> _removingSessionIds = {};
+
+  bool isRemoving(StopwatchSessionId id) => _removingSessionIds.contains(id);
 
   Set<int> get activeUserIds => Set.unmodifiable(
         _sessions.keys.map((id) => id.userId),
@@ -44,6 +49,19 @@ class StopwatchPageViewModel extends ChangeNotifier {
       ..sort();
 
     return List.unmodifiable(result);
+  }
+
+  @override
+  void dispose() {
+    if (_notifierDisposed) {
+      return;
+    }
+
+    _closed = true;
+    unawaited(close());
+
+    _notifierDisposed = true;
+    super.dispose();
   }
 
   Result<Unit> addUsers(Iterable<User> users) {
@@ -87,6 +105,16 @@ class StopwatchPageViewModel extends ChangeNotifier {
     return const Success(unit);
   }
 
+  bool requiresRemovalConfirmation(StopwatchSessionId id) {
+    final session = _sessions[id];
+    if (session == null) {
+      return false;
+    }
+
+    return session.bloc.state.status == StopwatchStatus.running ||
+        session.bloc.state.status == StopwatchStatus.paused;
+  }
+
   Future<void> close() => _closing ??= _close();
 
   Future<void> _close() async {
@@ -109,19 +137,84 @@ class StopwatchPageViewModel extends ChangeNotifier {
       _notifierDisposed = true;
       super.dispose();
     }
+
+    _removingSessionIds.clear();
   }
 
-  @override
-  void dispose() {
-    if (_notifierDisposed) {
-      return;
+  AsyncResult<Unit> removeSession(
+    StopwatchSessionId id, {
+    bool confirmed = false,
+  }) async {
+    if (_closed) {
+      return const Failure(
+        AppError(
+          code: AppErrorCode.invalidData,
+          message: 'The stopwatch page view model is closed.',
+        ),
+      );
     }
 
-    _closed = true;
-    unawaited(close());
+    final session = _sessions[id];
+    if (session == null) {
+      return const Success(unit);
+    }
 
-    _notifierDisposed = true;
-    super.dispose();
+    if (!_removingSessionIds.add(id)) {
+      return const Failure(
+        AppError(
+          code: AppErrorCode.invalidData,
+          message: 'Session removal is already running.',
+        ),
+      );
+    }
+
+    notifyListeners();
+
+    try {
+      final requiresConfirmation = requiresRemovalConfirmation(id);
+
+      if (requiresConfirmation && !confirmed) {
+        return const Failure(
+          AppError(
+            code: AppErrorCode.invalidData,
+            message: 'Active session removal requires confirmation.',
+          ),
+        );
+      }
+
+      if (requiresConfirmation) {
+        final finishResult = await session.finish();
+
+        if (finishResult.isFailure) {
+          return Failure(finishResult.error!);
+        }
+      }
+
+      if (session.hasPendingWrite) {
+        return const Failure(
+          AppError(
+            code: AppErrorCode.storageWriteFailed,
+            message: 'The session still has a pending write.',
+          ),
+        );
+      }
+
+      final listener = _sessionListeners.remove(id);
+      if (listener != null) {
+        session.removeListener(listener);
+      }
+
+      _sessions.remove(id);
+      await session.close();
+
+      return const Success(unit);
+    } finally {
+      _removingSessionIds.remove(id);
+
+      if (!_closed) {
+        notifyListeners();
+      }
+    }
   }
 
   void _onSessionChanged() {
