@@ -31,22 +31,22 @@ explícitas da sessão.
 
 **Dependência:** backlog 007 concluído.
 
-- [ ] Criar os models de aplicação da sessão próximos ao consumidor em
+- [x] Criar os models de aplicação da sessão próximos ao consumidor em
       `lib/application/stopwatch/session/`, sem dependências de widgets ou
       `BuildContext`.
-- [ ] Definir uma identidade estável de sessão baseada no ID persistido do
+- [x] Definir uma identidade estável de sessão baseada no ID persistido do
       atleta, adequada para `ValueKey` e para localizar, editar e remover a
       sessão.
-- [ ] Modelar o estado imutável da sessão com atleta, treino corrente, estado de
+- [x] Modelar o estado imutável da sessão com atleta, treino corrente, estado de
       inicialização, estado de persistência, escrita pendente, mensagens e erro
       recuperável.
-- [ ] Representar cada escrita por um valor imutável contendo o ID do treino,
+- [x] Representar cada escrita por um valor imutável contendo o ID do treino,
       `snapshotRevision`, tipo de snapshot e conteúdo que será repetido sem
       reconstrução.
-- [ ] Modelar mensagens de apresentação com identidade da sessão, identidade do
+- [x] Modelar mensagens de apresentação com identidade da sessão, identidade do
       evento ou revisão, ordem temporal estável, tipo e conteúdo necessário à
       UI.
-- [ ] Não duplicar duração, contadores ou status temporal no estado da sessão;
+- [x] Não duplicar duração, contadores ou status temporal no estado da sessão;
       esses valores continuam pertencendo ao `StopwatchState`.
 
 **Resultado esperado:** sessão, escrita pendente e mensagem possuem identidades
@@ -56,21 +56,21 @@ explícitas e não dependem da árvore de widgets.
 
 **Dependência:** tarefa 1.
 
-- [ ] Definir em `lib/domain/` a operação necessária para persistir um snapshot
+- [x] Definir em `lib/domain/` a operação necessária para persistir um snapshot
       uma única vez por `trainingId + snapshotRevision`, sem acoplar o domínio
       ao BLoC.
-- [ ] Adaptar `HistoryEntry`, mapper, service e repository somente com os campos
+- [x] Adaptar `HistoryEntry`, mapper, service e repository somente com os campos
       necessários para conservar a identidade da escrita até o banco.
-- [ ] Adicionar ao schema uma restrição única para a identidade idempotente e a
+- [x] Adicionar ao schema uma restrição única para a identidade idempotente e a
       migração compatível com bancos existentes, preservando históricos já
       gravados.
-- [ ] Fazer a inserção retornar o registro existente como sucesso quando a
+- [x] Fazer a inserção retornar o registro existente como sucesso quando a
       mesma identidade e o mesmo conteúdo já estiverem persistidos.
-- [ ] Tratar a mesma identidade com conteúdo diferente como inconsistência, sem
+- [x] Tratar a mesma identidade com conteúdo diferente como inconsistência, sem
       sobrescrever silenciosamente o registro anterior.
-- [ ] Manter a escrita imutável na sessão após falha; `retry` deve reenviar o
-      mesmo valor, sem gerar nova revisão ou nova mensagem de sucesso.
-- [ ] Preservar a criação transacional de treino e marcador inicial fornecida
+- [x] Preservar em `StopwatchSessionWrite` o snapshot e os comentários
+      imutáveis que a sessão reenviará em `retry`, sem reconstruir o payload.
+- [x] Preservar a criação transacional de treino e marcador inicial fornecida
       por `CreateTrainingUseCase`.
 
 **Resultado esperado:** repetir uma tentativa após resultado incerto ou falha
@@ -80,27 +80,29 @@ recuperável nunca duplica uma parcial.
 
 **Dependências:** tarefas 1 e 2.
 
-- [ ] Criar `StopwatchSessionViewModel` em
+- [x] Criar `StopwatchSessionViewModel` em
       `lib/application/stopwatch/session/stopwatch_session_view_model.dart` com
       um `StopwatchBloc` exclusivo e dependências recebidas por construtor.
-- [ ] Inicializar a sessão com o model de domínio `User`, configurações do treino
+- [x] Inicializar a sessão com o model de domínio `User`, configurações do treino
       e callbacks/factories necessários, sem `UserModel`, managers ou singletons.
-- [ ] Criar e persistir o treino antes do primeiro início efetivo e configurar o
+- [x] Criar e persistir o treino antes do primeiro início efetivo e configurar o
       BLoC com os limites desse treino.
-- [ ] Coordenar início, pausa, retomada, reset, parcial, volta e encerramento por
+- [x] Coordenar início, pausa, retomada, reset, parcial, volta e encerramento por
       métodos nomeados que despachem os eventos públicos correspondentes do
       BLoC.
-- [ ] Consumir cada `snapshotRevision` uma única vez e converter seu snapshot em
+- [x] Consumir cada `snapshotRevision` uma única vez e converter seu snapshot em
       uma escrita imutável antes de chamar a persistência.
-- [ ] Manter a medição e o snapshot intactos quando a persistência falhar, expor
+- [x] Manter a medição e o snapshot intactos quando a persistência falhar, expor
       o erro no estado e oferecer nova tentativa da escrita pendente.
-- [ ] Só publicar a mensagem de sucesso da ação depois que sua escrita estiver
+- [x] Só publicar a mensagem de sucesso da ação depois que sua escrita estiver
       confirmada, evitando mensagens duplicadas em `retry`.
-- [ ] Ao terminar, persistir os segmentos finais, marcar a sessão como
+- [x] Ao terminar, persistir os segmentos finais, marcar a sessão como
       sincronizada e preparar um treino limpo apenas quando o próximo início for
       solicitado.
-- [ ] Implementar `dispose()` idempotente que cancele Commands/observações da
-      sessão e aguarde `StopwatchBloc.close()`.
+- [x] Implementar `close()` idempotente e aguardável para concluir a operação
+      ativa e `StopwatchBloc.close()`, mantendo `dispose()` compatível com
+      `ChangeNotifier`; a sessão ainda não possui Commands ou observações
+      adicionais para cancelar.
 
 **Resultado esperado:** cada atleta possui uma unidade operacional independente
 que coordena BLoC e persistência sem conhecer widgets ou navegação.

@@ -70,6 +70,10 @@ class _HistoryRepositoryFake implements HistoryRepository {
 
   @override
   AsyncResult<HistoryEntry> insert(HistoryEntry entry) async => Success(entry);
+
+  @override
+  AsyncResult<HistoryEntry> insertIdempotent(HistoryEntry entry) =>
+      insert(entry);
 }
 
 void main() {

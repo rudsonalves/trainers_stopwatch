@@ -1,5 +1,84 @@
 # Changelog
 
+## 2026/08/24 - bkl008/task-02
+
+This change introduces independent stopwatch sessions for persisted athletes, with immutable session state, stable identities, named lifecycle operations, and presentation messages derived from confirmed stopwatch snapshots.
+
+It also adds idempotent snapshot persistence across the domain, repository, service, and database layers. Snapshot revisions are preserved through retries, duplicate writes with identical content succeed safely, and conflicting content is rejected without overwriting existing history.
+
+1. **`lib/application/stopwatch/session/`**
+
+   * Added `StopwatchSessionId`, using the persisted athlete ID as a stable session identity and rejecting transient users.
+   * Added immutable `StopwatchSessionWrite` values containing the training ID, snapshot revision, inferred snapshot type, original snapshot, and comments required for exact retries.
+   * Added ordered presentation messages with stable identities based on session, revision, and message type.
+   * Added immutable session state covering initialization, persistence, pending writes, messages, recoverable errors, user, and current training.
+   * Added `StopwatchSessionViewModel` with an exclusive `StopwatchBloc` and injected training creation, snapshot persistence, speed calculation, and clock dependencies.
+   * Implemented named start, pause, resume, reset, split, lap, finish, retry, and training-update operations with transition and concurrency validation.
+   * Persisted the training before starting measurement, configured BLoC limits from the persisted training, and published start messages after initialization.
+   * Converted each emitted snapshot revision into one immutable pending write, retained it after persistence failures, and reused the exact value during retries.
+   * Published split, lap, and finish messages only after successful persistence, including calculated speeds and stable ordering metadata.
+   * Added idempotent asynchronous shutdown that waits for active work and closes only the session BLoC while retaining `ChangeNotifier.dispose()` compatibility.
+
+2. **`lib/domain/common/history/models/history_entry.dart`**
+
+   * Added snapshot type and revision fields to retain idempotency metadata in history entries.
+   * Added validation requiring snapshot revision and type to be supplied together, with positive revisions.
+   * Extended equality and hashing to include snapshot identity metadata.
+
+3. **`lib/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart`**
+
+   * Added a use case that maps split, lap, and finish snapshots into history entries.
+   * Preserved the snapshot revision and type while selecting the appropriate split duration for persistence.
+   * Routed snapshot writes through the repository’s idempotent insertion operation.
+
+4. **History repository and service layer**
+
+   * Extended `HistoryRepository` and `HistoryRepositoryImpl` with idempotent insertion support.
+   * Updated repository caching to add returned records only when they are not already cached.
+   * Added service-level lookup by training and snapshot revision before insertion.
+   * Made identical repeated writes return the existing record successfully.
+   * Rejected reused snapshot identities containing different types, durations, or comments.
+   * Added conflict recovery for concurrent inserts by re-reading and validating the persisted record.
+
+5. **Database schema and history mapping**
+
+   * Increased the database version from `1006` to `1007`.
+   * Added nullable snapshot revision and snapshot type columns so existing history remains compatible.
+   * Added a partial unique index over training ID and non-null snapshot revision.
+   * Added an explicit `1006` to `1007` migration and rejected unsupported migration paths.
+   * Updated database opening to migrate version `1006` instead of replacing it.
+   * Updated `HistoryMapper` to serialize and deserialize snapshot identity fields.
+
+6. **`lib/core/config/dependencies/usecases_dependencies.dart`**
+
+   * Registered `PersistStopwatchSnapshotUseCase` in dependency injection alongside the existing training and user use cases.
+
+7. **Stopwatch session tests**
+
+   * Added coverage for persisted-user session identity, immutable writes, deterministic message ordering, immutable message collections, and nullable state updates.
+   * Verified that training persistence precedes stopwatch execution.
+   * Covered pause, resume, finish, retry, automatic lap-limit completion, message publication, and idempotent session closure.
+   * Confirmed that failed writes retain the exact snapshot payload and publish a single success message after retry.
+
+8. **Persistence and migration tests**
+
+   * Added database service coverage for migrating version `1006` to `1007` without deleting the existing database.
+   * Added history service coverage for returning identical persisted writes and rejecting conflicting content.
+   * Added use-case coverage for mapping snapshot identity and content into an idempotent history write.
+   * Updated repository fakes and database expectations for the new idempotent insertion contract and schema version.
+
+9. **`doc/backlog/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Marked the session models, idempotent persistence, and session view-model tasks as completed.
+   * Refined the retry requirement to explicitly preserve immutable snapshots and comments.
+   * Documented the implemented `close()` and `dispose()` lifecycle behavior.
+
+### Conclusion
+
+The application now has an independent session orchestration layer for each athlete, coordinating stopwatch state, training initialization, snapshot persistence, retries, and presentation messages without widget dependencies.
+
+Snapshot writes are idempotent from the session through the database, preserving existing history during migration and preventing duplicate or conflicting partial records. Automated tests cover the new session lifecycle, persistence guarantees, and schema upgrade behavior.
+
 ## 2026/08/24 - bkl008/task-01
 
 This change formalizes the implementation plan for migrating stopwatch management to independent MVVM sessions while retaining `StopwatchBloc` as the temporal core.

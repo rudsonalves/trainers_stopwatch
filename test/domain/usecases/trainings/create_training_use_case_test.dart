@@ -84,6 +84,10 @@ class _HistoryRepositoryFake implements HistoryRepository {
   }
 
   @override
+  AsyncResult<HistoryEntry> insertIdempotent(HistoryEntry entry) =>
+      insert(entry);
+
+  @override
   AsyncResult<Unit> deleteAndMergeNext({
     required int trainingId,
     required int historyEntryId,

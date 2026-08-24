@@ -16,7 +16,8 @@
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
 const dbName = 'stopwatch.db';
-const dbVersion = 1006;
+const dbVersion = 1007;
+const idempotentHistoryMigrationVersion = 1006;
 
 const settingsTable = 'settingsTable';
 const settingsId = 'id';
@@ -55,3 +56,6 @@ const historyId = 'id';
 const historyTrainingId = 'trainingId';
 const historyDuration = 'duration';
 const historyComments = 'comments';
+const historySnapshotRevision = 'snapshotRevision';
+const historySnapshotType = 'snapshotType';
+const historySnapshotIdentityIndex = 'historySnapshotIdentityIndex';

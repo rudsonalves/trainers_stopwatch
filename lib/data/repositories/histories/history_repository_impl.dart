@@ -34,6 +34,18 @@ class HistoryRepositoryImpl implements HistoryRepository {
   }
 
   @override
+  AsyncResult<HistoryEntry> insertIdempotent(HistoryEntry entry) async {
+    final result = await _service.insertIdempotent(entry);
+    if (result.isFailure) return Failure(result.error!);
+    final persisted = result.value!;
+    final cached = historiesForTraining(entry.trainingId);
+    if (!cached.any((item) => item.id == persisted.id)) {
+      _cache[entry.trainingId] = List.unmodifiable([...cached, persisted]);
+    }
+    return result;
+  }
+
+  @override
   AsyncResult<Unit> update(HistoryEntry entry) async {
     final id = entry.id;
     if (id == null) return Failure(_missingId('update'));

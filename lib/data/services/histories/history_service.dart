@@ -37,6 +37,48 @@ class HistoryService {
     }
   }
 
+  AsyncResult<HistoryEntry> insertIdempotent(HistoryEntry entry) async {
+    if (entry.snapshotRevision == null) {
+      return const Failure(
+        AppError(
+          code: AppErrorCode.invalidData,
+          message: 'An idempotent history write requires a snapshot identity.',
+        ),
+      );
+    }
+
+    final databaseResult = await _databaseService.open();
+    if (databaseResult.isFailure) return Failure(databaseResult.error!);
+    final database = databaseResult.value!;
+
+    try {
+      final existing = await _findSnapshotWrite(database, entry);
+      if (existing != null) return _sameWrite(existing, entry);
+
+      try {
+        final id = await database.insert(
+          historyTable,
+          _mapper.toMap(entry),
+          conflictAlgorithm: ConflictAlgorithm.abort,
+        );
+        return HistoryEntry.create(
+          id: id,
+          trainingId: entry.trainingId,
+          duration: entry.duration,
+          comments: entry.comments,
+          snapshotRevision: entry.snapshotRevision,
+          snapshotType: entry.snapshotType,
+        );
+      } catch (_) {
+        final concurrent = await _findSnapshotWrite(database, entry);
+        if (concurrent != null) return _sameWrite(concurrent, entry);
+        rethrow;
+      }
+    } catch (error, stackTrace) {
+      return Failure(_writeError('insert', error, stackTrace));
+    }
+  }
+
   AsyncResult<HistoryEntry> read(int id) async {
     final databaseResult = await _databaseService.open();
     if (databaseResult.isFailure) return Failure(databaseResult.error!);
@@ -163,6 +205,42 @@ class HistoryService {
       entries.add(mapped.value!);
     }
     return Success(List.unmodifiable(entries));
+  }
+
+  Future<HistoryEntry?> _findSnapshotWrite(
+    DatabaseExecutor database,
+    HistoryEntry entry,
+  ) async {
+    final rows = await database.query(
+      historyTable,
+      where: '$historyTrainingId = ? AND $historySnapshotRevision = ?',
+      whereArgs: [entry.trainingId, entry.snapshotRevision],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    final mapped = _mapper.fromMap(rows.first);
+    if (mapped.isFailure) throw mapped.error!;
+    return mapped.value!;
+  }
+
+  Result<HistoryEntry> _sameWrite(
+    HistoryEntry persisted,
+    HistoryEntry requested,
+  ) {
+    final sameContent = persisted.trainingId == requested.trainingId &&
+        persisted.snapshotRevision == requested.snapshotRevision &&
+        persisted.snapshotType == requested.snapshotType &&
+        persisted.duration == requested.duration &&
+        persisted.comments == requested.comments;
+    if (sameContent) return Success(persisted);
+
+    return Failure(
+      AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Snapshot identity is already used by different content.',
+        details: (persisted: persisted, requested: requested),
+      ),
+    );
   }
 
   AppError _notFound(int id) => AppError(

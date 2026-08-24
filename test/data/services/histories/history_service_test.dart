@@ -113,6 +113,8 @@ void main() {
         'trainingId': 9,
         'duration': milliseconds,
         'comments': null,
+        'snapshotRevision': null,
+        'snapshotType': null,
       };
 
   setUp(() {
@@ -140,6 +142,51 @@ void main() {
     expect(read.value!.duration, const Duration(seconds: 2));
     expect(listed.value, hasLength(1));
     expect(updated.isSuccess, isTrue);
+  });
+
+  test('returns an identical persisted snapshot write without inserting',
+      () async {
+    database.rows = [
+      {
+        ...row(4, 2000),
+        'comments': 'split',
+        'snapshotRevision': 3,
+        'snapshotType': 'split',
+      },
+    ];
+    final entry = HistoryEntry.create(
+      trainingId: 9,
+      duration: const Duration(seconds: 2),
+      comments: 'split',
+      snapshotRevision: 3,
+      snapshotType: HistorySnapshotType.split,
+    ).value!;
+
+    final result = await service.insertIdempotent(entry);
+
+    expect(result.isSuccess, isTrue);
+    expect(result.value!.id, 4);
+  });
+
+  test('rejects different content for an existing snapshot identity', () async {
+    database.rows = [
+      {
+        ...row(4, 2000),
+        'snapshotRevision': 3,
+        'snapshotType': 'split',
+      },
+    ];
+    final entry = HistoryEntry.create(
+      trainingId: 9,
+      duration: const Duration(seconds: 3),
+      snapshotRevision: 3,
+      snapshotType: HistorySnapshotType.split,
+    ).value!;
+
+    final result = await service.insertIdempotent(entry);
+
+    expect(result.isFailure, isTrue);
+    expect(result.error!.code, AppErrorCode.invalidData);
   });
 
   test('deletes an entry and transfers duration to the next entry', () async {

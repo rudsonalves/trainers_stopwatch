@@ -89,6 +89,7 @@ class DatabaseService {
           version: dbVersion,
           onConfigure: _configure,
           onCreate: _schema.create,
+          onUpgrade: _schema.upgrade,
         ),
       );
       _database = database;
@@ -116,7 +117,9 @@ class DatabaseService {
 
     var mustReplace = false;
     try {
-      mustReplace = await _readDatabaseVersion(databasePath) != dbVersion;
+      final version = await _readDatabaseVersion(databasePath);
+      mustReplace =
+          version != dbVersion && version != idempotentHistoryMigrationVersion;
     } catch (_) {
       mustReplace = true;
     }

@@ -6,6 +6,7 @@ abstract interface class HistoryRepository {
 
   AsyncResult<List<HistoryEntry>> loadForTraining(int trainingId);
   AsyncResult<HistoryEntry> insert(HistoryEntry entry);
+  AsyncResult<HistoryEntry> insertIdempotent(HistoryEntry entry);
   AsyncResult<Unit> update(HistoryEntry entry);
   AsyncResult<Unit> deleteAndMergeNext({
     required int trainingId,

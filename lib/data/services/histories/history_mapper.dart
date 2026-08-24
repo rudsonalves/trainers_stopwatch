@@ -12,6 +12,11 @@ class HistoryMapper {
         trainingId: map[historyTrainingId] as int,
         duration: Duration(milliseconds: map[historyDuration] as int),
         comments: map[historyComments] as String?,
+        snapshotRevision: map[historySnapshotRevision] as int?,
+        snapshotType: switch (map[historySnapshotType] as String?) {
+          null => null,
+          final value => HistorySnapshotType.values.byName(value),
+        },
       );
     } catch (error, stackTrace) {
       return Failure(
@@ -29,5 +34,7 @@ class HistoryMapper {
         historyTrainingId: entry.trainingId,
         historyDuration: entry.duration.inMilliseconds,
         historyComments: entry.comments,
+        historySnapshotRevision: entry.snapshotRevision,
+        historySnapshotType: entry.snapshotType?.name,
       };
 }

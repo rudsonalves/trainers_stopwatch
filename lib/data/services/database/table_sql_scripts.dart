@@ -64,6 +64,8 @@ const createHistoryTableSQL = 'CREATE TABLE IF NOT EXISTS $historyTable ('
     ' $historyTrainingId INTEGER NOT NULL,'
     ' $historyDuration INTEGER NOT NULL,'
     ' $historyComments TEXT,'
+    ' $historySnapshotRevision INTEGER,'
+    ' $historySnapshotType TEXT,'
     ' FOREIGN KEY ($historyTrainingId)'
     '   REFERENCES $trainingTable ($trainingId)'
     '   ON DELETE CASCADE'
@@ -72,5 +74,16 @@ const createHistoryTableSQL = 'CREATE TABLE IF NOT EXISTS $historyTable ('
 const createHistoryTrainingIndexSQL =
     'CREATE INDEX IF NOT EXISTS $historyTrainingIndex'
     ' ON $historyTable ($historyTrainingId)';
+
+const createHistorySnapshotIdentityIndexSQL =
+    'CREATE UNIQUE INDEX IF NOT EXISTS $historySnapshotIdentityIndex'
+    ' ON $historyTable ($historyTrainingId, $historySnapshotRevision)'
+    ' WHERE $historySnapshotRevision IS NOT NULL';
+
+const addHistorySnapshotRevisionSQL =
+    'ALTER TABLE $historyTable ADD COLUMN $historySnapshotRevision INTEGER';
+
+const addHistorySnapshotTypeSQL =
+    'ALTER TABLE $historyTable ADD COLUMN $historySnapshotType TEXT';
 
 const getUserImagesListSQL = 'SELECT $userPhoto FROM $userTable';

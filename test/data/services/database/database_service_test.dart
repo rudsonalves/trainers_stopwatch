@@ -26,9 +26,16 @@ class _DatabaseMock extends Mock implements Database {
 
 class _DatabaseSchemaMock extends DatabaseSchema {
   int createCalls = 0;
+  int upgradeCalls = 0;
 
   @override
   Future<void> create(Database database, int version) async => createCalls++;
+
+  @override
+  Future<void> upgrade(
+      Database database, int oldVersion, int newVersion) async {
+    upgradeCalls++;
+  }
 }
 
 void main() {
@@ -87,7 +94,32 @@ void main() {
     await capturedOptions.onCreate!(database, 1);
 
     expect(schema.createCalls, 1);
-    expect(capturedOptions.version, 1006);
+    expect(capturedOptions.version, 1007);
+  });
+
+  test('upgrades version 1006 without replacing the database', () async {
+    var deleted = false;
+    final service = DatabaseService(
+      databaseDirectoryPath: () async => '/tmp/trainers-stopwatch-test',
+      openDatabase: (path, options) async {
+        capturedOptions = options;
+        return database;
+      },
+      databaseExists: (_) async => true,
+      readDatabaseVersion: (_) async => 1006,
+      deleteDatabase: (_) async => deleted = true,
+      backupService: DatabaseBackupService(
+        clock: () => DateTime.utc(2026, 8, 13),
+      ),
+      schema: schema,
+    );
+
+    final result = await service.open();
+    await capturedOptions.onUpgrade!(database, 1006, 1007);
+
+    expect(result.isSuccess, isTrue);
+    expect(deleted, isFalse);
+    expect(schema.upgradeCalls, 1);
   });
 
   test('converts open failures to databaseUnavailable', () async {
@@ -95,7 +127,7 @@ void main() {
       databaseDirectoryPath: () async => throw StateError('path unavailable'),
       openDatabase: (unusedPath, unusedOptions) async => database,
       databaseExists: (_) async => false,
-      readDatabaseVersion: (_) async => 1006,
+      readDatabaseVersion: (_) async => 1007,
       deleteDatabase: (_) async {},
       backupService: DatabaseBackupService(
         clock: () => DateTime.utc(2026, 8, 13),
@@ -154,7 +186,7 @@ void main() {
       databaseDirectoryPath: () async => '/tmp/trainers-stopwatch-test',
       openDatabase: (path, options) async => database,
       databaseExists: (_) async => true,
-      readDatabaseVersion: (_) async => 1006,
+      readDatabaseVersion: (_) async => 1007,
       deleteDatabase: (_) async => deleted = true,
       backupService: DatabaseBackupService(
         clock: () => DateTime.utc(2026, 8, 13),
