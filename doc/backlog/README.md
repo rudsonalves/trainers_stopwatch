@@ -18,7 +18,7 @@ migrado estiver funcional.
 | 004 | [Configurações em MVVM](closed/004-configuracoes-mvvm.md) | data + ui piloto | concluído |
 | 005 | [Usuários e imagens](closed/005-usuarios-e-imagens.md) | data + ui | concluído |
 | 006 | [Treinos e históricos](closed/006-treinos-e-historicos.md) | domain + data + ui | concluído |
-| 007 | [Núcleo temporal do cronômetro](007-nucleo-cronometro-bloc.md) | BLoC | 002 e 003 |
+| 007 | [Núcleo temporal do cronômetro](closed/007-nucleo-cronometro-bloc.md) | BLoC | 002 e 003 |
 | 008 | [Sessões e múltiplos cronômetros](008-sessoes-multiplos-cronometros.md) | application + ui | 006 e 007 |
 | 009 | [Relatórios e compartilhamento](009-relatorios-e-compartilhamento.md) | domain + data + ui | 006 |
 | 010 | [Consolidação da UI e legado](010-consolidacao-ui-e-legado.md) | ui | 004 a 009 |

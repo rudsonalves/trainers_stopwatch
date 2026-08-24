@@ -17,9 +17,11 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../bloc/stopwatch_bloc.dart';
-import '../../../../common/theme/app_font_style.dart';
+import '/application/stopwatch/bloc/stopwatch_bloc.dart';
+import '/application/stopwatch/bloc/stopwatch_state.dart';
+import '/common/theme/app_font_style.dart';
 import 'counter_row.dart';
 
 class LapSplitCouters extends StatelessWidget {
@@ -75,18 +77,25 @@ class LapSplitCouters extends StatelessWidget {
             ValueListenableBuilder(
                 valueListenable: maxLaps,
                 builder: (context, value, _) => lapsHeader(value)),
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: CounterRow(
-                label: 'PSLap'.tr(),
-                counter: bloc.lapCounter,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: CounterRow(
-                counter: bloc.splitCounter,
-                label: 'PSSplit'.tr(),
+            BlocBuilder<StopwatchBloc, StopwatchState>(
+              bloc: bloc,
+              builder: (context, state) => Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: CounterRow(
+                      label: 'PSLap'.tr(),
+                      value: state.lapCount,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: CounterRow(
+                      value: state.splitCount,
+                      label: 'PSSplit'.tr(),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

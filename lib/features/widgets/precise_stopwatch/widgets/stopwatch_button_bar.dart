@@ -19,9 +19,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../bloc/stopwatch_bloc.dart';
-import '../../../../bloc/stopwatch_state.dart';
-import '../../../../common/icons/stopwatch_icons_icons.dart';
+import '/application/stopwatch/bloc/stopwatch_bloc.dart';
+import '/application/stopwatch/bloc/stopwatch_state.dart';
+import '/common/icons/stopwatch_icons_icons.dart';
 import '../../common/custon_icon_button.dart';
 import '../precise_stopwatch_controller.dart';
 
@@ -61,8 +61,8 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
           bloc: controller.bloc,
           listener: (context, state) {},
           builder: (context, state) {
-            switch (controller.state) {
-              case StopwatchStateInitial():
+            switch (state.status) {
+              case StopwatchStatus.idle:
                 return OverflowBar(
                   children: [
                     CustomIconButton(
@@ -83,40 +83,37 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                     ),
                   ],
                 );
-              case StopwatchStateRunning():
-                return ValueListenableBuilder(
-                  valueListenable: controller.bloc.splitCounter,
-                  builder: (context, value, _) => OverflowBar(
-                    children: [
-                      (value == controller.bloc.splitCounterMax - 1)
-                          ? CustomIconButton(
-                              onPressed: controller.blocLapTimer,
-                              label: 'PSLaps'.tr(),
-                              icon: Icon(
-                                StopwatchIcons.lap1,
-                                color: onSurfaceVariant,
-                              ),
-                            )
-                          : CustomIconButton(
-                              onPressed: controller.blocSplitTimer,
-                              label: 'PSSplit'.tr(),
-                              icon: Icon(
-                                StopwatchIcons.partial,
-                                color: onSurfaceVariant,
-                              ),
+              case StopwatchStatus.running:
+                return OverflowBar(
+                  children: [
+                    (state.splitCount == state.splitsPerLap - 1)
+                        ? CustomIconButton(
+                            onPressed: controller.blocLapTimer,
+                            label: 'PSLaps'.tr(),
+                            icon: Icon(
+                              StopwatchIcons.lap1,
+                              color: onSurfaceVariant,
                             ),
-                      CustomIconButton(
-                        onPressed: controller.blocPauseTimer,
-                        label: 'PSPause'.tr(),
-                        icon: Icon(
-                          StopwatchIcons.pause,
-                          color: onSurfaceVariant,
-                        ),
+                          )
+                        : CustomIconButton(
+                            onPressed: controller.blocSplitTimer,
+                            label: 'PSSplit'.tr(),
+                            icon: Icon(
+                              StopwatchIcons.partial,
+                              color: onSurfaceVariant,
+                            ),
+                          ),
+                    CustomIconButton(
+                      onPressed: controller.blocPauseTimer,
+                      label: 'PSPause'.tr(),
+                      icon: Icon(
+                        StopwatchIcons.pause,
+                        color: onSurfaceVariant,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
-              case StopwatchStatePaused():
+              case StopwatchStatus.paused:
                 return OverflowBar(
                   children: [
                     CustomIconButton(
@@ -145,20 +142,7 @@ class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
                     ),
                   ],
                 );
-              case StopwatchStateReset():
-                return OverflowBar(
-                  children: [
-                    CustomIconButton(
-                      onPressed: controller.blocStartTimer,
-                      label: 'PSStart'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.start,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                );
-              default:
+              case StopwatchStatus.finished:
                 return OverflowBar(
                   children: [
                     CustomIconButton(

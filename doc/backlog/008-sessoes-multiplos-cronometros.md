@@ -9,7 +9,8 @@ sessões de estado, eliminando widgets armazenados em controller global.
 
 - [`006-treinos-e-historicos.md`](closed/006-treinos-e-historicos.md),
   concluído;
-- `007-nucleo-cronometro-bloc.md`.
+- [`007-nucleo-cronometro-bloc.md`](closed/007-nucleo-cronometro-bloc.md),
+  concluído.
 
 ## Escopo
 
@@ -64,5 +65,11 @@ Nenhuma decisão adicional aprovada.
 ## Acompanhamento
 
 **Estado:** Planejado.
+
+**Fronteiras recebidas do backlog 007:** `PreciseStopwatchController` ainda
+coordena criação do treino, persistência de parciais, mensagens e adapters
+legados; `TrainingManager` e `HistoryManager` permanecem exclusivamente nessa
+composição temporária. O novo `StopwatchBloc` expõe estado e snapshots
+revisionados para substituição dessas fronteiras pela sessão MVVM.
 
 **Próximo backlog:** `009-relatorios-e-compartilhamento.md`.

@@ -1,5 +1,94 @@
 # Changelog
 
+## 2026/08/24 - bkl007/task-02
+
+This change completes the stopwatch temporal-core migration to an application-layer BLoC backed by `dart:core Stopwatch`. The new immutable state is the single source of elapsed duration, counters, lifecycle status, civil timestamps, and revisioned split, lap, and finish snapshots.
+
+Legacy stopwatch consumers now observe BLoC state directly and coordinate actions deterministically. The delivery also adds comprehensive temporal and widget tests, closes backlog 007, records the remaining session responsibilities for backlog 008, and includes supporting Android build and UI initialization fixes.
+
+1. **`lib/application/stopwatch/bloc`**
+
+   * Added `StopwatchBloc` with explicit run, pause, resume, reset, split, lap, stop, configure, and internal tick events.
+   * Replaced wall-clock duration calculations with an injectable `Stopwatch`, using `Stopwatch.elapsed` as the exclusive monotonic duration source.
+   * Added injectable civil-time and stopwatch factory callbacks, a configurable visual tick interval, optional lap limits, and validated splits-per-lap configuration.
+   * Implemented `idle`, `running`, `paused`, and `finished` transitions, including safe no-op handling for incompatible events.
+   * Added split, lap, and finish snapshot production from monotonic elapsed differences, with revision increments for deterministic consumption.
+   * Added automatic completion when the configured lap limit is reached.
+   * Ensured pause, reset, finish, lap-limit completion, and `close()` cancel the visual ticker and prevent stale ticks from restoring obsolete state.
+   * Added immutable `StopwatchState` data, nullable-field clearing through `copyWith`, and value equality across temporal state and configuration.
+
+2. **`lib/bloc`**
+
+   * Removed the legacy stopwatch BLoC, event classes, and state subclasses.
+   * Eliminated `DateTime.difference` duration measurement, direct `AppSettings` refresh access, mutable public configuration, parallel `ValueNotifier` counters, and the custom `dispose()` lifecycle.
+   * Removed the reset and error state classes in favor of explicit status transitions and safe ignored events.
+
+3. **`lib/features/widgets/precise_stopwatch/precise_stopwatch_controller.dart`**
+
+   * Migrated the legacy controller to the application-layer stopwatch BLoC and revisioned domain snapshots.
+   * Replaced mutable BLoC configuration with `StopwatchEventConfigure`.
+   * Added explicit resume handling and changed action coordination from fixed 100 ms delays to stream-based state predicates.
+   * Updated split, lap, and finish persistence flows to consume snapshot durations exactly once.
+   * Switched training start timestamps to immutable BLoC state and standardized cleanup on `bloc.close()`.
+   * Preserved training creation, persistence, messaging, and manager coordination outside the temporal BLoC.
+
+4. **`lib/features/widgets/precise_stopwatch`**
+
+   * Updated the stopwatch display and lap/split counters to rebuild from `StopwatchState` through `BlocBuilder`.
+   * Simplified `CounterRow` to render plain state values instead of observing individual `ValueNotifier` instances.
+   * Updated the button bar to select actions from the four explicit stopwatch statuses and state-based split-cycle configuration.
+   * Added asynchronous controller initialization handling with fixed-height loading and error states, preventing training data from being read before initialization completes.
+   * Removed direct mutation of the BLoC lap limit from the stopwatch widget.
+
+5. **`lib/features/stopwatch_page/widgets/stopwatch_dismissible.dart`**
+
+   * Updated dismissal protection to use the new stopwatch status model.
+   * Continued blocking removal while a stopwatch is running or paused.
+
+6. **`lib/features/widgets/common/user_card.dart`**
+
+   * Wrapped the user tile in a clipped `Material` surface so rounded corners and interaction rendering follow the card shape.
+   * Normalized the constants import to the application package-root style.
+
+7. **`test/application/stopwatch/bloc/stopwatch_bloc_test.dart`**
+
+   * Added deterministic coverage using an injectable controlled stopwatch and fake asynchronous time.
+   * Verified monotonic ticks, pause and resume behavior, reset and clean restart, split cycles, lap boundaries, running and paused completion, automatic lap-limit completion, and civil timestamps.
+   * Verified invalid and repeated events are ignored safely, tickers stop after pause and closure, and separate BLoC instances remain temporally independent.
+   * Added state value-equality and nullable-field clearing coverage.
+
+8. **`test/features/widgets/precise_stopwatch/stopwatch_state_widgets_test.dart`**
+
+   * Added widget coverage proving that elapsed duration and counters rebuild from emitted stopwatch state.
+   * Added a delayed-controller test confirming that the stopwatch widget displays initialization progress without reading training data prematurely.
+
+9. **`pubspec.yaml` and `pubspec.lock`**
+
+   * Added `fake_async` as a direct development dependency for deterministic ticker and lifecycle testing.
+
+10. **`android/gradle.properties`**
+
+   * Enabled native access for unnamed JVM modules in the Gradle process while preserving the existing memory and diagnostic settings.
+
+11. **`doc/backlog/closed/007-nucleo-cronometro-bloc.md` and `007-nucleo-cronometro-bloc-tasks.md`**
+
+   * Moved the backlog specification and task plan into the closed backlog directory.
+   * Updated the temporal dependency design to use injectable callbacks and a private timer instead of ceremonial clock and ticker interfaces.
+   * Marked all implementation, integration, testing, and validation tasks complete.
+   * Recorded the delivered BLoC behavior, consumer migration, test results, static-analysis outcome, diff validation, and delegated device validation.
+
+12. **`doc/backlog/README.md`, `closed/006-treinos-e-historicos.md`, and `008-sessoes-multiplos-cronometros.md`**
+
+   * Updated backlog navigation to reference the closed backlog 007 documents.
+   * Marked backlog 007 as a completed dependency of backlog 008.
+   * Documented the remaining temporary responsibilities in `PreciseStopwatchController`, `TrainingManager`, and `HistoryManager` for the future MVVM session migration.
+
+### Conclusion
+
+The stopwatch now has a deterministic, lifecycle-safe temporal core whose immutable BLoC state owns elapsed time, counters, configuration, and action snapshots. Legacy widgets and persistence coordination consume that state without parallel temporal notifiers or fixed processing delays.
+
+Backlog 007 is documented as complete with automated coverage for temporal behavior, resource cleanup, independent stopwatch instances, and state-driven widget updates. Session orchestration and persistence boundaries remain explicitly reserved for backlog 008.
+
 ## 2026/08/24 - bkl007/task-01
 
 This change formalizes the implementation plan and resolved design decisions for the BLoC-based stopwatch timing core. It establishes the intended temporal model, lifecycle behavior, legacy integration boundaries, and deterministic testing strategy for backlog 007.

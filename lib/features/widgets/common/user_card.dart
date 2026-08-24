@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../common/constants.dart';
+import '/common/constants.dart';
 import 'show_athlete_image.dart';
 
 class UserCard extends StatelessWidget {
@@ -44,29 +44,30 @@ class UserCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
+      child: Material(
         color: isChecked
             ? colorScheme.tertiaryContainer.withValues(alpha: 0.5)
             : colorScheme.surfaceBright,
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: ListTile(
-        title: Text(
-          name,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          '$email\n${phone ?? ''}',
-        ),
-        leading: SizedBox(
-          width: photoImageSize,
-          height: photoImageSize,
-          child: ShowUserImage(
-            photoReference ?? defaultPhotoImage,
-            size: 40,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          title: Text(
+            name,
+            overflow: TextOverflow.ellipsis,
           ),
+          subtitle: Text(
+            '$email\n${phone ?? ''}',
+          ),
+          leading: SizedBox(
+            width: photoImageSize,
+            height: photoImageSize,
+            child: ShowUserImage(
+              photoReference ?? defaultPhotoImage,
+              size: 40,
+            ),
+          ),
+          onTap: onTap,
         ),
-        onTap: onTap,
       ),
     );
   }

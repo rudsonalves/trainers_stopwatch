@@ -17,16 +17,16 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../common/theme/app_font_style.dart';
+import '/common/theme/app_font_style.dart';
 
 class CounterRow extends StatelessWidget {
   const CounterRow({
     super.key,
-    required this.counter,
+    required this.value,
     required this.label,
   });
 
-  final ValueNotifier<int> counter;
+  final int value;
   final String label;
 
   @override
@@ -41,13 +41,10 @@ class CounterRow extends StatelessWidget {
           style: AppFontStyle.roboto12,
         ),
         const SizedBox(width: 8),
-        ValueListenableBuilder(
-          valueListenable: counter,
-          builder: (context, value, _) => Text(
-            value.toString(),
-            style: AppFontStyle.ibm14SemiBold.copyWith(
-              color: primary,
-            ),
+        Text(
+          value.toString(),
+          style: AppFontStyle.ibm14SemiBold.copyWith(
+            color: primary,
           ),
         ),
       ],

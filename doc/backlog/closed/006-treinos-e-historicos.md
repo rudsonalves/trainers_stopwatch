@@ -116,6 +116,6 @@ da página e não altera a identidade nem a persistência dos treinos.
 
 **Estado:** Concluído em 2026-08-20.
 
-**Próximos backlogs:** [`007-nucleo-cronometro-bloc.md`](../007-nucleo-cronometro-bloc.md),
+**Próximos backlogs:** [`007-nucleo-cronometro-bloc.md`](007-nucleo-cronometro-bloc.md),
 [`008-sessoes-multiplos-cronometros.md`](../008-sessoes-multiplos-cronometros.md)
 e [`009-relatorios-e-compartilhamento.md`](../009-relatorios-e-compartilhamento.md).

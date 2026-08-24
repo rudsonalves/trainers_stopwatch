@@ -44,7 +44,10 @@ class PreciseStopwatch extends StatefulWidget {
 }
 
 class _PreciseStopwatchState extends State<PreciseStopwatch> {
+  static const _stopwatchHeight = 134.0;
+
   late final PreciseStopwatchController _controller;
+  late final Future<void> _initialization;
   final ValueNotifier<int?> maxLaps = ValueNotifier<int?>(null);
   final trainingColor = ValueNotifier<Color>(primaryColor);
   // Legacy settings bridge; remove with stopwatch migration in backlog 007.
@@ -57,13 +60,17 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
   void initState() {
     super.initState();
     _controller = widget.controller;
-    if (widget.isNotClone) {
-      _controller.init(widget.user);
-    }
-
-    maxLaps.value = _controller.training.maxlaps;
     name = widget.user.name;
     image = widget.user.photo ?? defaultPhotoImage;
+    _initialization = _initialize();
+  }
+
+  Future<void> _initialize() async {
+    if (widget.isNotClone) {
+      await _controller.init(widget.user);
+    }
+    if (!mounted) return;
+    maxLaps.value = _controller.training.maxlaps;
     trainingColor.value = _controller.training.color;
   }
 
@@ -86,44 +93,58 @@ class _PreciseStopwatchState extends State<PreciseStopwatch> {
 
     _controller.updateSplitLapLength();
     maxLaps.value = _controller.training.maxlaps;
-    _controller.bloc.maxLaps = _controller.training.maxlaps;
     trainingColor.value = _controller.training.color;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: trainingColor,
-      builder: (context, value, _) {
-        return Container(
-          decoration: BoxDecoration(
-            color: value.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          margin: EdgeInsets.zero,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                UserImageName(image: image, name: name),
-                LapSplitCouters(
-                  bloc: _controller.bloc,
-                  maxLaps: maxLaps,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    StopwatchDisplay(
-                        durationTraining: _controller.durationTraining),
-                    StopwatchButtonBar(
-                      controller: _controller,
-                      setTraining: _editTraining,
-                      userId: widget.user.id!,
-                    ),
-                  ],
-                ),
-              ],
+    return FutureBuilder<void>(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox(
+            height: _stopwatchHeight,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return const SizedBox(
+            height: _stopwatchHeight,
+            child: Center(child: Icon(Icons.error_outline)),
+          );
+        }
+
+        return ValueListenableBuilder(
+          valueListenable: trainingColor,
+          builder: (context, value, _) => Container(
+            decoration: BoxDecoration(
+              color: value.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  UserImageName(image: image, name: name),
+                  LapSplitCouters(
+                    bloc: _controller.bloc,
+                    maxLaps: maxLaps,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      StopwatchDisplay(bloc: _controller.bloc),
+                      StopwatchButtonBar(
+                        controller: _controller,
+                        setTraining: _editTraining,
+                        userId: widget.user.id!,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

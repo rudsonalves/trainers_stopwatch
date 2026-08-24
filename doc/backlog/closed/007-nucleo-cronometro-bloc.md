@@ -9,7 +9,7 @@ separando tempo decorrido, persistência e apresentação.
 
 - `002-dominio-puro.md`;
 - contratos de persistência de
-  [`003-persistencia-e-repositories.md`](closed/003-persistencia-e-repositories.md),
+  [`003-persistencia-e-repositories.md`](003-persistencia-e-repositories.md),
   concluído.
 
 ## Escopo
@@ -18,7 +18,7 @@ separando tempo decorrido, persistência e apresentação.
 - usar uma instância de `Stopwatch` como fonte monotônica de duração;
 - manter ticker apenas para solicitar atualizações visuais;
 - representar marcos de parcial e volta por `Duration`;
-- separar data civil por um contrato `Clock`;
+- separar data civil por um callback `DateTime Function()` injetável;
 - emitir um estado imutável com status, duração e contadores;
 - remover `ValueNotifier`s paralelos do BLoC;
 - impedir estados inválidos sem depender da habilitação dos botões;
@@ -107,9 +107,18 @@ medição limpa.
 
 ## Acompanhamento
 
-**Estado:** Planejado.
+**Estado:** Concluído em 2026-08-24.
 
 **Plano de execução:**
 [`007-nucleo-cronometro-bloc-tasks.md`](007-nucleo-cronometro-bloc-tasks.md).
 
-**Próximo backlog:** `008-sessoes-multiplos-cronometros.md`.
+**Resultado:** o BLoC usa `Stopwatch.elapsed` como fonte exclusiva de duração,
+emite estado imutável com snapshots revisionados e descarta o ticker visual de
+50 ms em todas as transições terminais e no fechamento. Os consumidores legados
+foram adaptados ao estado único; persistência e coordenação de sessões continuam
+fora do BLoC e seguem para o backlog 008. Testes determinísticos, suíte completa,
+análise e verificação do diff passaram. A validação exploratória em dispositivo
+ficou delegada ao usuário.
+
+**Próximo backlog:**
+[`008-sessoes-multiplos-cronometros.md`](../008-sessoes-multiplos-cronometros.md).

@@ -16,15 +16,18 @@
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../common/theme/app_font_style.dart';
+import '/application/stopwatch/bloc/stopwatch_bloc.dart';
+import '/application/stopwatch/bloc/stopwatch_state.dart';
+import '/common/theme/app_font_style.dart';
 
 class StopwatchDisplay extends StatelessWidget {
-  final ValueNotifier<Duration> durationTraining;
+  final StopwatchBloc bloc;
 
   const StopwatchDisplay({
     super.key,
-    required this.durationTraining,
+    required this.bloc,
   });
 
   String formatCs(Duration duration) {
@@ -46,10 +49,10 @@ class StopwatchDisplay extends StatelessWidget {
           color: colorScheme.primary.withValues(alpha: 0.2),
         ),
       ),
-      child: ValueListenableBuilder(
-        valueListenable: durationTraining,
-        builder: (context, value, _) => Text(
-          formatCs(value),
+      child: BlocBuilder<StopwatchBloc, StopwatchState>(
+        bloc: bloc,
+        builder: (context, state) => Text(
+          formatCs(state.elapsed),
           style: AppFontStyle.ibm26.copyWith(
             color: colorScheme.primary,
           ),

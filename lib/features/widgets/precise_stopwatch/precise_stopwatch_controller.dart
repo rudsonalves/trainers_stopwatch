@@ -18,9 +18,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '/bloc/stopwatch_bloc.dart';
-import '/bloc/stopwatch_events.dart';
-import '/bloc/stopwatch_state.dart';
+import '/application/stopwatch/bloc/stopwatch_bloc.dart';
+import '/application/stopwatch/bloc/stopwatch_event.dart';
+import '/application/stopwatch/bloc/stopwatch_state.dart';
 import '/common/adapters/training_domain_adapter.dart';
 import '/common/constants.dart';
 import '/common/functions/stopwatch_functions.dart';
@@ -30,6 +30,7 @@ import '/common/models/messages_model.dart';
 import '/common/models/training_model.dart';
 import '/common/models/user_model.dart';
 import '/common/singletons/app_settings.dart';
+import '/domain/common/stopwatch/models/stopwatch_snapshot.dart';
 import '/domain/usecases/trainings/create_training_use_case.dart';
 import '/manager/history_manager.dart';
 import '/manager/training_manager.dart';
@@ -63,9 +64,6 @@ class PreciseStopwatchController {
 
   StopwatchBloc get bloc => _bloc;
   StopwatchState get state => _bloc.state;
-  ValueNotifier<int> get lapCounter => _bloc.lapCounter;
-  ValueNotifier<int> get splitCounter => _bloc.splitCounter;
-  ValueNotifier<Duration> get durationTraining => _bloc.durationTraining;
   UserModel get user => _user;
   List<TrainingModel> get trainings => _trainingManager.trainings;
   List<HistoryModel> get histories => _historyManager.histories;
@@ -78,14 +76,14 @@ class PreciseStopwatchController {
     // Legacy settings bridge; remove with stopwatch migration in backlog 007.
     splitLength = AppSettings.instance.splitLength;
     lapLength = AppSettings.instance.lapLength;
-    _bloc.splitCounterMax = lapLength ~/ splitLength;
+    _configureBloc();
     await _trainingManager.init(_user.id!);
     _createNewTraining();
     splitsPerLap = (training.lapLength / training.splitLength).round();
   }
 
   void dispose() {
-    _bloc.dispose();
+    _bloc.close();
     _actionOnPress.dispose();
   }
 
@@ -119,7 +117,7 @@ class PreciseStopwatchController {
     if (lastColor != null && _training!.color == primaryColor) {
       _training!.color = lastColor!;
     }
-    _training!.date = bloc.startTime;
+    _training!.date = bloc.state.startedAt!;
     final domainTraining = _training!.toDomain();
     if (domainTraining.isFailure) throw domainTraining.error!;
 
@@ -143,23 +141,38 @@ class PreciseStopwatchController {
       lapLength = _training!.lapLength;
     }
 
-    _bloc.splitCounterMax = lapLength ~/ splitLength;
+    _configureBloc();
+  }
+
+  void _configureBloc() {
+    _bloc.add(
+      StopwatchEventConfigure(
+        maxLaps: _training?.maxlaps,
+        splitsPerLap: lapLength ~/ splitLength,
+      ),
+    );
   }
 
   Future<void> blocStartTimer() async {
-    _bloc.add(StopwatchEventRun());
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    if (isPaused) {
+    if (_bloc.state.status == StopwatchStatus.paused) {
+      await _dispatchAndWait(
+        const StopwatchEventResume(),
+        (state) => state.status == StopwatchStatus.running,
+      );
       isPaused = false;
       return;
     }
+
+    final state = await _dispatchAndWait(
+      const StopwatchEventRun(),
+      (state) => state.status == StopwatchStatus.running,
+    );
 
     if (!_isCreatedTraining) {
       _createNewTraining();
     }
     final startedComments = 'PSCStartedMessage'.tr(args: [
-      DateFormat.yMd().add_Hms().format(_bloc.startTime),
+      DateFormat.yMd().add_Hms().format(state.startedAt!),
     ]);
     await _insertTraining(startedComments);
     _toggleActionOnPress();
@@ -167,25 +180,33 @@ class PreciseStopwatchController {
   }
 
   Future<void> blocPauseTimer() async {
-    _bloc.add(StopwatchEventPause());
-    await Future.delayed(const Duration(milliseconds: 100));
+    await _dispatchAndWait(
+      const StopwatchEventPause(),
+      (state) => state.status == StopwatchStatus.paused,
+    );
     isPaused = true;
   }
 
   Future<void> blocResetTimer() async {
-    _bloc.add(StopwatchEventReset());
-    await Future.delayed(const Duration(milliseconds: 100));
+    await _dispatchAndWait(
+      const StopwatchEventReset(),
+      (state) => state.status == StopwatchStatus.idle,
+    );
     _toggleActionOnPress();
   }
 
   Future<void> blocLapTimer() async {
-    _bloc.add(StopwatchEventLap());
-    await Future.delayed(const Duration(milliseconds: 100));
+    final revision = _bloc.state.snapshotRevision;
+    final state = await _dispatchAndWait(
+      const StopwatchEventLap(),
+      (state) => state.snapshotRevision > revision,
+    );
+    final snapshot = state.snapshot! as LapSnapshot;
 
-    await _generateSplitRegister();
-    await _generateLapRegister();
+    await _generateSplitRegister(snapshot.splitDuration);
+    await _generateLapRegister(snapshot.lapDuration);
 
-    if (_bloc.maxLaps != null && _bloc.maxLaps == _bloc.lapCounter.value) {
+    if (_bloc.state.status == StopwatchStatus.finished) {
       isPaused = false;
       _isCreatedTraining = false;
       _sendFinishMessage();
@@ -195,31 +216,50 @@ class PreciseStopwatchController {
   }
 
   Future<void> blocSplitTimer() async {
-    _bloc.add(StopwatchEventSplit());
-    await Future.delayed(const Duration(milliseconds: 100));
+    final revision = _bloc.state.snapshotRevision;
+    final state = await _dispatchAndWait(
+      const StopwatchEventSplit(),
+      (state) => state.snapshotRevision > revision,
+    );
+    final snapshot = state.snapshot! as SplitSnapshot;
 
-    await _generateSplitRegister();
+    await _generateSplitRegister(snapshot.splitDuration);
   }
 
   Future<void> blocStopTimer() async {
-    _bloc.add(StopwatchEventStop());
-    await Future.delayed(const Duration(milliseconds: 100));
+    final revision = _bloc.state.snapshotRevision;
+    final state = await _dispatchAndWait(
+      const StopwatchEventStop(),
+      (state) =>
+          state.status == StopwatchStatus.finished &&
+          state.snapshotRevision > revision,
+    );
+    final snapshot = state.snapshot! as FinishSnapshot;
 
     isPaused = false;
     _isCreatedTraining = false;
 
-    await _generateSplitRegister();
-    await _generateLapRegister();
+    await _generateSplitRegister(snapshot.finalSplitDuration);
+    await _generateLapRegister(snapshot.finalLapDuration);
 
     _sendFinishMessage();
     _toggleActionOnPress();
     _createNewTraining();
   }
 
-  Future<void> _generateSplitRegister() async {
+  Future<StopwatchState> _dispatchAndWait(
+    StopwatchEvent event,
+    bool Function(StopwatchState state) matches,
+  ) {
+    final nextState = _bloc.stream.firstWhere(matches);
+    _bloc.add(event);
+    return nextState;
+  }
+
+  Future<void> _generateSplitRegister(Duration duration) async {
     int splitMs;
     SpeedValue speed;
-    (splitMs, speed) = _calculateSplitTimeSpeed();
+    (splitMs, speed) = _calculateSplitTimeSpeed(duration);
 
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
@@ -233,10 +273,10 @@ class PreciseStopwatchController {
     _toggleActionOnPress();
   }
 
-  Future<void> _generateLapRegister() async {
+  Future<void> _generateLapRegister(Duration duration) async {
     int lapMs;
     SpeedValue speed;
-    (lapMs, speed) = _calculateLapTimeSpeed();
+    (lapMs, speed) = _calculateLapTimeSpeed(duration);
 
     HistoryModel history = HistoryModel(
       trainingId: _training!.id!,
@@ -318,8 +358,8 @@ class PreciseStopwatchController {
     _stopwatchController.sendHistoryMessage(message);
   }
 
-  (int, SpeedValue) _calculateLapTimeSpeed() {
-    final lapMS = bloc.lapDuration.inMilliseconds;
+  (int, SpeedValue) _calculateLapTimeSpeed(Duration duration) {
+    final lapMS = duration.inMilliseconds;
 
     final speed = StopwatchFunctions.speedCalc(
       length: _training!.lapLength,
@@ -330,8 +370,8 @@ class PreciseStopwatchController {
     return (lapMS, speed);
   }
 
-  (int, SpeedValue) _calculateSplitTimeSpeed() {
-    final splitMS = bloc.splitDuration.inMilliseconds;
+  (int, SpeedValue) _calculateSplitTimeSpeed(Duration duration) {
+    final splitMS = duration.inMilliseconds;
 
     final speed = StopwatchFunctions.speedCalc(
       length: _training!.splitLength,

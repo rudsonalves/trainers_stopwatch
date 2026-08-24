@@ -18,7 +18,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../bloc/stopwatch_state.dart';
+import '/application/stopwatch/bloc/stopwatch_state.dart';
 import '../../widgets/common/dismissible_backgrounds.dart';
 import '../../widgets/precise_stopwatch/precise_stopwatch.dart';
 
@@ -61,8 +61,8 @@ class _StopwatDismissibleState extends State<StopwatDismissible> {
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart) {
               final state = widget.stopwatch.controller.bloc.state;
-              if (state is StopwatchStateRunning ||
-                  state is StopwatchStatePaused) {
+              if (state.status == StopwatchStatus.running ||
+                  state.status == StopwatchStatus.paused) {
                 return false;
               }
               bool result = await widget.removeStopwatch(userId);
