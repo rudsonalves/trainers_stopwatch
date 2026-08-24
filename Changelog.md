@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026/08/24 - bkl008/task-03
+
+This change introduces page-level lifecycle management for stopwatch sessions. The new view model owns active sessions, prevents duplicates, aggregates session messages, propagates updates, and coordinates asynchronous cleanup.
+
+Dependency registration and backlog documentation were updated to integrate and reflect the completed implementation.
+
+1. **`lib/ui/pages/stopwatch/stopwatch_page_view_model.dart`**
+
+   * Added `StopwatchPageViewModel` as the owner of stopwatch sessions while the application is active.
+   * Added an injectable `StopwatchSessionFactory` for creating session view models from users.
+   * Stored sessions in insertion order using stable `StopwatchSessionId` identities.
+   * Added immutable accessors for active user IDs, sessions, and globally aggregated messages.
+   * Sorted aggregated messages by their existing temporal ordering.
+   * Added user registration with session ID validation and duplicate prevention.
+   * Forwarded session changes through the page view model's listener notifications.
+   * Added idempotent asynchronous shutdown that removes listeners, closes every session, and disposes the notifier.
+   * Rejected new users after shutdown with an `invalidData` failure.
+
+2. **`lib/core/config/dependencies/viewmodels_dependencies.dart`**
+
+   * Registered `StopwatchPageViewModel` in the view-model dependency configuration.
+   * Added the corresponding stopwatch page view-model import.
+
+3. **`doc/backlog/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Marked the stopwatch page view-model task requirements as completed.
+   * Updated the documented file location to the UI stopwatch page module.
+
+### Conclusion
+
+The stopwatch page now has a centralized, observable owner for persistent session instances and their combined messages. The implementation also establishes dependency injection and coordinated lifecycle cleanup for all active stopwatch sessions.
+
 ## 2026/08/24 - bkl008/task-02
 
 This change introduces independent stopwatch sessions for persisted athletes, with immutable session state, stable identities, named lifecycle operations, and presentation messages derived from confirmed stopwatch snapshots.

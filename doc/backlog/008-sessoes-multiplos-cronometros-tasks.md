@@ -111,20 +111,20 @@ que coordena BLoC e persistência sem conhecer widgets ou navegação.
 
 **Dependência:** tarefa 3.
 
-- [ ] Criar `StopwatchPageViewModel` em
-      `lib/application/stopwatch/stopwatch_page_view_model.dart` e torná-lo o
+- [x] Criar `StopwatchPageViewModel` em
+      `lib/ui/pages/stopwatch/stopwatch_page_view_model.dart` e torná-lo o
       proprietário das sessões enquanto a aplicação estiver ativa.
-- [ ] Receber por construtor uma factory de `StopwatchSessionViewModel` e manter
+- [x] Receber por construtor uma factory de `StopwatchSessionViewModel` e manter
       somente models/ViewModels indexados pela identidade estável do atleta.
-- [ ] Adicionar os atletas selecionados sem duplicar sessões já existentes e
+- [x] Adicionar os atletas selecionados sem duplicar sessões já existentes e
       expor IDs ativos para a página de seleção.
-- [ ] Expor uma coleção imutável e observável de sessões, sem listas paralelas de
+- [x] Expor uma coleção imutável e observável de sessões, sem listas paralelas de
       usuários, contadores manuais ou widgets armazenados.
-- [ ] Derivar a lista global de mensagens combinando apenas as mensagens das
+- [x] Derivar a lista global de mensagens combinando apenas as mensagens das
       sessões existentes e ordenando-as pela identidade temporal estável.
-- [ ] Fazer navegação e reconstruções da Page preservarem as mesmas instâncias
+- [x] Fazer navegação e reconstruções da Page preservarem as mesmas instâncias
       das sessões e seus BLoCs.
-- [ ] No descarte do ViewModel da aplicação, encerrar e aguardar o descarte de
+- [x] No descarte do ViewModel da aplicação, encerrar e aguardar o descarte de
       todas as sessões ainda existentes.
 
 **Resultado esperado:** a página observa uma coleção de sessões persistente e

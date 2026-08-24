@@ -5,6 +5,7 @@ import '/data/repositories/settings/settings_repository.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/ui/app/app_appearance_state.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 
 void registerViewModelsDependencies(AutoInjector injector) {
   injector
@@ -17,5 +18,6 @@ void registerViewModelsDependencies(AutoInjector injector) {
         appearanceState: injector.get<AppAppearanceState>(),
         legacySettings: injector.get<LegacySettingsSink>(),
       ),
-    );
+    )
+    ..add<StopwatchPageViewModel>(StopwatchPageViewModel.new);
 }
