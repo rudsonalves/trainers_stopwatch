@@ -1,5 +1,116 @@
 # Changelog
 
+## 2026/08/24 - bkl008/task-05
+
+This change completes the stopwatch presentation migration to session-oriented view models. Stopwatch pages, widgets, navigation, training configuration, and global messages now derive their behavior from `StopwatchPageViewModel` and `StopwatchSessionViewModel` instead of widget-owned controllers and legacy presentation models.
+
+The update also centralizes session creation in dependency injection, preserves per-athlete widget identity, exposes persistence feedback and retry actions, and updates routing and tests for the new architecture.
+
+1. **`lib/application/stopwatch/session/stopwatch_session_view_model.dart`**
+
+   * Made the session color mutable while preserving a public read-only accessor.
+   * Extended training updates to accept an optional color value so training configuration and visual presentation state can be updated through the session view model.
+
+2. **`lib/core/config/dependencies.dart` and `lib/core/config/dependencies/viewmodels_dependencies.dart`**
+
+   * Removed legacy stopwatch controller factory configuration from application startup.
+   * Registered `StopwatchPageViewModel` as a singleton with a session factory.
+   * Added session construction using current settings, domain `Training`, `StopwatchBloc`, training creation and snapshot persistence use cases, repositories, refresh interval, and the default application color.
+
+3. **`lib/main.dart`, `lib/ui/app/my_material_app.dart`, and `lib/core/routing/routes/main_routes.dart`**
+
+   * Replaced application-level `StopwatchPageController` wiring with `StopwatchPageViewModel`.
+   * Updated stopwatch and users routes to consume active sessions and user identifiers from the page view model.
+   * Updated personal-training navigation to pass the selected session directly and derive history loading from its domain training.
+   * Removed legacy training conversion and stopwatch-controller dependencies from route construction.
+
+4. **`lib/core/routing/route_arguments.dart`**
+
+   * Replaced the widget-based personal-training route argument with `StopwatchSessionViewModel`, allowing navigation to share session state without passing a `PreciseStopwatch` widget.
+
+5. **`lib/features/stopwatch_page/stopwatch_page.dart`**
+
+   * Refactored the page to listen to `StopwatchPageViewModel` and render one stopwatch per session.
+   * Added stable athlete-based `ValueKey` values for dismissible stopwatch entries.
+   * Removed local stopwatch creation, page-controller disposal, and local message accumulation.
+   * Rendered the global log directly from the page view model’s message projection.
+   * Delegated removal eligibility and confirmed removal to the page view model, including presentation of removal failures.
+   * Updated personal-training navigation to pass the selected session and simplified the add-user flow.
+
+6. **`lib/features/stopwatch_page/stopwatch_page_controller.dart`**
+
+   * Removed stopwatch widget ownership, stopwatch controller factory configuration, and legacy add/remove stopwatch operations.
+   * Retained only the remaining legacy user and message state still represented by the controller.
+
+7. **`lib/features/stopwatch_page/widgets/stopwatch_dismissible.dart`**
+
+   * Converted the dismissible wrapper from a stateful widget to a stateless session-driven widget.
+   * Replaced `PreciseStopwatch` and numeric user arguments with `StopwatchSessionViewModel` and `StopwatchSessionId`.
+   * Delegated removal confirmation behavior to the page flow and management navigation to the selected session.
+   * Used stable user-based keys and constructed `PreciseStopwatch` directly from the session.
+
+8. **`lib/features/stopwatch_page/widgets/message_row.dart`**
+
+   * Migrated log rendering from the legacy `MessagesModel` to `StopwatchSessionMessage`.
+   * Selected icons from typed session message events instead of parsing comment text.
+   * Added domain-aware duration and speed formatting for split and lap messages.
+   * Derived row colors from the session message color value.
+
+9. **`lib/features/widgets/precise_stopwatch/precise_stopwatch.dart`**
+
+   * Rebuilt `PreciseStopwatch` as a stateless observer of `StopwatchSessionViewModel`.
+   * Removed controller initialization, disposal, legacy user models, cloned-widget behavior, and widget-owned notifiers.
+   * Rendered user identity, training color, lap limits, display, counters, and controls directly from session state.
+   * Routed training edits through the session’s `updateTraining` method.
+
+10. **`lib/features/widgets/precise_stopwatch/widgets/stopwatch_button_bar.dart` and `lap_split_counters.dart`**
+
+   * Replaced legacy controller callbacks with session operations for starting, resuming, pausing, splitting, recording laps, resetting, finishing, and retrying pending writes.
+   * Disabled stopwatch actions while session operations are running.
+   * Added visible progress, pending-write retry, and recoverable error indicators.
+   * Simplified lap-limit rendering to accept the session’s current maximum lap value directly.
+
+11. **`lib/features/widgets/edit_training_dialog/edit_training_dialog.dart`**
+
+   * Migrated the dialog from mutable legacy `TrainingModel` data to immutable domain `Training`.
+   * Added `TrainingEditResult` to return the updated training and selected color to the session.
+   * Constructed validated distance units, speed units, distances, and training values when applying edits.
+   * Kept dialog controllers and `ValueNotifier` instances local to presentation and completed their disposal.
+   * Updated field initialization and rendering for domain training properties.
+
+12. **`lib/features/widgets/common/custon_icon_button.dart`**
+
+   * Constrained button labels to a single line with ellipsis overflow to preserve the stopwatch control layout.
+
+13. **`lib/ui/pages/personal_training/personal_training_page.dart`**
+
+   * Replaced the passed stopwatch widget with the shared stopwatch session.
+   * Rendered the session-backed stopwatch directly and used the session user for the page title.
+   * Reloaded history when the session message count changes and removed the session listener during disposal.
+
+14. **`lib/ui/pages/users/users_page.dart`**
+
+   * Replaced the legacy stopwatch controller dependency with `StopwatchPageViewModel`.
+   * Added selected domain users directly to the page view model when leaving the selection page, removing legacy user conversion.
+
+15. **`test/core/routing/routes_test.dart` and `test/features/widgets/precise_stopwatch/stopwatch_state_widgets_test.dart`**
+
+   * Updated route tests to use the injected stopwatch page view model.
+   * Migrated widget tests to domain users, domain training, stopwatch sessions, and snapshot persistence use cases.
+   * Replaced the controller-initialization test with direct session rendering coverage.
+   * Added coverage confirming that the stopwatch page builds session widgets with stable athlete keys.
+   * Updated counter tests for the direct maximum-lap value API and removed obsolete legacy controller and manager mocks.
+
+16. **`doc/backlog/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Marked the stopwatch presentation migration tasks as completed, covering session-driven widgets, stable identities, session-owned operations, presentation-only dialog state, delegated removal, projected global logs, and persistence feedback.
+
+### Conclusion
+
+The stopwatch interface now operates on application-level session view models throughout dependency injection, routing, user selection, stopwatch controls, training editing, personal-training history, and global logging.
+
+This removes widget ownership of temporal controllers, establishes stable per-athlete session rendering, and exposes synchronized operation, error, and retry state through the presentation layer.
+
 ## 2026/08/24 - bkl008/task-04
 
 This change adds safe stopwatch session removal to the page view model. It introduces confirmation handling for active sessions, preserves sessions when final persistence fails, and prevents concurrent removal operations for the same session.

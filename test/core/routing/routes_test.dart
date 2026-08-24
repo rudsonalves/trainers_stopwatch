@@ -15,10 +15,10 @@ import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
 import 'package:trainers_stopwatch/features/about_page/about_page.dart';
 import 'package:trainers_stopwatch/features/stopwatch_page/stopwatch_page.dart';
-import 'package:trainers_stopwatch/features/stopwatch_page/stopwatch_page_controller.dart';
 import 'package:trainers_stopwatch/ui/pages/history/viewmodel/history_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/settings_page.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/trainings_page.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/users/users_page.dart';
@@ -64,12 +64,8 @@ void main() {
     setupDependencies();
     var settingsCreations = 0;
     var trainingsCreations = 0;
-    final stopwatchController = StopwatchPageController()
-      ..configure(
-        stopwatchFactory: () => throw StateError('unused in this test'),
-      );
     final dependencies = MainRouteDependencies(
-      stopwatchController: stopwatchController,
+      stopwatchViewModel: injector.get<StopwatchPageViewModel>(),
       usersViewModelFactory: (activeUserIds) => UsersViewModel(
         useCase: injector.get<UsersUseCase>(),
         initiallySelectedUserIds: activeUserIds,

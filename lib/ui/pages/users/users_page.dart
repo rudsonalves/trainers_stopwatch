@@ -6,22 +6,21 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '/common/adapters/user_domain_adapter.dart';
 import '/domain/common/user/models/user.dart';
-import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/features/widgets/common/generic_dialog.dart';
+import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import 'viewmodel/users_view_model.dart';
 import 'widgets/dismissible_user_tile.dart';
 import 'widgets/user_dialog/user_dialog.dart';
 
 class UsersPage extends StatefulWidget {
   final UsersViewModel viewModel;
-  final StopwatchPageController stopwatchController;
+  final StopwatchPageViewModel stopwatchViewModel;
 
   const UsersPage({
     super.key,
     required this.viewModel,
-    required this.stopwatchController,
+    required this.stopwatchViewModel,
   });
 
   @override
@@ -150,9 +149,7 @@ class _UsersPageState extends State<UsersPage> {
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) return;
-        widget.stopwatchController.addNewUsers(
-          viewModel.selectedUsers.map((user) => user.toLegacy()).toList(),
-        );
+        widget.stopwatchViewModel.addUsers(viewModel.selectedUsers);
       },
       child: Scaffold(
         key: scaffoldKey,

@@ -26,7 +26,7 @@ import 'counter_row.dart';
 
 class LapSplitCouters extends StatelessWidget {
   final StopwatchBloc bloc;
-  final ValueNotifier<int?> maxLaps;
+  final int? maxLaps;
 
   const LapSplitCouters({
     super.key,
@@ -74,9 +74,7 @@ class LapSplitCouters extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            ValueListenableBuilder(
-                valueListenable: maxLaps,
-                builder: (context, value, _) => lapsHeader(value)),
+            lapsHeader(maxLaps),
             BlocBuilder<StopwatchBloc, StopwatchState>(
               bloc: bloc,
               builder: (context, state) => Column(

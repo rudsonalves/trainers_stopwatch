@@ -155,19 +155,19 @@ medição ou descarta recursos antes de concluir sua persistência.
 
 **Dependências:** tarefas 3 a 5.
 
-- [ ] Fazer `StopWatchPage` observar `StopwatchPageViewModel` e construir um
+- [x] Fazer `StopWatchPage` observar `StopwatchPageViewModel` e construir um
       cronômetro por sessão com `ValueKey` baseada na identidade do atleta.
-- [ ] Alterar `PreciseStopwatch` para receber `StopwatchSessionViewModel`, sem
+- [x] Alterar `PreciseStopwatch` para receber `StopwatchSessionViewModel`, sem
       criar, inicializar ou descartar o controller temporal no estado do widget.
-- [ ] Manter `StopwatchDisplay`, contadores e barra de botões observando o
+- [x] Manter `StopwatchDisplay`, contadores e barra de botões observando o
       `StopwatchBloc` da sessão.
-- [ ] Mover edição das configurações do treino para métodos da sessão e manter o
+- [x] Mover edição das configurações do treino para métodos da sessão e manter o
       diálogo e seus `ValueNotifier`s estritamente na apresentação.
-- [ ] Adaptar `StopwatDismissible` para consultar a necessidade de confirmação e
+- [x] Adaptar `StopwatDismissible` para consultar a necessidade de confirmação e
       delegar a remoção confirmada ao Page ViewModel.
-- [ ] Renderizar o log global a partir da projeção de mensagens do Page
+- [x] Renderizar o log global a partir da projeção de mensagens do Page
       ViewModel, sem `_messageList` local nem canal `historyMessage` global.
-- [ ] Preservar layout, gestos atuais e feedback visível de inicialização,
+- [x] Preservar layout, gestos atuais e feedback visível de inicialização,
       persistência pendente, falha recuperável e nova tentativa.
 
 **Resultado esperado:** widgets são reconstruções descartáveis do estado das

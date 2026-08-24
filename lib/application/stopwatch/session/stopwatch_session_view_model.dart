@@ -26,7 +26,7 @@ class StopwatchSessionViewModel extends ChangeNotifier {
   final PersistStopwatchSnapshotUseCase _persistSnapshotUseCase;
   final SpeedCalculator _speedCalculator;
   final DateTime Function() _now;
-  final int colorValue;
+  int _colorValue;
 
   late StopwatchSessionState _state;
   Future<Result<Unit>>? _activeOperation;
@@ -42,11 +42,12 @@ class StopwatchSessionViewModel extends ChangeNotifier {
     required PersistStopwatchSnapshotUseCase persistSnapshotUseCase,
     SpeedCalculator speedCalculator = const SpeedCalculator(),
     DateTime Function()? now,
-    this.colorValue = 0xff000000,
+    int colorValue = 0xff000000,
   })  : _createTrainingUseCase = createTrainingUseCase,
         _persistSnapshotUseCase = persistSnapshotUseCase,
         _speedCalculator = speedCalculator,
-        _now = now ?? DateTime.now {
+        _now = now ?? DateTime.now,
+        _colorValue = colorValue {
     final id = StopwatchSessionId.fromUser(user);
     if (id.isFailure) throw id.error!;
     if (training.userId != id.value!.userId) {
@@ -67,6 +68,7 @@ class StopwatchSessionViewModel extends ChangeNotifier {
   User get user => _state.user;
   Training get training => _state.training!;
   bool get isOperationRunning => _activeOperation != null;
+  int get colorValue => _colorValue;
   bool get hasPendingWrite => _state.pendingWrite != null;
   bool get isSynchronized =>
       !hasPendingWrite &&
@@ -147,7 +149,7 @@ class StopwatchSessionViewModel extends ChangeNotifier {
         return _persist(pending);
       });
 
-  Result<Unit> updateTraining(Training updated) {
+  Result<Unit> updateTraining(Training updated, {int? colorValue}) {
     if (_closed || isOperationRunning) return _busyFailure();
     if (updated.userId != id.userId || updated.id != null) {
       return const Failure(
@@ -161,6 +163,7 @@ class StopwatchSessionViewModel extends ChangeNotifier {
         bloc.state.status != StopwatchStatus.finished) {
       return _invalidTransition('update training');
     }
+    if (colorValue != null) _colorValue = colorValue;
     _setState(_state.copyWith(training: updated, error: null));
     return const Success(unit);
   }

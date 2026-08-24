@@ -1,18 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 import '/common/theme/app_font_style.dart';
 import '/features/widgets/precise_stopwatch/precise_stopwatch.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/history/widgets/history_list_view.dart';
 
 class PersonalTrainingPage extends StatefulWidget {
-  final PreciseStopwatch stopwatch;
+  final StopwatchSessionViewModel session;
   final HistoryViewModel viewModel;
 
   const PersonalTrainingPage({
     super.key,
-    required this.stopwatch,
+    required this.session,
     required this.viewModel,
   });
 
@@ -21,16 +22,23 @@ class PersonalTrainingPage extends StatefulWidget {
 }
 
 class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
+  late int _messageCount;
   HistoryViewModel get viewModel => widget.viewModel;
 
   @override
   void initState() {
     super.initState();
-    widget.stopwatch.controller.actionOnPress.addListener(_reloadHistory);
+    _messageCount = widget.session.state.messages.length;
+    widget.session.addListener(_onSessionChanged);
     viewModel.load();
   }
 
-  void _reloadHistory() => viewModel.load();
+  void _onSessionChanged() {
+    final messageCount = widget.session.state.messages.length;
+    if (messageCount == _messageCount) return;
+    _messageCount = messageCount;
+    viewModel.load();
+  }
 
   Future<bool> _deleteHistory(int historyEntryId) async {
     await viewModel.delete(historyEntryId);
@@ -39,7 +47,7 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
 
   @override
   void dispose() {
-    widget.stopwatch.controller.actionOnPress.removeListener(_reloadHistory);
+    widget.session.removeListener(_onSessionChanged);
     viewModel.dispose();
     super.dispose();
   }
@@ -72,16 +80,14 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
     final training = viewModel.training;
     final unit = training.splitDistance.unit.symbol;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.stopwatch.user.name)),
+      appBar: AppBar(title: Text(widget.session.user.name)),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             PreciseStopwatch(
-              user: widget.stopwatch.user,
-              controller: widget.stopwatch.controller,
-              isNotClone: false,
+              session: widget.session,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8),

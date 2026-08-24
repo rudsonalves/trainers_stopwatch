@@ -18,40 +18,53 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common/models/training_model.dart';
 import '../../../common/theme/app_font_style.dart';
+import '../../../domain/common/training/models/training.dart';
+import '../../../domain/common/training/units/distance_unit.dart';
+import '../../../domain/common/training/units/speed_unit.dart';
+import '../../../domain/common/training/values/distance.dart';
 import '../common/numeric_field.dart';
 import '../common/simple_spin_box_field.dart';
 import 'widgets/color_dialog.dart';
 import 'widgets/distance_unit_row.dart';
 import 'widgets/speed_unit_row.dart';
 
+class TrainingEditResult {
+  final Training training;
+  final int colorValue;
+
+  const TrainingEditResult({
+    required this.training,
+    required this.colorValue,
+  });
+}
+
 class EditTrainingDialog extends StatefulWidget {
   final String userName;
-  final TrainingModel training;
+  final Training training;
+  final int colorValue;
 
   const EditTrainingDialog({
     super.key,
     required this.userName,
     required this.training,
+    required this.colorValue,
   });
 
-  static Future<bool> open(
+  static Future<TrainingEditResult?> open(
     BuildContext context, {
     required String userName,
-    required TrainingModel training,
-  }) async {
-    final bool result = await showDialog<bool?>(
-          context: context,
-          builder: (context) => EditTrainingDialog(
-            userName: userName,
-            training: training,
-          ),
-        ) ??
-        false;
-
-    return result;
-  }
+    required Training training,
+    required int colorValue,
+  }) =>
+      showDialog<TrainingEditResult>(
+        context: context,
+        builder: (context) => EditTrainingDialog(
+          userName: userName,
+          training: training,
+          colorValue: colorValue,
+        ),
+      );
 
   @override
   State<EditTrainingDialog> createState() => _EditTrainingDialogState();
@@ -73,18 +86,18 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   @override
   void initState() {
     super.initState();
-    currentColor.value = widget.training.color;
+    currentColor.value = Color(widget.colorValue);
 
-    final lapLength = widget.training.lapLength;
-    splitLength.value = widget.training.splitLength;
+    final lapLength = widget.training.lapDistance.value;
+    splitLength.value = widget.training.splitDistance.value;
     splitMult.value = (lapLength ~/ splitLength.value);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       lapController.text = lapLength.toString();
       splitController.text = splitLength.value.toString();
-      selectedDistUnit.value = widget.training.distanceUnit;
-      selectedSpeedUnit.value = widget.training.speedUnit;
+      selectedDistUnit.value = widget.training.splitDistance.unit.symbol;
+      selectedSpeedUnit.value = widget.training.speedUnit.symbol;
       maxLapController.text =
-          widget.training.maxlaps?.toString().padLeft(2, '0') ?? '00';
+          widget.training.maxLaps?.toString().padLeft(2, '0') ?? '00';
       commentsController.text = widget.training.comments ?? '';
     });
   }
@@ -94,22 +107,42 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
     splitLength.dispose();
     splitMult.dispose();
     lapController.dispose();
+    splitController.dispose();
     maxLapController.dispose();
+    commentsController.dispose();
     selectedSpeedUnit.dispose();
     selectedDistUnit.dispose();
+    currentColor.dispose();
     super.dispose();
   }
 
   void _applyButton() {
-    final split = splitLength.value;
-    widget.training.splitLength = split;
-    widget.training.lapLength = double.parse(lapController.text);
-    widget.training.distanceUnit = selectedDistUnit.value;
-    widget.training.speedUnit = selectedSpeedUnit.value;
-    widget.training.maxlaps = maxLaps();
-    widget.training.comments = commentsController.text;
-    widget.training.color = currentColor.value;
-    Navigator.pop(context, true);
+    final distanceUnit = DistanceUnit.fromSymbol(selectedDistUnit.value).value!;
+    final speedUnit = SpeedUnit.fromSymbol(selectedSpeedUnit.value).value!;
+    final splitDistance = Distance.create(
+      value: splitLength.value,
+      unit: distanceUnit,
+    ).value!;
+    final lapDistance = Distance.create(
+      value: double.parse(lapController.text),
+      unit: distanceUnit,
+    ).value!;
+    final training = Training.create(
+      userId: widget.training.userId,
+      date: widget.training.date,
+      comments: commentsController.text,
+      splitDistance: splitDistance,
+      lapDistance: lapDistance,
+      maxLaps: maxLaps(),
+      speedUnit: speedUnit,
+    ).value!;
+    Navigator.pop(
+      context,
+      TrainingEditResult(
+        training: training,
+        colorValue: currentColor.value.toARGB32(),
+      ),
+    );
   }
 
   int? maxLaps() {
@@ -219,7 +252,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           builder: (context, value, _) => NumericField(
             label: 'ETDSplitDistance'.tr(args: [value]),
             controller: splitController,
-            value: widget.training.splitLength,
+            value: widget.training.splitDistance.value,
             onChanged: _onChangedSplit,
           ),
         ),
@@ -270,7 +303,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           ),
         ),
         SimpleSpinBoxField(
-          value: widget.training.maxlaps,
+          value: widget.training.maxLaps,
           label: Text('ETDNumberLaps'.tr()),
           maxValue: 100,
           controller: maxLapController,

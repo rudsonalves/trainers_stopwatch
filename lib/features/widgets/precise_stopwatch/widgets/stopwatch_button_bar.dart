@@ -1,19 +1,6 @@
 // Copyright (C) 2024 Rudson Alves
 //
 // This file is part of trainers_stopwatch.
-//
-// trainers_stopwatch is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// trainers_stopwatch is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -21,144 +8,125 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/application/stopwatch/bloc/stopwatch_bloc.dart';
 import '/application/stopwatch/bloc/stopwatch_state.dart';
+import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 import '/common/icons/stopwatch_icons_icons.dart';
 import '../../common/custon_icon_button.dart';
-import '../precise_stopwatch_controller.dart';
 
-class StopwatchButtonBar extends StatefulWidget {
-  final PreciseStopwatchController controller;
+class StopwatchButtonBar extends StatelessWidget {
+  final StopwatchSessionViewModel session;
   final Future<void> Function() setTraining;
-  final int userId;
 
   const StopwatchButtonBar({
     super.key,
-    required this.controller,
+    required this.session,
     required this.setTraining,
-    required this.userId,
   });
 
   @override
-  State<StopwatchButtonBar> createState() => _StopwatchButtonBarState();
-}
-
-class _StopwatchButtonBarState extends State<StopwatchButtonBar> {
-  late final PreciseStopwatchController controller;
-  @override
-  void initState() {
-    super.initState();
-    controller = widget.controller;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final onSurfaceVariant = colorScheme.onSurfaceVariant;
+    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
+    return BlocBuilder<StopwatchBloc, StopwatchState>(
+      bloc: session.bloc,
+      builder: (context, state) {
+        final buttons = switch (state.status) {
+          StopwatchStatus.idle => [
+              CustomIconButton(
+                onPressed:
+                    session.isOperationRunning ? null : () => session.start(),
+                label: 'PSStart'.tr(),
+                icon: Icon(StopwatchIcons.start, color: onSurfaceVariant),
+              ),
+              CustomIconButton(
+                onPressed: session.isOperationRunning ? null : setTraining,
+                label: 'PSSets'.tr(),
+                icon: Icon(Icons.settings, color: onSurfaceVariant),
+              ),
+            ],
+          StopwatchStatus.running => [
+              state.splitCount == state.splitsPerLap - 1
+                  ? CustomIconButton(
+                      onPressed: session.isOperationRunning
+                          ? null
+                          : () => session.lap(),
+                      label: 'PSLaps'.tr(),
+                      icon: Icon(StopwatchIcons.lap1, color: onSurfaceVariant),
+                    )
+                  : CustomIconButton(
+                      onPressed: session.isOperationRunning
+                          ? null
+                          : () => session.split(),
+                      label: 'PSSplit'.tr(),
+                      icon:
+                          Icon(StopwatchIcons.partial, color: onSurfaceVariant),
+                    ),
+              CustomIconButton(
+                onPressed:
+                    session.isOperationRunning ? null : () => session.pause(),
+                label: 'PSPause'.tr(),
+                icon: Icon(StopwatchIcons.pause, color: onSurfaceVariant),
+              ),
+            ],
+          StopwatchStatus.paused => [
+              CustomIconButton(
+                onPressed:
+                    session.isOperationRunning ? null : () => session.resume(),
+                label: 'PSCont'.tr(),
+                icon: Icon(StopwatchIcons.start, color: onSurfaceVariant),
+              ),
+              CustomIconButton(
+                onLongPressed:
+                    session.isOperationRunning ? null : () => session.reset(),
+                label: 'PSReset'.tr(),
+                icon: Icon(
+                  StopwatchIcons.reset,
+                  color: onSurfaceVariant.withRed(130),
+                ),
+              ),
+              CustomIconButton(
+                onLongPressed:
+                    session.isOperationRunning ? null : () => session.finish(),
+                label: 'PSFinish'.tr(),
+                icon: Icon(
+                  StopwatchIcons.stop,
+                  color: onSurfaceVariant.withRed(130),
+                ),
+              ),
+            ],
+          StopwatchStatus.finished => [
+              CustomIconButton(
+                onPressed:
+                    session.isOperationRunning ? null : () => session.start(),
+                label: 'PSStart'.tr(),
+                icon: Icon(StopwatchIcons.start, color: onSurfaceVariant),
+              ),
+            ],
+        };
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        BlocConsumer<StopwatchBloc, StopwatchState>(
-          bloc: controller.bloc,
-          listener: (context, state) {},
-          builder: (context, state) {
-            switch (state.status) {
-              case StopwatchStatus.idle:
-                return OverflowBar(
-                  children: [
-                    CustomIconButton(
-                      onPressed: controller.blocStartTimer,
-                      label: 'PSStart'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.start,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                    CustomIconButton(
-                      onPressed: widget.setTraining,
-                      label: 'PSSets'.tr(),
-                      icon: Icon(
-                        Icons.settings,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                );
-              case StopwatchStatus.running:
-                return OverflowBar(
-                  children: [
-                    (state.splitCount == state.splitsPerLap - 1)
-                        ? CustomIconButton(
-                            onPressed: controller.blocLapTimer,
-                            label: 'PSLaps'.tr(),
-                            icon: Icon(
-                              StopwatchIcons.lap1,
-                              color: onSurfaceVariant,
-                            ),
-                          )
-                        : CustomIconButton(
-                            onPressed: controller.blocSplitTimer,
-                            label: 'PSSplit'.tr(),
-                            icon: Icon(
-                              StopwatchIcons.partial,
-                              color: onSurfaceVariant,
-                            ),
-                          ),
-                    CustomIconButton(
-                      onPressed: controller.blocPauseTimer,
-                      label: 'PSPause'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.pause,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                );
-              case StopwatchStatus.paused:
-                return OverflowBar(
-                  children: [
-                    CustomIconButton(
-                      onPressed: controller.blocStartTimer,
-                      label: 'PSCont'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.start,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                    CustomIconButton(
-                      onLongPressed: controller.blocResetTimer,
-                      label: 'PSReset'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.reset,
-                        color: onSurfaceVariant.withRed(130),
-                      ),
-                    ),
-                    CustomIconButton(
-                      onLongPressed: controller.blocStopTimer,
-                      label: 'PSFinish'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.stop,
-                        color: onSurfaceVariant.withRed(130),
-                      ),
-                    ),
-                  ],
-                );
-              case StopwatchStatus.finished:
-                return OverflowBar(
-                  children: [
-                    CustomIconButton(
-                      onPressed: controller.blocStartTimer,
-                      label: 'PSStart'.tr(),
-                      icon: Icon(
-                        StopwatchIcons.start,
-                        color: onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                );
-            }
-          },
-        ),
-      ],
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OverflowBar(children: buttons),
+            if (session.hasPendingWrite)
+              IconButton(
+                tooltip: 'Retry',
+                onPressed: session.isOperationRunning
+                    ? null
+                    : () => session.retryPendingWrite(),
+                icon: const Icon(Icons.sync_problem),
+              )
+            else if (session.isOperationRunning)
+              const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (session.state.error != null)
+              Tooltip(
+                message: session.state.error!.message,
+                child: const Icon(Icons.error_outline),
+              ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,33 +1,19 @@
 // Copyright (C) 2024 Rudson Alves
 //
 // This file is part of trainers_stopwatch.
-//
-// trainers_stopwatch is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// trainers_stopwatch is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
-
-import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../common/models/messages_model.dart';
-import '../../common/singletons/app_settings.dart';
-import '../../core/routing/route_arguments.dart';
-import '../../core/routing/routes.dart';
+import '/application/stopwatch/session/stopwatch_session_id.dart';
+import '/application/stopwatch/session/stopwatch_session_view_model.dart';
+import '/common/singletons/app_settings.dart';
+import '/core/routing/route_arguments.dart';
+import '/core/routing/routes.dart';
+import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import '../widgets/common/generic_dialog.dart';
-import 'stopwatch_page_controller.dart';
 import 'widgets/message_row.dart';
 import 'widgets/stopwatch_dismissible.dart';
 import 'widgets/stopwatch_drawer.dart';
@@ -35,127 +21,94 @@ import 'widgets/stopwatch_drawer.dart';
 const double stopWatchHeight = 134;
 
 class StopWatchPage extends StatefulWidget {
-  final StopwatchPageController controller;
+  final StopwatchPageViewModel viewModel;
 
-  const StopWatchPage({super.key, required this.controller});
+  const StopWatchPage({super.key, required this.viewModel});
 
   @override
   State<StopWatchPage> createState() => _StopWatchPageState();
 }
 
 class _StopWatchPageState extends State<StopWatchPage> {
-  late final _controller = widget.controller;
-  // Legacy settings bridge; remove with stopwatch migration in backlog 007.
   final app = AppSettings.instance;
-  final _messageList = <MessagesModel>[];
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  StopwatchPageViewModel get viewModel => widget.viewModel;
 
   @override
   void initState() {
     super.initState();
-
-    _controller.historyMessage.addListener(_onHistoryMessageChanged);
-
     FlutterNativeSplash.remove();
   }
 
-  void _onHistoryMessageChanged() {
-    final message = _controller.historyMessage.value;
-    // && message != 'none'
-    if (message.isNotEmpty && !_messageList.contains(message)) {
-      _messageList.add(message);
-    }
-  }
+  Future<void> _addStopwatches() =>
+      context.pushNamed(MainRoutes.users.routeName);
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    app.dispose();
-    super.dispose();
-  }
-
-  Future<void> _addStopwatchs() async {
-    await context.pushNamed(MainRoutes.users.routeName);
-    _controller.addStopwatch();
-    setState(() {});
-  }
-
-  Future<bool> _removeStopwatch(int userId) async {
-    final result = await GenericDialog.open(context,
+  Future<bool> _removeStopwatch(StopwatchSessionId id) async {
+    var confirmed = true;
+    if (viewModel.requiresRemovalConfirmation(id)) {
+      confirmed = await GenericDialog.open(
+        context,
         title: 'SPRemoveTraining'.tr(),
         message: 'SPLongMsg'.tr(),
-        actions: DialogActions.yesNo);
-    if (result) {
-      final userName = _controller.usersList
-          .firstWhere(
-            (user) => user.id == userId,
-          )
-          .name;
-      _removeUserFromLogs(userName);
-      _controller.removeStopwatch(userId);
-      setState(() {});
+        actions: DialogActions.yesNo,
+      );
     }
-    return result;
+    if (!confirmed) return false;
+
+    final result = await viewModel.removeSession(id, confirmed: confirmed);
+    if (result.isFailure && mounted) {
+      await GenericDialog.open(
+        context,
+        title: 'SPRemoveTraining'.tr(),
+        message: result.error!.message,
+        actions: DialogActions.close,
+      );
+    }
+    return result.isSuccess;
   }
 
-  void _removeUserFromLogs(String userName) {
-    _messageList.removeWhere((message) => message.userName == userName);
-  }
-
-  Future<void> _managerStopwatch(int userId) async {
-    final stopwatch = _controller.stopwatchs.firstWhere(
-      (stopwatch) => stopwatch.user.id == userId,
-    );
-    if (!context.mounted) return;
+  Future<void> _manageStopwatch(StopwatchSessionViewModel session) async {
     await context.pushNamed(
       MainRoutes.personalTraining.routeName,
-      extra: PersonalTrainingRouteArguments(stopwatch: stopwatch),
+      extra: PersonalTrainingRouteArguments(session: session),
     );
   }
 
-  Widget _stopWatchListView() {
-    final listViewBuilder = ListView.builder(
-      itemCount: _controller.stopwatchLength.value,
-      itemBuilder: (context, index) => StopwatDismissible(
-        stopwatch: _controller.stopwatchs[index],
-        removeStopwatch: _removeStopwatch,
-        managerStopwatch: _managerStopwatch,
-      ),
-    );
-
+  Widget _stopwatchListView() {
     return SizedBox(
-      height: _sizedBoxHeigth(),
-      child: listViewBuilder,
+      height: _sizedBoxHeight(),
+      child: ListView.builder(
+        itemCount: viewModel.sessions.length,
+        itemBuilder: (context, index) {
+          final session = viewModel.sessions[index];
+          return StopwatDismissible(
+            key: ValueKey(session.id.userId),
+            session: session,
+            removeStopwatch: _removeStopwatch,
+            managerStopwatch: _manageStopwatch,
+          );
+        },
+      ),
     );
   }
 
   Widget _logTimes() {
     final colorScheme = Theme.of(context).colorScheme;
-
+    final messages = viewModel.messages.reversed.toList(growable: false);
     return Expanded(
       child: Focus(
         child: Container(
           margin: EdgeInsets.zero,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: colorScheme.secondaryContainer,
-            ),
+            border: Border.all(color: colorScheme.secondaryContainer),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: ListenableBuilder(
-              listenable: _controller.historyMessage,
-              builder: (context, _) {
-                final messages = _messageList.reversed.toList();
-
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) => MessageRow(
-                    message: messages[index],
-                  ),
-                );
-              },
+          padding: const EdgeInsets.all(6),
+          child: ListView.builder(
+            itemCount: messages.length,
+            itemBuilder: (context, index) => MessageRow(
+              message: messages[index],
             ),
           ),
         ),
@@ -163,18 +116,14 @@ class _StopWatchPageState extends State<StopWatchPage> {
     );
   }
 
-  double _sizedBoxHeigth() {
-    int length = _controller.stopwatchLength.value;
-    length = length < 1 ? 1 : length;
-    length = length > 4 ? 4 : length;
+  double _sizedBoxHeight() {
+    var length = viewModel.sessions.length.clamp(1, 4);
     return length * stopWatchHeight;
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final primary = colorScheme.primary;
-
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -196,23 +145,21 @@ class _StopWatchPageState extends State<StopWatchPage> {
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
         ),
       ),
-      drawer: StopwatchDrawer(
-        addStopwatchs: _addStopwatchs,
-      ),
+      drawer: StopwatchDrawer(addStopwatchs: _addStopwatches),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Column(
-          children: [
-            _stopWatchListView(),
-            _logTimes(),
-          ],
+        child: ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, _) => Column(
+            children: [_stopwatchListView(), _logTimes()],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addStopwatchs,
+        onPressed: _addStopwatches,
         child: Icon(
           Icons.group_add,
-          color: primary.withValues(alpha: .5),
+          color: colorScheme.primary.withValues(alpha: .5),
         ),
       ),
     );

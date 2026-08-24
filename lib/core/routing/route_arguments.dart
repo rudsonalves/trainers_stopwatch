@@ -1,11 +1,11 @@
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
-import '/features/widgets/precise_stopwatch/precise_stopwatch.dart';
+import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 
 class PersonalTrainingRouteArguments {
-  final PreciseStopwatch stopwatch;
+  final StopwatchSessionViewModel session;
 
-  const PersonalTrainingRouteArguments({required this.stopwatch});
+  const PersonalTrainingRouteArguments({required this.session});
 }
 
 class HistoryRouteArguments {

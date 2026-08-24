@@ -74,6 +74,8 @@ class CustomIconButton extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 label!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: AppFontStyle.roboto12,
                               ),
                             ],

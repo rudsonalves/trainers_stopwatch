@@ -22,18 +22,18 @@ import 'package:go_router/go_router.dart';
 import '/common/functions/share_functions.dart';
 import '/common/theme/theme.dart';
 import '/common/theme/util.dart';
-import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/core/routing/router.dart';
 import '/core/routing/routes/main_routes.dart';
 import '/domain/common/training/models/training.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import '/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import '/ui/pages/users/viewmodel/users_view_model.dart';
 import 'app_appearance_state.dart';
 
 class MyMaterialApp extends StatefulWidget {
-  final StopwatchPageController stopwatchController;
+  final StopwatchPageViewModel stopwatchViewModel;
   final UsersViewModel Function(Iterable<int> activeUserIds)
       usersViewModelFactory;
   final TrainingsViewModel Function() trainingsViewModelFactory;
@@ -44,7 +44,7 @@ class MyMaterialApp extends StatefulWidget {
 
   const MyMaterialApp({
     super.key,
-    required this.stopwatchController,
+    required this.stopwatchViewModel,
     required this.usersViewModelFactory,
     required this.trainingsViewModelFactory,
     required this.historyViewModelFactory,
@@ -68,7 +68,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
     super.initState();
     _router = createRouter(
       MainRouteDependencies(
-        stopwatchController: widget.stopwatchController,
+        stopwatchViewModel: widget.stopwatchViewModel,
         usersViewModelFactory: widget.usersViewModelFactory,
         trainingsViewModelFactory: widget.trainingsViewModelFactory,
         historyViewModelFactory: widget.historyViewModelFactory,

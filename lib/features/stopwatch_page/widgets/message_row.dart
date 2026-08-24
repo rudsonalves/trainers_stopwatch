@@ -17,11 +17,12 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../common/icons/stopwatch_icons_icons.dart';
-import '../../../common/models/messages_model.dart';
+import '/application/stopwatch/session/stopwatch_session_message.dart';
+import '/common/icons/stopwatch_icons_icons.dart';
+import '/common/presentation/training_value_formatter.dart';
 
 class MessageRow extends StatelessWidget {
-  final MessagesModel message;
+  final StopwatchSessionMessage message;
 
   const MessageRow({
     super.key,
@@ -29,22 +30,23 @@ class MessageRow extends StatelessWidget {
   });
 
   Row _buildMessageRow(IconData iconData) {
+    final color = Color(message.colorValue);
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Icon(iconData, color: message.color),
+        Icon(iconData, color: color),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              message.logTitle,
+              message.userName,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text(message.logSubtitle),
+            Text(_subtitle),
           ],
         ),
       ],
@@ -52,19 +54,30 @@ class MessageRow extends StatelessWidget {
   }
 
   Row _messageRow() {
-    if (message.comments.contains('Start')) {
-      return _buildMessageRow(StopwatchIcons.start);
-    } else if (message.comments.contains('Split')) {
-      return _buildMessageRow(StopwatchIcons.partial);
-    } else if (message.comments.contains('Lap')) {
-      return _buildMessageRow(StopwatchIcons.lap);
-    } else {
-      return _buildMessageRow(StopwatchIcons.stop);
+    final icon = switch (message.type) {
+      StopwatchSessionMessageType.started => StopwatchIcons.start,
+      StopwatchSessionMessageType.split => StopwatchIcons.partial,
+      StopwatchSessionMessageType.lap => StopwatchIcons.lap,
+      StopwatchSessionMessageType.finished => StopwatchIcons.stop,
+    };
+    return _buildMessageRow(icon);
+  }
+
+  String get _subtitle {
+    if (message.type == StopwatchSessionMessageType.started ||
+        message.type == StopwatchSessionMessageType.finished) {
+      return message.comments;
     }
+    final duration = TrainingValueFormatter.formatDuration(message.duration);
+    final speed = message.speed;
+    if (speed == null) return '${message.label} time: $duration';
+    return '${message.label} time: $duration '
+        'Speed: ${TrainingValueFormatter.formatSpeed(speed)}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final color = Color(message.colorValue);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2),
       padding: const EdgeInsets.symmetric(
@@ -72,7 +85,7 @@ class MessageRow extends StatelessWidget {
         horizontal: 8,
       ),
       decoration: BoxDecoration(
-        color: message.color.withValues(alpha: 0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: _messageRow(),

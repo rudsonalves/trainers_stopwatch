@@ -26,13 +26,13 @@ import 'core/config/dependencies.dart';
 import 'data/repositories/histories/history_repository.dart';
 import 'data/repositories/trainings/training_repository.dart';
 import 'data/repositories/users/user_repository.dart';
-import 'features/stopwatch_page/stopwatch_page_controller.dart';
 import 'domain/usecases/users/users_use_case.dart';
 import 'ui/app/app_appearance_state.dart';
 import 'ui/app/bootstrap_error_app.dart';
 import 'ui/app/my_material_app.dart';
 import 'ui/pages/history/viewmodel/history_view_model.dart';
 import 'ui/pages/settings/viewmodel/settings_view_model.dart';
+import 'ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import 'ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import 'ui/pages/users/viewmodel/users_view_model.dart';
 
@@ -57,7 +57,7 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
       child: MyMaterialApp(
-        stopwatchController: injector.get<StopwatchPageController>(),
+        stopwatchViewModel: injector.get<StopwatchPageViewModel>(),
         usersViewModelFactory: (activeUserIds) => UsersViewModel(
           useCase: injector.get<UsersUseCase>(),
           initiallySelectedUserIds: activeUserIds,

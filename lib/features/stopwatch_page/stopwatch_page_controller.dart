@@ -19,20 +19,9 @@ import 'package:flutter/material.dart';
 
 import '/common/models/messages_model.dart';
 import '/common/models/user_model.dart';
-import '../widgets/precise_stopwatch/precise_stopwatch.dart';
-import '../widgets/precise_stopwatch/precise_stopwatch_controller.dart';
 
 class StopwatchPageController {
-  late final PreciseStopwatchController Function() _stopwatchFactory;
-
   StopwatchPageController();
-
-  void configure({
-    required PreciseStopwatchController Function() stopwatchFactory,
-  }) =>
-      _stopwatchFactory = stopwatchFactory;
-
-  final List<PreciseStopwatch> _stopwatchs = [];
 
   final _stopwatchLength = ValueNotifier<int>(0);
   final _historyMessage = ValueNotifier<MessagesModel>(MessagesModel());
@@ -41,7 +30,6 @@ class StopwatchPageController {
 
   List<UserModel> get usersList => _usersList;
   List<UserModel> get newUsers => _newUsers;
-  List<PreciseStopwatch> get stopwatchs => _stopwatchs;
   ValueNotifier<int> get stopwatchLength => _stopwatchLength;
   ValueNotifier<MessagesModel> get historyMessage => _historyMessage;
 
@@ -72,29 +60,5 @@ class StopwatchPageController {
   bool _hasUser(int id) {
     int index = _usersList.indexWhere((user) => user.id == id);
     return index >= 0;
-  }
-
-  void addStopwatch() {
-    for (final user in newUsers) {
-      final stopwatchController = _stopwatchFactory();
-
-      _stopwatchs.add(
-        PreciseStopwatch(
-          key: GlobalKey(),
-          user: user,
-          controller: stopwatchController,
-        ),
-      );
-    }
-    mergeUserLists();
-
-    _stopwatchLength.value = _stopwatchs.length;
-  }
-
-  void removeStopwatch(int userId) {
-    final itemIndex = _stopwatchs.indexWhere((sw) => sw.user.id! == userId);
-    _usersList.removeWhere((item) => item.id == userId);
-    _stopwatchs.removeAt(itemIndex);
-    _stopwatchLength.value = _stopwatchs.length;
   }
 }

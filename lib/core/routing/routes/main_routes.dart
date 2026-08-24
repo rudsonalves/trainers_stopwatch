@@ -1,16 +1,15 @@
 import 'package:go_router/go_router.dart';
 
-import '/common/adapters/training_domain_adapter.dart';
 import '/common/functions/share_functions.dart';
 import '/domain/common/training/models/training.dart';
 import '/features/about_page/about_page.dart';
 import '/features/stopwatch_page/stopwatch_page.dart';
-import '/features/stopwatch_page/stopwatch_page_controller.dart';
 import '/ui/pages/history/history_page.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/personal_training/personal_training_page.dart';
 import '/ui/pages/settings/settings_page.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import '/ui/pages/trainings/trainings_page.dart';
 import '/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import '/ui/pages/users/users_page.dart';
@@ -20,7 +19,7 @@ import '../route_arguments.dart';
 import '../routes.dart';
 
 class MainRouteDependencies {
-  final StopwatchPageController stopwatchController;
+  final StopwatchPageViewModel stopwatchViewModel;
   final UsersViewModel Function(Iterable<int> activeUserIds)
       usersViewModelFactory;
   final TrainingsViewModel Function() trainingsViewModelFactory;
@@ -29,7 +28,7 @@ class MainRouteDependencies {
   final SettingsViewModel Function() settingsViewModelFactory;
 
   const MainRouteDependencies({
-    required this.stopwatchController,
+    required this.stopwatchViewModel,
     required this.usersViewModelFactory,
     required this.trainingsViewModelFactory,
     required this.historyViewModelFactory,
@@ -43,7 +42,7 @@ List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [
         path: MainRoutes.stopwatch.routePath,
         name: MainRoutes.stopwatch.routeName,
         builder: (context, state) => StopWatchPage(
-          controller: dependencies.stopwatchController,
+          viewModel: dependencies.stopwatchViewModel,
         ),
       ),
       GoRoute(
@@ -53,11 +52,9 @@ List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [
           key: state.pageKey,
           child: UsersPage(
             viewModel: dependencies.usersViewModelFactory(
-              dependencies.stopwatchController.usersList
-                  .map((user) => user.id)
-                  .nonNulls,
+              dependencies.stopwatchViewModel.activeUserIds,
             ),
-            stopwatchController: dependencies.stopwatchController,
+            stopwatchViewModel: dependencies.stopwatchViewModel,
           ),
         ),
       ),
@@ -95,13 +92,13 @@ List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [
         name: MainRoutes.personalTraining.routeName,
         pageBuilder: (context, state) {
           final arguments = state.extra as PersonalTrainingRouteArguments;
-          final training = arguments.stopwatch.controller.training.toDomain();
-          if (training.isFailure) throw training.error!;
           return AppCustomTransitionPage(
             key: state.pageKey,
             child: PersonalTrainingPage(
-              stopwatch: arguments.stopwatch,
-              viewModel: dependencies.historyViewModelFactory(training.value!),
+              session: arguments.session,
+              viewModel: dependencies.historyViewModelFactory(
+                arguments.session.training,
+              ),
             ),
           );
         },
