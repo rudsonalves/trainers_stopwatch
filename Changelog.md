@@ -1,5 +1,71 @@
 # Changelog
 
+## 2026/08/24 - bkl008/task-06
+
+This change completes the automated migration of stopwatch coordination to the session-based MVVM architecture. Legacy page and stopwatch controllers, temporary managers, and their dependency registrations were removed in favor of domain models, `StopwatchSessionViewModel`, and `StopwatchPageViewModel`.
+
+Dependency composition now reuses registered training use cases, while expanded session and widget tests cover isolation, persistence failures, removal workflows, stable session identity, message projection, and recoverable UI errors. Backlog documentation records the completed automated validation and the remaining manual acceptance work.
+
+1. **`lib/core/config/dependencies/`**
+
+   * Removed registrations and imports for `StopwatchPageController`, `PreciseStopwatchController`, `TrainingManager`, and `HistoryManager`.
+   * Refactored session ViewModel construction to resolve `CreateTrainingUseCase` and `PersistStopwatchSnapshotUseCase` from the injector instead of constructing them from repositories.
+   * Preserved the session factory composition around domain `User` and `Training` instances, `StopwatchBloc`, application settings, and the configured session color.
+
+2. **Legacy stopwatch controllers**
+
+   * Deleted `lib/features/stopwatch_page/stopwatch_page_controller.dart`, removing the legacy user-list, stopwatch-count, and global history-message coordination layer.
+   * Deleted `lib/features/widgets/precise_stopwatch/precise_stopwatch_controller.dart`, removing its parallel timer state, legacy model adapters, manager-based persistence, global message publication, and circular dependency on the page controller.
+   * Consolidated stopwatch lifecycle and persistence responsibilities under the session ViewModel architecture represented by the remaining application and UI components.
+
+3. **`lib/manager/`**
+
+   * Deleted `HistoryManager` and `TrainingManager`.
+   * Removed the temporary repository-to-legacy-model bridges used for session history and training operations.
+   * Eliminated the secondary session architecture that performed loading, insertion, updates, deletion, and adapter conversions outside the new ViewModels and use cases.
+
+4. **`test/application/stopwatch/session/stopwatch_session_view_model_test.dart`**
+
+   * Added training-insert failure control to the fake repository and verified that a failed training creation leaves the stopwatch idle, without a persisted training identity or emitted messages.
+   * Added page coordination coverage for duplicate athlete rejection, stable session instances, active user identities, and isolation between athletes.
+   * Covered direct removal of idle and synchronized finished sessions, cancellation of active removal, and confirmed removal while running or paused.
+   * Verified that final-persistence failures retain the finished session with a pending write, and that retrying the write enables subsequent removal.
+   * Added assertions that removing one session closes only its BLoC and removes only its messages from the globally ordered projection.
+
+5. **`test/features/widgets/precise_stopwatch/stopwatch_state_widgets_test.dart`**
+
+   * Added widget coverage for recoverable training-creation errors, including visible error feedback and preservation of the idle stopwatch state.
+   * Verified that dismissible actions delegate removal by session identity and editing with the session ViewModel rather than transporting a widget.
+   * Added active-session dismissal coverage to confirm that the removal dialog is displayed and cancellation preserves the running session.
+   * Added focused create-training and snapshot-persistence test implementations to support success and failure scenarios.
+
+6. **`test/core/config/dependencies_test.dart`**
+
+   * Replaced legacy `PreciseStopwatchController` resolution assertions with `StopwatchPageViewModel` resolution.
+   * Verified that the page ViewModel is registered as a stable singleton while existing transient dependency behavior remains covered.
+   * Removed controller disposal handling made obsolete by the deleted legacy dependency.
+
+7. **`doc/backlog/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Marked the MVVM composition and navigation migration tasks as completed.
+   * Recorded completion of legacy controller and manager removal, adapter cleanup within the session flow, migration-comment updates, and consumer searches.
+   * Marked session coordination, persistence, idempotency, removal, message projection, and widget test requirements as completed.
+   * Recorded successful formatting, focused and complete test execution, static analysis, diff validation, architecture searches, and backlog tracking updates.
+   * Left manual multi-stopwatch validation and final movement to the closed backlog pending.
+
+8. **`doc/backlog/008-sessoes-multiplos-cronometros.md`**
+
+   * Updated the backlog status to report completion of implementation and automated validation.
+   * Documented removal of the legacy controllers, managers, and injector registrations, along with adoption of domain models and session/page ViewModels.
+   * Clarified that legacy adapters remain only for verified consumers outside the session flow.
+   * Recorded 286 passing tests, clean analysis and diff checks, and the manual scenarios still awaiting maintainer validation.
+
+### Conclusion
+
+The stopwatch flow now relies on a single session-based MVVM architecture, with legacy coordination controllers and temporary managers removed from both implementation and dependency injection.
+
+Automated coverage validates isolated multi-athlete sessions, failure-safe persistence, removal and retry behavior, ordered messaging, and widget interaction. The implementation is automated-test complete, with final backlog closure awaiting manual acceptance validation.
+
 ## 2026/08/24 - bkl008/task-05
 
 This change completes the stopwatch presentation migration to session-oriented view models. Stopwatch pages, widgets, navigation, training configuration, and global messages now derive their behavior from `StopwatchPageViewModel` and `StopwatchSessionViewModel` instead of widget-owned controllers and legacy presentation models.

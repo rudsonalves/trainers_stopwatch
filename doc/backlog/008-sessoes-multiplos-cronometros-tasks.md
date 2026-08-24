@@ -177,21 +177,21 @@ sessões e nenhuma medição depende da permanência de um widget na árvore.
 
 **Dependências:** tarefas 4 e 6.
 
-- [ ] Substituir `StopwatchPageController` por `StopwatchPageViewModel` nas
+- [x] Substituir `StopwatchPageController` por `StopwatchPageViewModel` nas
       dependências de `StopWatchPage`, `UsersPage`, `MainRouteDependencies` e
       `MyMaterialApp`.
-- [ ] Fazer o retorno da seleção entregar models de domínio ao Page ViewModel e
+- [x] Fazer o retorno da seleção entregar models de domínio ao Page ViewModel e
       usar suas identidades de sessão para bloquear atletas já ativos.
-- [ ] Alterar `PersonalTrainingRouteArguments` para transportar identidade ou
+- [x] Alterar `PersonalTrainingRouteArguments` para transportar identidade ou
       ViewModel de sessão, nunca um widget `PreciseStopwatch`.
-- [ ] Fazer a rota de treino pessoal obter `Training` diretamente da sessão,
+- [x] Fazer a rota de treino pessoal obter `Training` diretamente da sessão,
       removendo a conversão `TrainingModel.toDomain()` da configuração de rotas.
-- [ ] Registrar factories e ViewModels em `lib/core/config/dependencies/` com o
+- [x] Registrar factories e ViewModels em `lib/core/config/dependencies/` com o
       escopo necessário para manter as sessões durante a navegação.
-- [ ] Remover a configuração tardia `StopwatchPageController.configure()` e a
+- [x] Remover a configuração tardia `StopwatchPageController.configure()` e a
       dependência circular entre controller da página e controller do
       cronômetro.
-- [ ] Confirmar que Pages continuam sendo as únicas responsáveis por abrir
+- [x] Confirmar que Pages continuam sendo as únicas responsáveis por abrir
       rotas e diálogos.
 
 **Resultado esperado:** composição e navegação usam estado de domínio/sessão e
@@ -201,20 +201,20 @@ não transportam widgets nem adapters legados.
 
 **Dependências:** tarefas 3, 6 e 7.
 
-- [ ] Remover `PreciseStopwatchController` depois que todos os seus consumidores
+- [x] Remover `PreciseStopwatchController` depois que todos os seus consumidores
       tiverem sido migrados.
-- [ ] Remover `StopwatchPageController` depois que seleção, lista, mensagens e
+- [x] Remover `StopwatchPageController` depois que seleção, lista, mensagens e
       rotas consumirem o novo Page ViewModel.
-- [ ] Remover `TrainingManager` e `HistoryManager`, seus registros no injector e
+- [x] Remover `TrainingManager` e `HistoryManager`, seus registros no injector e
       imports restantes.
-- [ ] Remover do fluxo de sessão os adapters de `UserModel`, `TrainingModel` e
+- [x] Remover do fluxo de sessão os adapters de `UserModel`, `TrainingModel` e
       `HistoryModel`, preservando-os apenas se outro fluxo legado ainda possuir
       consumidor comprovado.
-- [ ] Remover listas de `PreciseStopwatch`, `GlobalKey` por cronômetro, canal
+- [x] Remover listas de `PreciseStopwatch`, `GlobalKey` por cronômetro, canal
       global de mensagem e flags temporais paralelas ao estado do BLoC.
-- [ ] Atualizar comentários de migração que ainda atribuam ao backlog 007
+- [x] Atualizar comentários de migração que ainda atribuam ao backlog 007
       responsabilidades agora tratadas pelo backlog 008.
-- [ ] Usar `rg` para confirmar que managers, controllers e conversões removidos
+- [x] Usar `rg` para confirmar que managers, controllers e conversões removidos
       não possuem consumidores restantes.
 
 **Resultado esperado:** não resta uma segunda arquitetura de sessão concorrendo
@@ -224,27 +224,27 @@ com os novos ViewModels.
 
 **Dependências:** tarefas 1 a 8.
 
-- [ ] Testar criação de uma sessão por atleta, rejeição de duplicatas e
+- [x] Testar criação de uma sessão por atleta, rejeição de duplicatas e
       preservação das instâncias durante navegação/reconstrução da Page.
-- [ ] Testar que iniciar, pausar, retomar, registrar ações e encerrar uma sessão
+- [x] Testar que iniciar, pausar, retomar, registrar ações e encerrar uma sessão
       não altera estado, ticker, mensagens ou persistência das demais.
-- [ ] Testar que o treino é persistido antes do primeiro início observável e que
+- [x] Testar que o treino é persistido antes do primeiro início observável e que
       uma falha de criação não inicia uma medição órfã.
-- [ ] Testar consumo único de cada revisão e persistência de parcial, volta,
+- [x] Testar consumo único de cada revisão e persistência de parcial, volta,
       encerramento e conclusão automática por limite de voltas.
-- [ ] Testar falha antes e depois de uma escrita efetiva, repetição com a mesma
+- [x] Testar falha antes e depois de uma escrita efetiva, repetição com a mesma
       identidade e ausência de duplicação no banco.
-- [ ] Testar que uma tentativa bem-sucedida limpa somente a escrita pendente
+- [x] Testar que uma tentativa bem-sucedida limpa somente a escrita pendente
       correspondente e publica uma única mensagem.
-- [ ] Testar remoção direta de sessão `idle` e `finished` sincronizada.
-- [ ] Testar cancelamento da confirmação sem alteração temporal.
-- [ ] Testar remoção confirmada durante execução e pausa, incluindo
+- [x] Testar remoção direta de sessão `idle` e `finished` sincronizada.
+- [x] Testar cancelamento da confirmação sem alteração temporal.
+- [x] Testar remoção confirmada durante execução e pausa, incluindo
       encerramento, persistência final e descarte posterior.
-- [ ] Testar que falha na persistência final impede a remoção e permite `retry`.
-- [ ] Testar que remover uma sessão cancela somente seu BLoC e seus recursos.
-- [ ] Testar projeção global ordenada a partir de mensagens isoladas por sessão
+- [x] Testar que falha na persistência final impede a remoção e permite `retry`.
+- [x] Testar que remover uma sessão cancela somente seu BLoC e seus recursos.
+- [x] Testar projeção global ordenada a partir de mensagens isoladas por sessão
       e retirada das mensagens ao remover o atleta.
-- [ ] Testar em widget seleção, chaves estáveis, controles, diálogo de remoção,
+- [x] Testar em widget seleção, chaves estáveis, controles, diálogo de remoção,
       erro recuperável e navegação para edição sem transportar widget na rota.
 
 **Resultado esperado:** testes determinísticos comprovam a coordenação sem
@@ -254,16 +254,16 @@ esperas reais e sem acoplamento entre atletas.
 
 **Dependência:** tarefas 1 a 9.
 
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar os testes focados de sessão, persistência e widgets migrados.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar os testes focados de sessão, persistência e widgets migrados.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
 - [ ] Validar manualmente múltiplos cronômetros, navegação com medição ativa,
       falha/repetição de escrita e todos os caminhos de remoção.
-- [ ] Confirmar por busca que nenhum controller/ViewModel armazena widget ou
+- [x] Confirmar por busca que nenhum controller/ViewModel armazena widget ou
       `BuildContext` e que managers/adapters removidos não têm consumidores.
-- [ ] Atualizar o acompanhamento do backlog 008 com os resultados e limitações
+- [x] Atualizar o acompanhamento do backlog 008 com os resultados e limitações
       da entrega.
 - [ ] Mover backlog e tasks concluídos para `doc/backlog/closed/` somente depois
       de cumprir os critérios de aceite.

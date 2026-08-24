@@ -15,9 +15,9 @@ import 'package:trainers_stopwatch/data/services/images/user_image_storage_servi
 import 'package:trainers_stopwatch/data/services/settings/settings_service.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
-import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/precise_stopwatch_controller.dart';
 import 'package:trainers_stopwatch/ui/app/app_appearance_state.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 
 void main() {
   test('setupDependencies is idempotent and resolves the bootstrap graph', () {
@@ -37,10 +37,7 @@ void main() {
     final imageStorage = injector.get<UserImageStorageService>();
     final usersUseCase = injector.get<UsersUseCase>();
     final createTrainingUseCase = injector.get<CreateTrainingUseCase>();
-    final stopwatchSession = injector.get<PreciseStopwatchController>();
-    final nextStopwatchSession = injector.get<PreciseStopwatchController>();
-    addTearDown(stopwatchSession.dispose);
-    addTearDown(nextStopwatchSession.dispose);
+    final stopwatchPageViewModel = injector.get<StopwatchPageViewModel>();
     addTearDown(settingsViewModel.dispose);
 
     setupDependencies();
@@ -68,8 +65,8 @@ void main() {
       isNot(same(createTrainingUseCase)),
     );
     expect(
-      nextStopwatchSession,
-      isNot(same(stopwatchSession)),
+      injector.get<StopwatchPageViewModel>(),
+      same(stopwatchPageViewModel),
     );
   });
 }

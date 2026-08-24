@@ -4,9 +4,7 @@ import '/application/stopwatch/bloc/stopwatch_bloc.dart';
 import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 import '/common/adapters/legacy_settings_sink.dart';
 import '/common/constants.dart';
-import '/data/repositories/histories/history_repository.dart';
 import '/data/repositories/settings/settings_repository.dart';
-import '/data/repositories/trainings/training_repository.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/usecases/trainings/create_training_use_case.dart';
@@ -43,13 +41,9 @@ void registerViewModelsDependencies(AutoInjector injector) {
             user: user,
             training: training,
             bloc: StopwatchBloc(tickInterval: settings.refreshInterval),
-            createTrainingUseCase: CreateTrainingUseCase(
-              trainingRepository: injector.get<TrainingRepository>(),
-              historyRepository: injector.get<HistoryRepository>(),
-            ),
-            persistSnapshotUseCase: PersistStopwatchSnapshotUseCase(
-              historyRepository: injector.get<HistoryRepository>(),
-            ),
+            createTrainingUseCase: injector.get<CreateTrainingUseCase>(),
+            persistSnapshotUseCase:
+                injector.get<PersistStopwatchSnapshotUseCase>(),
             colorValue: primaryColor.toARGB32(),
           );
         },

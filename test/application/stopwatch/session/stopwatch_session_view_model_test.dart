@@ -12,6 +12,7 @@ import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 
 const _writeFailure = AppError(
   code: AppErrorCode.storageWriteFailed,
@@ -21,12 +22,14 @@ const _writeFailure = AppError(
 class _TrainingRepositoryFake implements TrainingRepository {
   final List<String> operations;
   int nextId = 40;
+  bool failInsert = false;
 
   _TrainingRepositoryFake(this.operations);
 
   @override
   AsyncResult<Training> insert(Training training) async {
     operations.add('training');
+    if (failInsert) return const Failure(_writeFailure);
     return Training.create(
       id: nextId++,
       userId: training.userId,
@@ -189,6 +192,17 @@ void main() {
         StopwatchSessionMessageType.started);
   });
 
+  test('does not start the bloc when training creation fails', () async {
+    trainingRepository.failInsert = true;
+
+    final result = await session.start();
+
+    expect(result.isFailure, isTrue);
+    expect(session.bloc.state.status, StopwatchStatus.idle);
+    expect(session.training.id, isNull);
+    expect(session.state.messages, isEmpty);
+  });
+
   test('coordinates pause, resume and finish through named methods', () async {
     await session.start();
     clock.advance(const Duration(seconds: 3));
@@ -267,5 +281,175 @@ void main() {
 
     expect(session.bloc.isClosed, isTrue);
     expect((await session.pause()).isFailure, isTrue);
+  });
+
+  group('page coordination', () {
+    late StopwatchPageViewModel page;
+    late Map<int, _ControlledStopwatch> clocks;
+
+    StopwatchSessionViewModel sessionFor(User user) {
+      final stopwatch = _ControlledStopwatch();
+      clocks[user.id!] = stopwatch;
+      return StopwatchSessionViewModel(
+        user: user,
+        training: Training.create(
+          userId: user.id!,
+          date: DateTime.utc(2026, 8, 24),
+        ).value!,
+        bloc: StopwatchBloc(
+          createStopwatch: () => stopwatch,
+          now: () => DateTime.utc(2026, 8, 24, 12),
+          tickInterval: const Duration(days: 1),
+        ),
+        createTrainingUseCase: CreateTrainingUseCase(
+          trainingRepository: trainingRepository,
+          historyRepository: historyRepository,
+        ),
+        persistSnapshotUseCase: PersistStopwatchSnapshotUseCase(
+          historyRepository: historyRepository,
+        ),
+        now: () => DateTime.utc(2026, 8, 24, 12),
+      );
+    }
+
+    setUp(() {
+      clocks = {};
+      page = StopwatchPageViewModel(sessionFactory: sessionFor);
+    });
+
+    tearDown(() => page.close());
+
+    test('creates one stable session per athlete and rejects duplicates', () {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+
+      expect(page.addUsers([ana, ana]).isSuccess, isTrue);
+      final first = page.sessions.single;
+      expect(page.addUsers([ana]).isSuccess, isTrue);
+
+      expect(page.sessions, hasLength(1));
+      expect(page.sessions.single, same(first));
+      expect(page.activeUserIds, {7});
+    });
+
+    test('one athlete operation does not alter another session', () async {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      const bia = User(id: 8, name: 'Bia', email: 'bia@example.com');
+      page.addUsers([ana, bia]);
+      final anaSession = page.sessions[0];
+      final biaSession = page.sessions[1];
+
+      await anaSession.start();
+      clocks[7]!.advance(const Duration(seconds: 3));
+      await anaSession.split();
+
+      expect(anaSession.bloc.state.status, StopwatchStatus.running);
+      expect(anaSession.state.messages, hasLength(2));
+      expect(biaSession.bloc.state.status, StopwatchStatus.idle);
+      expect(biaSession.state.messages, isEmpty);
+      expect(biaSession.training.id, isNull);
+    });
+
+    test('cancelled active removal preserves the measurement', () async {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      page.addUsers([ana]);
+      final active = page.sessions.single;
+      await active.start();
+
+      final result = await page.removeSession(active.id);
+
+      expect(result.isFailure, isTrue);
+      expect(page.sessions.single, same(active));
+      expect(active.bloc.state.status, StopwatchStatus.running);
+    });
+
+    test('removes idle and synchronized finished sessions directly', () async {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      const bia = User(id: 8, name: 'Bia', email: 'bia@example.com');
+      page.addUsers([ana, bia]);
+      final idle = page.sessions[0];
+      final finished = page.sessions[1];
+      await finished.start();
+      await finished.finish();
+
+      expect((await page.removeSession(idle.id)).isSuccess, isTrue);
+      expect((await page.removeSession(finished.id)).isSuccess, isTrue);
+      expect(page.sessions, isEmpty);
+    });
+
+    test('confirmed active removal finishes and closes only its session',
+        () async {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      const bia = User(id: 8, name: 'Bia', email: 'bia@example.com');
+      page.addUsers([ana, bia]);
+      final removed = page.sessions[0];
+      final retained = page.sessions[1];
+      await removed.start();
+
+      final result = await page.removeSession(removed.id, confirmed: true);
+
+      expect(result.isSuccess, isTrue);
+      expect(removed.bloc.isClosed, isTrue);
+      expect(retained.bloc.isClosed, isFalse);
+      expect(page.sessions, [same(retained)]);
+    });
+
+    test('confirmed paused removal persists and closes the session', () async {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      page.addUsers([ana]);
+      final paused = page.sessions.single;
+      await paused.start();
+      clocks[7]!.advance(const Duration(seconds: 2));
+      await paused.pause();
+
+      final result = await page.removeSession(paused.id, confirmed: true);
+
+      expect(result.isSuccess, isTrue);
+      expect(paused.bloc.isClosed, isTrue);
+      expect(historyRepository.attemptedSnapshotWrites, hasLength(1));
+      expect(page.sessions, isEmpty);
+    });
+
+    test('failed final persistence retains session and retry enables removal',
+        () async {
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      page.addUsers([ana]);
+      final active = page.sessions.single;
+      await active.start();
+      historyRepository.failSnapshotWrite = true;
+
+      final failed = await page.removeSession(active.id, confirmed: true);
+
+      expect(failed.isFailure, isTrue);
+      expect(page.sessions.single, same(active));
+      expect(active.hasPendingWrite, isTrue);
+      expect(active.bloc.state.status, StopwatchStatus.finished);
+
+      historyRepository.failSnapshotWrite = false;
+      expect((await active.retryPendingWrite()).isSuccess, isTrue);
+      expect((await page.removeSession(active.id)).isSuccess, isTrue);
+      expect(page.sessions, isEmpty);
+    });
+
+    test('projects messages in order and removes only the athlete messages',
+        () async {
+      const bia = User(id: 8, name: 'Bia', email: 'bia@example.com');
+      const ana = User(id: 7, name: 'Ana', email: 'ana@example.com');
+      page.addUsers([bia, ana]);
+      final biaSession = page.sessions[0];
+      final anaSession = page.sessions[1];
+      await biaSession.start();
+      await anaSession.start();
+
+      expect(
+          page.messages.map((message) => message.id.sessionId.userId), [7, 8]);
+
+      await page.removeSession(anaSession.id, confirmed: true);
+
+      expect(
+        page.messages.map((message) => message.id.sessionId.userId).toSet(),
+        {8},
+      );
+      expect(page.sessions.single, same(biaSession));
+    });
   });
 }

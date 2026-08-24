@@ -5,12 +5,17 @@ import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_bloc.dar
 import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_event.dart';
 import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_state.dart';
 import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_view_model.dart';
+import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/domain/common/history/models/history_entry.dart';
+import 'package:trainers_stopwatch/domain/common/stopwatch/models/stopwatch_snapshot.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart';
+import 'package:trainers_stopwatch/domain/usecases/trainings/training_initialization.dart';
 import 'package:trainers_stopwatch/features/stopwatch_page/stopwatch_page.dart';
 import 'package:trainers_stopwatch/features/stopwatch_page/widgets/stopwatch_dismissible.dart';
+import 'package:trainers_stopwatch/features/widgets/common/generic_dialog.dart';
 import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/precise_stopwatch.dart';
 import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/widgets/lap_split_counters.dart';
 import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/widgets/stopwatch_display.dart';
@@ -86,6 +91,78 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('shows a recoverable error when training creation fails',
+      (tester) async {
+    const user = User(id: 2, name: 'Bia', email: 'b@example.com');
+    final session = StopwatchSessionViewModel(
+      user: user,
+      training: Training.create(
+        userId: 2,
+        date: DateTime.utc(2026, 8, 24),
+      ).value!,
+      bloc: StopwatchBloc(tickInterval: const Duration(days: 1)),
+      createTrainingUseCase: FailingCreateTrainingUseCase(),
+      persistSnapshotUseCase: MockPersistStopwatchSnapshotUseCase(),
+    );
+    addTearDown(session.close);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: PreciseStopwatch(session: session)),
+      ),
+    );
+    await tester.tap(find.text('PSStart'));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.error_outline), findsOneWidget);
+    expect(session.bloc.state.status, StopwatchStatus.idle);
+  });
+
+  testWidgets('dismissible delegates removal and editing with the session',
+      (tester) async {
+    const user = User(id: 3, name: 'Caio', email: 'c@example.com');
+    final session = StopwatchSessionViewModel(
+      user: user,
+      training: Training.create(
+        userId: 3,
+        date: DateTime.utc(2026, 8, 24),
+      ).value!,
+      bloc: StopwatchBloc(tickInterval: const Duration(days: 1)),
+      createTrainingUseCase: MockCreateTrainingUseCase(),
+      persistSnapshotUseCase: MockPersistStopwatchSnapshotUseCase(),
+    );
+    addTearDown(session.close);
+    StopwatchSessionViewModel? edited;
+    int? removedUserId;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StopwatDismissible(
+            session: session,
+            removeStopwatch: (id) async {
+              removedUserId = id.userId;
+              return true;
+            },
+            managerStopwatch: (value) async => edited = value,
+          ),
+        ),
+      ),
+    );
+    final dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
+
+    expect(
+      await dismissible.confirmDismiss!(DismissDirection.endToStart),
+      isTrue,
+    );
+    expect(removedUserId, 3);
+    expect(
+      await dismissible.confirmDismiss!(DismissDirection.startToEnd),
+      isFalse,
+    );
+    expect(edited, same(session));
+  });
+
   testWidgets('page builds session widgets with stable athlete keys',
       (tester) async {
     const user = User(
@@ -117,9 +194,105 @@ void main() {
     expect(find.byType(PreciseStopwatch), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('active session dismissal asks confirmation and cancel keeps it',
+      (tester) async {
+    const user = User(id: 9, name: 'Dora', email: 'd@example.com');
+    final viewModel = StopwatchPageViewModel(
+      sessionFactory: (user) => StopwatchSessionViewModel(
+        user: user,
+        training: Training.create(
+          userId: user.id!,
+          date: DateTime.utc(2026, 8, 24),
+        ).value!,
+        bloc: StopwatchBloc(tickInterval: const Duration(days: 1)),
+        createTrainingUseCase: SuccessfulCreateTrainingUseCase(),
+        persistSnapshotUseCase: SuccessfulPersistSnapshotUseCase(),
+      ),
+    );
+    viewModel.addUsers([user]);
+    addTearDown(viewModel.close);
+    final session = viewModel.sessions.single;
+    await session.start();
+
+    await tester.pumpWidget(
+      MaterialApp(home: StopWatchPage(viewModel: viewModel)),
+    );
+    await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GenericDialog), findsOneWidget);
+    await tester.tap(find.text('GenericNo'));
+    await tester.pumpAndSettle();
+    expect(viewModel.sessions.single, same(session));
+    expect(session.bloc.state.status, StopwatchStatus.running);
+    await session.pause();
+  });
 }
 
 class MockCreateTrainingUseCase extends Mock implements CreateTrainingUseCase {}
+
+class FailingCreateTrainingUseCase implements CreateTrainingUseCase {
+  @override
+  AsyncResult<TrainingInitialization> execute({
+    required Training training,
+    String? initialComments,
+  }) async =>
+      const Failure(
+        AppError(
+          code: AppErrorCode.storageWriteFailed,
+          message: 'write failed',
+        ),
+      );
+}
+
+class SuccessfulCreateTrainingUseCase implements CreateTrainingUseCase {
+  @override
+  AsyncResult<TrainingInitialization> execute({
+    required Training training,
+    String? initialComments,
+  }) async {
+    final persisted = Training.create(
+      id: 50,
+      userId: training.userId,
+      date: training.date,
+      comments: training.comments,
+      splitDistance: training.splitDistance,
+      lapDistance: training.lapDistance,
+      maxLaps: training.maxLaps,
+      speedUnit: training.speedUnit,
+    ).value!;
+    return Success(
+      TrainingInitialization(
+        training: persisted,
+        initialHistory: HistoryEntry.create(
+          id: 1,
+          trainingId: 50,
+          duration: Duration.zero,
+          comments: initialComments,
+        ).value!,
+      ),
+    );
+  }
+}
+
+class SuccessfulPersistSnapshotUseCase
+    implements PersistStopwatchSnapshotUseCase {
+  @override
+  AsyncResult<HistoryEntry> execute({
+    required int trainingId,
+    required int snapshotRevision,
+    required StopwatchSnapshot snapshot,
+    String? comments,
+  }) async =>
+      HistoryEntry.create(
+        id: 2,
+        trainingId: trainingId,
+        duration: snapshot.elapsed,
+        comments: comments,
+        snapshotRevision: snapshotRevision,
+      );
+}
 
 class MockPersistStopwatchSnapshotUseCase extends Mock
     implements PersistStopwatchSnapshotUseCase {}

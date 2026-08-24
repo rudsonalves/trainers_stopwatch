@@ -81,13 +81,22 @@ Todas as questões foram decididas antes da implementação.
 
 ## Acompanhamento
 
-**Estado:** Em execução; decisões fechadas e tarefas preparadas em
+**Estado:** Implementação e validações automatizadas concluídas. A validação
+manual foi delegada ao mantenedor e será executada posteriormente; por isso, os
+documentos permanecem em `doc/backlog/` até o aceite manual. A execução está
+registrada em
 [`008-sessoes-multiplos-cronometros-tasks.md`](008-sessoes-multiplos-cronometros-tasks.md).
 
-**Fronteiras recebidas do backlog 007:** `PreciseStopwatchController` ainda
-coordena criação do treino, persistência de parciais, mensagens e adapters
-legados; `TrainingManager` e `HistoryManager` permanecem exclusivamente nessa
-composição temporária. O novo `StopwatchBloc` expõe estado e snapshots
-revisionados para substituição dessas fronteiras pela sessão MVVM.
+**Entrega automatizada:** `PreciseStopwatchController`,
+`StopwatchPageController`, `TrainingManager` e `HistoryManager` foram removidos,
+assim como seus registros no injector. O fluxo de sessão usa domínio,
+`StopwatchSessionViewModel` e `StopwatchPageViewModel`. Os adapters legados foram
+preservados somente porque relatórios, PDF, compartilhamento e funções de
+compatibilidade ainda possuem consumidores comprovados fora do fluxo de
+sessão. A suíte completa terminou com 286 testes aprovados; `flutter analyze` e
+`git diff --check` terminaram sem apontamentos.
+
+**Pendente:** validação manual de múltiplos cronômetros, navegação durante uma
+medição ativa, falha e repetição de escrita e todos os caminhos de remoção.
 
 **Próximo backlog:** `009-relatorios-e-compartilhamento.md`.
