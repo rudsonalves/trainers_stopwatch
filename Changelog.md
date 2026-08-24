@@ -1,5 +1,50 @@
 # Changelog
 
+## 2026/08/24 - bkl007/task-01
+
+This change formalizes the implementation plan and resolved design decisions for the BLoC-based stopwatch timing core. It establishes the intended temporal model, lifecycle behavior, legacy integration boundaries, and deterministic testing strategy for backlog 007.
+
+The update also narrows static analysis to project-owned sources and refreshes resolved development and transitive dependencies.
+
+1. **`analysis_options.yaml`**
+
+   * Excluded generated build output and platform-specific Android, iOS, web, Windows, macOS, and Linux directories from analyzer processing.
+   * Preserved the existing formatter and lint configuration while focusing analysis on relevant project code.
+
+2. **`doc/backlog/007-nucleo-cronometro-bloc-tasks.md`**
+
+   * Added the detailed execution plan for rebuilding the stopwatch timing core around BLoC and `Stopwatch.elapsed`.
+   * Defined injectable contracts for civil time, monotonic stopwatch creation, and visual ticker lifecycle.
+   * Specified an immutable state model covering `idle`, `running`, `paused`, and `finished`, with counters, elapsed duration, civil timestamps, snapshots, and monotonic snapshot revisions.
+   * Documented the event and transition behavior for starting, pausing, resuming, resetting, recording splits and laps, finishing, and safely ignoring invalid operations.
+   * Established lifecycle and concurrency requirements for ticker uniqueness, cancellation, late tick rejection, idempotent operations, and BLoC resource cleanup through `close()`.
+   * Planned the minimum legacy consumer adaptations needed to make BLoC state the sole source of timing data while keeping persistence, session coordination, presentation concerns, and write-failure handling outside the timing core.
+   * Defined composition-root changes for constructor-based configuration and removal of global settings dependencies.
+   * Added a deterministic testing matrix using controllable clock, stopwatch, and ticker fakes, including transition, snapshot, counter, duration, invalid-event, automatic completion, and resource-lifecycle coverage.
+   * Added delivery validation requirements covering formatting, focused and complete test suites, static analysis, diff validation, manual flows, multi-stopwatch independence, and backlog closure.
+
+3. **`doc/backlog/007-nucleo-cronometro-bloc.md`**
+
+   * Replaced the open design questions with explicit architectural decisions.
+   * Set the default visual update interval to 50 milliseconds while retaining `Stopwatch.elapsed` as the duration source.
+   * Defined lap registration as closing both the current lap and split at the same monotonic instant.
+   * Allowed finishing from both running and paused states, with paused time excluded from elapsed duration.
+   * Defined reset as a transition to a clean `idle` state and finish as a transition to `finished` that preserves final duration, counters, and the `FinishSnapshot`.
+   * Linked the backlog to its new detailed execution plan.
+
+4. **`pubspec.lock`**
+
+   * Refreshed resolved versions and integrity hashes for analyzer, build, formatting, code-generation, testing, mocking, platform interop, and supporting transitive packages.
+   * Updated the direct development dependency `mockito` from 5.6.4 to 5.8.1.
+   * Updated related analyzer and test toolchains, including `analyzer`, `_fe_analyzer_shared`, `dart_style`, `test`, `test_api`, and `test_core`.
+   * Updated supporting packages such as `code_assets`, `hooks`, `image`, `intl`, `matcher`, `meta`, `objective_c`, `record_use`, `source_maps`, `synchronized`, `vector_math`, and `vm_service`.
+
+### Conclusion
+
+The change set converts backlog 007 from an open architectural proposal into a concrete, ordered delivery plan with resolved timing semantics and explicit integration and validation boundaries.
+
+It also improves analyzer scope and refreshes the locked dependency toolchain needed for subsequent implementation and testing work.
+
 ## 2026/08/20 - bkl006/task-09
 
 This change completes the migration of training and history flows to an MVVM architecture based on domain entities, repositories, Commands, and route-scoped ViewModels. Legacy page controllers, shared history abstractions, UI managers, overlays, and model-based presentation paths were removed where they no longer had consumers.
