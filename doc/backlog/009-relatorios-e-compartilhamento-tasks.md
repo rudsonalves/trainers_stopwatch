@@ -117,37 +117,61 @@ repository e falha posterior do builder.
 
 **Dependências:** tarefas 2 e 3.
 
-- [ ] Definir contrato de renderer PDF que receba relatório e textos já
+- [x] Definir contrato de renderer PDF que receba relatório e textos já
       preparados e devolva bytes, sem consultar repository ou criar arquivo.
-- [ ] Definir contrato de armazenamento temporário para criar/gravar e excluir
+- [x] Definir contrato de armazenamento temporário para criar/gravar e excluir
       um arquivo, usando uma referência abstrata adequada aos demais serviços.
-- [ ] Definir contrato de compartilhamento que receba arquivo e metadados e não
+- [x] Definir contrato de compartilhamento que receba arquivo e metadados e não
       assuma sua ownership ou exclusão.
-- [ ] Definir contrato de e-mail com destinatários, assunto, corpo HTML e
+- [x] Definir contrato de e-mail com destinatários, assunto, corpo HTML e
       anexos, sem dependência de localização ou Flutter na interface.
-- [ ] Fazer todos os contratos devolverem `Result`/`AppError` com categorias
+- [x] Fazer todos os contratos devolverem `Result`/`AppError` com categorias
       apresentáveis para falhas esperadas.
 
 **Resultado esperado:** PDF, sistema de arquivos e plugins externos podem ser
 substituídos por fakes determinísticos.
 
+**Entregue em 2026-08-25:** foram definidos contratos independentes para
+renderização PDF, armazenamento temporário, compartilhamento e e-mail.
+`TrainingReportPdfRenderer` recebe conteúdo e textos preparados e devolve
+bytes; `TemporaryReportFileStorage` grava e exclui referências abstratas sem
+expor `dart:io.File`; `ReportShareService` compartilha sem assumir ownership;
+e `ReportEmailService` recebe uma mensagem HTML pronta com destinatários e
+anexos. Todas as operações assíncronas retornam `Result`/`AppError` e não
+dependem de repositories, localização, Flutter ou plugins concretos. Os valores
+transportados possuem igualdade por valor, cópia defensiva e coleções
+imutáveis, cobertas por testes.
+
 ### 5. Implementar os adapters de PDF, arquivo, e-mail e compartilhamento
 
 **Dependência:** tarefa 4.
 
-- [ ] Migrar a composição visual de `BuildPdf` para o renderer, preservando uma
+- [x] Migrar a composição visual de `BuildPdf` para o renderer, preservando uma
       página por treino e o layout caracterizado.
-- [ ] Carregar o ícone e aplicar textos e formatos localizados somente na
+- [x] Carregar o ícone e aplicar textos e formatos localizados somente na
       fronteira de renderização.
-- [ ] Implementar armazenamento no diretório temporário sem nome global que
+- [x] Implementar armazenamento no diretório temporário sem nome global que
       permita colisão entre operações concorrentes.
-- [ ] Encapsular `share_plus` e `flutter_email_sender` nos respectivos adapters,
+- [x] Encapsular `share_plus` e `flutter_email_sender` nos respectivos adapters,
       sem acesso a repository ou exclusão de arquivo.
-- [ ] Mapear exceções de bundle, PDF, I/O e plugins para `AppError`, preservando
+- [x] Mapear exceções de bundle, PDF, I/O e plugins para `AppError`, preservando
       causa e contexto úteis para diagnóstico.
 
 **Resultado esperado:** integrações concretas ficam isoladas e o renderer não
 conhece banco nem coordenação do fluxo.
+
+**Entregue em 2026-08-25:** `TrainingReportPdfRendererImpl` passou a renderizar
+o conteúdo pronto em uma página por treino, usando textos e locale recebidos,
+ícone do bundle e fonte IBM Plex Mono com suporte a Unicode. O renderer
+inicializa os símbolos de data do locale, devolve somente bytes e não consulta
+repository nem grava arquivos. `TemporaryReportFileStorageImpl` cria nomes
+únicos, grava no diretório temporário e executa exclusão idempotente.
+`ReportShareServiceImpl` e `ReportEmailServiceImpl` isolam `share_plus` e
+`flutter_email_sender`, recebem referências abstratas e não assumem ownership
+dos arquivos. Falhas de bundle, PDF, filesystem e plugins são convertidas em
+`AppError`. Testes com assets reais, diretório temporário e funções fake cobrem
+renderização, Unicode, relatório vazio, múltiplas seções, nomes concorrentes,
+gravação, exclusão, e-mail, compartilhamento e falhas esperadas.
 
 ### 6. Coordenar geração, envio e limpeza em UseCases
 

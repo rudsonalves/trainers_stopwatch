@@ -1,5 +1,80 @@
 # Changelog
 
+## 2026/08/25 - bkl009/task-05
+
+This change introduces domain contracts and concrete platform adapters for rendering, storing, sharing, and emailing training reports. The reporting flow now exposes deterministic, testable service boundaries that return `Result` values and avoid coupling domain interfaces to Flutter, repositories, localization providers, or platform plugins.
+
+PDF generation preserves the existing report structure while moving asset loading, locale-aware formatting, and document composition into a dedicated renderer. Temporary file operations and external integrations are isolated behind injectable implementations with consistent error mapping.
+
+1. **`lib/domain/common/report/services`**
+
+   * Added `TrainingReportPdfRenderer`, which accepts prepared report content and presentation texts and returns PDF bytes through `AsyncResult`.
+   * Added `TrainingReportPdfTexts` to carry locale and report labels independently of Flutter localization, with value equality and hash-code support.
+   * Added `TemporaryReportFileStorage` for writing and idempotently deleting temporary report files through abstract file references.
+   * Added `TemporaryReportFile` metadata with value equality, avoiding exposure of `dart:io.File` across service boundaries.
+   * Added `ReportShareService` to share a temporary file and subject without transferring file ownership.
+   * Added `ReportEmailService` and `ReportEmailMessage` for HTML email delivery with recipients and attachments.
+   * Protected email recipient and attachment collections through defensive copies and immutable lists.
+   * Standardized asynchronous service results on `Result`/`AppError`.
+
+2. **`lib/data/services/reports/training_report_pdf_renderer_impl.dart`**
+
+   * Added the concrete PDF renderer using the configured stopwatch icon and IBM Plex Mono font assets.
+   * Initialized locale date symbols and applied locale-aware date and time formatting at the rendering boundary.
+   * Generated one PDF page per training section, including user details, training totals, lap and split configuration, event rows, speeds, durations, and comments.
+   * Added Unicode-capable text rendering and preserved valid PDF output for empty reports.
+   * Kept rendering independent from repositories and filesystem operations by returning document bytes directly.
+   * Converted asset-loading, PDF-generation, and other rendering exceptions into diagnostic `AppError` failures.
+
+3. **`lib/data/services/reports/temporary_report_file_storage_impl.dart`**
+
+   * Added temporary-directory storage for rendered report bytes.
+   * Sanitized suggested filenames by removing path components and rejected invalid names or empty MIME types.
+   * Generated unique filenames from timestamps and sequence values to prevent collisions between concurrent operations.
+   * Returned abstract file metadata after flushed writes and implemented idempotent deletion for existing or already-removed files.
+   * Mapped directory, write, and deletion failures to storage-related `AppError` results.
+   * Added injectable directory and suffix providers for deterministic testing.
+
+4. **`lib/data/services/reports/report_share_service_impl.dart` and `report_email_service_impl.dart`**
+
+   * Added a `share_plus` adapter that converts temporary report metadata into an `XFile` and forwards the supplied subject without deleting or otherwise owning the file.
+   * Added a `flutter_email_sender` adapter that converts domain email messages into HTML emails with recipients, subject, body, and attachment paths.
+   * Added injectable plugin functions to isolate platform dependencies in tests.
+   * Converted sharing and email plugin exceptions into `AppError` failures while retaining the original error as diagnostic details.
+
+5. **`pubspec.yaml` and `pubspec.lock`**
+
+   * Promoted `intl` to a direct application dependency for locale initialization and localized date formatting in the PDF renderer.
+   * Updated the lockfile dependency classification while retaining version `0.20.2`.
+
+6. **`test/domain/common/report/services/report_service_contracts_test.dart`**
+
+   * Added coverage for value equality and hash codes on temporary file metadata, PDF text values, and email messages.
+   * Verified defensive copying and immutability of email recipients and attachments.
+
+7. **`test/domain/common/report/services/reports/report_platform_services_test.dart`**
+
+   * Added temporary-storage tests for byte persistence, unique naming, filename sanitization, input validation, failure mapping, and idempotent deletion.
+   * Added sharing adapter tests for file metadata and subject conversion, plus plugin exception handling.
+   * Added email adapter tests for HTML message conversion, attachment paths, and plugin exception handling.
+
+8. **`test/domain/common/report/services/reports/training_report_pdf_renderer_impl_test.dart`**
+
+   * Added PDF rendering tests using real application assets and prepared report content.
+   * Verified PDF signatures, Unicode-compatible rendering, multiple training sections, and valid empty-report output.
+   * Added asset-loading failure coverage to confirm exceptions are preserved within `AppError` details.
+
+9. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Marked the report service contract and platform adapter tasks as completed.
+   * Documented the delivered boundaries, concrete implementations, ownership rules, error handling, Unicode and localization support, unique temporary storage, and automated coverage.
+
+### Conclusion
+
+The reporting architecture now provides isolated contracts and tested implementations for PDF generation, temporary file lifecycle management, sharing, and HTML email delivery.
+
+These boundaries make platform integrations replaceable and deterministic while preserving report layout, localized formatting, Unicode content, concurrent file safety, and structured failure handling.
+
 ## 2026/08/25 - bkl009/task-03
 
 This change establishes the domain-level reporting model and coordinates report construction through a dedicated use case. Report data can now be assembled independently of PDF rendering, localization, persistence models, and platform plugins while preserving established ordering, calculations, and error behavior.
