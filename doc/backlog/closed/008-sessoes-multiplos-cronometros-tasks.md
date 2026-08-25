@@ -259,13 +259,13 @@ esperas reais e sem acoplamento entre atletas.
 - [x] Executar a suíte completa com `flutter test`.
 - [x] Executar `flutter analyze` sem novas issues.
 - [x] Executar `git diff --check`.
-- [ ] Validar manualmente múltiplos cronômetros, navegação com medição ativa,
+- [x] Validar manualmente múltiplos cronômetros, navegação com medição ativa,
       falha/repetição de escrita e todos os caminhos de remoção.
 - [x] Confirmar por busca que nenhum controller/ViewModel armazena widget ou
       `BuildContext` e que managers/adapters removidos não têm consumidores.
 - [x] Atualizar o acompanhamento do backlog 008 com os resultados e limitações
       da entrega.
-- [ ] Mover backlog e tasks concluídos para `doc/backlog/closed/` somente depois
+- [x] Mover backlog e tasks concluídos para `doc/backlog/closed/` somente depois
       de cumprir os critérios de aceite.
 
 **Resultado esperado:** a migração permanece executável, analisada e testada,

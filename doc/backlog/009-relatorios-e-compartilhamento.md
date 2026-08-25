@@ -35,11 +35,7 @@ e do domínio puro do backlog 002.
 
 ## Questões em aberto
 
-1. O PDF deve continuar com uma página por treino?
-2. O compartilhamento é responsável por apagar o arquivo ou isso pertence ao
-   UseCase?
-3. O corpo do e-mail continuará HTML e localizado?
-4. Como representar relatório vazio ou treino sem parciais?
+Nenhuma.
 
 ## Critérios de aceite
 
@@ -54,10 +50,19 @@ e do domínio puro do backlog 002.
 
 ## Decisões
 
-Nenhuma decisão adicional aprovada.
+- Nesta versão, o PDF mantém o comportamento atual de uma página por treino.
+- O UseCase é responsável pelo ciclo de vida do arquivo temporário e deve
+  garantir sua limpeza após o compartilhamento, inclusive em caso de falha.
+- Nesta versão, o corpo do e-mail permanece em HTML e localizado; o serviço de
+  e-mail recebe assunto e corpo já preparados na fronteira de apresentação.
+- Nesta versão, relatórios vazios e treinos sem parciais mantêm a representação
+  atual, protegida por testes de caracterização antes da refatoração.
 
 ## Acompanhamento
 
-**Estado:** Planejado.
+**Estado:** Em execução.
+
+**Plano de tarefas:**
+[`009-relatorios-e-compartilhamento-tasks.md`](009-relatorios-e-compartilhamento-tasks.md).
 
 **Próximo backlog:** `010-consolidacao-ui-e-legado.md`.

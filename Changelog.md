@@ -1,5 +1,50 @@
 # Changelog
 
+## 2026/08/25 - bkl009/tasks
+
+This change set closes the multiple-stopwatch sessions backlog and starts the reporting and sharing backlog. It records the architectural decisions for the upcoming refactor and introduces a detailed execution plan covering report content, platform integrations, use cases, presentation, dependency injection, legacy removal, and validation.
+
+It also adds workspace configuration so the Android project is recognized as a nested Gradle project.
+
+1. **`.vscode/settings.json`**
+
+   * Added VS Code workspace configuration identifying `android` as a nested Gradle project.
+
+2. **`doc/backlog/009-relatorios-e-compartilhamento.md`**
+
+   * Resolved all previously open questions about PDF pagination, temporary-file ownership, localized HTML email content, empty reports, and trainings without split data.
+   * Established that use cases own and clean up temporary files, including after sharing failures.
+   * Changed the backlog state from planned to in progress.
+   * Linked the backlog to its new task execution plan.
+
+3. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Added the implementation plan for separating report content, PDF rendering, temporary storage, email, and sharing behind injectable boundaries.
+   * Defined tasks for characterizing existing behavior and creating immutable, platform-independent report data.
+   * Planned use cases for loading histories, assembling reports, rendering PDFs, invoking external channels, and reliably cleaning up temporary files.
+   * Specified contracts and adapters for PDF generation, temporary storage, email, and sharing with `Result` and `AppError`-based failure handling.
+   * Defined the migration of `TrainingsViewModel` and `TrainingsPage` to typed Commands without direct repository, renderer, filesystem, or plugin access.
+   * Documented dependency-injection, routing, localization, and presentation-boundary updates.
+   * Planned removal of legacy report implementations, domain adapters, models, and obsolete integration arguments after consumer migration.
+   * Added test coverage requirements for report content, ordering, failures, cleanup ownership, concurrency, Commands, widgets, and platform adapter isolation.
+   * Established formatting, testing, static analysis, diff validation, manual integration checks, documentation, and closure requirements.
+
+4. **`doc/backlog/closed/008-sessoes-multiplos-cronometros-tasks.md`**
+
+   * Moved the backlog 008 task plan into the closed backlog folder.
+   * Marked manual validation of multiple stopwatches, active-measurement navigation, write failure and retry behavior, and removal paths as completed.
+   * Marked the final backlog and task-file archival step as completed.
+
+5. **`doc/backlog/closed/008-sessoes-multiplos-cronometros.md`**
+
+   * Moved the completed multiple-stopwatch sessions backlog into the closed backlog folder without changing its content.
+
+### Conclusion
+
+Backlog 008 is now formally closed and archived after completing its remaining validation requirements. Backlog 009 has entered execution with approved behavioral decisions and a comprehensive implementation and verification plan.
+
+The project workspace also now recognizes the Android module as a nested Gradle project.
+
 ## 2026/08/24 - bkl008/task-06
 
 This change completes the automated migration of stopwatch coordination to the session-based MVVM architecture. Legacy page and stopwatch controllers, temporary managers, and their dependency registrations were removed in favor of domain models, `StopwatchSessionViewModel`, and `StopwatchPageViewModel`.
