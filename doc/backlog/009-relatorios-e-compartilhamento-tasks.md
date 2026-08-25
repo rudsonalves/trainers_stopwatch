@@ -25,54 +25,93 @@ Commands sem alterar o formato e o comportamento observável desta versão.
 
 **Dependência:** backlog 006 concluído e decisões deste backlog fechadas.
 
-- [ ] Registrar em testes a estrutura atual de uma página por treino, linhas,
+- [x] Registrar em testes a estrutura atual de uma página por treino, linhas,
       totais, unidades, comentários e ordem dos eventos.
-- [ ] Caracterizar relatório sem treinos e treino sem parciais, sem introduzir
+- [x] Caracterizar relatório sem treinos e treino sem parciais, sem introduzir
       uma nova regra visual nesta versão.
-- [ ] Caracterizar assunto, corpo HTML localizado, destinatário, anexo e dados
+- [x] Caracterizar assunto, corpo HTML localizado, destinatário, anexo e dados
       entregues ao compartilhamento.
-- [ ] Identificar falhas atualmente originadas por carga, conteúdo, PDF,
+- [x] Identificar falhas atualmente originadas por carga, conteúdo, PDF,
       arquivo, e-mail e compartilhamento para orientar sua conversão em
       `AppError`.
 
 **Resultado esperado:** a refatoração possui uma linha de base executável que
 protege o comportamento aprovado.
 
+**Entregue em 2026-08-25:** os testes de caracterização exercitam o PDF real
+com filesystem temporário e substituem somente as plataformas de e-mail e
+compartilhamento por fakes. A linha de base cobre ordem de treinos e eventos,
+rótulos, unidades, durações, velocidades, comentários, quantidade vazia de
+páginas, HTML, assunto, destinatário, anexo e metadados de compartilhamento. O
+comportamento atual observado é: lista de treinos vazia gera um PDF sem páginas;
+um treino contendo somente o marco inicial falha com `zeroElapsedTime`; e-mail
+apaga o anexo após sucesso; compartilhamento deixa o arquivo presente. O corpo
+do e-mail é HTML, usa o locale na data e mantém os demais rótulos fixos em
+inglês. A auditoria também confirmou que falhas de repository e regras de
+conteúdo propagam `AppError`, enquanto bundle/PDF/I/O e compartilhamento ainda
+propagam exceções da implementação e o e-mail as embrulha em `Exception`; sua
+normalização permanece nas tarefas 4 a 6.
+
+Validação da tarefa: 9 testes focados e a suíte completa com 293 testes
+passaram; `flutter analyze` e `git diff --check` terminaram sem issues.
+
 ### 2. Modelar o conteúdo do relatório
 
 **Dependência:** tarefa 1.
 
-- [ ] Criar valores imutáveis de relatório para cabeçalho, resumo por treino,
+- [x] Criar valores imutáveis de relatório para cabeçalho, resumo por treino,
       linhas e totais usando apenas `User`, `Training`, `HistoryEntry` e eventos
       de domínio.
-- [ ] Centralizar a montagem das linhas e o cálculo de duração, distância,
+- [x] Centralizar a montagem das linhas e o cálculo de duração, distância,
       voltas e velocidade média em código independente de Flutter, plugins,
       bundle e persistência.
-- [ ] Reutilizar `TrainingEventGenerator` e os value objects de unidades, sem
+- [x] Reutilizar `TrainingEventGenerator` e os value objects de unidades, sem
       duplicar a semântica de parciais e voltas.
-- [ ] Manter no conteúdo valores sem tradução e sem formatação específica de
+- [x] Manter no conteúdo valores sem tradução e sem formatação específica de
       PDF ou HTML.
-- [ ] Retornar `Result`/`AppError` para dados inválidos em vez de lançar
+- [x] Retornar `Result`/`AppError` para dados inválidos em vez de lançar
       exceções cruas.
 
 **Resultado esperado:** o relatório completo pode ser produzido e testado como
 dados de domínio, sem renderer ou plataforma.
 
+**Entregue em 2026-08-25:** foram criados models imutáveis para o conteúdo
+completo, seções por treino, linhas baseadas em `TrainingEvent` e totais de
+distância, duração, voltas e velocidade média. `TrainingReportContentBuilder`
+recebe somente `User`, `Training` e `HistoryEntry`, preserva a ordem dos
+treinos, reutiliza `TrainingEventGenerator` e `SpeedCalculator` e retorna
+`Result`/`AppError` sem depender de Flutter, plugins, bundle, localização,
+persistência ou formatação. Relatório sem treinos permanece válido; treino
+somente com o marco inicial preserva `zeroElapsedTime`; dados vazios ou
+inválidos falham sem retornar conteúdo parcial. Os testes cobrem igualdade por
+valor, imutabilidade, cálculos, eventos, ordem e falhas.
+
 ### 3. Criar o UseCase de montagem do relatório
 
 **Dependências:** tarefa 2 e repositories do backlog 006.
 
-- [ ] Criar um UseCase que receba `HistoryRepository` por construtor, carregue
+- [x] Criar um UseCase que receba `HistoryRepository` por construtor, carregue
       os históricos de cada treino selecionado e monte o relatório completo.
-- [ ] Preservar a ordem dos treinos recebidos e a ordem de eventos definida no
+- [x] Preservar a ordem dos treinos recebidos e a ordem de eventos definida no
       domínio.
-- [ ] Interromper a montagem com `AppError` identificável quando uma carga ou
+- [x] Interromper a montagem com `AppError` identificável quando uma carga ou
       transformação falhar, sem produzir relatório parcial silenciosamente.
-- [ ] Fazer a saída conter somente dados prontos para renderização, sem models
+- [x] Fazer a saída conter somente dados prontos para renderização, sem models
       SQLite, adapters legados, strings localizadas ou objetos de plugin.
 
 **Resultado esperado:** carregar históricos e montar conteúdo torna-se uma
 operação coordenada única, independente da geração de PDF.
+
+**Entregue em 2026-08-25:** `BuildTrainingReportUseCase` recebe
+`HistoryRepository` por construtor, valida as identidades do usuário e dos
+treinos e rejeita treinos pertencentes a outro usuário. Os históricos são
+carregados sequencialmente na ordem dos treinos recebidos e transformados por
+`TrainingReportContentBuilder`. A primeira falha de carga ou transformação
+interrompe a operação sem consultar treinos posteriores e sem expor conteúdo
+parcial. A saída contém somente models de relatório e entidades de domínio, sem
+dependências de SQLite, adapters legados, localização, PDF, arquivos ou
+plugins. Os testes cobrem relatório vazio, ordem, validações, falha de
+repository e falha posterior do builder.
 
 ### 4. Definir contratos de renderização e plataforma
 

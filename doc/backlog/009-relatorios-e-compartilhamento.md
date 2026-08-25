@@ -65,4 +65,7 @@ Nenhuma.
 **Plano de tarefas:**
 [`009-relatorios-e-compartilhamento-tasks.md`](009-relatorios-e-compartilhamento-tasks.md).
 
+**Progresso:** tarefa 1 concluída; comportamento legado de conteúdo, PDF,
+e-mail, compartilhamento, casos vazios e falhas caracterizado por testes.
+
 **Próximo backlog:** `010-consolidacao-ui-e-legado.md`.

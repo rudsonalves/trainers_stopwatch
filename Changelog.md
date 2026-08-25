@@ -1,5 +1,115 @@
 # Changelog
 
+## 2026/08/25 - bkl009/task-03
+
+This change establishes the domain-level reporting model and coordinates report construction through a dedicated use case. Report data can now be assembled independently of PDF rendering, localization, persistence models, and platform plugins while preserving established ordering, calculations, and error behavior.
+
+The change also adds characterization coverage for the legacy PDF, email, and sharing flows, providing an executable baseline for the remaining migration work.
+
+1. **`lib/domain/common/report/models`**
+
+   * Added immutable models for complete report content, per-training sections, event-backed rows, and calculated totals.
+   * Protected report section and row collections through unmodifiable copies.
+   * Implemented value equality and consistent hash codes across the report structure.
+   * Represented totals using domain values for distance and average speed alongside duration and lap count.
+
+2. **`lib/domain/common/report/services`**
+
+   * Added `TrainingReportInput` to associate a training with an immutable history collection.
+   * Added `TrainingReportContentBuilder` to convert users, trainings, and history entries into renderer-independent report content.
+   * Reused `TrainingEventGenerator` and `SpeedCalculator` to preserve domain semantics for event ordering, splits, laps, distance, duration, and average speed.
+   * Preserved input training order and converted generated events into report rows.
+   * Propagated domain failures through `Result` and prevented partially built reports from being returned after an error.
+
+3. **`lib/domain/usecases/reports/build_training_report_use_case.dart`**
+
+   * Added `BuildTrainingReportUseCase` with constructor-injected `HistoryRepository` and report content builder dependencies.
+   * Validated that the selected user and trainings have persisted identities and that every training belongs to the selected user.
+   * Loaded histories sequentially in the received training order before delegating report assembly to the domain builder.
+   * Stopped processing on the first repository or content-building failure without exposing partial report content.
+   * Supported empty training selections without repository access.
+
+4. **`test/domain/common/report`**
+
+   * Added tests for report model value equality, hash-code consistency, defensive collection copying, and immutability.
+   * Verified empty reports, training order, generated event rows, split and lap semantics, totals, units, durations, comments, and average-speed calculations.
+   * Covered empty and invalid histories, the preserved `zeroElapsedTime` failure, invalid timelines, and atomic failure behavior.
+
+5. **`test/domain/usecases/reports/build_training_report_use_case_test.dart`**
+
+   * Added use-case coverage for ordered history loading and ordered report output.
+   * Verified empty report generation without repository access.
+   * Covered transient users, transient trainings, and trainings assigned to another user.
+   * Confirmed that repository and builder failures stop processing and return no partial content.
+
+6. **`test/common/functions/report_sharing_characterization_test.dart`**
+
+   * Added characterization tests for legacy report event ordering, labels, units, durations, speeds, comments, and reports without rows.
+   * Exercised real PDF generation with a controlled temporary-directory provider, including ordered history loading, non-empty output, zero-page empty reports, and the `zeroElapsedTime` edge case.
+   * Captured the existing HTML email subject, recipient, body, attachment, and successful attachment cleanup behavior.
+   * Captured the existing sharing subject and PDF metadata, including retention of the temporary shared file.
+   * Added fake repository and platform implementations to isolate external integrations while preserving observable behavior.
+
+7. **`pubspec.yaml` and `pubspec.lock`**
+
+   * Added the email sender, path provider, and sharing platform interfaces as direct development dependencies.
+   * Enabled characterization tests to replace platform integrations with deterministic fakes.
+
+8. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Marked the characterization, report content modeling, and report-building use-case tasks as complete.
+   * Documented the delivered models, calculations, ordering guarantees, validations, failure boundaries, and platform cleanup behavior.
+   * Recorded focused and full test results, static analysis, and diff validation outcomes.
+   * Retained remaining exception normalization work for later rendering and platform tasks.
+
+9. **`doc/backlog/009-relatorios-e-compartilhamento.md` and `Changelog.md`**
+
+   * Updated backlog progress to record completion of the legacy behavior characterization.
+   * Added the task 1 changelog entry describing the executable reporting and sharing baseline.
+
+### Conclusion
+
+Reporting now has immutable domain content models and a coordinated use case that loads histories, validates ownership, preserves ordering, and returns structured failures without partial output.
+
+Comprehensive domain and legacy characterization tests protect calculations, PDF generation, and external delivery behavior as the reporting architecture continues to be separated from rendering and platform integrations.
+
+## 2026/08/25 - bkl009/task-01
+
+This change establishes the executable characterization baseline for the
+reporting and sharing migration. Tests now preserve the legacy report rows,
+ordering, PDF production, HTML email payload, sharing metadata, temporary-file
+behavior, and empty-input edge cases before architectural separation begins.
+
+1. **Report and sharing characterization**
+
+   * Added focused tests for event order, labels, units, durations, speeds, and
+     comments produced by the legacy report.
+   * Exercised real PDF generation with a fake temporary-directory provider and
+     verified training load order, non-empty output, and the zero-page empty
+     report behavior.
+   * Recorded the existing `zeroElapsedTime` failure for a training containing
+     only its initial marker.
+   * Captured the HTML email subject, recipient, body, attachment, and successful
+     cleanup through a fake email platform.
+   * Captured the sharing subject and PDF attachment through a fake sharing
+     platform, including the legacy behavior that leaves the temporary file in
+     place.
+   * Declared the email, path-provider, and sharing platform interfaces as
+     explicit development dependencies used by the test fakes.
+
+2. **Backlog tracking**
+
+   * Marked task 1 complete and documented the observed error boundaries that
+     later tasks will normalize to `AppError`.
+   * Recorded successful focused and full test runs with 293 passing tests,
+     clean static analysis, and diff validation.
+
+### Conclusion
+
+The legacy behavior is now protected by deterministic tests, allowing report
+content and platform integrations to be separated in subsequent tasks without
+silently changing this version's output or edge cases.
+
 ## 2026/08/25 - bkl009/tasks
 
 This change set closes the multiple-stopwatch sessions backlog and starts the reporting and sharing backlog. It records the architectural decisions for the upcoming refactor and introduces a detailed execution plan covering report content, platform integrations, use cases, presentation, dependency injection, legacy removal, and validation.

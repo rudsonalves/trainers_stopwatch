@@ -375,7 +375,7 @@ packages:
     source: hosted
     version: "1.0.1"
   flutter_email_sender_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: flutter_email_sender_platform_interface
       sha256: "576fb2b08790040693bd02b1911ad51bf52ccabba87dc2964d6805552f27c39a"
@@ -846,7 +846,7 @@ packages:
     source: hosted
     version: "2.2.2"
   path_provider_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: path_provider_platform_interface
       sha256: "484838772624c3a4b94f1e44a3e19897fee738f2d5c4ce448443b0417f7c9dda"
@@ -950,7 +950,7 @@ packages:
     source: hosted
     version: "13.3.0"
   share_plus_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: share_plus_platform_interface
       sha256: "365ef7379fc22507256adda3385152942ffce08935452bc972c2e52a0bebae41"
