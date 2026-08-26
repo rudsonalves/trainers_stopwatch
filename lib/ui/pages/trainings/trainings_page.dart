@@ -2,26 +2,25 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '/common/functions/share_functions.dart';
 import '/common/icons/stopwatch_icons_icons.dart';
 import '/common/theme/app_font_style.dart';
 import '/core/routing/route_arguments.dart';
 import '/core/routing/routes.dart';
+import '/domain/common/report/services/training_report_pdf_renderer.dart';
 import '/domain/common/training/models/training.dart';
 import '/features/widgets/common/generic_dialog.dart';
 import '/features/widgets/common/user_card.dart';
+import 'viewmodel/models/training_report_command_inputs.dart';
 import 'viewmodel/trainings_view_model.dart';
 import 'widgets/dismissible_training.dart';
 import 'widgets/select_user_popup_menu.dart';
 
 class TrainingsPage extends StatefulWidget {
   final TrainingsViewModel viewModel;
-  final AppShare appShare;
 
   const TrainingsPage({
     super.key,
     required this.viewModel,
-    required this.appShare,
   });
 
   @override
@@ -30,6 +29,25 @@ class TrainingsPage extends StatefulWidget {
 
 class _TrainingsPageState extends State<TrainingsPage> {
   TrainingsViewModel get viewModel => widget.viewModel;
+  TrainingReportPdfTexts _reportPdfTexts() => TrainingReportPdfTexts(
+        locale: context.locale.toString(),
+        reportTitle: 'TPReportTitle'.tr(),
+        userLabel: 'TPReportUser'.tr(),
+        dateLabel: 'TPReportDate'.tr(),
+        totalDistanceLabel: 'TPReportTotalDistance'.tr(),
+        totalTimeLabel: 'TPReportTotalTime'.tr(),
+        averageSpeedLabel: 'TPReportAverageSpeed'.tr(),
+        lapDistanceLabel: 'TPReportLapDistance'.tr(),
+        splitDistanceLabel: 'TPReportSplitDistance'.tr(),
+        lapCountLabel: 'TPReportLapCount'.tr(),
+        eventColumnLabel: 'TPReportEvent'.tr(),
+        timeColumnLabel: 'TPReportTime'.tr(),
+        speedColumnLabel: 'TPReportSpeed'.tr(),
+        commentsColumnLabel: 'TPReportComments'.tr(),
+        trainingStartedLabel: 'TPReportTrainingStarted'.tr(),
+        splitLabel: 'TPReportSplit'.tr(),
+        lapLabel: 'TPReportLap'.tr(),
+      );
 
   @override
   void initState() {
@@ -73,22 +91,26 @@ class _TrainingsPageState extends State<TrainingsPage> {
     if (confirmed) await viewModel.deleteSelected();
   }
 
-  void _sendEmail() {
+  Future<void> _sendEmail() async {
     final user = viewModel.selectedUser;
     if (user == null) return;
-    widget.appShare.sendEmail(
-      user: user,
-      recipient: user.email,
-      trainings: viewModel.selectedTrainings,
+
+    await viewModel.sendReportEmail(
+      EmailTrainingReportCommandInput(
+        pdfTexts: _reportPdfTexts(),
+        recipients: [user.email],
+        subject: 'TPReportSubject'.tr(),
+        htmlBody: 'TPReportEmailBody'.tr(),
+      ),
     );
   }
 
-  void _sendWhatsApp() {
-    final user = viewModel.selectedUser;
-    if (user == null) return;
-    widget.appShare.sendWhatsApp(
-      user: user,
-      trainings: viewModel.selectedTrainings,
+  Future<void> _shareReport() async {
+    await viewModel.shareReport(
+      ShareTrainingReportCommandInput(
+        pdfTexts: _reportPdfTexts(),
+        subject: 'TPReportSubject'.tr(),
+      ),
     );
   }
 
@@ -123,12 +145,15 @@ class _TrainingsPageState extends State<TrainingsPage> {
             padding: const EdgeInsets.only(bottom: 4),
             child: Text('TPError'.tr()),
           ),
+        if (viewModel.isReportOperationRunning) const LinearProgressIndicator(),
         OverflowBar(
           alignment: MainAxisAlignment.spaceAround,
+          spacing: 6,
           children: [
             MenuAnchor(
               builder: (context, controller, child) => IconButton.filledTonal(
-                onPressed: viewModel.hasSelectedTrainings
+                onPressed: viewModel.hasSelectedTrainings &&
+                        !viewModel.isReportOperationRunning
                     ? () => controller.isOpen
                         ? controller.close()
                         : controller.open()
@@ -138,7 +163,8 @@ class _TrainingsPageState extends State<TrainingsPage> {
               ),
               menuChildren: [
                 MenuItemButton(
-                  onPressed: _sendEmail,
+                  onPressed:
+                      viewModel.isReportOperationRunning ? null : _sendEmail,
                   child: const Row(children: [
                     Icon(StopwatchIcons.mail, color: Colors.amber),
                     SizedBox(width: 12),
@@ -146,11 +172,12 @@ class _TrainingsPageState extends State<TrainingsPage> {
                   ]),
                 ),
                 MenuItemButton(
-                  onPressed: _sendWhatsApp,
-                  child: const Row(children: [
-                    Icon(StopwatchIcons.whatsapp, color: Colors.green),
-                    SizedBox(width: 12),
-                    Text('WhatsApp'),
+                  onPressed:
+                      viewModel.isReportOperationRunning ? null : _shareReport,
+                  child: Row(children: [
+                    const Icon(Icons.share),
+                    const SizedBox(width: 12),
+                    Text('TPShare'.tr()),
                   ]),
                 ),
               ],

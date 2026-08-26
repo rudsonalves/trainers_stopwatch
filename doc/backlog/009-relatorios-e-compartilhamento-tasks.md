@@ -210,36 +210,56 @@ compartilhamento.
 
 **Dependência:** tarefa 6.
 
-- [ ] Injetar as operações de e-mail e compartilhamento no ViewModel da página
+- [x] Injetar as operações de e-mail e compartilhamento no ViewModel da página
       de treinos.
-- [ ] Expor Commands tipados que usem o usuário e os treinos selecionados, sem
+- [x] Expor Commands tipados que usem o usuário e os treinos selecionados, sem
       acessar arquivo, renderer, plugin ou repository concreto diretamente.
-- [ ] Rejeitar seleção ou usuário inválido com `AppError` apresentável.
-- [ ] Consolidar estado de execução e último erro com os Commands existentes,
+- [x] Rejeitar seleção ou usuário inválido com `AppError` apresentável.
+- [x] Consolidar estado de execução e último erro com os Commands existentes,
       bloqueando disparos concorrentes incompatíveis.
-- [ ] Manter destinatário, assunto, corpo HTML e textos localizados preparados
+- [x] Manter destinatário, assunto, corpo HTML e textos localizados preparados
       na fronteira de apresentação definida para o fluxo.
 
 **Resultado esperado:** a UI dispara intenções e observa estado, enquanto o
 ViewModel permanece livre de detalhes de plataforma.
 
+**Entregue em 2026-08-26:** `TrainingsViewModel` passou a receber os casos de
+uso de compartilhamento e envio por e-mail e expõe Commands tipados para as
+duas operações. Os Commands utilizam exclusivamente o usuário e os treinos
+selecionados, rejeitam estado inválido com `AppError`, consolidam execução e
+último erro com os comandos existentes e bloqueiam operações de relatório
+incompatíveis. Destinatários, assunto, corpo HTML e textos localizados são
+recebidos por objetos de entrada preparados pela apresentação. Os testes
+cobrem encaminhamento dos dados selecionados, validações, propagação de falhas
+e concorrência nos dois sentidos.
+
 ### 8. Migrar UI, rotas e injeção de dependências
 
 **Dependência:** tarefa 7.
 
-- [ ] Fazer `TrainingsPage` chamar somente os Commands do ViewModel para e-mail
+- [x] Fazer `TrainingsPage` chamar somente os Commands do ViewModel para e-mail
       e compartilhamento.
-- [ ] Apresentar progresso e falhas esperadas sem exceções não tratadas e
+- [x] Apresentar progresso e falhas esperadas sem exceções não tratadas e
       preservar seleção, menus e layout atuais.
-- [ ] Registrar renderer, serviços e UseCases no composition root com ciclos de
+- [x] Registrar renderer, serviços e UseCases no composition root com ciclos de
       vida adequados.
-- [ ] Remover `AppShare` dos argumentos da Page, das rotas, de `MyMaterialApp` e
+- [x] Remover `AppShare` dos argumentos da Page, das rotas, de `MyMaterialApp` e
       da composição de `main.dart` quando não houver consumidores.
-- [ ] Manter Pages responsáveis por interação e localização, sem passar
+- [x] Manter Pages responsáveis por interação e localização, sem passar
       `BuildContext` para ViewModel, UseCase ou serviço.
 
 **Resultado esperado:** apresentação e navegação dependem apenas do ViewModel e
 de tipos estáveis da aplicação.
+
+**Entregue em 2026-08-26:** `TrainingsPage` passou a preparar os textos
+localizados e os dados de e-mail na fronteira de apresentação e a disparar
+somente os Commands da `TrainingsViewModel`. A página apresenta progresso,
+desabilita novos disparos durante operações de relatório e continua exibindo
+falhas pelo estado consolidado da ViewModel. Renderer, armazenamento
+temporário, serviços e UseCases foram registrados no composition root.
+`AppShare` foi removido da Page, das rotas, de `MyMaterialApp`, de `main.dart`
+e do injetor. As traduções do relatório foram adicionadas aos três locales.
+A análise estática e a suíte completa de testes passaram após a migração.
 
 ### 9. Remover a implementação e os adapters legados
 

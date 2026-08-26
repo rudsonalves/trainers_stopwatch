@@ -15,4 +15,5 @@ enum AppErrorCode {
   invalidData,
   zeroElapsedTime,
   unexpected,
+  unknown,
 }

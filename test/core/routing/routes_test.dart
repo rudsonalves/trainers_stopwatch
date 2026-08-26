@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trainers_stopwatch/common/functions/share_functions.dart';
 import 'package:trainers_stopwatch/core/config/dependencies.dart';
 import 'package:trainers_stopwatch/core/routing/animations_page/app_custom_transition_page.dart';
 import 'package:trainers_stopwatch/core/routing/route_arguments.dart';
@@ -12,6 +11,8 @@ import 'package:trainers_stopwatch/data/repositories/trainings/training_reposito
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_email_use_case.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
 import 'package:trainers_stopwatch/features/about_page/about_page.dart';
 import 'package:trainers_stopwatch/features/stopwatch_page/stopwatch_page.dart';
@@ -75,13 +76,15 @@ void main() {
         return TrainingsViewModel(
           userRepository: injector.get<UserRepository>(),
           trainingRepository: injector.get<TrainingRepository>(),
+          shareTrainingReport: injector.get<ShareTrainingReportUseCase>(),
+          sendTrainingReportEmail:
+              injector.get<SendTrainingReportEmailUseCase>(),
         );
       },
       historyViewModelFactory: (training) => HistoryViewModel(
         training: training,
         historyRepository: injector.get<HistoryRepository>(),
       ),
-      appShare: injector.get<AppShare>(),
       settingsViewModelFactory: () {
         settingsCreations++;
         return injector.get<SettingsViewModel>();

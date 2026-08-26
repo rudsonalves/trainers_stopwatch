@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 
-import '/common/functions/share_functions.dart';
 import '/domain/common/training/models/training.dart';
 import '/features/about_page/about_page.dart';
 import '/features/stopwatch_page/stopwatch_page.dart';
@@ -24,7 +23,6 @@ class MainRouteDependencies {
       usersViewModelFactory;
   final TrainingsViewModel Function() trainingsViewModelFactory;
   final HistoryViewModel Function(Training training) historyViewModelFactory;
-  final AppShare appShare;
   final SettingsViewModel Function() settingsViewModelFactory;
 
   const MainRouteDependencies({
@@ -32,7 +30,6 @@ class MainRouteDependencies {
     required this.usersViewModelFactory,
     required this.trainingsViewModelFactory,
     required this.historyViewModelFactory,
-    required this.appShare,
     required this.settingsViewModelFactory,
   });
 }
@@ -65,7 +62,6 @@ List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [
           key: state.pageKey,
           child: TrainingsPage(
             viewModel: dependencies.trainingsViewModelFactory(),
-            appShare: dependencies.appShare,
           ),
         ),
       ),

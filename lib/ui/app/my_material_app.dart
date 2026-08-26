@@ -19,7 +19,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '/common/functions/share_functions.dart';
 import '/common/theme/theme.dart';
 import '/common/theme/util.dart';
 import '/core/routing/router.dart';
@@ -38,7 +37,6 @@ class MyMaterialApp extends StatefulWidget {
       usersViewModelFactory;
   final TrainingsViewModel Function() trainingsViewModelFactory;
   final HistoryViewModel Function(Training training) historyViewModelFactory;
-  final AppShare appShare;
   final AppAppearanceState appearanceState;
   final SettingsViewModel Function() settingsViewModelFactory;
 
@@ -48,7 +46,6 @@ class MyMaterialApp extends StatefulWidget {
     required this.usersViewModelFactory,
     required this.trainingsViewModelFactory,
     required this.historyViewModelFactory,
-    required this.appShare,
     required this.appearanceState,
     required this.settingsViewModelFactory,
   });
@@ -72,7 +69,6 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
         usersViewModelFactory: widget.usersViewModelFactory,
         trainingsViewModelFactory: widget.trainingsViewModelFactory,
         historyViewModelFactory: widget.historyViewModelFactory,
-        appShare: widget.appShare,
         settingsViewModelFactory: widget.settingsViewModelFactory,
       ),
     );

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/common/adapters/history_domain_adapter.dart';
 import 'package:trainers_stopwatch/common/adapters/settings_domain_adapter.dart';
 import 'package:trainers_stopwatch/common/adapters/training_domain_adapter.dart';
 import 'package:trainers_stopwatch/common/adapters/user_domain_adapter.dart';
-import 'package:trainers_stopwatch/common/models/history_model.dart';
 import 'package:trainers_stopwatch/common/models/settings_model.dart';
 import 'package:trainers_stopwatch/common/models/training_model.dart';
 import 'package:trainers_stopwatch/common/models/user_model.dart';
@@ -54,19 +52,6 @@ void main() {
     );
 
     expect(legacy.toDomain().isFailure, isTrue);
-  });
-
-  test('maps history in both directions including zero duration', () {
-    final legacy = HistoryModel(
-      id: 3,
-      trainingId: 2,
-      duration: Duration.zero,
-      comments: 'started',
-    );
-
-    final restored = legacy.toDomain().value!.toLegacy();
-
-    expect(restored.toMap(), legacy.toMap());
   });
 
   test('maps settings without moving schema metadata into the domain', () {

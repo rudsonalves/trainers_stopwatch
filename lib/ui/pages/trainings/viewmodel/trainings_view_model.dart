@@ -7,10 +7,15 @@ import '/data/repositories/trainings/training_repository.dart';
 import '/data/repositories/users/user_repository.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
+import '/domain/usecases/reports/send_training_report_email_use_case.dart';
+import '/domain/usecases/reports/share_training_report_use_case.dart';
+import 'models/training_report_command_inputs.dart';
 
 class TrainingsViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final TrainingRepository _trainingRepository;
+  final ShareTrainingReportUseCase _shareTrainingReport;
+  final SendTrainingReportEmailUseCase _sendTrainingReportEmail;
   final Set<int> _selectedTrainingIds = {};
   final Map<Command<Object>, VoidCallback> _commandListeners = {};
 
@@ -19,6 +24,9 @@ class TrainingsViewModel extends ChangeNotifier {
   late final Command1<Unit, Training> updateCommand;
   late final Command1<Unit, Training> deleteCommand;
   late final Command0<Unit> deleteSelectedCommand;
+  late final Command1<Unit, ShareTrainingReportCommandInput> shareReportCommand;
+  late final Command1<Unit, EmailTrainingReportCommandInput>
+      sendReportEmailCommand;
 
   User? _selectedUser;
   AppError? _lastError;
@@ -26,19 +34,38 @@ class TrainingsViewModel extends ChangeNotifier {
   TrainingsViewModel({
     required UserRepository userRepository,
     required TrainingRepository trainingRepository,
+    required ShareTrainingReportUseCase shareTrainingReport,
+    required SendTrainingReportEmailUseCase sendTrainingReportEmail,
   })  : _userRepository = userRepository,
-        _trainingRepository = trainingRepository {
+        _trainingRepository = trainingRepository,
+        _shareTrainingReport = shareTrainingReport,
+        _sendTrainingReportEmail = sendTrainingReportEmail {
     loadUsersCommand = Command0<List<User>>(_loadUsers);
     loadTrainingsCommand = Command1<List<Training>, int>(_loadTrainings);
     updateCommand = Command1<Unit, Training>(_update);
     deleteCommand = Command1<Unit, Training>(_delete);
     deleteSelectedCommand = Command0<Unit>(_deleteSelected);
+    shareReportCommand =
+        Command1<Unit, ShareTrainingReportCommandInput>(_shareReport);
+    sendReportEmailCommand =
+        Command1<Unit, EmailTrainingReportCommandInput>(_sendReportEmail);
 
     for (final command in _commands) {
       void listener() => _onCommandChanged(command);
       _commandListeners[command] = listener;
       command.addListener(listener);
     }
+  }
+
+  @override
+  void dispose() {
+    for (final command in _commands) {
+      command
+        ..removeListener(_commandListeners[command]!)
+        ..dispose();
+    }
+    _commandListeners.clear();
+    super.dispose();
   }
 
   List<User> get users => _userRepository.users;
@@ -78,7 +105,22 @@ class TrainingsViewModel extends ChangeNotifier {
         updateCommand,
         deleteCommand,
         deleteSelectedCommand,
+        shareReportCommand,
+        sendReportEmailCommand,
       ];
+
+  bool get isReportOperationRunning =>
+      shareReportCommand.isRunning || sendReportEmailCommand.isRunning;
+
+  Future<void> shareReport(
+    ShareTrainingReportCommandInput input,
+  ) =>
+      shareReportCommand.execute(input);
+
+  Future<void> sendReportEmail(
+    EmailTrainingReportCommandInput input,
+  ) =>
+      sendReportEmailCommand.execute(input);
 
   Future<void> loadUsers() => loadUsersCommand.execute();
 
@@ -193,6 +235,84 @@ class TrainingsViewModel extends ChangeNotifier {
     return const Success(unit);
   }
 
+  AsyncResult<Unit> _shareReport(
+    ShareTrainingReportCommandInput input,
+  ) {
+    if (sendReportEmailCommand.isRunning) {
+      return Future.value(Failure(_concurrentReportOperationError));
+    }
+
+    final reportData = _selectedReportData();
+    if (reportData.isFailure) {
+      return Future.value(Failure(reportData.error!));
+    }
+
+    final data = reportData.value!;
+
+    return _shareTrainingReport.execute(
+      user: data.user,
+      trainings: data.trainings,
+      texts: input.pdfTexts,
+      subject: input.subject,
+    );
+  }
+
+  AsyncResult<Unit> _sendReportEmail(
+    EmailTrainingReportCommandInput input,
+  ) {
+    if (shareReportCommand.isRunning) {
+      return Future.value(Failure(_concurrentReportOperationError));
+    }
+
+    final reportData = _selectedReportData();
+    if (reportData.isFailure) {
+      return Future.value(Failure(reportData.error!));
+    }
+
+    final data = reportData.value!;
+
+    return _sendTrainingReportEmail.execute(
+      user: data.user,
+      trainings: data.trainings,
+      texts: input.pdfTexts,
+      recipients: input.recipients,
+      subject: input.subject,
+      htmlBody: input.htmlBody,
+    );
+  }
+
+  Result<({User user, List<Training> trainings})> _selectedReportData() {
+    final user = selectedUser;
+    if (user == null) {
+      return const Failure(
+        AppError(
+          code: AppErrorCode.invalidData,
+          message: 'A user must be selected before generating a report.',
+        ),
+      );
+    }
+
+    final selected = selectedTrainings;
+    if (selected.isEmpty) {
+      return const Failure(
+        AppError(
+          code: AppErrorCode.invalidData,
+          message: 'At least one training must be selected.',
+        ),
+      );
+    }
+
+    return Success((
+      user: user,
+      trainings: selected,
+    ));
+  }
+
+  AppError get _concurrentReportOperationError => const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Another report operation is already running.',
+      );
+
   void _reconcileSelection() {
     final availableIds = trainings.map((training) => training.id).nonNulls;
     _selectedTrainingIds.retainAll(availableIds);
@@ -205,16 +325,5 @@ class TrainingsViewModel extends ChangeNotifier {
       _lastError = command.error;
     }
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    for (final command in _commands) {
-      command
-        ..removeListener(_commandListeners[command]!)
-        ..dispose();
-    }
-    _commandListeners.clear();
-    super.dispose();
   }
 }

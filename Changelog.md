@@ -1,5 +1,78 @@
 # Changelog
 
+## 2026/08/26 - bkl009/task-08
+
+This change migrates training report sharing and email delivery from the legacy `AppShare` implementation to typed ViewModel commands backed by report use cases and domain service abstractions.
+
+The training page now prepares localized report content at the presentation boundary, exposes operation progress and errors through consolidated ViewModel state, and prevents incompatible report operations from running concurrently. Dependency registration, routing, tests, translations, and backlog documentation were updated to support the new architecture.
+
+1. **`assets/translations`**
+
+   * Added English, Spanish, and Brazilian Portuguese translations for report titles, metadata labels, table columns, training events, email subjects, and email bodies.
+   * Enabled the presentation layer to provide fully localized text to the report renderer and delivery commands.
+
+2. **`lib/ui/pages/trainings/trainings_page.dart`**
+
+   * Replaced direct `AppShare` calls with typed `TrainingsViewModel` commands for email delivery and general report sharing.
+   * Added construction of localized `TrainingReportPdfTexts` at the presentation boundary.
+   * Added localized email recipient, subject, HTML body, and sharing subject inputs.
+   * Replaced the WhatsApp-specific action with a generic localized sharing action.
+   * Added a progress indicator and disabled report controls while a report operation is running.
+   * Removed `AppShare` from the page constructor while preserving existing selection, menu, and error presentation behavior.
+
+3. **`lib/ui/pages/trainings/viewmodel`**
+
+   * Added immutable command input models for report sharing and email delivery.
+   * Injected `ShareTrainingReportUseCase` and `SendTrainingReportEmailUseCase` into `TrainingsViewModel`.
+   * Added typed commands and convenience methods for both report delivery operations.
+   * Forwarded only the selected user, selected trainings, localized PDF text, and delivery metadata to the corresponding use cases.
+   * Added validation failures for missing users and empty training selections.
+   * Consolidated report command failures into the existing `lastError` state.
+   * Added shared report-operation state and rejected concurrent email and sharing requests.
+   * Included the new commands in listener registration and disposal.
+
+4. **`lib/core/config/dependencies`**
+
+   * Registered the PDF renderer, temporary report file storage, report sharing service, and report email service using their domain interfaces.
+   * Registered the report building, file generation, delivery, sharing, and email use cases with their required dependencies.
+   * Removed the legacy `AppShare` singleton registration.
+
+5. **Application composition and routing**
+
+   * Updated `main.dart` to inject the report sharing and email use cases into `TrainingsViewModel`.
+   * Removed `AppShare` from `MyMaterialApp`, `MainRouteDependencies`, route construction, and the trainings page.
+   * Updated routing tests to construct the ViewModel through the new report use-case dependencies.
+
+6. **Legacy report and sharing modules**
+
+   * Removed the legacy PDF builder, `AppShare` delivery implementation, training report mapper, message model, training event presentation mapper, and history domain adapter.
+   * Removed the obsolete bidirectional history adapter coverage.
+   * Deleted legacy report characterization and presentation-mapping tests that targeted the removed implementation.
+
+7. **`lib/core/result/errors/app_error_code.dart`**
+
+   * Added the `unknown` application error code for report failures that do not map to an existing specialized category.
+
+8. **`test/ui/pages/trainings/viewmodel/trainings_view_model_test.dart`**
+
+   * Added report sharing and email use-case fakes to the ViewModel test setup.
+   * Added coverage for forwarding selected users, trainings, localized PDF text, recipients, subjects, and HTML bodies.
+   * Added validation coverage for attempts made without selected trainings.
+   * Added assertions for command failure propagation and consolidated `lastError` state.
+   * Added bidirectional concurrency tests ensuring email and sharing operations cannot overlap.
+
+9. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Marked the ViewModel command integration and UI, routing, and dependency migration tasks as complete.
+   * Documented the delivered validation, state management, localization, dependency registration, legacy `AppShare` removal, and test coverage.
+   * Recorded successful static analysis and full test-suite execution after the migration.
+
+### Conclusion
+
+Training report delivery is now coordinated through localized presentation inputs, typed ViewModel commands, application use cases, and domain service interfaces. The UI exposes consistent progress and failure state while preventing conflicting report operations.
+
+The legacy report-sharing path and its adapters were removed from application composition, leaving routing and presentation independent of platform-specific delivery details.
+
 ## 2026/08/26 - bkl009/task-06
 
 This change introduces a shared report-delivery pipeline for generating, sharing, and emailing training report PDFs. It centralizes report construction, rendering, temporary storage, delivery, and cleanup while preserving failures across each boundary.

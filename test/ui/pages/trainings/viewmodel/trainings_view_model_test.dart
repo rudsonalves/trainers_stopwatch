@@ -1,18 +1,30 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/repositories/trainings/training_repository.dart';
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
+import 'package:trainers_stopwatch/domain/common/report/services/training_report_pdf_renderer.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_email_use_case.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
+import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/training_report_command_inputs.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 
 const readFailure = AppError(
   code: AppErrorCode.storageReadFailed,
   message: 'read failed',
 );
+
 const writeFailure = AppError(
   code: AppErrorCode.storageWriteFailed,
   message: 'write failed',
+);
+
+const reportFailure = AppError(
+  code: AppErrorCode.unknown,
+  message: 'report failed',
 );
 
 class _UserRepositoryFake implements UserRepository {
@@ -88,13 +100,94 @@ class _TrainingRepositoryFake implements TrainingRepository {
   AsyncResult<Training> insert(Training training) async => Success(training);
 }
 
+class _ShareTrainingReportFake implements ShareTrainingReportUseCase {
+  int calls = 0;
+  User? receivedUser;
+  List<Training>? receivedTrainings;
+  TrainingReportPdfTexts? receivedTexts;
+  String? receivedSubject;
+  AsyncResult<Unit> result = Future.value(const Success(unit));
+
+  @override
+  AsyncResult<Unit> execute({
+    required User user,
+    required List<Training> trainings,
+    required TrainingReportPdfTexts texts,
+    required String subject,
+    String suggestedName = 'training_logs.pdf',
+  }) {
+    calls++;
+    receivedUser = user;
+    receivedTrainings = List.unmodifiable(trainings);
+    receivedTexts = texts;
+    receivedSubject = subject;
+
+    return result;
+  }
+}
+
+class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
+  int calls = 0;
+  User? receivedUser;
+  List<Training>? receivedTrainings;
+  TrainingReportPdfTexts? receivedTexts;
+  List<String>? receivedRecipients;
+  String? receivedSubject;
+  String? receivedHtmlBody;
+  AsyncResult<Unit> result = Future.value(const Success(unit));
+
+  @override
+  AsyncResult<Unit> execute({
+    required User user,
+    required List<Training> trainings,
+    required TrainingReportPdfTexts texts,
+    required List<String> recipients,
+    required String subject,
+    required String htmlBody,
+    String suggestedName = 'training_logs.pdf',
+  }) {
+    calls++;
+    receivedUser = user;
+    receivedTrainings = List.unmodifiable(trainings);
+    receivedTexts = texts;
+    receivedRecipients = List.unmodifiable(recipients);
+    receivedSubject = subject;
+    receivedHtmlBody = htmlBody;
+
+    return result;
+  }
+}
+
 void main() {
   late _UserRepositoryFake userRepository;
   late _TrainingRepositoryFake trainingRepository;
   late TrainingsViewModel viewModel;
 
+  late _ShareTrainingReportFake shareTrainingReport;
+  late _SendTrainingReportEmailFake sendTrainingReportEmail;
+
   const ana = User(id: 1, name: 'Ana', email: 'ana@example.com');
   const bia = User(id: 2, name: 'Bia', email: 'bia@example.com');
+
+  const pdfTexts = TrainingReportPdfTexts(
+    locale: 'pt_BR',
+    reportTitle: 'Relatório',
+    userLabel: 'Usuário',
+    dateLabel: 'Data',
+    totalDistanceLabel: 'Distância total',
+    totalTimeLabel: 'Tempo total',
+    averageSpeedLabel: 'Velocidade média',
+    lapDistanceLabel: 'Distância da volta',
+    splitDistanceLabel: 'Distância parcial',
+    lapCountLabel: 'Voltas',
+    eventColumnLabel: 'Evento',
+    timeColumnLabel: 'Tempo',
+    speedColumnLabel: 'Velocidade',
+    commentsColumnLabel: 'Comentários',
+    trainingStartedLabel: 'Treino iniciado',
+    splitLabel: 'Parcial',
+    lapLabel: 'Volta',
+  );
 
   Training training(int id, int userId, {String? comments}) => Training.create(
         id: id,
@@ -104,6 +197,8 @@ void main() {
       ).value!;
 
   setUp(() {
+    shareTrainingReport = _ShareTrainingReportFake();
+    sendTrainingReportEmail = _SendTrainingReportEmailFake();
     userRepository = _UserRepositoryFake()..stored = const [ana, bia];
     trainingRepository = _TrainingRepositoryFake()
       ..stored[1] = [training(11, 1), training(12, 1)]
@@ -111,6 +206,8 @@ void main() {
     viewModel = TrainingsViewModel(
       userRepository: userRepository,
       trainingRepository: trainingRepository,
+      shareTrainingReport: shareTrainingReport,
+      sendTrainingReportEmail: sendTrainingReportEmail,
     );
     addTearDown(viewModel.dispose);
   });
@@ -246,5 +343,224 @@ void main() {
     expect(viewModel.selectedUser, isNull);
     expect(viewModel.trainings, isEmpty);
     expect(viewModel.selectedTrainingIds, isEmpty);
+  });
+
+  test('shares a report containing only the selected trainings', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final selected = viewModel.trainings.first;
+    viewModel.setSelected(selected, selected: true);
+
+    await viewModel.shareReport(
+      const ShareTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.shareReportCommand.isSuccess, isTrue);
+    expect(viewModel.lastError, isNull);
+    expect(shareTrainingReport.calls, 1);
+    expect(shareTrainingReport.receivedUser, ana);
+    expect(shareTrainingReport.receivedTrainings, [selected]);
+    expect(shareTrainingReport.receivedTexts, pdfTexts);
+    expect(
+      shareTrainingReport.receivedSubject,
+      'Relatório de treinos',
+    );
+  });
+
+  test('rejects report sharing when no training is selected', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    await viewModel.shareReport(
+      const ShareTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.shareReportCommand.isFailure, isTrue);
+    expect(viewModel.lastError?.code, AppErrorCode.invalidData);
+    expect(shareTrainingReport.calls, 0);
+  });
+
+  test('emails a report containing only the selected trainings', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final selected = viewModel.trainings.last;
+    viewModel.setSelected(selected, selected: true);
+
+    await viewModel.sendReportEmail(
+      EmailTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendReportEmailCommand.isSuccess, isTrue);
+    expect(viewModel.lastError, isNull);
+    expect(sendTrainingReportEmail.calls, 1);
+    expect(sendTrainingReportEmail.receivedUser, ana);
+    expect(sendTrainingReportEmail.receivedTrainings, [selected]);
+    expect(sendTrainingReportEmail.receivedTexts, pdfTexts);
+    expect(
+      sendTrainingReportEmail.receivedRecipients,
+      ['coach@example.com'],
+    );
+    expect(
+      sendTrainingReportEmail.receivedSubject,
+      'Relatório de treinos',
+    );
+    expect(
+      sendTrainingReportEmail.receivedHtmlBody,
+      '<p>Relatório em anexo.</p>',
+    );
+  });
+
+  test('rejects report email when no training is selected', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    await viewModel.sendReportEmail(
+      EmailTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendReportEmailCommand.isFailure, isTrue);
+    expect(viewModel.lastError?.code, AppErrorCode.invalidData);
+    expect(sendTrainingReportEmail.calls, 0);
+  });
+
+  test('exposes sharing failures through the command and lastError', () async {
+    shareTrainingReport.result = Future.value(
+      const Failure(reportFailure),
+    );
+
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.setSelected(viewModel.trainings.first, selected: true);
+
+    await viewModel.shareReport(
+      const ShareTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.shareReportCommand.isFailure, isTrue);
+    expect(viewModel.shareReportCommand.error, reportFailure);
+    expect(viewModel.lastError, reportFailure);
+    expect(shareTrainingReport.calls, 1);
+  });
+
+  test('exposes email failures through the command and lastError', () async {
+    sendTrainingReportEmail.result = Future.value(
+      const Failure(reportFailure),
+    );
+
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.setSelected(viewModel.trainings.first, selected: true);
+
+    await viewModel.sendReportEmail(
+      EmailTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendReportEmailCommand.isFailure, isTrue);
+    expect(viewModel.sendReportEmailCommand.error, reportFailure);
+    expect(viewModel.lastError, reportFailure);
+    expect(sendTrainingReportEmail.calls, 1);
+  });
+
+  test('rejects email while report sharing is running', () async {
+    final shareCompleter = Completer<Result<Unit>>();
+    shareTrainingReport.result = shareCompleter.future;
+
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.setSelected(viewModel.trainings.first, selected: true);
+
+    final sharing = viewModel.shareReport(
+      const ShareTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.shareReportCommand.isRunning, isTrue);
+    expect(viewModel.isReportOperationRunning, isTrue);
+
+    await viewModel.sendReportEmail(
+      EmailTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendReportEmailCommand.isFailure, isTrue);
+    expect(
+        viewModel.sendReportEmailCommand.error?.code, AppErrorCode.invalidData);
+    expect(sendTrainingReportEmail.calls, 0);
+
+    shareCompleter.complete(const Success(unit));
+    await sharing;
+
+    expect(viewModel.shareReportCommand.isSuccess, isTrue);
+    expect(viewModel.isReportOperationRunning, isFalse);
+  });
+
+  test('rejects sharing while report email is running', () async {
+    final emailCompleter = Completer<Result<Unit>>();
+    sendTrainingReportEmail.result = emailCompleter.future;
+
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.setSelected(viewModel.trainings.first, selected: true);
+
+    final sending = viewModel.sendReportEmail(
+      EmailTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendReportEmailCommand.isRunning, isTrue);
+    expect(viewModel.isReportOperationRunning, isTrue);
+
+    await viewModel.shareReport(
+      const ShareTrainingReportCommandInput(
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.shareReportCommand.isFailure, isTrue);
+    expect(viewModel.shareReportCommand.error?.code, AppErrorCode.invalidData);
+    expect(shareTrainingReport.calls, 0);
+
+    emailCompleter.complete(const Success(unit));
+    await sending;
+
+    expect(viewModel.sendReportEmailCommand.isSuccess, isTrue);
+    expect(viewModel.isReportOperationRunning, isFalse);
   });
 }
