@@ -1,5 +1,66 @@
 # Changelog
 
+## 2026/08/26 - bkl009/task-06
+
+This change introduces a shared report-delivery pipeline for generating, sharing, and emailing training report PDFs. It centralizes report construction, rendering, temporary storage, delivery, and cleanup while preserving failures across each boundary.
+
+The backlog documentation and automated test suite were updated to reflect the completed delivery lifecycle, including ownership of temporary files, recipient validation, failure propagation, and cleanup guarantees.
+
+1. **`lib/domain/usecases/reports/generate_training_report_file_use_case.dart`**
+
+   * Added `GenerateTrainingReportFileUseCase` to coordinate report content construction, PDF rendering, and temporary file creation.
+   * Configured generated reports with the `application/pdf` MIME type and the caller-provided filename.
+   * Stopped the pipeline at the first failed operation and propagated build, rendering, and storage errors without invoking subsequent stages.
+
+2. **`lib/domain/usecases/reports/deliver_training_report_use_case.dart`**
+
+   * Added `DeliverTrainingReportUseCase` and the `TrainingReportDelivery` callback abstraction to centralize external delivery and temporary-file cleanup.
+   * Established temporary-file ownership only after successful generation and guaranteed deletion after delivery success, returned failure, or thrown exception.
+   * Mapped unexpected delivery and cleanup exceptions to domain-level `AppError` values.
+   * Added result-merging behavior that returns isolated cleanup failures, preserves primary delivery failures, and retains both errors plus the temporary file path when delivery and cleanup fail together.
+
+3. **`lib/domain/usecases/reports/share_training_report_use_case.dart`**
+
+   * Added a thin sharing operation that delegates report generation and lifecycle management to the shared delivery coordinator.
+   * Forwarded the generated temporary file and prepared subject to `ReportShareService`.
+   * Added `training_logs.pdf` as the default suggested report filename.
+
+4. **`lib/domain/usecases/reports/send_training_report_email_use_case.dart`**
+
+   * Added an email delivery operation that reuses the common report-delivery workflow.
+   * Constructed `ReportEmailMessage` values with prepared recipients, subject, HTML body, and the generated PDF attachment.
+   * Rejected empty recipient lists and blank recipient values before generating a temporary file.
+   * Added `training_logs.pdf` as the default suggested attachment filename.
+
+5. **`test/domain/usecases/reports/generate_training_report_file_use_case_test.dart`**
+
+   * Added coverage for the complete build, render, and write sequence and its generated file metadata.
+   * Verified that build failures prevent rendering and storage, rendering failures prevent storage, and temporary-file write failures are propagated.
+
+6. **`test/domain/usecases/reports/deliver_training_report_use_case_test.dart`**
+
+   * Added lifecycle tests verifying generation, delivery, and deletion order.
+   * Confirmed that generation failures do not trigger delivery or cleanup.
+   * Covered cleanup after delivery failures and exceptions, isolated cleanup failures, unexpected cleanup exceptions, and combined delivery and cleanup failures.
+   * Verified that combined failures retain the primary error, cleanup error, and affected temporary file path.
+
+7. **`test/domain/usecases/reports/share_and_email_training_report_use_cases_test.dart`**
+
+   * Added sharing tests for delivery coordination, default filenames, metadata forwarding, and service failure propagation.
+   * Added email tests for prepared message forwarding, PDF attachment handling, recipient validation, and service failure propagation.
+   * Verified that invalid recipients are rejected before report generation or email service invocation.
+
+8. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Marked the report sharing and email delivery task requirements as completed.
+   * Documented the delivered generation and delivery coordinators, temporary-file ownership rules, cleanup guarantees, combined error reporting, recipient validation, and test coverage.
+
+### Conclusion
+
+The report workflow now provides reusable generation and delivery coordination for both sharing and email channels. Temporary files have an explicit lifecycle, failures remain observable, and duplicated orchestration between delivery methods is avoided.
+
+Automated tests validate successful execution, boundary failures, cleanup behavior, combined errors, delegation, and input validation.
+
 ## 2026/08/25 - bkl009/task-05
 
 This change introduces domain contracts and concrete platform adapters for rendering, storing, sharing, and emailing training reports. The reporting flow now exposes deterministic, testable service boundaries that return `Result` values and avoid coupling domain interfaces to Flutter, repositories, localization providers, or platform plugins.

@@ -177,20 +177,34 @@ gravação, exclusão, e-mail, compartilhamento e falhas esperadas.
 
 **Dependências:** tarefas 3 a 5.
 
-- [ ] Criar operações de compartilhamento e envio por e-mail que componham
+- [x] Criar operações de compartilhamento e envio por e-mail que componham
       montagem, renderização, gravação e canal externo, recebendo os textos já
       preparados pela fronteira de apresentação/renderização.
-- [ ] Fazer o UseCase manter a ownership da referência temporária desde sua
+- [x] Fazer o UseCase manter a ownership da referência temporária desde sua
       criação até a conclusão da operação.
-- [ ] Garantir a exclusão em `finally` após sucesso ou falha do canal externo,
+- [x] Garantir a exclusão em `finally` após sucesso ou falha do canal externo,
       sem tentar excluir um arquivo que não chegou a ser criado.
-- [ ] Definir como reportar falha de limpeza junto de uma falha primária, sem
+- [x] Definir como reportar falha de limpeza junto de uma falha primária, sem
       ocultar nenhuma delas nem converter sucesso em silêncio.
-- [ ] Impedir que e-mail e compartilhamento dupliquem a mesma sequência de
+- [x] Impedir que e-mail e compartilhamento dupliquem a mesma sequência de
       montagem, renderização e limpeza.
 
 **Resultado esperado:** cada operação possui ciclo de vida previsível e não
 deixa arquivos temporários sob responsabilidade dos plugins.
+
+**Entregue em 2026-08-26:** `GenerateTrainingReportFileUseCase` centraliza
+montagem, renderização e gravação do PDF, interrompendo o pipeline na primeira
+falha. `DeliverTrainingReportUseCase` assume ownership somente após a criação
+do arquivo, executa o canal externo e garante a exclusão em `finally`.
+Falha de entrega permanece como erro primário; falha isolada de limpeza é
+apresentada ao consumidor; quando ambas falham, o `AppError` preserva os dois
+erros e o caminho do arquivo. `ShareTrainingReportUseCase` e
+`SendTrainingReportEmailUseCase` são operações finas que reutilizam essa
+coordenação e delegam somente ao serviço externo correspondente. Destinatários
+inválidos são rejeitados antes da geração. Os testes cobrem a ordem completa,
+interrupções em cada fronteira, ownership, limpeza após sucesso, falha ou
+exceção, combinação de erros e ausência de duplicação entre e-mail e
+compartilhamento.
 
 ### 7. Expor Commands no `TrainingsViewModel`
 
