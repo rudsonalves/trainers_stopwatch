@@ -33,6 +33,7 @@ import 'app_appearance_state.dart';
 
 class MyMaterialApp extends StatefulWidget {
   final StopwatchPageViewModel stopwatchViewModel;
+  final SettingsViewModel stopwatchSettingsViewModel;
   final UsersViewModel Function(Iterable<int> activeUserIds)
       usersViewModelFactory;
   final TrainingsViewModel Function() trainingsViewModelFactory;
@@ -43,6 +44,7 @@ class MyMaterialApp extends StatefulWidget {
   const MyMaterialApp({
     super.key,
     required this.stopwatchViewModel,
+    required this.stopwatchSettingsViewModel,
     required this.usersViewModelFactory,
     required this.trainingsViewModelFactory,
     required this.historyViewModelFactory,
@@ -66,6 +68,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
     _router = createRouter(
       MainRouteDependencies(
         stopwatchViewModel: widget.stopwatchViewModel,
+        stopwatchSettingsViewModel: widget.stopwatchSettingsViewModel,
         usersViewModelFactory: widget.usersViewModelFactory,
         trainingsViewModelFactory: widget.trainingsViewModelFactory,
         historyViewModelFactory: widget.historyViewModelFactory,

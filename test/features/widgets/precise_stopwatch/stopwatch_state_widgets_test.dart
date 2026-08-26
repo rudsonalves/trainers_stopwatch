@@ -6,10 +6,11 @@ import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_event.da
 import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_state.dart';
 import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_view_model.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
+import 'package:trainers_stopwatch/domain/common/history/models/history_entry.dart';
+import 'package:trainers_stopwatch/domain/common/settings/models/settings.dart';
+import 'package:trainers_stopwatch/domain/common/stopwatch/models/stopwatch_snapshot.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
-import 'package:trainers_stopwatch/domain/common/history/models/history_entry.dart';
-import 'package:trainers_stopwatch/domain/common/stopwatch/models/stopwatch_snapshot.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/training_initialization.dart';
@@ -19,6 +20,8 @@ import 'package:trainers_stopwatch/features/widgets/common/generic_dialog.dart';
 import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/precise_stopwatch.dart';
 import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/widgets/lap_split_counters.dart';
 import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/widgets/stopwatch_display.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/models/settings_form_data.dart';
+import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 
 void main() {
@@ -186,7 +189,11 @@ void main() {
     addTearDown(viewModel.close);
 
     await tester.pumpWidget(
-      MaterialApp(home: StopWatchPage(viewModel: viewModel)),
+      MaterialApp(
+          home: StopWatchPage(
+        viewModel: viewModel,
+        settingsViewModel: MockSettingsViewModel(),
+      )),
     );
 
     expect(find.byType(StopwatDismissible), findsOneWidget);
@@ -216,7 +223,11 @@ void main() {
     await session.start();
 
     await tester.pumpWidget(
-      MaterialApp(home: StopWatchPage(viewModel: viewModel)),
+      MaterialApp(
+          home: StopWatchPage(
+        viewModel: viewModel,
+        settingsViewModel: MockSettingsViewModel(),
+      )),
     );
     await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
     await tester.pumpAndSettle();
@@ -227,6 +238,37 @@ void main() {
     expect(viewModel.sessions.single, same(session));
     expect(session.bloc.state.status, StopwatchStatus.running);
     await session.pause();
+  });
+
+  testWidgets('brightness button delegates the toggle to SettingsViewModel',
+      (tester) async {
+    final stopwatchViewModel = StopwatchPageViewModel(
+      sessionFactory: (_) => throw UnimplementedError(),
+    );
+    final settingsViewModel = MockSettingsViewModel();
+
+    when(settingsViewModel.state).thenReturn(
+      SettingsFormData.fromDomain(Settings.create().value!),
+    );
+    when(settingsViewModel.toggleBrightness()).thenAnswer((_) async {});
+
+    addTearDown(stopwatchViewModel.close);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StopWatchPage(
+          viewModel: stopwatchViewModel,
+          settingsViewModel: settingsViewModel,
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.dark_mode));
+    await tester.pump();
+
+    verify(settingsViewModel.toggleBrightness()).called(1);
   });
 }
 
@@ -296,3 +338,11 @@ class SuccessfulPersistSnapshotUseCase
 
 class MockPersistStopwatchSnapshotUseCase extends Mock
     implements PersistStopwatchSnapshotUseCase {}
+
+class MockSettingsViewModel extends Mock implements SettingsViewModel {
+  @override
+  Future<void> toggleBrightness() => super.noSuchMethod(
+        Invocation.method(#toggleBrightness, []),
+        returnValue: Future<void>.value(),
+      ) as Future<void>;
+}

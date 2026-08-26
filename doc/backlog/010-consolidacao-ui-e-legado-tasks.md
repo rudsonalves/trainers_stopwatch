@@ -26,25 +26,81 @@ as plataformas suportadas nesta versão.
 **Dependência:** backlogs 004 a 009 concluídos e decisões deste backlog
 fechadas.
 
-- [ ] Inventariar Pages, ViewModels, BLoCs, componentes, rotas e artefatos
+- [x] Inventariar Pages, ViewModels, BLoCs, componentes, rotas e artefatos
       legados ainda presentes.
-- [ ] Mapear dependências de cada Page e identificar acesso direto a repository,
+- [x] Mapear dependências de cada Page e identificar acesso direto a repository,
       serviço, plugin, singleton, manager, store ou controller de negócio.
-- [ ] Registrar os fluxos suportados por plataforma e os pontos que exigem
+- [x] Registrar os fluxos suportados por plataforma e os pontos que exigem
       validação manual.
-- [ ] Executar e registrar `flutter analyze`, testes atuais e buscas
+- [x] Executar e registrar `flutter analyze`, testes atuais e buscas
       arquiteturais antes das remoções.
-- [ ] Classificar achados em correção local deste backlog ou backlog futuro,
+- [x] Classificar achados em correção local deste backlog ou backlog futuro,
       conforme as decisões aprovadas.
 
 **Resultado esperado:** existe uma linha de base verificável, com consumidores
 e violações identificados antes de qualquer migração ou exclusão.
 
+**Entregue em 2026-08-26:** Pages, ViewModels, BLoC, componentes, rotas e
+artefatos legados foram inventariados. Android e iOS permanecem como targets
+mantidos e os fluxos dependentes de validação nativa foram registrados. A
+auditoria encontrou duas violações confirmadas em `StopWatchPage` e pontos de
+acoplamento a revisar, sem acesso direto de outras Pages a repositories ou ao
+injetor. A linha de base passou com 351 testes, analyzer sem issues e diff
+válido. Todos os achados foram classificados entre correção local e possível
+backlog futuro.
+
+**Inventário inicial:** foram identificadas sete Pages roteadas, seis
+ViewModels, um BLoC e `AppAppearanceState` como estado compartilhado. Os
+componentes estão distribuídos entre widgets locais de `ui/pages`, widgets
+comuns em `features/widgets`, `edit_training_dialog` e `precise_stopwatch`; não
+existe ainda `ui/components`. Rotas, nomes e argumentos estão concentrados em
+`core/routing`. Permanecem como candidatos a legado `LegacySettingsSink`,
+`AppSettings`, adapters e models em `common`, `StopwatchFunctions` e a
+organização paralela entre `features` e `ui`. Não foram encontrados Managers
+ou Stores. `UserController` foi registrado como controller visual de diálogo,
+não como legado confirmado.
+
+**Mapa inicial de dependências:** `AboutPage` usa somente metadados estáticos e
+tema; `HistoryPage`, `SettingsPage` e `TrainingsPage` recebem uma ViewModel;
+`UsersPage` recebe `UsersViewModel` e `StopwatchPageViewModel`;
+`PersonalTrainingPage` recebe `StopwatchSessionViewModel` e `HistoryViewModel`.
+Nenhuma dessas Pages acessa repository, injetor ou filesystem diretamente.
+`StopWatchPage` é a exceção confirmada: acessa `AppSettings.instance` e chama
+diretamente `FlutterNativeSplash.remove()`. Os dois pontos entram na tarefa 2.
+Os casos com duas fronteiras de apresentação serão revisados como possível
+acoplamento, sem classificá-los antecipadamente como violação.
+
+**Plataformas e validação manual:** o repositório mantém projetos nativos para
+Android e iOS; não existem targets Web, Linux, macOS ou Windows. Em ambas as
+plataformas devem ser validados bootstrap e splash, SQLite e persistência,
+configurações, seleção/compressão/armazenamento de imagens, sessões de
+cronômetro, navegação, dialogs, tema, contraste, locale, unidades, geração de
+PDF, compartilhamento, cancelamento, cliente de e-mail com anexo e links
+externos. Os adapters automatizados continuam cobrindo regras e falhas, mas não
+substituem a confirmação das integrações nativas.
+
+**Linha de base:** `flutter analyze` terminou sem issues, a suíte completa
+passou com 351 testes e `git diff --check` não encontrou problemas. As buscas
+confirmaram os dois acessos diretos já registrados em `StopWatchPage`, não
+encontraram Pages consultando repositories ou o injetor e mantiveram os
+artefatos de `common` como candidatos à auditoria de consumidores. Avisos de
+chaves de localização emitidos por testes de widget são informativos do
+harness atual e não representam falha da suíte ou issue do analyzer.
+
+**Classificação:** entram no backlog 010 a remoção de `AppSettings.instance` e
+da chamada de splash em `StopWatchPage`, a revisão das Pages que recebem duas
+ViewModels, a auditoria e remoção de adapters, models, singleton, helpers e
+dependências sem consumidores, a migração de `training_domain_adapter.dart`, a
+consolidação comprovada de widgets e os avisos locais dos arquivos e testes
+migrados. Atualizações amplas de Flutter/plugins, mudanças nativas, alteração
+das plataformas suportadas, redesenho visual ou mudança funcional recebem
+backlog próprio caso sejam necessárias.
+
 ### 2. Consolidar as fronteiras de Pages, ViewModels e BLoCs
 
 **Dependência:** tarefa 1.
 
-- [ ] Fazer Pages dependerem somente de ViewModels/BLoCs e componentes
+- [x] Fazer Pages dependerem somente de ViewModels/BLoCs e componentes
       adequados ao fluxo.
 - [ ] Remover `BuildContext`, widgets, focus, controllers visuais, dialogs,
       snackbars e navegação de ViewModels/BLoCs.
@@ -53,6 +109,14 @@ e violações identificados antes de qualquer migração ou exclusão.
 - [ ] Impedir acesso direto de Pages a repositories, serviços de plataforma e
       singletons de negócio.
 - [ ] Atualizar testes unitários das fronteiras afetadas.
+
+**Fronteiras das Pages:** `FlutterNativeSplash.remove()` foi transferido de
+`StopWatchPage` para o composition root. O acesso a `AppSettings.instance` foi
+substituído por uma instância explícita de `SettingsViewModel`, que expõe e
+persiste o toggle de brilho. Rotas, aplicação e testes passaram a fornecer essa
+dependência. O novo comportamento possui cobertura unitária e de widget. A
+busca final não encontrou Pages acessando diretamente repository, service,
+plugin, injetor ou singleton de negócio.
 
 **Resultado esperado:** apresentação coordena interação visual nas Pages e
 estado/operações testáveis em ViewModels/BLoCs, sem dependências invertidas.

@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 
 import '/common/adapters/legacy_settings_sink.dart';
 import '/core/result/command.dart';
@@ -49,6 +51,19 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future<void> setBrightness(Brightness value) =>
       _apply((state) => state.copyWith(brightness: value));
+
+  Future<void> toggleBrightness() {
+    final current = _state;
+    if (current == null) {
+      return saveCommand.execute(null);
+    }
+
+    final next = current.brightness == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+
+    return setBrightness(next);
+  }
 
   Future<void> setContrast(AppContrast value) =>
       _apply((state) => state.copyWith(contrast: value));

@@ -67,6 +67,7 @@ void main() {
     var trainingsCreations = 0;
     final dependencies = MainRouteDependencies(
       stopwatchViewModel: injector.get<StopwatchPageViewModel>(),
+      stopwatchSettingsViewModel: injector.get<SettingsViewModel>(),
       usersViewModelFactory: (activeUserIds) => UsersViewModel(
         useCase: injector.get<UsersUseCase>(),
         initiallySelectedUserIds: activeUserIds,

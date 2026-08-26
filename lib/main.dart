@@ -59,6 +59,7 @@ void main() async {
       fallbackLocale: const Locale('en', 'US'),
       child: MyMaterialApp(
         stopwatchViewModel: injector.get<StopwatchPageViewModel>(),
+        stopwatchSettingsViewModel: injector.get<SettingsViewModel>(),
         usersViewModelFactory: (activeUserIds) => UsersViewModel(
           useCase: injector.get<UsersUseCase>(),
           initiallySelectedUserIds: activeUserIds,
@@ -79,4 +80,6 @@ void main() async {
       ),
     ),
   );
+
+  FlutterNativeSplash.remove();
 }

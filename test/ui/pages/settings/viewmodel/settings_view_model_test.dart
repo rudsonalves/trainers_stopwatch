@@ -114,6 +114,24 @@ void main() {
     expect(legacySettings.synchronized, [repository.stored]);
   });
 
+  test('toggles brightness and persists each new value', () async {
+    expect(viewModel.state!.brightness, Brightness.dark);
+
+    await viewModel.toggleBrightness();
+
+    expect(viewModel.state!.brightness, Brightness.light);
+    expect(appearanceState.brightness, Brightness.light);
+    expect(repository.stored!.brightness, BrightnessPreference.light);
+
+    await viewModel.toggleBrightness();
+
+    expect(viewModel.state!.brightness, Brightness.dark);
+    expect(appearanceState.brightness, Brightness.dark);
+    expect(repository.stored!.brightness, BrightnessPreference.dark);
+    expect(repository.updates, hasLength(2));
+    expect(legacySettings.synchronized, repository.updates);
+  });
+
   test('persists contrast and locale and synchronizes both consumers',
       () async {
     await viewModel.setContrast(AppContrast.medium);

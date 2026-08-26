@@ -4,14 +4,13 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
 import '/application/stopwatch/session/stopwatch_session_id.dart';
 import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '/common/singletons/app_settings.dart';
 import '/core/routing/route_arguments.dart';
 import '/core/routing/routes.dart';
+import '/ui/pages/settings/viewmodel/settings_view_model.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import '../widgets/common/generic_dialog.dart';
 import 'widgets/message_row.dart';
@@ -22,24 +21,22 @@ const double stopWatchHeight = 134;
 
 class StopWatchPage extends StatefulWidget {
   final StopwatchPageViewModel viewModel;
+  final SettingsViewModel settingsViewModel;
 
-  const StopWatchPage({super.key, required this.viewModel});
+  const StopWatchPage({
+    super.key,
+    required this.viewModel,
+    required this.settingsViewModel,
+  });
 
   @override
   State<StopWatchPage> createState() => _StopWatchPageState();
 }
 
 class _StopWatchPageState extends State<StopWatchPage> {
-  final app = AppSettings.instance;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   StopwatchPageViewModel get viewModel => widget.viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    FlutterNativeSplash.remove();
-  }
 
   Future<void> _addStopwatches() =>
       context.pushNamed(MainRoutes.users.routeName);
@@ -130,14 +127,22 @@ class _StopWatchPageState extends State<StopWatchPage> {
         elevation: 4,
         title: Text('SPAppBarTitle'.tr()),
         actions: [
-          IconButton(
-            icon: ValueListenableBuilder(
-              valueListenable: app.brightnessMode,
-              builder: (context, value, _) => Icon(
-                value == Brightness.dark ? Icons.dark_mode : Icons.light_mode,
-              ),
-            ),
-            onPressed: app.toggleBrightnessMode,
+          ListenableBuilder(
+            listenable: widget.settingsViewModel,
+            builder: (context, _) {
+              final brightness = widget.settingsViewModel.state?.brightness;
+
+              return IconButton(
+                icon: Icon(
+                  brightness == Brightness.dark
+                      ? Icons.dark_mode
+                      : Icons.light_mode,
+                ),
+                onPressed: brightness == null
+                    ? null
+                    : widget.settingsViewModel.toggleBrightness,
+              );
+            },
           ),
         ],
         leading: IconButton(

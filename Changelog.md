@@ -1,5 +1,58 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-01
+
+This change establishes the architectural baseline for backlog 010 and begins consolidating presentation boundaries. The documented audit now identifies legacy artifacts, Page dependencies, supported platforms, manual validation requirements, and the classification of follow-up work.
+
+The stopwatch screen no longer accesses the settings singleton or native splash plugin directly. Brightness control is provided through an injected `SettingsViewModel`, while splash removal is handled by the application composition root.
+
+1. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Marked the initial inventory, dependency mapping, platform validation, baseline verification, and finding-classification tasks as completed.
+   * Documented the current Pages, ViewModels, BLoC, shared state, components, routing structure, and potential legacy artifacts.
+   * Recorded Page dependency boundaries and identified the direct settings singleton and native splash accesses in `StopWatchPage`.
+   * Defined the Android and iOS flows requiring manual validation.
+   * Recorded the successful baseline of 351 tests, an analyzer run without issues, and a clean diff check.
+   * Classified findings between backlog 010 work and potential future backlogs.
+   * Marked the Page dependency-boundary task as completed and documented the migration to injected settings and composition-root splash handling.
+
+2. **Stopwatch Page presentation boundary**
+
+   * Updated `lib/features/stopwatch_page/stopwatch_page.dart` to require an explicit `SettingsViewModel`.
+   * Removed direct access to `AppSettings.instance` and the native splash plugin.
+   * Replaced singleton-based brightness observation and mutation with `SettingsViewModel` state listening and `toggleBrightness`.
+   * Disabled the brightness action until settings state is available.
+
+3. **Routing and application composition**
+
+   * Extended `MainRouteDependencies` in `lib/core/routing/routes/main_routes.dart` with the settings ViewModel used by the stopwatch route.
+   * Updated `lib/ui/app/my_material_app.dart` to accept and propagate the new dependency into router creation.
+   * Updated `lib/main.dart` to resolve `SettingsViewModel` through dependency injection and remove the native splash after application startup.
+   * Updated routing tests to provide the added dependency.
+
+4. **Settings and appearance models**
+
+   * Added `toggleBrightness` to `lib/ui/pages/settings/viewmodel/settings_view_model.dart`, alternating between light and dark modes through the existing persistence flow.
+   * Preserved synchronization with appearance state and the legacy settings consumer by delegating to `setBrightness`.
+   * Replaced Material package imports with narrower `dart:ui` and Flutter foundation imports in the settings ViewModel, settings form data, and application appearance state.
+
+5. **Stopwatch widget tests**
+
+   * Updated `test/features/widgets/precise_stopwatch/stopwatch_state_widgets_test.dart` to inject a mocked `SettingsViewModel` into every `StopWatchPage`.
+   * Added widget coverage verifying that the brightness button renders from settings state and delegates user interaction to `toggleBrightness`.
+   * Added the supporting settings imports and mock implementation.
+
+6. **Settings ViewModel tests**
+
+   * Added coverage in `test/ui/pages/settings/viewmodel/settings_view_model_test.dart` for toggling brightness in both directions.
+   * Verified updates to ViewModel state, shared appearance state, repository persistence, and legacy settings synchronization.
+
+### Conclusion
+
+The stopwatch Page now depends on an explicit presentation-layer settings boundary instead of a global singleton, and native splash handling has moved to application composition.
+
+The accompanying documentation and tests establish a verified architectural baseline and protect the new brightness-toggle integration across routing, UI behavior, persistence, and shared appearance state.
+
 ## 2026/08/26 - bkl010/tasks
 
 This change formalizes the execution plan for consolidating the presentation layer and removing legacy architecture. It establishes the approved scope, sequencing, dependencies, expected outcomes, and completion criteria for backlog 010.

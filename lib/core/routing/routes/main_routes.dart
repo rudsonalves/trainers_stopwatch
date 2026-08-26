@@ -19,6 +19,7 @@ import '../routes.dart';
 
 class MainRouteDependencies {
   final StopwatchPageViewModel stopwatchViewModel;
+  final SettingsViewModel stopwatchSettingsViewModel;
   final UsersViewModel Function(Iterable<int> activeUserIds)
       usersViewModelFactory;
   final TrainingsViewModel Function() trainingsViewModelFactory;
@@ -27,6 +28,7 @@ class MainRouteDependencies {
 
   const MainRouteDependencies({
     required this.stopwatchViewModel,
+    required this.stopwatchSettingsViewModel,
     required this.usersViewModelFactory,
     required this.trainingsViewModelFactory,
     required this.historyViewModelFactory,
@@ -40,6 +42,7 @@ List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [
         name: MainRoutes.stopwatch.routeName,
         builder: (context, state) => StopWatchPage(
           viewModel: dependencies.stopwatchViewModel,
+          settingsViewModel: dependencies.stopwatchSettingsViewModel,
         ),
       ),
       GoRoute(
