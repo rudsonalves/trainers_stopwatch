@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026/08/26 - bkl010/tasks
+
+This change formalizes the execution plan for consolidating the presentation layer and removing legacy architecture. It establishes the approved scope, sequencing, dependencies, expected outcomes, and completion criteria for backlog 010.
+
+The backlog documentation now resolves the previously open decisions around platform support, shared UI components, and deprecation handling. It also records the automated validation work completed for backlog 009 while retaining the remaining manual and closure activities.
+
+1. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Marked formatting, focused tests, the complete Flutter test suite, static analysis, and diff validation as completed.
+   * Recorded completion of the architectural search confirming that legacy dependencies and direct plugin or repository access do not remain outside the defined boundaries.
+   * Left manual platform validation, backlog result documentation, and final archival pending.
+
+2. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Added the complete task plan for UI consolidation and legacy removal.
+   * Defined the approved architectural boundaries between Pages, ViewModels, and BLoCs, keeping navigation and visual interaction responsibilities in Pages.
+   * Established tasks for auditing the presentation baseline, consolidating presentation dependencies, centralizing navigation and route arguments, and making screen states explicit.
+   * Defined evidence-based rules for moving reusable widgets into `ui/components`, standardizing theme usage, and preserving accessibility without introducing a visual redesign.
+   * Added scoped handling for obsolete imports, deprecated APIs, analyzer findings, and larger issues that require separate backlogs.
+   * Planned the removal of unused managers, stores, controllers, singletons, adapters, models, helpers, tests, and dependencies after consumer verification.
+   * Included migration or documented assessment of the remaining `training_domain_adapter.dart` consumer in `StopwatchFunctions.speedCalc`.
+   * Added documentation, automated testing, static analysis, architectural searches, manual platform validation, and backlog archival requirements.
+   * Defined an explicit completion rule covering presentation boundaries, navigation, UI states, legacy removal, documentation, and validation evidence.
+
+3. **`doc/backlog/010-consolidacao-ui-e-legado.md`**
+
+   * Replaced the open questions with approved decisions that preserve the currently supported platforms.
+   * Established that widgets qualify for `ui/components` only when concretely reused by at least two features.
+   * Scoped backlog 010 to local deprecation fixes, obsolete imports, simple API substitutions, and analyzer findings in migrated files.
+   * Directed broad behavioral changes, significant dependency upgrades, native platform changes, and architectural redesigns into separate backlogs.
+   * Updated the decisions and tracking status to reflect that the scope is resolved and the execution tasks are defined.
+
+### Conclusion
+
+Backlog 010 now has an actionable and bounded plan for completing MVVM presentation adoption, standardizing UI responsibilities, and removing unused legacy architecture. Its documentation aligns the approved decisions with explicit implementation, validation, and closure criteria.
+
+Backlog 009 also reflects the completed automated quality checks while clearly preserving the outstanding manual validation and final documentation work.
+
 ## 2026/08/26 - bkl009/task-09
 
 This change completes the legacy report cleanup and expands widget-level verification for the training report workflow. It also refines the selectable training presentation so its Material styling and interaction effects follow the rounded card shape.

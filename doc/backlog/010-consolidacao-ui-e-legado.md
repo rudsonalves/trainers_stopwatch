@@ -32,12 +32,21 @@ Depende da conclusão dos backlogs 004 a 009.
 - novas funcionalidades de produto;
 - abstrações de componentes sem reutilização concreta.
 
-## Questões em aberto
+## Questões resolvidas
 
-1. Quais plataformas continuarão oficialmente suportadas?
-2. Quais componentes atuais realmente justificam compartilhamento?
-3. Quais avisos/depreciações devem ser resolvidos junto da migração e quais
-   exigem backlog próprio?
+1. **Quais plataformas continuarão oficialmente suportadas?** Permanecem as
+   plataformas já suportadas nesta versão, sem ampliação ou redução de escopo.
+2. **Quais componentes atuais realmente justificam compartilhamento?** Um
+   componente somente deve ser movido para `ui/components` quando houver
+   reutilização concreta em duas ou mais features. Sem reutilização comprovada,
+   ele permanece próximo da feature consumidora.
+3. **Quais avisos/depreciações devem ser resolvidos junto da migração e quais
+   exigem backlog próprio?** O backlog 010 corrige avisos dos arquivos migrados,
+   imports obsoletos, substituições simples de API e problemas apontados pelo
+   analyzer. Mudanças amplas de comportamento, atualizações relevantes de
+   dependências, alterações nativas ou redesenho fora da consolidação recebem
+   backlog próprio. Mensagens informativas de dependências externas não ampliam
+   este escopo.
 
 ## Critérios de aceite
 
@@ -53,10 +62,14 @@ Depende da conclusão dos backlogs 004 a 009.
 
 ## Decisões
 
-Nenhuma decisão adicional aprovada.
+- manter as plataformas atualmente suportadas;
+- promover widgets para `ui/components` somente com reutilização concreta em
+  duas ou mais features;
+- corrigir depreciações locais e simples no backlog 010 e separar mudanças
+  amplas em backlog próprio.
 
 ## Acompanhamento
 
-**Estado:** Planejado — encerramento da reestruturação arquitetural.
+**Estado:** Planejado — questões fechadas e tarefas definidas para execução.
 
 **Próximo backlog:** a definir conforme prioridades funcionais do produto.

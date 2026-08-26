@@ -328,15 +328,15 @@ bloqueio durante execução e feedback de erro, sem plugins ou filesystem reais.
 
 **Dependência:** tarefas 1 a 10.
 
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar os testes focados de conteúdo, UseCases, serviços, ViewModel e
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar os testes focados de conteúdo, UseCases, serviços, ViewModel e
       widgets migrados.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novas issues.
-- [ ] Executar `git diff --check`.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novas issues.
+- [x] Executar `git diff --check`.
 - [ ] Validar manualmente PDF, e-mail e compartilhamento em uma plataforma com
       os plugins disponíveis, incluindo falha/cancelamento e limpeza.
-- [ ] Confirmar por busca que não restam dependências legadas ou acessos a
+- [x] Confirmar por busca que não restam dependências legadas ou acessos a
       plugin/repository fora das fronteiras definidas.
 - [ ] Atualizar o acompanhamento do backlog 009 com resultados e limitações e
       movê-lo para `closed/` somente após cumprir os critérios de aceite.

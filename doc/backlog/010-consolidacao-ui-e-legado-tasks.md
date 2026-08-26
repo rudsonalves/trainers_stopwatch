@@ -1,0 +1,165 @@
+# 010 — Tarefas de consolidação da UI e remoção do legado
+
+## Objetivo
+
+Concluir a adoção de MVVM na apresentação, uniformizar páginas e componentes e
+remover a arquitetura antiga sem alterar o comportamento aprovado nem ampliar
+as plataformas suportadas nesta versão.
+
+## Decisões já tomadas
+
+- permanecem oficialmente suportadas as plataformas já atendidas pela versão;
+- widgets somente migram para `ui/components` quando forem usados concretamente
+  por duas ou mais features;
+- avisos, imports obsoletos e depreciações com substituição local e simples
+  entram neste backlog;
+- mudanças amplas de comportamento, dependências ou plataforma nativa recebem
+  backlog próprio;
+- navegação, dialogs, snackbars, focus e controllers visuais permanecem nas
+  Pages;
+- não haverá redesenho visual completo nem abstração sem reutilização real.
+
+## Ordem de execução
+
+### 1. Auditar a apresentação e caracterizar a linha de base
+
+**Dependência:** backlogs 004 a 009 concluídos e decisões deste backlog
+fechadas.
+
+- [ ] Inventariar Pages, ViewModels, BLoCs, componentes, rotas e artefatos
+      legados ainda presentes.
+- [ ] Mapear dependências de cada Page e identificar acesso direto a repository,
+      serviço, plugin, singleton, manager, store ou controller de negócio.
+- [ ] Registrar os fluxos suportados por plataforma e os pontos que exigem
+      validação manual.
+- [ ] Executar e registrar `flutter analyze`, testes atuais e buscas
+      arquiteturais antes das remoções.
+- [ ] Classificar achados em correção local deste backlog ou backlog futuro,
+      conforme as decisões aprovadas.
+
+**Resultado esperado:** existe uma linha de base verificável, com consumidores
+e violações identificados antes de qualquer migração ou exclusão.
+
+### 2. Consolidar as fronteiras de Pages, ViewModels e BLoCs
+
+**Dependência:** tarefa 1.
+
+- [ ] Fazer Pages dependerem somente de ViewModels/BLoCs e componentes
+      adequados ao fluxo.
+- [ ] Remover `BuildContext`, widgets, focus, controllers visuais, dialogs,
+      snackbars e navegação de ViewModels/BLoCs.
+- [ ] Encapsular intenções assíncronas em Commands ou estados equivalentes,
+      preservando erros apresentáveis.
+- [ ] Impedir acesso direto de Pages a repositories, serviços de plataforma e
+      singletons de negócio.
+- [ ] Atualizar testes unitários das fronteiras afetadas.
+
+**Resultado esperado:** apresentação coordena interação visual nas Pages e
+estado/operações testáveis em ViewModels/BLoCs, sem dependências invertidas.
+
+### 3. Revisar e uniformizar navegação e argumentos
+
+**Dependência:** tarefa 2.
+
+- [ ] Confirmar que nomes e paths permanecem centralizados no `go_router`.
+- [ ] Substituir argumentos soltos por tipos estáveis quando houver dados
+      compostos entre rotas.
+- [ ] Remover rotas, argumentos, factories e dependências de navegação sem
+      consumidores.
+- [ ] Manter navegação exclusivamente na camada de apresentação.
+- [ ] Cobrir construção, recriação e argumentos relevantes em testes de rota.
+
+**Resultado esperado:** rotas e argumentos possuem uma fonte central e não
+transportam dependências legadas ou detalhes de plataforma.
+
+### 4. Tornar explícitos os estados e as interações de tela
+
+**Dependências:** tarefas 2 e 3.
+
+- [ ] Revisar loading, vazio, sucesso e erro nos fluxos relevantes.
+- [ ] Preservar dialogs, snackbars, menus, seleção, focus e controllers nas
+      Pages responsáveis.
+- [ ] Bloquear disparos incompatíveis enquanto operações estiverem em execução.
+- [ ] Garantir feedback visível para falhas esperadas sem exceções cruas.
+- [ ] Adicionar ou atualizar testes de widget para os estados afetados.
+
+**Resultado esperado:** cada fluxo importante apresenta estados previsíveis e
+testáveis sem transferir responsabilidades visuais para ViewModels/BLoCs.
+
+### 5. Consolidar componentes e tema sem redesenho
+
+**Dependência:** tarefa 1; pode acompanhar as tarefas 2 a 4.
+
+- [ ] Mapear widgets com uso real em duas ou mais features.
+- [ ] Mover somente esses widgets para `ui/components`, preservando os demais
+      junto das features consumidoras.
+- [ ] Remover componentes genéricos sem consumidores e abstrações duplicadas.
+- [ ] Uniformizar usos de tema e estilos nos arquivos migrados sem redesenhar a
+      interface.
+- [ ] Preservar acessibilidade, semântica e comportamento dos componentes
+      alterados com testes proporcionais ao risco.
+
+**Resultado esperado:** compartilhamento de UI reflete reutilização comprovada,
+sem criar uma biblioteca genérica prematura ou alterar o desenho do produto.
+
+### 6. Resolver avisos e depreciações dentro do escopo aprovado
+
+**Dependências:** tarefas 2 a 5.
+
+- [ ] Corrigir imports obsoletos, APIs depreciadas e avisos diretamente ligados
+      aos arquivos migrados.
+- [ ] Aplicar substituições locais que não alterem comportamento observável.
+- [ ] Não ampliar o escopo por mensagens informativas de dependências externas.
+- [ ] Registrar em backlog próprio qualquer correção que exija atualização
+      ampla, mudança nativa ou redesenho arquitetural.
+- [ ] Confirmar que `flutter analyze` não introduz erros ou avisos novos.
+
+**Resultado esperado:** o código migrado usa APIs atuais quando a troca é segura,
+e problemas maiores permanecem visíveis sem desviar o backlog.
+
+### 7. Remover legado e dependências sem consumidores
+
+**Dependências:** tarefas 2 a 6.
+
+- [ ] Remover managers, stores, controllers, singletons e adapters temporários
+      somente após confirmar ausência de consumidores.
+- [ ] Migrar o consumidor remanescente de `training_domain_adapter.dart` em
+      `StopwatchFunctions.speedCalc` ou documentar impedimento comprovado.
+- [ ] Remover models, helpers e testes de caracterização que tenham sido
+      integralmente substituídos.
+- [ ] Auditar o `pubspec` e remover apenas dependências comprovadamente sem uso
+      em código, testes, geração, assets ou plataformas nativas.
+- [ ] Confirmar por busca que os fluxos migrados não conservam imports ou
+      factories legados.
+
+**Resultado esperado:** não existe arquitetura paralela sem consumidores e as
+dependências declaradas correspondem ao produto efetivamente entregue.
+
+### 8. Atualizar documentação e validar a entrega
+
+**Dependências:** tarefas 1 a 7.
+
+- [ ] Atualizar README, documentação arquitetural e acompanhamento dos
+      backlogs concluídos para refletir a implementação real.
+- [ ] Executar `dart format` nos arquivos alterados.
+- [ ] Executar testes focados de ViewModels/BLoCs, rotas, estados e widgets.
+- [ ] Executar a suíte completa com `flutter test`.
+- [ ] Executar `flutter analyze` sem novos erros ou avisos.
+- [ ] Executar `git diff --check` e buscas finais de fronteiras e legado.
+- [ ] Validar manualmente os fluxos suportados em cada plataforma mantida.
+- [ ] Registrar resultados, limitações e eventuais backlogs derivados.
+- [ ] Mover o backlog 010 e suas tasks para `closed/` somente após cumprir todos
+      os critérios de aceite.
+
+**Resultado esperado:** a arquitetura documentada corresponde ao código, os
+fluxos suportados permanecem funcionais e o encerramento possui evidências de
+testes, análise, buscas e validação manual.
+
+## Regra de conclusão
+
+O backlog somente pode ser encerrado quando Pages dependerem das fronteiras de
+apresentação aprovadas; ViewModels/BLoCs estiverem livres de contexto e estado
+visual; navegação e argumentos permanecerem centralizados; estados importantes
+forem explícitos; legado e dependências sem consumidores forem removidos; a
+documentação refletir a entrega; e testes, análise, diff e validações manuais
+terminarem sem novos problemas.
