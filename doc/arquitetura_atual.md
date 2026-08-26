@@ -1,407 +1,151 @@
 # Arquitetura atual do Trainer's Stopwatch
 
-> Levantamento do código existente em 13 de agosto de 2026. Este documento
-> descreve a aplicação como ela está hoje; não propõe ainda uma arquitetura de
-> destino.
+> Estado consolidado em 26 de agosto de 2026, após os backlogs 001 a 010.
 
-A arquitetura de destino e a estratégia incremental estão descritas em
-[`plano_reestruturacao_mvvm.md`](plano_reestruturacao_mvvm.md).
-
-## Estado da transição arquitetural
-
-Os backlogs 001 e as tarefas 1 a 10 do backlog 002 introduziram uma fundação
-nova sem remover ainda as camadas legadas.
-
-### Fundação entregue
-
-- `core/result`: `Result`, `AppError`, `Unit` e Commands;
-- `core/config`: composition root com `AutoInjector`;
-- `core/bootstrap`: inicialização tipada da aplicação;
-- logging transversal de desenvolvimento;
-- erros distintos para banco, migration, backup, restauração e storage.
-
-### Domínio entregue
-
-```text
-domain/common/
-├── user/models/User
-├── settings/models/Settings
-├── history/models/HistoryEntry
-├── stopwatch/models/*Snapshot
-└── training/
-    ├── models/Training
-    ├── units/DistanceUnit, SpeedUnit
-    ├── values/Distance, Speed
-    ├── events/TrainingEvent
-    └── services/SpeedCalculator, TrainingEventGenerator
-```
-
-O domínio usa Dart puro e `core/result`. Ele não conhece Flutter, SQLite,
-localização, widgets, repositories ou plugins. Cor permanece estado visual da
-sessão. A versão do schema permanece metadado da persistência.
-
-### Convivência temporária
-
-Adapters em `lib/common/adapters` conectam os models antigos aos tipos novos.
-`StopwatchFunctions.speedCalc` já delega para `SpeedCalculator`, e
-`TrainingReport` já delega para `TrainingEventGenerator`. Esses adapters serão
-removidos conforme dados, configurações e UI forem migrados nos backlogs 003 a
-005.
-
-## 1. Visão geral
+## Visão geral
 
 O Trainer's Stopwatch é uma aplicação Flutter local-first para controlar
-cronômetros de vários atletas, registrar parciais e voltas, manter o histórico
-dos treinos e compartilhar relatórios.
-
-A organização atual é híbrida:
-
-- a apresentação é agrupada principalmente por funcionalidade em `features`;
-- o acesso a dados segue uma separação em camadas;
-- a máquina de estados do cronômetro usa BLoC;
-- as demais telas usam controllers com `ChangeNotifier` ou estado local;
-- configurações, banco e controle da tela principal usam singletons;
-- integrações com arquivos e serviços do dispositivo são chamadas diretamente.
-
-Portanto, o projeto não implementa integralmente Clean Architecture, MVC, MVVM
-ou BLoC. Ele reúne elementos desses estilos em uma arquitetura própria.
-
-## 2. Mapa de alto nível
+cronômetros de vários atletas, registrar parciais e voltas, consultar treinos e
+compartilhar relatórios. A aplicação usa MVVM na apresentação e preserva BLoC
+exclusivamente no núcleo temporal do cronômetro.
 
 ```text
-main.dart
-  |
-  +-- DatabaseProvider ------ DatabaseManager / migrações / backup
-  |
-  +-- EasyLocalization
-  |
-  +-- MyMaterialApp --------- tema, idioma e rotas
-          |
-          +-- Pages / Widgets
-                    |
-                    +-- ViewModels / StopwatchPageController
-                    |         |
-                    |         +-- Managers
-                    |                   |
-                    |                   +-- Repositories
-                    |                             |
-                    |                             +-- Stores
-                    |                                      |
-                    |                                      +-- SQLite
-                    |
-                    +-- PreciseStopwatchController
-                              |
-                              +-- StopwatchBloc
-                              +-- TrainingManager
-                              +-- HistoryManager
+UI (Pages e Components)
+        |
+        v
+ViewModels / StopwatchBloc
+        |
+        v
+UseCases e domínio
+        |
+        v
+Repositories
+        |
+        v
+Services (SQLite e plugins)
 ```
 
-O fluxo acima é predominante, mas não obrigatório. Há controllers que acessam
-singletons diretamente, funções que instanciam repositories e widgets mantidos
-dentro de um controller global.
+As dependências são montadas no composition root em `lib/core/config`. Objetos
+de aplicação recebem colaboradores por construtor; Pages não consultam o
+injetor, repositories, serviços de plataforma ou singletons.
 
-## 3. Inicialização da aplicação
-
-O ponto de entrada é `lib/main.dart`:
-
-1. inicializa os bindings do Flutter;
-2. mantém a splash screen ativa;
-3. inicializa `easy_localization`;
-4. abre e prepara o banco por meio de `DatabaseProvider`;
-5. carrega configurações globais em `AppSettings`;
-6. executa migrações, com backup anterior e tentativa de restauração em caso de
-   erro;
-7. monta `MyMaterialApp` dentro de `EasyLocalization`.
-
-`MyMaterialApp` observa brilho e contraste em `AppAppearanceState`, cria os
-temas e entrega a navegação ao `GoRouter`. A rota inicial é `/stopwatch`.
-
-## 4. Apresentação e navegação
-
-A apresentação migrada fica em `lib/ui/pages/<feature>`, com a construção da
-página na raiz da feature e subdiretórios `viewmodel`, `widgets` e outros
-agrupamentos locais necessários. Configurações, usuários, treinos e históricos
-já seguem esse formato. Features ainda não migradas permanecem temporariamente em
-`lib/features`; componentes compartilhados legados continuam em
-`lib/features/widgets/common` até a consolidação da UI.
-
-| Funcionalidade | Rota | Responsabilidade |
-| --- | --- | --- |
-| cronômetros | `/stopwatch` | selecionar atletas e controlar vários cronômetros |
-| usuários | `/users` | cadastrar, editar, excluir e selecionar atletas |
-| treino ativo | `/training` | exibir o histórico ligado a um cronômetro |
-| treinos | `/trainings` | consultar, selecionar e compartilhar treinos salvos |
-| histórico | `/history` | detalhar e editar registros de um treino |
-| configurações | `/settings` | alterar unidades, distâncias, tema e idioma |
-| sobre | `/about` | apresentar informações e links externos |
-
-O sistema de ajuda baseado em `onboarding_overlay` e os wrappers de rota
-`*_overlay.dart` foram removidos. O `go_router` constrói as Pages diretamente e
-centraliza paths, nomes, observer e transições
-em `lib/core/routing`. As Pages navegam por nome e passam objetos em classes de
-argumentos tipadas; ViewModels não conhecem navegação. O `Navigator` direto
-permanece apenas para fechar rotas modais, como dialogs e drawer.
-
-### Estado da interface
-
-Não existe um mecanismo único de estado para toda a apresentação:
-
-- `StatefulWidget` controla estado estritamente visual;
-- `ChangeNotifier` representa os ViewModels de configurações, usuários, treinos
-  e históricos;
-- `ValueNotifier` atualiza contadores, mensagens, configurações e ações pontuais;
-- `StopwatchBloc` controla exclusivamente o ciclo do cronômetro;
-- alguns controllers são instâncias locais, enquanto outros são singletons.
-
-As classes de estado dos controllers de página usam estados simples como
-`Initial`, `Loading`, `Success` e `Error`. Erros são normalmente registrados no
-log e convertidos para o estado `Error`.
-
-## 5. Núcleo do cronômetro
-
-O cronômetro é dividido em três partes:
-
-### `PreciseStopwatch`
-
-Widget que apresenta atleta, tempo, contadores e botões. Cada atleta selecionado
-recebe uma instância desse widget e de `PreciseStopwatchController`.
-
-### `PreciseStopwatchController`
-
-Coordena a regra de aplicação do treino:
-
-- envia eventos ao BLoC;
-- cria e persiste o treino no primeiro início;
-- registra o histórico inicial e as parciais;
-- calcula velocidades;
-- produz mensagens de início, parcial, volta e fim;
-- comunica essas mensagens ao controller global da página principal.
-
-### `StopwatchBloc`
-
-É a máquina de estados temporal. Recebe eventos de iniciar, pausar, reiniciar,
-registrar volta, registrar parcial e encerrar. Seus estados são inicial,
-executando, pausado, reiniciado e erro.
-
-`DateTime.now()` é a fonte de tempo. Um `Timer.periodic` atualiza a duração
-exibida, mas a duração efetiva é calculada pela diferença entre instantes. Ao
-retomar, os marcos temporais são deslocados pelo período pausado.
-
-O BLoC publica o estado pelo próprio `flutter_bloc`, mas expõe tempo e contadores
-por `ValueNotifier`. Assim, esta parte também é híbrida, não um BLoC puro.
-
-## 6. Múltiplos cronômetros
-
-`StopwatchPageController` é um singleton que mantém:
-
-- usuários selecionados;
-- novos usuários aguardando inclusão;
-- uma lista de widgets `PreciseStopwatch` já construídos;
-- quantidade de cronômetros em um `ValueNotifier`;
-- última mensagem de histórico em outro `ValueNotifier`.
-
-Esse controller funciona como estado de sessão da tela principal e também como
-canal de comunicação entre cronômetros e o painel de mensagens. O fato de manter
-widgets no controller mistura estado de apresentação com composição de UI.
-
-## 7. Camada de aplicação: controllers e managers
-
-Os controllers recebem ações da interface e coordenam operações assíncronas.
-Eles também transformam resultados em estados observáveis pela UI.
-
-Os managers encapsulam operações sobre coleções de modelos:
-
-- `UserManager`: usuários;
-- `TrainingManager`: treinos de um usuário;
-- `HistoryManager`: históricos de um treino;
-- `SettingsManager`: configurações.
-
-Em geral, um manager consulta o repository, mantém uma lista em memória e a
-atualiza após inserir, alterar ou excluir. `UserManager` é singleton;
-`TrainingManager` e `HistoryManager` são normalmente criados por fluxo.
-
-Não há uma camada explícita de casos de uso. Na prática, controllers e managers
-dividem essa responsabilidade.
-
-## 8. Acesso a dados
-
-O acesso aos dados segue quatro níveis:
+## Organização do código
 
 ```text
-Controller
-   -> Manager                 coordenação e cache em memória
-      -> Repository           conversão Model <-> Map
-         -> Store             comandos SQLite e tratamento de erro
-            -> DatabaseManager abertura e ciclo de vida do banco
+lib/
+├── application/         sessões e coordenação dos cronômetros
+├── core/                bootstrap, configuração, resultado, Commands e rotas
+├── data/                repositories e serviços concretos
+├── domain/              entidades, valores, regras, contratos e UseCases
+├── ui/
+│   ├── app/             MaterialApp e estado global de aparência
+│   ├── components/      componentes reutilizados por múltiplos fluxos
+│   └── pages/           Pages, ViewModels e widgets locais
+└── main.dart            inicialização e composition root
 ```
 
-### Repositories
+O diretório legado `lib/features` foi removido. Componentes só ficam em
+`ui/components` quando possuem reutilização concreta; widgets específicos
+permanecem próximos da Page consumidora.
 
-Há um contrato abstrato e uma implementação concreta para usuário, treino,
-histórico e configurações. As implementações convertem os mapas retornados pelo
-store em models e atualizam identificadores depois de inserções.
+## Inicialização e configurações
 
-Apesar das interfaces, managers normalmente instanciam repositories concretos
-internamente. A abstração existe, mas não funciona como ponto de injeção de
-dependência no desenho atual.
+`main.dart` inicializa Flutter e localização, preserva a splash durante o
+bootstrap, configura as dependências e monta `MyMaterialApp`. O
+`DatabaseProvider` abre o SQLite, carrega as configurações pelo repository e
+sincroniza `AppAppearanceState`. Falhas de bootstrap são convertidas em
+`AppError` e apresentadas por uma aplicação mínima de erro.
 
-### Stores
+Não existe mais `AppSettings` nem outro singleton de negócio. Brilho, contraste
+e locale são observados por `AppAppearanceState`; edição e persistência ficam em
+`SettingsViewModel` e `SettingsRepository`.
 
-Cada store executa CRUD diretamente com `sqflite`, obtém o banco pelo singleton
-`DatabaseManager` e converte exceções em novas exceções com contexto de log.
+## Apresentação
 
-### Banco e migrações
+As rotas constroem as Pages e injetam suas dependências. Cada Page mantém apenas
+responsabilidades visuais, como navegação, dialogs, menus, focus e controllers
+de campos. Operações e estado não visual ficam em ViewModels ou no BLoC.
 
-O banco `stopwatch.db` fica no diretório de documentos da aplicação. O SQLite é
-aberto com chaves estrangeiras habilitadas.
-
-Existem duas noções de versão:
-
-- `dbVersion = 1`, usada por `openDatabase`;
-- versão lógica de esquema `1006`, armazenada nas configurações e usada pelos
-  scripts de migração.
-
-Antes da migração, `DatabaseProvider` solicita um backup. `DatabaseMigration`
-desativa chaves estrangeiras, aplica batches incrementais, atualiza a versão nas
-configurações e reativa as chaves.
-
-## 9. Modelo de dados
-
-```text
-User 1 -------- N Training 1 -------- N History
-
-Settings (registro global)
-```
-
-| Entidade | Campos relevantes |
+| Fluxo | Estado de apresentação |
 | --- | --- |
-| `SettingsModel` | distâncias, unidade, versão do esquema, brilho, contraste, idioma, atualização e tutorial |
-| `UserModel` | nome, e-mail, telefone e caminho da foto |
-| `TrainingModel` | usuário, data, comentários, distâncias, limite de voltas, unidades e cor |
-| `HistoryModel` | treino, duração e comentários |
-| `MessagesModel` | representação de uma mensagem exibida; não é uma tabela |
+| cronômetros | `StopwatchPageViewModel` e sessões individuais |
+| usuários | `UsersViewModel` |
+| treino ativo | `HistoryViewModel` e sessão do cronômetro |
+| treinos e relatórios | `TrainingsViewModel` |
+| histórico | `HistoryViewModel` |
+| configurações | `SettingsViewModel` e `AppAppearanceState` |
 
-Usuários possuem treinos e treinos possuem históricos, ambos com exclusão em
-cascata. Voltas não possuem tabela própria: são derivadas da sequência de
-parciais e da relação entre comprimento da volta e comprimento da parcial.
+Intenções assíncronas são expostas por `Command` ou por estado equivalente da
+sessão. Loading, vazio e falha são explícitos nos fluxos relevantes, e controles
+incompatíveis ficam bloqueados durante operações pendentes.
 
-A cor existe em `TrainingModel`, mas não é incluída em `toMap` e não possui coluna
-no esquema. Portanto, ela é estado de execução e não é restaurada do banco.
+## Navegação
 
-## 10. Configuração global
+`go_router` centraliza nomes e paths em `lib/core/routing/routes.dart`. Pages
+navegam por nomes centralizados; ViewModels não recebem `BuildContext`. Dados de
+rota são transportados por classes de argumentos tipadas. A rota de treino
+individual recebe um identificador estável de sessão e resolve a instância no
+composition root, sem transportar ViewModels como argumento.
 
-`AppSettings` estende `SettingsModel` e é um singleton. Além dos valores
-persistidos, expõe `ValueNotifier` para brilho e contraste e mantém informações
-de tutorial e diretórios da aplicação.
+## Domínio e aplicação
 
-Ele é acessado diretamente pelo app, BLoC, controllers e páginas. Assim,
-configuração persistida, estado global observável e detalhes de ambiente ficam
-reunidos no mesmo objeto.
+O domínio usa Dart puro e `core/result`. Ele não depende de Flutter, SQLite,
+plugins, localização ou widgets. Seus principais grupos são:
 
-## 11. Serviços e funções transversais
+- usuários, configurações, treinos e históricos;
+- unidades e valores de distância e velocidade;
+- eventos de treino e cálculo de velocidade;
+- conteúdo de relatórios e contratos de entrega;
+- UseCases de usuários, treinos, persistência de sessões e relatórios.
 
-`lib/common/functions` contém serviços estáticos ou funções de domínio:
+`Result`, `AppError` e `Unit` representam sucesso e falhas esperadas. Adapters,
+models e helpers da arquitetura anterior foram removidos depois da migração de
+seus consumidores.
 
-- `StopwatchFunctions`: formatação de duração e conversão de velocidade;
-- `TrainingReport`: transforma históricos em mensagens de início, parcial e
-  volta;
-- `BuildPdf`: consulta históricos e gera o arquivo PDF;
-- `AppShare`: compartilha o PDF ou abre o cliente de e-mail.
+## Núcleo do cronômetro
 
-Esses componentes ficam fora da cadeia manager/repository/store. `BuildPdf`, por
-exemplo, instancia `HistoryRepository` diretamente. Diretórios, bundle de assets,
-e-mail e compartilhamento também são acessados diretamente pelas APIs dos
-plugins.
+`StopwatchBloc` é a máquina temporal e controla início, pausa, retomada, reset,
+parcial, volta e término. `StopwatchSessionViewModel` coordena uma sessão,
+persiste treino e histórico por UseCases e publica um estado imutável com
+operação pendente e erro apresentável.
 
-As fotos de usuários são escolhidas pela interface, comprimidas no controller e
-gravadas no diretório de documentos. O controller também remove arquivos que não
-estão mais referenciados no banco.
+`StopwatchPageViewModel` mantém as sessões ativas indexadas por identificador,
+agrega mensagens e controla remoções concorrentes. A UI constrói os widgets a
+partir dessas sessões; nenhum ViewModel armazena widgets.
 
-## 12. Internacionalização, tema e assets
+## Persistência e integrações
 
-As traduções ficam em `assets/translations` para `pt-BR`, `en-US` e espanhol. A
-localização é disponibilizada acima de `MaterialApp`.
+Repositories mantêm o cache observável e delegam operações a serviços de dados.
+Os serviços SQLite convertem registros diretamente para tipos de domínio. O
+banco existente continua compatível e preserva a substituição segura de um
+arquivo antigo antes da abertura.
 
-O tema Material possui variantes clara/escura e três níveis de contraste. As
-preferências são observadas por `AnimatedBuilder`. Imagens, ícones e fontes são
-empacotados como assets; fotos de usuários ficam no armazenamento da aplicação.
+Plugins ficam atrás de serviços concretos para seleção, compressão e
+armazenamento de imagens, geração de PDF, arquivo temporário, compartilhamento e
+e-mail. UseCases coordenam essas fronteiras e garantem ownership e limpeza dos
+arquivos temporários.
 
-## 13. Dependências e acoplamentos arquiteturais
+## Relatórios
 
-Os principais pontos que condicionam futuras atualizações são:
+`TrainingReportContentBuilder` produz conteúdo de domínio sem PDF, bundle ou
+plugins. O renderer recebe dados e textos preparados pela apresentação. Os
+UseCases carregam históricos, geram o arquivo e o entregam por compartilhamento
+ou e-mail, propagando falhas como `AppError`.
 
-1. **Arquitetura de estado híbrida:** BLoC, `ChangeNotifier`, `ValueNotifier`,
-   estado local e singletons coexistem.
-2. **Dependências construídas internamente:** controllers, managers, repositories
-   e stores instanciam suas dependências concretas.
-3. **Estado global:** `AppSettings`, `DatabaseManager`, `UserManager` e
-   `StopwatchPageController` vivem como singletons.
-4. **UI dentro de controller:** a lista global de cronômetros contém widgets, e
-   não somente modelos de estado.
-5. **Camadas parcialmente atravessadas:** serviços como PDF acessam repository
-   diretamente e controllers executam operações de sistema de arquivos.
-6. **Regra distribuída:** a lógica de treino está dividida entre BLoC,
-   `PreciseStopwatchController`, managers, models e funções comuns.
-7. **Contratos abstratos pouco explorados:** repositories possuem interfaces,
-   mas elas não são injetadas nos consumidores.
-8. **Erros tratados localmente:** predominam log, nova `Exception` e estado
-   genérico de erro; não há um modelo comum de falhas.
+## Tema, localização e plataformas
 
-Esses pontos não são, por si sós, defeitos. Eles descrevem as fronteiras atuais e
-onde uma mudança pode repercutir em mais de uma camada.
+`MyMaterialApp` deriva os temas de `AppAppearanceState`. Componentes migrados
+usam `ColorScheme` e tipografia do tema sem impor um redesenho. Textos de UI são
+fornecidos por `easy_localization`; textos de PDF são preparados na fronteira de
+apresentação.
 
-## 14. Fluxos principais
+As plataformas mantidas nesta versão são Android e iOS. Integrações nativas
+devem ser confirmadas manualmente nas duas plataformas antes do encerramento de
+um backlog que as altere.
 
-### Iniciar um treino
+## Validação
 
-```text
-Usuário toca Iniciar
-  -> PreciseStopwatchController
-  -> StopwatchBloc inicia medição
-  -> TrainingManager persiste Training
-  -> HistoryManager persiste registro inicial
-  -> StopwatchPageController recebe mensagem
-  -> UI atualiza tempo e painel de eventos
-```
-
-### Registrar parcial ou volta
-
-```text
-Botão parcial/volta
-  -> evento no StopwatchBloc
-  -> BLoC calcula duração desde o último marco
-  -> controller calcula velocidade
-  -> HistoryManager persiste parcial
-  -> controller deriva mensagem de parcial/volta
-  -> tela principal recebe a mensagem
-```
-
-### Consultar e compartilhar treinos
-
-```text
-TrainingsPage
-  -> TrainingsViewModel
-  -> UserRepository / TrainingRepository
-  -> Services -> SQLite
-  -> seleção de treinos
-  -> AppShare -> BuildPdf
-  -> HistoryRepository -> SQLite
-  -> plugin de compartilhamento ou e-mail
-```
-
-## 15. Consequência para a atualização do código
-
-Antes de escolher mudanças estruturais, é necessário decidir quais características
-atuais devem ser preservadas e qual arquitetura de destino será adotada. A ordem
-natural do trabalho é:
-
-1. usar este mapa como linha de base;
-2. definir objetivos da atualização, plataformas mantidas e restrições;
-3. escolher as fronteiras desejadas entre apresentação, aplicação, domínio e
-   infraestrutura;
-4. atualizar por fluxo vertical, evitando uma reescrita integral;
-5. criar testes somente para proteger o comportamento afetado em cada mudança e
-   para reproduzir defeitos encontrados.
-
-Os testes, portanto, apoiam a atualização; não são o produto principal deste
-levantamento.
+Os testes cobrem domínio, serviços, repositories, UseCases, ViewModels, BLoC,
+rotas e estados de widget relevantes. A entrega é validada por `dart format`,
+testes focados, suíte completa, `flutter analyze`, `git diff --check`, buscas de
+fronteiras e legado e validação manual dos fluxos nativos em Android e iOS.

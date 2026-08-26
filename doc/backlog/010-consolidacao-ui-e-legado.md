@@ -70,6 +70,19 @@ Depende da conclusão dos backlogs 004 a 009.
 
 ## Acompanhamento
 
-**Estado:** Planejado — questões fechadas e tarefas definidas para execução.
+**Estado:** Em validação final — implementação e verificações automatizadas
+concluídas; validação manual em Android e iOS pendente.
 
 **Próximo backlog:** a definir conforme prioridades funcionais do produto.
+
+## Validação da entrega
+
+- formatação verificada em 210 arquivos Dart, sem alterações pendentes;
+- 65 testes focados de ViewModels, BLoC, rotas, injeção, estados e widgets
+  passaram;
+- suíte completa passou com 345 testes;
+- `flutter analyze` terminou sem issues;
+- `git diff --check`, buscas de fronteiras e buscas de legado passaram;
+- links relativos da documentação foram verificados e corrigidos;
+- nenhum backlog derivado foi identificado;
+- validação manual em Android e iOS permanece pendente.

@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 
-import '/common/theme/app_font_style.dart';
+import '../../theme/app_font_style.dart';
 
 class CounterRow extends StatelessWidget {
   const CounterRow({

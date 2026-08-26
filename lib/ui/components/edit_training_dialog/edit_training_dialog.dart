@@ -18,12 +18,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common/theme/app_font_style.dart';
-import '../../../domain/common/training/models/training.dart';
-import '../../../domain/common/training/units/distance_unit.dart';
-import '../../../domain/common/training/units/speed_unit.dart';
-import '../../../domain/common/training/values/distance.dart';
+import '/domain/common/training/models/training.dart';
+import '/domain/common/training/units/distance_unit.dart';
+import '/domain/common/training/units/speed_unit.dart';
+import '/domain/common/training/values/distance.dart';
 import '../numeric_field.dart';
+import '../theme/app_font_style.dart';
 import 'widgets/color_dialog.dart';
 import 'widgets/distance_unit_row.dart';
 import 'widgets/simple_spin_box_field.dart';

@@ -236,15 +236,15 @@ dependências declaradas correspondem ao produto efetivamente entregue.
 
 **Dependências:** tarefas 1 a 7.
 
-- [ ] Atualizar README, documentação arquitetural e acompanhamento dos
+- [x] Atualizar README, documentação arquitetural e acompanhamento dos
       backlogs concluídos para refletir a implementação real.
-- [ ] Executar `dart format` nos arquivos alterados.
-- [ ] Executar testes focados de ViewModels/BLoCs, rotas, estados e widgets.
-- [ ] Executar a suíte completa com `flutter test`.
-- [ ] Executar `flutter analyze` sem novos erros ou avisos.
-- [ ] Executar `git diff --check` e buscas finais de fronteiras e legado.
+- [x] Executar `dart format` nos arquivos alterados.
+- [x] Executar testes focados de ViewModels/BLoCs, rotas, estados e widgets.
+- [x] Executar a suíte completa com `flutter test`.
+- [x] Executar `flutter analyze` sem novos erros ou avisos.
+- [x] Executar `git diff --check` e buscas finais de fronteiras e legado.
 - [ ] Validar manualmente os fluxos suportados em cada plataforma mantida.
-- [ ] Registrar resultados, limitações e eventuais backlogs derivados.
+- [x] Registrar resultados, limitações e eventuais backlogs derivados.
 - [ ] Mover o backlog 010 e suas tasks para `closed/` somente após cumprir todos
       os critérios de aceite.
 

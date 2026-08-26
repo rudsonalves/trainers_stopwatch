@@ -19,8 +19,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../common/theme/app_font_style.dart';
-import '../../../../core/routing/routes.dart';
+import '/core/routing/routes.dart';
+import '/ui/components/theme/app_font_style.dart';
 
 class StopwatchDrawer extends StatelessWidget {
   final Future<void> Function() addStopwatchs;

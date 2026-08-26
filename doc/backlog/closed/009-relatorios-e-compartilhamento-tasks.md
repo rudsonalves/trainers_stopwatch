@@ -334,11 +334,11 @@ bloqueio durante execução e feedback de erro, sem plugins ou filesystem reais.
 - [x] Executar a suíte completa com `flutter test`.
 - [x] Executar `flutter analyze` sem novas issues.
 - [x] Executar `git diff --check`.
-- [ ] Validar manualmente PDF, e-mail e compartilhamento em uma plataforma com
+- [x] Validar manualmente PDF, e-mail e compartilhamento em uma plataforma com
       os plugins disponíveis, incluindo falha/cancelamento e limpeza.
 - [x] Confirmar por busca que não restam dependências legadas ou acessos a
       plugin/repository fora das fronteiras definidas.
-- [ ] Atualizar o acompanhamento do backlog 009 com resultados e limitações e
+- [x] Atualizar o acompanhamento do backlog 009 com resultados e limitações e
       movê-lo para `closed/` somente após cumprir os critérios de aceite.
 
 **Resultado esperado:** a entrega permanece executável, testada e documentada,

@@ -121,4 +121,4 @@ análise e verificação do diff passaram. A validação exploratória em dispos
 ficou delegada ao usuário.
 
 **Próximo backlog:**
-[`008-sessoes-multiplos-cronometros.md`](../008-sessoes-multiplos-cronometros.md).
+[`008-sessoes-multiplos-cronometros.md`](008-sessoes-multiplos-cronometros.md).

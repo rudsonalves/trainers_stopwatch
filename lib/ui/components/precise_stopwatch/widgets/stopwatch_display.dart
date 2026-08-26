@@ -20,7 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/application/stopwatch/bloc/stopwatch_bloc.dart';
 import '/application/stopwatch/bloc/stopwatch_state.dart';
-import '/common/theme/app_font_style.dart';
+import '../../theme/app_font_style.dart';
 
 class StopwatchDisplay extends StatelessWidget {
   final StopwatchBloc bloc;

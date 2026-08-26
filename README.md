@@ -12,37 +12,24 @@ is documented in
 
 Implementation increments are tracked in [`doc/backlog`](doc/backlog/README.md).
 
-The **Trainer's Stopwatch** app leverages the **Flutter** framework and the **Bloc (Business Logic Component)** pattern to manage the stopwatch's state and facilitate the implementation of complex functionalities. The structure based on **events** and **states** allows for robust control logic, which is essential for ensuring the stopwatch's accuracy under various conditions.
+Trainer's Stopwatch is a local-first Flutter application for timing multiple
+athletes, recording laps and splits, reviewing saved training history, and
+sharing PDF reports.
 
-## Technical Implementation
+## Technical overview
 
-The app's architecture is divided into different layers to separate concerns and improve code maintainability. Below is a breakdown of the key implementations and their respective functionalities:
+- MVVM structures the presentation layer, while BLoC is limited to the
+  stopwatch's temporal state machine.
+- Pages, ViewModels, reusable components, and application sessions live under
+  `lib/ui` and `lib/application`.
+- Domain rules and UseCases are independent of Flutter, SQLite, and plugins.
+- Repositories and services isolate persistence and native integrations.
+- `go_router` centralizes route names, paths, and typed arguments.
+- Expected failures use `Result` and `AppError`; asynchronous UI operations use
+  Commands or equivalent session state.
 
-### 1. **Bloc Architecture**:
-
-- **stopwatch_bloc.dart**: This file contains the main stopwatch logic, implemented using the Bloc pattern. It manages different events such as starting, pausing, resetting, logging a lap or a split, and stopping the stopwatch. The Bloc uses a **Timer** to periodically update the training time, ensuring precision even if there are delays in the graphical interface. The use of **ValueNotifier** allows efficient UI updates when the time or counters change.
-
-- **stopwatch_events.dart**: Defines the various events that the stopwatch can receive. Each event corresponds to a specific user action, such as starting or pausing the stopwatch.
-
-- **stopwatch_state.dart**: Defines the different states of the stopwatch. Using states like **StopwatchStateInitial**, **StopwatchStateRunning**, **StopwatchStatePaused**, and **StopwatchStateReset** facilitates UI management by activating only the relevant buttons based on the current state.
-
-### 2. **Precise Stopwatch Control**:
-
-- **precise_stopwatch_controller.dart**: This class acts as a controller for the precise stopwatch logic. It integrates with the **StopwatchBloc** and manages training sessions and history, using models such as **UserModel**, **TrainingModel**, and **HistoryModel**. The class provides methods to start, pause, reset, log laps and splits, and stop the stopwatch. It also handles creating and inserting training sessions and managing the time history.
-
-- The controller also implements methods to send messages and log records to the user, using a **ValueNotifier** to notify the UI about changes in the action state.
-
-### 3. **User Interface and Custom Widgets**:
-
-- **precise_stopwatch.dart**: This widget implements an instance of the **PreciseStopwatch**, utilizing the **PreciseStopwatchController** to handle stopwatch actions and control logic.
-
-- **Custom Widgets**: The `widgets` folder contains custom UI components such as **counter_row.dart**, **lap_split_counters.dart**, **stopwatch_button_bar.dart**, **stopwatch_display.dart**, and **user_image_name.dart**, which provide a user-friendly and responsive interface for the end-user.
-
-## Technical Highlights
-
-The app utilizes a combination of **State Management with Bloc**, **Value Notifiers**, and **Timers** to ensure stopwatch accuracy and a smooth user experience. The modular design and separation of responsibilities between logic control, user interface, and data handling make the app easy to maintain and expand.
-
-The **Trainer's Stopwatch** not only allows the timing of multiple athletes simultaneously on a single device but also stores performance data for future analysis, making it a valuable tool for trainers and coaches looking to optimize training regimens and improve athlete performance.
+The application currently supports Android and iOS. See the architecture
+document linked above for the complete structure and validation rules.
 
 # ChangeLog
 

@@ -1,5 +1,57 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-08
+
+This change consolidates the project documentation around the completed MVVM migration and legacy UI cleanup. It replaces the former transitional architecture description with the current application structure, boundaries, state-management model, persistence flow, integrations, and validation practices.
+
+It also relocates shared theme utilities into the reusable UI component layer, updates their consumers, closes the reporting backlog after manual validation, and records the automated checks completed for backlog 010.
+
+1. **README.md**
+
+   * Replaced the legacy BLoC-centric implementation overview with a concise description of the local-first application and its current capabilities.
+   * Documented the architectural roles of MVVM, the stopwatch BLoC, domain UseCases, repositories, services, centralized routing, `Result`, `AppError`, and Commands.
+   * Clarified the supported Android and iOS platforms and directed readers to the full architecture document.
+
+2. **doc/arquitetura_atual.md**
+
+   * Rewrote the architecture document to describe the consolidated state after backlogs 001 through 010.
+   * Documented the current dependency flow from UI through ViewModels, BLoC, UseCases, repositories, and platform services.
+   * Added the final source organization across `application`, `core`, `data`, `domain`, and `ui`, including the removal of the legacy `lib/features` directory.
+   * Updated bootstrap, dependency injection, settings, navigation, presentation state, stopwatch sessions, persistence, native integrations, reporting, localization, themes, supported platforms, and validation guidance.
+   * Removed obsolete descriptions of managers, global business singletons, legacy adapters, controllers storing widgets, and transitional architectural coupling.
+
+3. **doc/backlog/010-consolidacao-ui-e-legado.md and task plan**
+
+   * Advanced backlog 010 to final validation, with implementation and automated verification complete.
+   * Marked documentation, formatting, focused tests, the full test suite, static analysis, diff checks, legacy searches, and result recording as completed.
+   * Recorded validation results covering 210 formatted Dart files, 65 focused tests, 345 total tests, clean analysis and diff checks, corrected documentation links, and no derived backlog.
+   * Kept manual Android and iOS validation and final backlog closure explicitly pending.
+
+4. **doc/backlog/README.md and closed backlog documentation**
+
+   * Marked backlogs 007, 008, and 009 as completed in the backlog index.
+   * Moved the backlog 009 specification and task plan into `doc/backlog/closed`.
+   * Recorded completion of manual PDF, email, sharing, cancellation, failure, and cleanup validation for backlog 009.
+   * Updated backlog 009 status and progress to reflect completed implementation, automated tests, and manual validation.
+   * Corrected relative links across closed backlogs 002, 006, 007, 008, and 009 to match their final directory locations.
+
+5. **lib/ui/components/theme**
+
+   * Moved `app_font_style.dart`, `theme.dart`, and `util.dart` from `lib/common/theme` into the shared UI component layer.
+   * Preserved the existing theme implementations while aligning their ownership with presentation-layer reuse.
+
+6. **UI theme and shared-component consumers**
+
+   * Updated `MyMaterialApp`, shared stopwatch components, dialogs, page widgets, settings controls, training views, user views, and drawer components to import theme utilities from `lib/ui/components/theme`.
+   * Normalized several imports to project-root paths for shared UI components and domain types.
+   * Updated the personal training, trainings, settings, and user dialog flows to reference reusable components through their consolidated `ui/components` locations.
+
+### Conclusion
+
+The change set completes the documentation and structural portion of the UI and legacy consolidation work. The project now describes and reflects a consistent MVVM-oriented architecture with shared presentation assets located under `lib/ui/components`.
+
+Automated validation is complete and the reporting backlog is closed. Backlog 010 remains open only for final manual verification on Android and iOS.
+
 ## 2026/08/26 - bkl010/task-07
 
 This change completes the removal of the remaining legacy compatibility layer after the application’s migration to domain models and the current settings architecture.

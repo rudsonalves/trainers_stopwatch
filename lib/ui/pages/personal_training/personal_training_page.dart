@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '/common/theme/app_font_style.dart';
+import '/ui/components/precise_stopwatch/precise_stopwatch.dart';
+import '/ui/components/theme/app_font_style.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/history/widgets/history_list_view.dart';
-import '../../components/precise_stopwatch/precise_stopwatch.dart';
 
 class PersonalTrainingPage extends StatefulWidget {
   final StopwatchSessionViewModel session;

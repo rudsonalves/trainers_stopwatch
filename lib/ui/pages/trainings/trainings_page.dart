@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '/common/icons/stopwatch_icons_icons.dart';
-import '/common/theme/app_font_style.dart';
 import '/core/routing/route_arguments.dart';
 import '/core/routing/routes.dart';
 import '/domain/common/report/services/training_report_pdf_renderer.dart';
 import '/domain/common/training/models/training.dart';
-import '../../components/generic_dialog.dart';
-import '../../components/user_card.dart';
+import '/ui/components/generic_dialog.dart';
+import '/ui/components/theme/app_font_style.dart';
+import '/ui/components/user_card.dart';
 import 'viewmodel/models/training_report_command_inputs.dart';
 import 'viewmodel/trainings_view_model.dart';
 import 'widgets/dismissible_training.dart';

@@ -6,9 +6,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '/common/constants.dart';
-import '/common/theme/app_font_style.dart';
 import '/domain/common/training/units/distance_unit.dart';
 import '/ui/app/app_appearance_state.dart';
+import '/ui/components/theme/app_font_style.dart';
 import 'viewmodel/models/settings_form_data.dart';
 import 'viewmodel/settings_view_model.dart';
 import 'widgets/length_line_edit.dart';

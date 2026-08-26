@@ -11,7 +11,7 @@ As tarefas de implementação estão organizadas em
 ## Dependência
 
 Depende de
-[`closed/001-fundacao-arquitetural.md`](closed/001-fundacao-arquitetural.md)
+[`001-fundacao-arquitetural.md`](001-fundacao-arquitetural.md)
 para os contratos transversais.
 
 ## Escopo

@@ -8,7 +8,7 @@ e-mail e compartilhamento atrás de serviços injetáveis.
 ## Dependência
 
 Depende do backlog
-[`006-treinos-e-historicos.md`](closed/006-treinos-e-historicos.md), concluído,
+[`006-treinos-e-historicos.md`](006-treinos-e-historicos.md), concluído,
 e do domínio puro do backlog 002.
 
 ## Escopo
@@ -60,12 +60,12 @@ Nenhuma.
 
 ## Acompanhamento
 
-**Estado:** Em execução.
+**Estado:** Concluído.
 
 **Plano de tarefas:**
 [`009-relatorios-e-compartilhamento-tasks.md`](009-relatorios-e-compartilhamento-tasks.md).
 
-**Progresso:** tarefa 1 concluída; comportamento legado de conteúdo, PDF,
-e-mail, compartilhamento, casos vazios e falhas caracterizado por testes.
+**Progresso:** implementação, testes automatizados e validação manual
+concluídos.
 
 **Próximo backlog:** `010-consolidacao-ui-e-legado.md`.

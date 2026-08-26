@@ -7,9 +7,9 @@ sessões de estado, eliminando widgets armazenados em controller global.
 
 ## Dependências
 
-- [`006-treinos-e-historicos.md`](closed/006-treinos-e-historicos.md),
+- [`006-treinos-e-historicos.md`](006-treinos-e-historicos.md),
   concluído;
-- [`007-nucleo-cronometro-bloc.md`](closed/007-nucleo-cronometro-bloc.md),
+- [`007-nucleo-cronometro-bloc.md`](007-nucleo-cronometro-bloc.md),
   concluído.
 
 ## Escopo

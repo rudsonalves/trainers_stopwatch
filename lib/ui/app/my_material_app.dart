@@ -19,11 +19,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '/common/theme/theme.dart';
-import '/common/theme/util.dart';
 import '/core/routing/router.dart';
 import '/core/routing/routes/main_routes.dart';
 import '/domain/common/training/models/training.dart';
+import '/ui/components/theme/theme.dart';
+import '/ui/components/theme/util.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';

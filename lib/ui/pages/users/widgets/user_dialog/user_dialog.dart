@@ -18,10 +18,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '/common/theme/app_font_style.dart';
 import '/domain/common/user/models/user.dart';
 import '/domain/models/prepared_user_image.dart';
-import '../../../../components/show_athlete_image.dart';
+import '/ui/components/show_athlete_image.dart';
+import '/ui/components/theme/app_font_style.dart';
 import '../../viewmodel/models/user_form_result.dart';
 import 'user_controller.dart';
 import 'validator.dart';

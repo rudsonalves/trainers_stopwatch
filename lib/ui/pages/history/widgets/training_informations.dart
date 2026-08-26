@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '/common/theme/app_font_style.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
+import '/ui/components/theme/app_font_style.dart';
 
 class TrainingInformations extends StatelessWidget {
   final User user;
