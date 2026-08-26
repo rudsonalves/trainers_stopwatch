@@ -158,13 +158,13 @@ diff.
 
 **Dependência:** tarefa 2.
 
-- [ ] Confirmar que nomes e paths permanecem centralizados no `go_router`.
-- [ ] Substituir argumentos soltos por tipos estáveis quando houver dados
+- [x] Confirmar que nomes e paths permanecem centralizados no `go_router`.
+- [x] Substituir argumentos soltos por tipos estáveis quando houver dados
       compostos entre rotas.
-- [ ] Remover rotas, argumentos, factories e dependências de navegação sem
+- [x] Remover rotas, argumentos, factories e dependências de navegação sem
       consumidores.
-- [ ] Manter navegação exclusivamente na camada de apresentação.
-- [ ] Cobrir construção, recriação e argumentos relevantes em testes de rota.
+- [x] Manter navegação exclusivamente na camada de apresentação.
+- [x] Cobrir construção, recriação e argumentos relevantes em testes de rota.
 
 **Resultado esperado:** rotas e argumentos possuem uma fonte central e não
 transportam dependências legadas ou detalhes de plataforma.

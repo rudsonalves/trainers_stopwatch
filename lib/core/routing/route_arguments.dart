@@ -1,11 +1,13 @@
+import '/application/stopwatch/session/stopwatch_session_id.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 
 class PersonalTrainingRouteArguments {
-  final StopwatchSessionViewModel session;
+  final StopwatchSessionId sessionId;
 
-  const PersonalTrainingRouteArguments({required this.session});
+  const PersonalTrainingRouteArguments({
+    required this.sessionId,
+  });
 }
 
 class HistoryRouteArguments {

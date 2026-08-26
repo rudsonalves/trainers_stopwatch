@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-03
+
+This change consolidates personal-training navigation around a stable stopwatch session identifier instead of passing the complete session view model between routes.
+
+Routing now resolves active session state through centralized dependencies, removes the unused global route observer, and adds test coverage for the revised route argument contract. The related backlog task is marked as complete.
+
+1. **`lib/core/routing/route_arguments.dart`**
+
+   * Refactored `PersonalTrainingRouteArguments` to carry a `StopwatchSessionId` instead of a `StopwatchSessionViewModel`.
+   * Decoupled route arguments from the full presentation-layer session object.
+
+2. **`lib/core/routing/routes/main_routes.dart`**
+
+   * Updated the personal-training route to resolve the requested session through `stopwatchViewModel.sessionById`.
+   * Added explicit `StateError` handling when the referenced stopwatch session is no longer active.
+   * Continued constructing the personal-training page and history view model from the resolved session.
+
+3. **`lib/features/stopwatch_page/stopwatch_page.dart`**
+
+   * Updated personal-training navigation to pass only the selected session identity through `PersonalTrainingRouteArguments`.
+
+4. **`lib/core/routing/router.dart`**
+
+   * Removed the unused route observer import and observer registration from the centralized `GoRouter` configuration.
+
+5. **`test/core/routing/routes_test.dart`**
+
+   * Added coverage confirming that personal-training route arguments carry only the stopwatch session identity.
+   * Verified that the generated session identifier retains the associated user ID.
+
+6. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Marked the route centralization, stable argument typing, navigation cleanup, presentation-layer ownership, and route testing requirements as completed.
+
+### Conclusion
+
+Personal-training navigation now uses a stable session identity and reconstructs active state at the routing boundary, reducing coupling between routes and presentation view models. The routing configuration is cleaner, missing-session behavior is explicit, and the updated contract is covered by tests.
+
 ## 2026/08/26 - bkl010/task-02
 
 This change completes the presentation-boundary consolidation task by documenting the removal of visual framework concerns from ViewModels and BLoCs, the representation of asynchronous interactions through observable state mechanisms, and the elimination of direct business and platform dependencies from Pages.

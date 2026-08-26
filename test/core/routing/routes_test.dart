@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_id.dart';
 import 'package:trainers_stopwatch/core/config/dependencies.dart';
 import 'package:trainers_stopwatch/core/routing/animations_page/app_custom_transition_page.dart';
 import 'package:trainers_stopwatch/core/routing/route_arguments.dart';
@@ -129,5 +130,20 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byType(StopWatchPage), findsOneWidget);
+  });
+
+  test('personal training navigation carries only the session identity', () {
+    const user = User(
+      id: 7,
+      name: 'Ana',
+      email: 'ana@example.com',
+    );
+    final sessionId = StopwatchSessionId.fromUser(user).value!;
+    final arguments = PersonalTrainingRouteArguments(
+      sessionId: sessionId,
+    );
+
+    expect(arguments.sessionId, sessionId);
+    expect(arguments.sessionId.userId, user.id);
   });
 }

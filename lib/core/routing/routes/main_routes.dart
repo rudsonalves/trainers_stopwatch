@@ -91,12 +91,22 @@ List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [
         name: MainRoutes.personalTraining.routeName,
         pageBuilder: (context, state) {
           final arguments = state.extra as PersonalTrainingRouteArguments;
+          final session = dependencies.stopwatchViewModel.sessionById(
+            arguments.sessionId,
+          );
+
+          if (session == null) {
+            throw StateError(
+              'The requested stopwatch session is no longer active.',
+            );
+          }
+
           return AppCustomTransitionPage(
             key: state.pageKey,
             child: PersonalTrainingPage(
-              session: arguments.session,
+              session: session,
               viewModel: dependencies.historyViewModelFactory(
-                arguments.session.training,
+                session.training,
               ),
             ),
           );

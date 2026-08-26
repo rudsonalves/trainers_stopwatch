@@ -68,7 +68,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
   Future<void> _manageStopwatch(StopwatchSessionViewModel session) async {
     await context.pushNamed(
       MainRoutes.personalTraining.routeName,
-      extra: PersonalTrainingRouteArguments(session: session),
+      extra: PersonalTrainingRouteArguments(sessionId: session.id),
     );
   }
 
