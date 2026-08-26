@@ -29,52 +29,6 @@ class MessageRow extends StatelessWidget {
     required this.message,
   });
 
-  Row _buildMessageRow(IconData iconData) {
-    final color = Color(message.colorValue);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Icon(iconData, color: color),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              message.userName,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(_subtitle),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Row _messageRow() {
-    final icon = switch (message.type) {
-      StopwatchSessionMessageType.started => StopwatchIcons.start,
-      StopwatchSessionMessageType.split => StopwatchIcons.partial,
-      StopwatchSessionMessageType.lap => StopwatchIcons.lap,
-      StopwatchSessionMessageType.finished => StopwatchIcons.stop,
-    };
-    return _buildMessageRow(icon);
-  }
-
-  String get _subtitle {
-    if (message.type == StopwatchSessionMessageType.started ||
-        message.type == StopwatchSessionMessageType.finished) {
-      return message.comments;
-    }
-    final duration = TrainingValueFormatter.formatDuration(message.duration);
-    final speed = message.speed;
-    if (speed == null) return '${message.label} time: $duration';
-    return '${message.label} time: $duration '
-        'Speed: ${TrainingValueFormatter.formatSpeed(speed)}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final color = Color(message.colorValue);
@@ -88,7 +42,53 @@ class MessageRow extends StatelessWidget {
         color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: _messageRow(),
+      child: _messageRow(context),
     );
+  }
+
+  Row _buildMessageRow(BuildContext context, IconData iconData) {
+    final color = Color(message.colorValue);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(iconData, color: color),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message.userName,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            Text(_subtitle),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Row _messageRow(BuildContext context) {
+    final icon = switch (message.type) {
+      StopwatchSessionMessageType.started => StopwatchIcons.start,
+      StopwatchSessionMessageType.split => StopwatchIcons.partial,
+      StopwatchSessionMessageType.lap => StopwatchIcons.lap,
+      StopwatchSessionMessageType.finished => StopwatchIcons.stop,
+    };
+    return _buildMessageRow(context, icon);
+  }
+
+  String get _subtitle {
+    if (message.type == StopwatchSessionMessageType.started ||
+        message.type == StopwatchSessionMessageType.finished) {
+      return message.comments;
+    }
+    final duration = TrainingValueFormatter.formatDuration(message.duration);
+    final speed = message.speed;
+    if (speed == null) return '${message.label} time: $duration';
+    return '${message.label} time: $duration '
+        'Speed: ${TrainingValueFormatter.formatSpeed(speed)}';
   }
 }

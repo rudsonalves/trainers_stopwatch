@@ -108,7 +108,9 @@ class GenericDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(
         title,
-        style: TextStyle(color: primary),
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: primary,
+            ),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,

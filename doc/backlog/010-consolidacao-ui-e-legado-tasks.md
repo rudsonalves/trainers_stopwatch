@@ -191,7 +191,7 @@ testáveis sem transferir responsabilidades visuais para ViewModels/BLoCs.
 - [x] Mover somente esses widgets para `ui/components`, preservando os demais
       junto das features consumidoras.
 - [x] Remover componentes genéricos sem consumidores e abstrações duplicadas.
-- [ ] Uniformizar usos de tema e estilos nos arquivos migrados sem redesenhar a
+- [x] Uniformizar usos de tema e estilos nos arquivos migrados sem redesenhar a
       interface.
 - [ ] Preservar acessibilidade, semântica e comportamento dos componentes
       alterados com testes proporcionais ao risco.

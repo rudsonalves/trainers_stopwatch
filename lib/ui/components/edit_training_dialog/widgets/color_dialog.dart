@@ -41,7 +41,7 @@ class ColorDialog extends StatefulWidget {
 }
 
 class _ColorDialogState extends State<ColorDialog> {
-  Color selectedColor = Colors.black;
+  late Color selectedColor;
 
   @override
   void initState() {

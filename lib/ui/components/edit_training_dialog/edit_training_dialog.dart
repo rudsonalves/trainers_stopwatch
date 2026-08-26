@@ -81,12 +81,14 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
   final splitLength = ValueNotifier<double>(0);
   final splitMult = ValueNotifier<int>(5);
 
-  late final currentColor = ValueNotifier<Color>(Colors.green);
+  late final ValueNotifier<Color> currentColor;
 
   @override
   void initState() {
     super.initState();
-    currentColor.value = Color(widget.colorValue);
+    currentColor = ValueNotifier<Color>(
+      Color(widget.colorValue),
+    );
 
     final lapLength = widget.training.lapDistance.value;
     splitLength.value = widget.training.splitDistance.value;
@@ -233,12 +235,12 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
                       color: currentColor.value.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         'Color',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ),
                   ),

@@ -18,7 +18,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/theme/app_font_style.dart';
+import '/common/theme/app_font_style.dart';
 
 class DismissibleContainers {
   DismissibleContainers._();
@@ -28,15 +28,16 @@ class DismissibleContainers {
     bool enable = true,
     String? label,
     IconData iconData = Icons.edit,
-    Color color = Colors.green,
+    Color? color,
   }) {
     final primary = Theme.of(context).colorScheme.primary;
+    final backgroundColor = color ?? Theme.of(context).colorScheme.tertiary;
     label = label ?? 'GenericEdit'.tr();
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: color.withValues(alpha: 0.3),
+        color: backgroundColor.withValues(alpha: 0.3),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -65,15 +66,16 @@ class DismissibleContainers {
     bool enable = true,
     String? label,
     IconData iconData = Icons.remove_circle,
-    Color color = Colors.red,
+    Color? color,
   }) {
     final primary = Theme.of(context).colorScheme.primary;
+    final backgroundColor = color ?? Theme.of(context).colorScheme.error;
     label = label ?? 'GenericDelete'.tr();
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: color.withValues(alpha: 0.3),
+        color: backgroundColor.withValues(alpha: 0.3),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-05-c
+
+This change standardizes theme and style usage across migrated UI components while preserving their existing layout and behavior. It replaces fixed colors and standalone text styles with values derived from the active Flutter theme and improves state initialization in training color dialogs.
+
+1. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Marked the theme and style standardization task for migrated files as completed.
+
+2. **`lib/ui/components/dismissible_backgrounds.dart`**
+
+   * Updated the shared font-style import to use the project-root import convention.
+   * Changed edit and delete background color parameters to optional overrides.
+   * Replaced fixed green and red defaults with the theme color scheme’s tertiary and error colors.
+   * Preserved custom color support and the existing translucent background treatment.
+
+3. **`lib/ui/components/edit_training_dialog`**
+
+   * Initialized the current training color notifier directly from the supplied color value instead of assigning through a temporary fixed default.
+   * Initialized the color dialog’s selected color as lifecycle-managed state without an unused black default.
+   * Updated the color selector label to derive its typography from the theme’s body style while retaining bold emphasis.
+
+4. **`lib/ui/components/generic_dialog.dart`**
+
+   * Updated dialog title styling to extend the theme’s large title typography while preserving the primary color override.
+
+5. **`lib/ui/pages/stopwatch/widgets/message_row.dart`**
+
+   * Passed the build context through the message-row helpers to enable theme-aware styling.
+   * Updated the participant name to derive its typography from the theme’s body style while retaining its semibold weight.
+   * Reorganized the build method without changing message icons, content, color treatment, spacing, or formatting behavior.
+
+### Conclusion
+
+The migrated UI components now use the application theme more consistently for colors and typography. The update also removes unnecessary placeholder color initialization while preserving existing customization and visual behavior.
+
 ## 2026/08/26 - bkl010/task-05
 
 This change consolidates the About and Stopwatch pages under the UI page structure. Routing and test imports were updated to reflect the relocated files while preserving existing page behavior and coverage.
