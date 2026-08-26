@@ -17,8 +17,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants.dart';
-import '../../../../common/singletons/app_settings.dart';
+import '/common/constants.dart';
 
 class SpeedUnitRow extends StatefulWidget {
   const SpeedUnitRow({
@@ -37,9 +36,6 @@ class SpeedUnitRow extends StatefulWidget {
 }
 
 class _SpeedUnitRowState extends State<SpeedUnitRow> {
-  // Legacy settings bridge; remove with stopwatch/training UI migration in 007.
-  final app = AppSettings.instance;
-
   @override
   Widget build(BuildContext context) {
     final colorscheme = Theme.of(context).colorScheme;

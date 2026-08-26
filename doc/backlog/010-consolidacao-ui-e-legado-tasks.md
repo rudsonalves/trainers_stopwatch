@@ -193,7 +193,7 @@ testáveis sem transferir responsabilidades visuais para ViewModels/BLoCs.
 - [x] Remover componentes genéricos sem consumidores e abstrações duplicadas.
 - [x] Uniformizar usos de tema e estilos nos arquivos migrados sem redesenhar a
       interface.
-- [ ] Preservar acessibilidade, semântica e comportamento dos componentes
+- [x] Preservar acessibilidade, semântica e comportamento dos componentes
       alterados com testes proporcionais ao risco.
 
 **Resultado esperado:** compartilhamento de UI reflete reutilização comprovada,
@@ -203,13 +203,13 @@ sem criar uma biblioteca genérica prematura ou alterar o desenho do produto.
 
 **Dependências:** tarefas 2 a 5.
 
-- [ ] Corrigir imports obsoletos, APIs depreciadas e avisos diretamente ligados
+- [x] Corrigir imports obsoletos, APIs depreciadas e avisos diretamente ligados
       aos arquivos migrados.
-- [ ] Aplicar substituições locais que não alterem comportamento observável.
-- [ ] Não ampliar o escopo por mensagens informativas de dependências externas.
-- [ ] Registrar em backlog próprio qualquer correção que exija atualização
+- [x] Aplicar substituições locais que não alterem comportamento observável.
+- [x] Não ampliar o escopo por mensagens informativas de dependências externas.
+- [x] Registrar em backlog próprio qualquer correção que exija atualização
       ampla, mudança nativa ou redesenho arquitetural.
-- [ ] Confirmar que `flutter analyze` não introduz erros ou avisos novos.
+- [x] Confirmar que `flutter analyze` não introduz erros ou avisos novos.
 
 **Resultado esperado:** o código migrado usa APIs atuais quando a troca é segura,
 e problemas maiores permanecem visíveis sem desviar o backlog.
@@ -218,15 +218,15 @@ e problemas maiores permanecem visíveis sem desviar o backlog.
 
 **Dependências:** tarefas 2 a 6.
 
-- [ ] Remover managers, stores, controllers, singletons e adapters temporários
+- [x] Remover managers, stores, controllers, singletons e adapters temporários
       somente após confirmar ausência de consumidores.
-- [ ] Migrar o consumidor remanescente de `training_domain_adapter.dart` em
+- [x] Migrar o consumidor remanescente de `training_domain_adapter.dart` em
       `StopwatchFunctions.speedCalc` ou documentar impedimento comprovado.
-- [ ] Remover models, helpers e testes de caracterização que tenham sido
+- [x] Remover models, helpers e testes de caracterização que tenham sido
       integralmente substituídos.
-- [ ] Auditar o `pubspec` e remover apenas dependências comprovadamente sem uso
+- [x] Auditar o `pubspec` e remover apenas dependências comprovadamente sem uso
       em código, testes, geração, assets ou plataformas nativas.
-- [ ] Confirmar por busca que os fluxos migrados não conservam imports ou
+- [x] Confirmar por busca que os fluxos migrados não conservam imports ou
       factories legados.
 
 **Resultado esperado:** não existe arquitetura paralela sem consumidores e as

@@ -1,6 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/common/adapters/legacy_settings_sink.dart';
-import 'package:trainers_stopwatch/common/singletons/app_settings.dart';
 import 'package:trainers_stopwatch/core/bootstrap/bootstrap.dart';
 import 'package:trainers_stopwatch/core/config/dependencies.dart';
 import 'package:trainers_stopwatch/data/repositories/histories/history_repository.dart';
@@ -31,7 +29,6 @@ void main() {
     final historyRepository = injector.get<HistoryRepository>();
     final appearanceState = injector.get<AppAppearanceState>();
     final settingsViewModel = injector.get<SettingsViewModel>();
-    final legacySettings = injector.get<LegacySettingsSink>();
     final imageSelection = injector.get<ImageSelectionService>();
     final imageCompression = injector.get<ImageCompressionService>();
     final imageStorage = injector.get<UserImageStorageService>();
@@ -55,7 +52,6 @@ void main() {
     final nextSettingsViewModel = injector.get<SettingsViewModel>();
     addTearDown(nextSettingsViewModel.dispose);
     expect(nextSettingsViewModel, isNot(same(settingsViewModel)));
-    expect(legacySettings, same(injector.get<AppSettings>()));
     expect(injector.get<ImageSelectionService>(), same(imageSelection));
     expect(injector.get<ImageCompressionService>(), same(imageCompression));
     expect(injector.get<UserImageStorageService>(), same(imageStorage));

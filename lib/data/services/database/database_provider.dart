@@ -17,7 +17,6 @@
 
 import 'dart:developer';
 
-import '/common/singletons/app_settings.dart';
 import '/core/result/result.dart';
 import '/data/repositories/settings/settings_repository.dart';
 import '/data/services/database/database_service.dart';
@@ -25,17 +24,14 @@ import '/ui/app/app_appearance_state.dart';
 
 class DatabaseProvider {
   final DatabaseService _databaseService;
-  final AppSettings _appSettings;
   final SettingsRepository _settingsRepository;
   final AppAppearanceState _appearanceState;
 
   const DatabaseProvider({
     required DatabaseService databaseService,
-    required AppSettings appSettings,
     required SettingsRepository settingsRepository,
     required AppAppearanceState appearanceState,
   })  : _databaseService = databaseService,
-        _appSettings = appSettings,
         _settingsRepository = settingsRepository,
         _appearanceState = appearanceState;
 
@@ -45,8 +41,11 @@ class DatabaseProvider {
       if (databaseResult.isFailure) return Failure(databaseResult.error!);
 
       try {
-        await _appSettings.init(_settingsRepository, _appearanceState);
-        _appearanceState.synchronize(_settingsRepository.current!);
+        final settingsResult = await _settingsRepository.load();
+        if (settingsResult.isFailure) {
+          return Failure(settingsResult.error!);
+        }
+        _appearanceState.synchronize(settingsResult.value!);
       } on AppError {
         rethrow;
       } catch (error, stackTrace) {

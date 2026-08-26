@@ -17,7 +17,6 @@
 
 import 'package:flutter/material.dart';
 
-import '/common/singletons/app_settings.dart';
 import '/common/theme/app_font_style.dart';
 
 class CustomIconButton extends StatelessWidget {
@@ -38,50 +37,46 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Legacy settings bridge; remove during UI consolidation in backlog 010.
-    final app = AppSettings.instance;
     final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       child: Focus(
         focusNode: focusNode,
-        child: ValueListenableBuilder(
-          valueListenable: app.brightnessMode,
-          builder: (context, value, _) => Card(
-            elevation: 2,
-            margin: EdgeInsets.zero,
-            color: value == Brightness.light
-                ? colorScheme.onPrimary.withValues(alpha: 0.3)
-                : colorScheme.primary.withValues(alpha: 0.2),
-            child: Material(
-              color: Colors.transparent,
+        child: Card(
+          elevation: 2,
+          margin: EdgeInsets.zero,
+          color: brightness == Brightness.light
+              ? colorScheme.onPrimary.withValues(alpha: 0.3)
+              : colorScheme.primary.withValues(alpha: 0.2),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(5),
+            child: InkWell(
               borderRadius: BorderRadius.circular(5),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(5),
-                onLongPress: onLongPressed,
-                onTap: onPressed,
-                child: SizedBox(
-                  width: 48,
-                  height: label == null ? 48 : 54,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 3),
-                    child: label != null
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              icon,
-                              const SizedBox(height: 2),
-                              Text(
-                                label!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppFontStyle.roboto12,
-                              ),
-                            ],
-                          )
-                        : icon,
-                  ),
+              onLongPress: onLongPressed,
+              onTap: onPressed,
+              child: SizedBox(
+                width: 48,
+                height: label == null ? 48 : 54,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: label != null
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            icon,
+                            const SizedBox(height: 2),
+                            Text(
+                              label!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppFontStyle.roboto12,
+                            ),
+                          ],
+                        )
+                      : icon,
                 ),
               ),
             ),

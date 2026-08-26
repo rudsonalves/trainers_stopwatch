@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/common/adapters/legacy_settings_sink.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/repositories/settings/settings_repository.dart';
 import 'package:trainers_stopwatch/domain/common/settings/models/settings.dart';
@@ -41,29 +40,19 @@ class _SettingsRepositoryFake implements SettingsRepository {
   }
 }
 
-class _LegacySettingsSinkFake implements LegacySettingsSink {
-  final synchronized = <Settings>[];
-
-  @override
-  void synchronize(Settings settings) => synchronized.add(settings);
-}
-
 void main() {
   late Settings initial;
   late _SettingsRepositoryFake repository;
   late AppAppearanceState appearanceState;
-  late _LegacySettingsSinkFake legacySettings;
   late SettingsViewModel viewModel;
 
   setUp(() {
     initial = Settings.create(id: 1).value!;
     repository = _SettingsRepositoryFake()..stored = initial;
     appearanceState = AppAppearanceState(settings: initial);
-    legacySettings = _LegacySettingsSinkFake();
     viewModel = SettingsViewModel(
       repository: repository,
       appearanceState: appearanceState,
-      legacySettings: legacySettings,
     );
   });
 
@@ -85,7 +74,6 @@ void main() {
     expect(viewModel.loadCommand.isSuccess, isTrue);
     expect(viewModel.state!.brightness, Brightness.light);
     expect(appearanceState.brightness, Brightness.light);
-    expect(legacySettings.synchronized, [repository.stored]);
     expect(appearanceState.contrast, AppContrast.high);
     expect(appearanceState.locale, const Locale('pt', 'BR'));
   });
@@ -111,7 +99,6 @@ void main() {
     expect(repository.updates, hasLength(1));
     expect(repository.stored!.brightness, BrightnessPreference.light);
     expect(appearanceState.brightness, Brightness.light);
-    expect(legacySettings.synchronized, [repository.stored]);
   });
 
   test('toggles brightness and persists each new value', () async {
@@ -129,7 +116,6 @@ void main() {
     expect(appearanceState.brightness, Brightness.dark);
     expect(repository.stored!.brightness, BrightnessPreference.dark);
     expect(repository.updates, hasLength(2));
-    expect(legacySettings.synchronized, repository.updates);
   });
 
   test('persists contrast and locale and synchronizes both consumers',
@@ -144,8 +130,6 @@ void main() {
     );
     expect(appearanceState.contrast, AppContrast.medium);
     expect(appearanceState.locale, const Locale('pt', 'BR'));
-    expect(legacySettings.synchronized, hasLength(2));
-    expect(legacySettings.synchronized.last, repository.stored);
   });
 
   test('persists distances, their common unit and refresh interval', () async {
@@ -179,7 +163,6 @@ void main() {
     expect(repository.updates.last.brightness, BrightnessPreference.light);
     expect(repository.updates.last.contrast, ContrastPreference.high);
     expect(repository.stored, repository.updates.last);
-    expect(legacySettings.synchronized, repository.updates);
   });
 
   test('rolls presentation back when immediate persistence fails', () async {
@@ -196,7 +179,6 @@ void main() {
     expect(viewModel.state!.locale, const Locale('en', 'US'));
     expect(appearanceState.locale, const Locale('en', 'US'));
     expect(repository.current, initial);
-    expect(legacySettings.synchronized, isEmpty);
   });
 
   test('rejects invalid edits without changing presentation state', () async {

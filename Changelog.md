@@ -1,5 +1,81 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-07
+
+This change completes the removal of the remaining legacy compatibility layer after the application’s migration to domain models and the current settings architecture.
+
+Temporary adapters, legacy models, the global settings singleton, compatibility helpers, and their characterization tests were removed. Dependency registration, database initialization, settings synchronization, UI theme access, and package dependencies were updated to operate without the parallel legacy architecture.
+
+1. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Marked the accessibility and behavior-preservation work as completed.
+   * Completed the migrated-code cleanup checklist covering obsolete imports, deprecated APIs, behavior-preserving replacements, scope control, backlog registration, and static analysis.
+   * Completed the legacy-removal checklist covering temporary architecture, the remaining training adapter consumer, replaced models and tests, dependency auditing, and legacy reference verification.
+
+2. **`lib/common/adapters`**
+
+   * Removed the temporary `LegacySettingsSink` synchronization interface.
+   * Removed bidirectional adapters between legacy and domain settings, training, and user models.
+   * Eliminated the remaining compatibility conversion layer between the former data structures and the domain architecture.
+
+3. **`lib/common/models`**
+
+   * Removed the obsolete `HistoryModel`, `SettingsModel`, `TrainingModel`, and `UserModel` classes.
+   * Deleted their legacy mapping, JSON serialization, default-value, and presentation-specific compatibility behavior.
+
+4. **`lib/common/functions/stopwatch_functions.dart`**
+
+   * Removed the legacy `StopwatchFunctions` facade and `SpeedValue` representation.
+   * Eliminated the compatibility path that converted `TrainingModel` instances before delegating speed calculations and duration formatting to domain and presentation services.
+
+5. **`lib/common/singletons/app_settings.dart`**
+
+   * Removed the global `AppSettings` singleton and its legacy model inheritance.
+   * Deleted its repository initialization, application-directory setup, brightness notifier, persistence flow, and domain-to-legacy synchronization behavior.
+
+6. **Application dependency configuration**
+
+   * Removed `AppSettings` and `LegacySettingsSink` registrations from `application_dependencies.dart`.
+   * Removed legacy settings injection from `SettingsViewModel` construction in `viewmodels_dependencies.dart`.
+   * Kept application bootstrap and view-model registration aligned with the repository and `AppAppearanceState` architecture.
+
+7. **`lib/data/services/database/database_provider.dart`**
+
+   * Removed the `AppSettings` dependency from database startup.
+   * Updated initialization to load settings directly from `SettingsRepository`.
+   * Propagated repository failures through the existing result flow and synchronized successful settings directly with `AppAppearanceState`.
+
+8. **Settings presentation flow**
+
+   * Removed `LegacySettingsSink` from `SettingsViewModel` state, constructor dependencies, load handling, and save handling.
+   * Retained repository persistence and direct synchronization of appearance settings.
+   * Updated the settings view-model tests to remove the legacy fake and assertions while preserving coverage of repository and appearance-state behavior.
+
+9. **UI components**
+
+   * Removed the unused `AppSettings` reference from `SpeedUnitRow` and normalized its constants import.
+   * Refactored `CustomIconButton` to obtain brightness from the active Flutter theme instead of listening to the removed singleton.
+   * Preserved the button’s card styling, focus handling, dimensions, labels, tap behavior, and long-press behavior while simplifying its widget tree.
+
+10. **Dependency manifest and lockfile**
+
+   * Removed unused direct dependencies on `cupertino_icons` and `bloc_test`.
+   * Removed direct development declarations for the email sender, path provider, and share platform interfaces, leaving the platform packages as transitive dependencies where still required.
+   * Pruned the lockfile entries that were only retained by the removed dependencies, including their testing, coverage, server, source-map, and WebSocket dependency chains.
+
+11. **Legacy compatibility tests**
+
+   * Removed adapter round-trip tests for settings, training, and user legacy models.
+   * Removed tests for the legacy stopwatch speed-calculation facade.
+   * Removed duration-formatting compatibility assertions tied to `StopwatchFunctions`, retaining direct coverage of `TrainingValueFormatter`.
+   * Updated dependency configuration tests to stop resolving and comparing the removed singleton and legacy sink.
+
+### Conclusion
+
+The application no longer maintains a parallel legacy model, adapter, singleton, or settings synchronization architecture. Settings initialization and presentation now use the repository, domain model, application appearance state, and Flutter theme directly.
+
+The cleanup also removes obsolete compatibility tests and unused dependencies, leaving the migrated codebase aligned with the consolidated architecture documented in backlog 010.
+
 ## 2026/08/26 - bkl010/task-05-c
 
 This change standardizes theme and style usage across migrated UI components while preserving their existing layout and behavior. It replaces fixed colors and standalone text styles with values derived from the active Flutter theme and improves state initialization in training color dialogs.
