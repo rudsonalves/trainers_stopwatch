@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '/domain/common/user/models/user.dart';
-import '/features/widgets/common/generic_dialog.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
+import '../../components/generic_dialog.dart';
 import 'viewmodel/users_view_model.dart';
 import 'widgets/dismissible_user_tile.dart';
 import 'widgets/user_dialog/user_dialog.dart';

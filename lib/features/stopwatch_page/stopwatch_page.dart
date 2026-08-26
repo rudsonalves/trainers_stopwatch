@@ -12,7 +12,7 @@ import '/core/routing/route_arguments.dart';
 import '/core/routing/routes.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
-import '../widgets/common/generic_dialog.dart';
+import '../../ui/components/generic_dialog.dart';
 import 'widgets/message_row.dart';
 import 'widgets/stopwatch_dismissible.dart';
 import 'widgets/stopwatch_drawer.dart';

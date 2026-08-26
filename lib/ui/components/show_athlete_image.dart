@@ -15,35 +15,36 @@
 // You should have received a copy of the GNU General Public License
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
-import '../../common/show_athlete_image.dart';
+import '../../common/constants.dart';
 
-class UserImageName extends StatelessWidget {
-  const UserImageName({
-    super.key,
-    required this.image,
-    required this.name,
-  });
-
+class ShowUserImage extends StatelessWidget {
   final String image;
-  final String name;
+  final double? size;
+
+  const ShowUserImage(
+    this.image, {
+    super.key,
+    this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ShowUserImage(image),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: 70,
-          child: Text(
-            name.split(' ').first,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+    return SizedBox(
+      width: size ?? photoImageSize,
+      height: size ?? photoImageSize,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: image == defaultPhotoImage
+            ? Image.asset(image)
+            : Image.file(
+                File(image),
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 }

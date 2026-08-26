@@ -187,10 +187,10 @@ testáveis sem transferir responsabilidades visuais para ViewModels/BLoCs.
 
 **Dependência:** tarefa 1; pode acompanhar as tarefas 2 a 4.
 
-- [ ] Mapear widgets com uso real em duas ou mais features.
-- [ ] Mover somente esses widgets para `ui/components`, preservando os demais
+- [x] Mapear widgets com uso real em duas ou mais features.
+- [x] Mover somente esses widgets para `ui/components`, preservando os demais
       junto das features consumidoras.
-- [ ] Remover componentes genéricos sem consumidores e abstrações duplicadas.
+- [x] Remover componentes genéricos sem consumidores e abstrações duplicadas.
 - [ ] Uniformizar usos de tema e estilos nos arquivos migrados sem redesenhar a
       interface.
 - [ ] Preservar acessibilidade, semântica e comportamento dos componentes

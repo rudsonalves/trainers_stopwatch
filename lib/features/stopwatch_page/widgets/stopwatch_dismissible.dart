@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 
 import '/application/stopwatch/session/stopwatch_session_id.dart';
 import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '../../widgets/common/dismissible_backgrounds.dart';
-import '../../widgets/precise_stopwatch/precise_stopwatch.dart';
+import '../../../ui/components/dismissible_backgrounds.dart';
+import '../../../ui/components/precise_stopwatch/precise_stopwatch.dart';
 
 class StopwatDismissible extends StatelessWidget {
   final StopwatchSessionViewModel session;

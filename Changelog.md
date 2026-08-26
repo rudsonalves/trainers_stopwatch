@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-04-a
+
+This change consolidates reusable interface widgets under `ui/components`, replacing the legacy shared-widget organization inside `features/widgets`. Consumer imports and tests were updated to follow the new component locations while preserving existing behavior.
+
+The backlog now records completion of the component usage assessment, migration of shared widgets, and removal of redundant generic abstractions.
+
+1. **`lib/ui/components`**
+
+   * Established the shared UI component area by moving reusable dialogs, form fields, dismissible backgrounds, athlete images, user cards, and stopwatch widgets from `lib/features/widgets`.
+   * Kept the edit-training dialog and precise-stopwatch widget groups together with their supporting components.
+   * Relocated `simple_spin_box_field.dart` into the edit-training dialog module and `custon_icon_button.dart` into the precise-stopwatch module, reflecting their actual ownership.
+   * Updated internal imports to resolve shared constants, theme styles, application settings, and neighboring components from their new locations.
+
+2. **`lib/features/stopwatch_page`**
+
+   * Updated the stopwatch page and dismissible stopwatch widget to consume the relocated generic dialog, dismissible backgrounds, and precise stopwatch components from `ui/components`.
+
+3. **`lib/ui/pages`**
+
+   * Updated history, personal training, settings, trainings, and users pages and widgets to import shared components from the consolidated `ui/components` hierarchy.
+   * Preserved existing integrations with generic dialogs, user cards, numeric fields, athlete images, dismissible backgrounds, and the precise stopwatch.
+
+4. **`test/features/widgets/precise_stopwatch/stopwatch_state_widgets_test.dart`**
+
+   * Updated widget test imports to reference the new locations of the generic dialog and precise-stopwatch components.
+
+5. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Marked the shared-widget usage mapping, reusable component migration, and redundant generic component cleanup tasks as completed.
+
+### Conclusion
+
+Reusable UI elements are now consolidated under a dedicated presentation-layer component hierarchy, with feature and page consumers aligned to the new structure. The migration clarifies component ownership without changing the represented interface behavior.
+
 ## 2026/08/26 - bkl010/task-04
 
 This change improves UI state handling across stopwatch, training, history, personal training, settings, and user flows. It introduces localized empty-state messages, replaces raw exception details with user-facing error feedback, and prevents incompatible interactions while asynchronous operations are running.

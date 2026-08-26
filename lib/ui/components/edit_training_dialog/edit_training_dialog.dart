@@ -23,10 +23,10 @@ import '../../../domain/common/training/models/training.dart';
 import '../../../domain/common/training/units/distance_unit.dart';
 import '../../../domain/common/training/units/speed_unit.dart';
 import '../../../domain/common/training/values/distance.dart';
-import '../common/numeric_field.dart';
-import '../common/simple_spin_box_field.dart';
+import '../numeric_field.dart';
 import 'widgets/color_dialog.dart';
 import 'widgets/distance_unit_row.dart';
+import 'widgets/simple_spin_box_field.dart';
 import 'widgets/speed_unit_row.dart';
 
 class TrainingEditResult {

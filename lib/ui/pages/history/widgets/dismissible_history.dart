@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '/common/icons/stopwatch_icons_icons.dart';
 import '/common/presentation/training_value_formatter.dart';
 import '/domain/common/training/events/training_event.dart';
-import '/features/widgets/common/dismissible_backgrounds.dart';
+import '../../../components/dismissible_backgrounds.dart';
 
 class DismissibleHistory extends StatelessWidget {
   final TrainingEvent event;

@@ -10,7 +10,7 @@ import '/application/stopwatch/bloc/stopwatch_bloc.dart';
 import '/application/stopwatch/bloc/stopwatch_state.dart';
 import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 import '/common/icons/stopwatch_icons_icons.dart';
-import '../../common/custon_icon_button.dart';
+import 'custon_icon_button.dart';
 
 class StopwatchButtonBar extends StatelessWidget {
   final StopwatchSessionViewModel session;

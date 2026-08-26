@@ -17,8 +17,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../common/singletons/app_settings.dart';
-import '../../../common/theme/app_font_style.dart';
+import '/common/singletons/app_settings.dart';
+import '/common/theme/app_font_style.dart';
 
 class CustomIconButton extends StatelessWidget {
   final void Function()? onPressed;

@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 
 import '/common/constants.dart';
 import '/common/theme/app_font_style.dart';
-import '/features/widgets/common/numeric_field.dart';
+import '../../../components/numeric_field.dart';
 
 class LengthLineEdit extends StatefulWidget {
   final String lengthLabel;

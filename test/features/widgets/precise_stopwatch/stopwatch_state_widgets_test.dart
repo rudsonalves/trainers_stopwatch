@@ -16,10 +16,10 @@ import 'package:trainers_stopwatch/domain/usecases/trainings/persist_stopwatch_s
 import 'package:trainers_stopwatch/domain/usecases/trainings/training_initialization.dart';
 import 'package:trainers_stopwatch/features/stopwatch_page/stopwatch_page.dart';
 import 'package:trainers_stopwatch/features/stopwatch_page/widgets/stopwatch_dismissible.dart';
-import 'package:trainers_stopwatch/features/widgets/common/generic_dialog.dart';
-import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/precise_stopwatch.dart';
-import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/widgets/lap_split_counters.dart';
-import 'package:trainers_stopwatch/features/widgets/precise_stopwatch/widgets/stopwatch_display.dart';
+import 'package:trainers_stopwatch/ui/components/generic_dialog.dart';
+import 'package:trainers_stopwatch/ui/components/precise_stopwatch/precise_stopwatch.dart';
+import 'package:trainers_stopwatch/ui/components/precise_stopwatch/widgets/lap_split_counters.dart';
+import 'package:trainers_stopwatch/ui/components/precise_stopwatch/widgets/stopwatch_display.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/models/settings_form_data.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
