@@ -121,6 +121,9 @@ class _TrainingsPageState extends State<TrainingsPage> {
     if (viewModel.loadUsersCommand.isFailure && viewModel.users.isEmpty) {
       return Center(child: Text('TPError'.tr()));
     }
+    if (viewModel.users.isEmpty) {
+      return Center(child: Text('APRegisterSome'.tr()));
+    }
 
     return Column(
       children: [
@@ -128,6 +131,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
           colorScheme: colorScheme,
           users: viewModel.users,
           selectedUserId: viewModel.selectedUserId,
+          enabled: !viewModel.isLoading,
           onSelected: (id) {
             if (id != null) viewModel.selectUser(id);
           },
@@ -152,19 +156,18 @@ class _TrainingsPageState extends State<TrainingsPage> {
           children: [
             MenuAnchor(
               builder: (context, controller, child) => IconButton.filledTonal(
-                onPressed: viewModel.hasSelectedTrainings &&
-                        !viewModel.isReportOperationRunning
-                    ? () => controller.isOpen
-                        ? controller.close()
-                        : controller.open()
-                    : null,
+                onPressed:
+                    viewModel.hasSelectedTrainings && !viewModel.isLoading
+                        ? () => controller.isOpen
+                            ? controller.close()
+                            : controller.open()
+                        : null,
                 icon: const Icon(Icons.share),
                 tooltip: 'Show menu',
               ),
               menuChildren: [
                 MenuItemButton(
-                  onPressed:
-                      viewModel.isReportOperationRunning ? null : _sendEmail,
+                  onPressed: viewModel.isLoading ? null : _sendEmail,
                   child: const Row(children: [
                     Icon(StopwatchIcons.mail, color: Colors.amber),
                     SizedBox(width: 12),
@@ -172,8 +175,7 @@ class _TrainingsPageState extends State<TrainingsPage> {
                   ]),
                 ),
                 MenuItemButton(
-                  onPressed:
-                      viewModel.isReportOperationRunning ? null : _shareReport,
+                  onPressed: viewModel.isLoading ? null : _shareReport,
                   child: Row(children: [
                     const Icon(Icons.share),
                     const SizedBox(width: 12),
@@ -183,13 +185,14 @@ class _TrainingsPageState extends State<TrainingsPage> {
               ],
             ),
             IconButton.filledTonal(
-              onPressed:
-                  viewModel.hasSelectedTrainings ? _removeSelected : null,
+              onPressed: viewModel.hasSelectedTrainings && !viewModel.isLoading
+                  ? _removeSelected
+                  : null,
               tooltip: 'GenericRemove'.tr(),
               icon: const Icon(Icons.delete),
             ),
             IconButton.filledTonal(
-              onPressed: viewModel.trainings.isEmpty
+              onPressed: viewModel.trainings.isEmpty || viewModel.isLoading
                   ? null
                   : viewModel.areAllTrainingsSelected
                       ? viewModel.clearSelection
@@ -221,23 +224,28 @@ class _TrainingsPageState extends State<TrainingsPage> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: ListView.builder(
-                      itemCount: viewModel.trainings.length,
-                      itemBuilder: (context, index) {
-                        final training =
-                            viewModel.trainings.reversed.elementAt(index);
-                        return DismissibleTraining(
-                          training: training,
-                          openHistory: _openHistory,
-                          removeTraining: _removeTraining,
-                          onSelect: (training) => viewModel.setSelected(
-                            training,
-                            selected: !viewModel.isSelected(training),
+                    child: viewModel.selectedUser != null &&
+                            viewModel.trainings.isEmpty &&
+                            !viewModel.loadTrainingsCommand.isRunning
+                        ? Center(child: Text('TPNoTrainings'.tr()))
+                        : ListView.builder(
+                            itemCount: viewModel.trainings.length,
+                            itemBuilder: (context, index) {
+                              final training =
+                                  viewModel.trainings.reversed.elementAt(index);
+                              return DismissibleTraining(
+                                training: training,
+                                enabled: !viewModel.isLoading,
+                                openHistory: _openHistory,
+                                removeTraining: _removeTraining,
+                                onSelect: (training) => viewModel.setSelected(
+                                  training,
+                                  selected: !viewModel.isSelected(training),
+                                ),
+                                selected: viewModel.isSelected(training),
+                              );
+                            },
                           ),
-                          selected: viewModel.isSelected(training),
-                        );
-                      },
-                    ),
                   ),
                 ),
               ],

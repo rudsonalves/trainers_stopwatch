@@ -1,4 +1,8 @@
 {
+  "SPNoRecords": "No times recorded",
+  "SPNoSessions": "Add users to start the stopwatches",
+  "TPNoTrainings": "No training sessions recorded",
+  "HPNoEvents": "No events recorded",
   "TPReportTitle": "Training Report",
   "TPReportUser": "User",
   "TPReportDate": "Date",

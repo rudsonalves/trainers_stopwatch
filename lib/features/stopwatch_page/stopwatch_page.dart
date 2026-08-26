@@ -58,7 +58,7 @@ class _StopWatchPageState extends State<StopWatchPage> {
       await GenericDialog.open(
         context,
         title: 'SPRemoveTraining'.tr(),
-        message: result.error!.message,
+        message: 'TPError'.tr(),
         actions: DialogActions.close,
       );
     }
@@ -75,18 +75,21 @@ class _StopWatchPageState extends State<StopWatchPage> {
   Widget _stopwatchListView() {
     return SizedBox(
       height: _sizedBoxHeight(),
-      child: ListView.builder(
-        itemCount: viewModel.sessions.length,
-        itemBuilder: (context, index) {
-          final session = viewModel.sessions[index];
-          return StopwatDismissible(
-            key: ValueKey(session.id.userId),
-            session: session,
-            removeStopwatch: _removeStopwatch,
-            managerStopwatch: _manageStopwatch,
-          );
-        },
-      ),
+      child: viewModel.sessions.isEmpty
+          ? Center(child: Text('SPNoSessions'.tr()))
+          : ListView.builder(
+              itemCount: viewModel.sessions.length,
+              itemBuilder: (context, index) {
+                final session = viewModel.sessions[index];
+                return StopwatDismissible(
+                  key: ValueKey(session.id.userId),
+                  enabled: !viewModel.isRemoving(session.id),
+                  session: session,
+                  removeStopwatch: _removeStopwatch,
+                  managerStopwatch: _manageStopwatch,
+                );
+              },
+            ),
     );
   }
 
@@ -102,12 +105,14 @@ class _StopWatchPageState extends State<StopWatchPage> {
             border: Border.all(color: colorScheme.secondaryContainer),
           ),
           padding: const EdgeInsets.all(6),
-          child: ListView.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) => MessageRow(
-              message: messages[index],
-            ),
-          ),
+          child: messages.isEmpty
+              ? Center(child: Text('SPNoRecords'.tr()))
+              : ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) => MessageRow(
+                    message: messages[index],
+                  ),
+                ),
         ),
       ),
     );

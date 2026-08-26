@@ -11,6 +11,7 @@ class DismissibleHistory extends StatelessWidget {
   final bool enableDelete;
   final Future<void> Function(TrainingEvent event) editHistory;
   final Future<bool> Function(int historyId) deleteHistory;
+  final bool enabled;
 
   const DismissibleHistory({
     super.key,
@@ -18,6 +19,7 @@ class DismissibleHistory extends StatelessWidget {
     required this.enableDelete,
     required this.editHistory,
     required this.deleteHistory,
+    this.enabled = true,
   });
 
   String get label => switch (event) {
@@ -50,6 +52,8 @@ class DismissibleHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Dismissible(
         key: ValueKey('${event.runtimeType}-${event.historyId}'),
+        direction:
+            enabled ? DismissDirection.horizontal : DismissDirection.none,
         background: DismissibleContainers.background(context),
         secondaryBackground: DismissibleContainers.secondaryBackground(
           context,

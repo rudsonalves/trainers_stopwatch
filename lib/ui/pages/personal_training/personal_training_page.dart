@@ -62,9 +62,15 @@ class _PersonalTrainingPageState extends State<PersonalTrainingPage> {
     return Column(
       children: [
         if (viewModel.isLoading) const LinearProgressIndicator(),
+        if (viewModel.lastError != null)
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text('TPError'.tr()),
+          ),
         Expanded(
           child: HistoryListView(
             events: viewModel.events,
+            enabled: !viewModel.isLoading,
             histories: viewModel.histories,
             updateComments: viewModel.updateComments,
             deleteHistory: _deleteHistory,

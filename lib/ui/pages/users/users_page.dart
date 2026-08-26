@@ -128,6 +128,7 @@ class _UsersPageState extends State<UsersPage> {
               final user = viewModel.users[index];
               return DismissibleUserTile(
                 user: user,
+                enabled: !viewModel.isLoading,
                 selectUser: _selectUser,
                 editFunction: _editUser,
                 deleteFunction: _deleteUser,

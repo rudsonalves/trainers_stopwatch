@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '/domain/common/history/models/history_entry.dart';
@@ -14,6 +15,7 @@ class HistoryListView extends StatelessWidget {
   }) updateComments;
   final Future<bool> Function(int historyId) deleteHistory;
   final bool reversed;
+  final bool enabled;
 
   const HistoryListView({
     super.key,
@@ -22,6 +24,7 @@ class HistoryListView extends StatelessWidget {
     required this.updateComments,
     required this.deleteHistory,
     this.reversed = false,
+    this.enabled = true,
   });
 
   Future<void> _edit(BuildContext context, TrainingEvent event) async {
@@ -60,18 +63,21 @@ class HistoryListView extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.all(8),
-      child: ListView.builder(
-        itemCount: shownEvents.length,
-        itemBuilder: (context, index) {
-          final event = shownEvents[index];
-          return DismissibleHistory(
-            event: event,
-            enableDelete: _canDelete(event),
-            editHistory: (event) => _edit(context, event),
-            deleteHistory: deleteHistory,
-          );
-        },
-      ),
+      child: shownEvents.isEmpty
+          ? Center(child: Text('HPNoEvents'.tr()))
+          : ListView.builder(
+              itemCount: shownEvents.length,
+              itemBuilder: (context, index) {
+                final event = shownEvents[index];
+                return DismissibleHistory(
+                  event: event,
+                  enabled: enabled,
+                  enableDelete: _canDelete(event),
+                  editHistory: (event) => _edit(context, event),
+                  deleteHistory: deleteHistory,
+                );
+              },
+            ),
     );
   }
 }

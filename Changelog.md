@@ -1,5 +1,63 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-04
+
+This change improves UI state handling across stopwatch, training, history, personal training, settings, and user flows. It introduces localized empty-state messages, replaces raw exception details with user-facing error feedback, and prevents incompatible interactions while asynchronous operations are running.
+
+The affected widgets now expose explicit enabled states for dismissible items, selectors, forms, and actions. Widget coverage was also extended to verify training empty states and interaction locking during report operations.
+
+1. **Translation assets**
+
+   * Added localized empty-state messages for stopwatch sessions, recorded times, training sessions, and history events.
+   * Updated English, Spanish, and Brazilian Portuguese translation files with equivalent UI feedback.
+
+2. **Stopwatch page and widgets**
+
+   * Added empty states for missing stopwatch sessions and recorded messages.
+   * Replaced raw removal and session error messages with the localized generic error text.
+   * Added an enabled state to stopwatch dismissible items.
+   * Disabled swipe gestures and stopwatch controls while the corresponding session is being removed.
+
+3. **History and personal training pages**
+
+   * Added a localized empty state when no history events are available.
+   * Propagated loading state through the history list and dismissible history widgets to disable swipe actions during active operations.
+   * Added visible localized error feedback to the personal training page.
+
+4. **Settings page**
+
+   * Replaced raw command error details with localized generic error messages.
+   * Disabled settings form interactions while settings are being loaded.
+   * Preserved progress indicators for active load and save operations.
+
+5. **Trainings page and widgets**
+
+   * Added empty states for missing users and for selected users without recorded training sessions.
+   * Added enabled states to the user selector and dismissible training widgets.
+   * Disabled user selection, training selection, swipe actions, deletion, bulk selection, and report menu actions while the page is loading.
+   * Updated report actions to consistently use the aggregate loading state when determining availability.
+
+6. **Users page and dismissible user tile**
+
+   * Added an enabled state to user tiles.
+   * Disabled swipe and tap interactions while user operations are loading.
+
+7. **Training page widget tests**
+
+   * Extended the training repository fake to support users without training records.
+   * Added coverage for the localized no-training empty state and absence of training rows.
+   * Added assertions confirming that the user selector, dismissible gesture, and training tile interaction are disabled during report operations.
+   * Updated the test translation loader with the new training empty-state message.
+
+8. **UI consolidation backlog**
+
+   * Marked the task for reviewing loading, empty, success, and error states as complete.
+   * Marked preservation of page-owned interactions, blocking of incompatible actions, visible failure feedback, and affected widget test updates as complete.
+
+### Conclusion
+
+The UI now presents predictable localized empty and error states while consistently preventing conflicting interactions during asynchronous work. These changes strengthen page-level responsibility for feedback and interaction control and add targeted test coverage for the updated training behavior.
+
 ## 2026/08/26 - bkl010/task-03
 
 This change consolidates personal-training navigation around a stable stopwatch session identifier instead of passing the complete session view model between routes.

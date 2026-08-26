@@ -12,11 +12,13 @@ import '../../widgets/precise_stopwatch/precise_stopwatch.dart';
 
 class StopwatDismissible extends StatelessWidget {
   final StopwatchSessionViewModel session;
+  final bool enabled;
   final Future<bool> Function(StopwatchSessionId) removeStopwatch;
   final Future<void> Function(StopwatchSessionViewModel) managerStopwatch;
 
   const StopwatDismissible({
     super.key,
+    this.enabled = true,
     required this.session,
     required this.removeStopwatch,
     required this.managerStopwatch,
@@ -29,6 +31,8 @@ class StopwatDismissible extends StatelessWidget {
       child: Focus(
         child: Dismissible(
           key: ValueKey(session.id.userId),
+          direction:
+              enabled ? DismissDirection.horizontal : DismissDirection.none,
           background: DismissibleContainers.background(
             context,
             label: 'SWDLabel'.tr(),
@@ -47,7 +51,10 @@ class StopwatDismissible extends StatelessWidget {
             }
             return false;
           },
-          child: PreciseStopwatch(session: session),
+          child: AbsorbPointer(
+            absorbing: !enabled,
+            child: PreciseStopwatch(session: session),
+          ),
         ),
       ),
     );

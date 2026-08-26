@@ -57,7 +57,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final data = viewModel.state;
     if (data == null) {
       if (viewModel.loadCommand.isFailure) {
-        return _ErrorMessage(message: viewModel.loadCommand.error!.message);
+        return _ErrorMessage(message: 'TPError'.tr());
       }
       return const Center(child: CircularProgressIndicator());
     }
@@ -67,10 +67,15 @@ class _SettingsPageState extends State<SettingsPage> {
         if (viewModel.loadCommand.isRunning || viewModel.saveCommand.isRunning)
           const LinearProgressIndicator(),
         if (viewModel.loadCommand.isFailure)
-          _ErrorMessage(message: viewModel.loadCommand.error!.message),
+          _ErrorMessage(message: 'TPError'.tr()),
         if (viewModel.saveCommand.isFailure)
-          _ErrorMessage(message: viewModel.saveCommand.error!.message),
-        Expanded(child: _SettingsForm(data: data, viewModel: viewModel)),
+          _ErrorMessage(message: 'TPError'.tr()),
+        Expanded(
+          child: AbsorbPointer(
+            absorbing: viewModel.loadCommand.isRunning,
+            child: _SettingsForm(data: data, viewModel: viewModel),
+          ),
+        ),
       ],
     );
   }

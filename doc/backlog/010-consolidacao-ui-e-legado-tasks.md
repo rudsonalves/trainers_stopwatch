@@ -173,12 +173,12 @@ transportam dependências legadas ou detalhes de plataforma.
 
 **Dependências:** tarefas 2 e 3.
 
-- [ ] Revisar loading, vazio, sucesso e erro nos fluxos relevantes.
-- [ ] Preservar dialogs, snackbars, menus, seleção, focus e controllers nas
+- [x] Revisar loading, vazio, sucesso e erro nos fluxos relevantes.
+- [x] Preservar dialogs, snackbars, menus, seleção, focus e controllers nas
       Pages responsáveis.
-- [ ] Bloquear disparos incompatíveis enquanto operações estiverem em execução.
-- [ ] Garantir feedback visível para falhas esperadas sem exceções cruas.
-- [ ] Adicionar ou atualizar testes de widget para os estados afetados.
+- [x] Bloquear disparos incompatíveis enquanto operações estiverem em execução.
+- [x] Garantir feedback visível para falhas esperadas sem exceções cruas.
+- [x] Adicionar ou atualizar testes de widget para os estados afetados.
 
 **Resultado esperado:** cada fluxo importante apresenta estados previsíveis e
 testáveis sem transferir responsabilidades visuais para ViewModels/BLoCs.

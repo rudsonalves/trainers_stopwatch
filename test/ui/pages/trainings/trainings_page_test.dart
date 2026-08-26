@@ -14,6 +14,7 @@ import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_
 import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/trainings_page.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/trainings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/trainings/widgets/dismissible_training.dart';
 
 class _TestAssetLoader extends AssetLoader {
   const _TestAssetLoader();
@@ -48,6 +49,7 @@ class _TestAssetLoader extends AssetLoader {
         'TPReportLap': 'Volta',
         'TPReportSubject': 'Relatório de treinos',
         'TPReportEmailBody': '<p>O relatório de treinos está anexado.</p>',
+        'TPNoTrainings': 'Nenhum treinamento registrado',
       };
 }
 
@@ -76,13 +78,13 @@ class _UserRepositoryFake implements UserRepository {
 }
 
 class _TrainingRepositoryFake implements TrainingRepository {
-  final Training training;
+  final Training? training;
 
   const _TrainingRepositoryFake(this.training);
 
   @override
   List<Training> trainingsForUser(int userId) =>
-      training.userId == userId ? [training] : const [];
+      training?.userId == userId ? [training!] : const [];
 
   @override
   AsyncResult<List<Training>> loadForUser(int userId) async =>
@@ -139,7 +141,10 @@ Future<
       TrainingsViewModel viewModel,
       _ShareTrainingReportFake share,
       _SendTrainingReportEmailFake email,
-    })> _pumpPage(WidgetTester tester) async {
+    })> _pumpPage(
+  WidgetTester tester, {
+  bool hasTraining = true,
+}) async {
   const user = User(
     id: 1,
     name: 'Ana',
@@ -158,7 +163,9 @@ Future<
 
   final viewModel = TrainingsViewModel(
     userRepository: const _UserRepositoryFake(user),
-    trainingRepository: _TrainingRepositoryFake(training),
+    trainingRepository: _TrainingRepositoryFake(
+      hasTraining ? training : null,
+    ),
     shareTrainingReport: share,
     sendTrainingReportEmail: email,
   );
@@ -235,6 +242,17 @@ void main() {
     );
   });
 
+  testWidgets('shows an empty state when the user has no trainings',
+      (tester) async {
+    await _pumpPage(tester, hasTraining: false);
+
+    expect(
+      find.text('Nenhum treinamento registrado'),
+      findsOneWidget,
+    );
+    expect(find.byType(DismissibleTraining), findsNothing);
+  });
+
   testWidgets('shows progress and disables the menu while sharing',
       (tester) async {
     final dependencies = await _pumpPage(tester);
@@ -260,6 +278,33 @@ void main() {
             find.widgetWithIcon(IconButton, Icons.share),
           )
           .onPressed,
+      isNull,
+    );
+
+    expect(
+      tester
+          .widget<DropdownButton<int>>(
+            find.byType(DropdownButton<int>),
+          )
+          .onChanged,
+      isNull,
+    );
+
+    expect(
+      tester
+          .widget<Dismissible>(
+            find.byType(Dismissible),
+          )
+          .direction,
+      DismissDirection.none,
+    );
+
+    expect(
+      tester
+          .widget<ListTile>(
+            find.widgetWithText(ListTile, 'Treino de velocidade'),
+          )
+          .onTap,
       isNull,
     );
 

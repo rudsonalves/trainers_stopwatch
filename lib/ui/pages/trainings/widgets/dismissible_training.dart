@@ -10,6 +10,7 @@ class DismissibleTraining extends StatelessWidget {
   final Future<bool> Function(Training training) removeTraining;
   final ValueChanged<Training> onSelect;
   final bool selected;
+  final bool enabled;
 
   const DismissibleTraining({
     super.key,
@@ -18,6 +19,7 @@ class DismissibleTraining extends StatelessWidget {
     required this.removeTraining,
     required this.onSelect,
     required this.selected,
+    this.enabled = true,
   });
 
   (String, String) _labels() {
@@ -43,6 +45,7 @@ class DismissibleTraining extends StatelessWidget {
     return Dismissible(
       key: ValueKey(training.id),
       background: DismissibleContainers.background(context),
+      direction: enabled ? DismissDirection.horizontal : DismissDirection.none,
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
@@ -66,7 +69,7 @@ class DismissibleTraining extends StatelessWidget {
           child: ListTile(
             title: Text(title),
             subtitle: Text(subtitle),
-            onTap: () => onSelect(training),
+            onTap: enabled ? () => onSelect(training) : null,
           ),
         ),
       ),

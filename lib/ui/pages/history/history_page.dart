@@ -58,6 +58,7 @@ class _HistoryPageState extends State<HistoryPage> {
         Expanded(
           child: HistoryListView(
             events: viewModel.events,
+            enabled: !viewModel.isLoading,
             histories: viewModel.histories,
             updateComments: viewModel.updateComments,
             deleteHistory: _deleteHistory,

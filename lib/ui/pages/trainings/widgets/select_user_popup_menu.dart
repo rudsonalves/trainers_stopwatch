@@ -9,6 +9,7 @@ class SelectUserPopupMenu extends StatelessWidget {
   final List<User> users;
   final int? selectedUserId;
   final ValueChanged<int?> onSelected;
+  final bool enabled;
 
   const SelectUserPopupMenu({
     super.key,
@@ -16,6 +17,7 @@ class SelectUserPopupMenu extends StatelessWidget {
     required this.users,
     required this.selectedUserId,
     required this.onSelected,
+    this.enabled = true,
   });
 
   @override
@@ -43,7 +45,7 @@ class SelectUserPopupMenu extends StatelessWidget {
                               Text(user.name, overflow: TextOverflow.ellipsis),
                         ))
                     .toList(),
-                onChanged: onSelected,
+                onChanged: enabled ? onSelected : null,
               ),
             ),
           ),

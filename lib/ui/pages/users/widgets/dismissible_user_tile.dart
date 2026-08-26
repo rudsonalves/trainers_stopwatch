@@ -29,6 +29,7 @@ class DismissibleUserTile extends StatelessWidget {
   final Future<bool> Function(User)? deleteFunction;
   final bool isChecked;
   final List<int> blockedUserIds;
+  final bool enabled;
 
   const DismissibleUserTile({
     super.key,
@@ -38,9 +39,11 @@ class DismissibleUserTile extends StatelessWidget {
     this.deleteFunction,
     required this.isChecked,
     required this.blockedUserIds,
+    this.enabled = true,
   });
 
   void _onTap(BuildContext context) {
+    if (!enabled) return;
     if (!blockedUserIds.contains(user.id!)) {
       if (selectUser != null) {
         selectUser!(!isChecked, user);
@@ -61,6 +64,7 @@ class DismissibleUserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
       background: DismissibleContainers.background(context),
+      direction: enabled ? DismissDirection.horizontal : DismissDirection.none,
       secondaryBackground: DismissibleContainers.secondaryBackground(context),
       key: ValueKey(user.id),
       child: UserCard(

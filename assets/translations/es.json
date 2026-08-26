@@ -1,4 +1,8 @@
 {
+  "SPNoRecords": "Ningún tiempo registrado",
+  "SPNoSessions": "Añade atletas para iniciar los cronómetros",
+  "TPNoTrainings": "Ningún entrenamiento registrado",
+  "HPNoEvents": "Ningún evento registrado",
   "TPReportTitle": "Informe de entrenamientos",
   "TPReportUser": "Usuario",
   "TPReportDate": "Fecha",

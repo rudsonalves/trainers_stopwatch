@@ -121,7 +121,7 @@ class StopwatchButtonBar extends StatelessWidget {
               )
             else if (session.state.error != null)
               Tooltip(
-                message: session.state.error!.message,
+                message: 'TPError'.tr(),
                 child: const Icon(Icons.error_outline),
               ),
           ],
