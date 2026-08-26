@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-02
+
+This change completes the presentation-boundary consolidation task by documenting the removal of visual framework concerns from ViewModels and BLoCs, the representation of asynchronous interactions through observable state mechanisms, and the elimination of direct business and platform dependencies from Pages.
+
+The backlog now records the architectural decisions, audit findings, affected presentation flows, and validation coverage delivered for Settings, Stopwatch, navigation, and appearance behavior.
+
+1. **`doc/backlog/010-consolidacao-ui-e-legado-tasks.md`**
+
+   * Marked all presentation-responsibility subtasks as completed, covering non-visual ViewModels and BLoCs, asynchronous intentions, Page dependency boundaries, and affected unit tests.
+   * Documented the audit confirming that ViewModels and BLoCs no longer contain `BuildContext`, Material widgets, focus handling, visual controllers, dialogs, snackbars, or navigation concerns.
+   * Recorded that `SettingsViewModel`, `SettingsFormData`, and `AppAppearanceState` now depend on value types from `dart:ui` and `ChangeNotifier` from `foundation` instead of Material.
+   * Described how asynchronous operations are exposed through Commands in Users, Trainings, History, and Settings, while Stopwatch flows use explicit operation state, `AppError`, concurrency tracking, and `Result`.
+   * Clarified that synchronous selection and lifecycle operations remain synchronous where command abstraction would not add value.
+   * Documented the completed Page dependency audit, including the relocation of splash removal to the composition root and coordination of brightness persistence and appearance synchronization through `SettingsViewModel`.
+   * Recorded that Pages no longer directly access repositories, platform services, dependency injectors, business singletons, or plugins, while valid presentation concerns remain in place.
+   * Added the delivery summary and validation results for Settings, Stopwatch, routes, appearance, focused tests, static analysis, and diff verification.
+
+### Conclusion
+
+The presentation layer consolidation task is now documented as complete. Pages coordinate visual interaction, while ViewModels and BLoCs expose testable state and operations without visual framework or inverted infrastructure dependencies.
+
+The recorded audit and validation confirm consistent architectural boundaries across the affected Settings, Stopwatch, navigation, and appearance flows.
+
 ## 2026/08/26 - bkl010/task-01
 
 This change establishes the architectural baseline for backlog 010 and begins consolidating presentation boundaries. The documented audit now identifies legacy artifacts, Page dependencies, supported platforms, manual validation requirements, and the classification of follow-up work.

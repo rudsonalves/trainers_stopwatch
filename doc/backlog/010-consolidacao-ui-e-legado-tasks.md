@@ -102,13 +102,13 @@ backlog próprio caso sejam necessárias.
 
 - [x] Fazer Pages dependerem somente de ViewModels/BLoCs e componentes
       adequados ao fluxo.
-- [ ] Remover `BuildContext`, widgets, focus, controllers visuais, dialogs,
+- [x] Remover `BuildContext`, widgets, focus, controllers visuais, dialogs,
       snackbars e navegação de ViewModels/BLoCs.
-- [ ] Encapsular intenções assíncronas em Commands ou estados equivalentes,
+- [x] Encapsular intenções assíncronas em Commands ou estados equivalentes,
       preservando erros apresentáveis.
-- [ ] Impedir acesso direto de Pages a repositories, serviços de plataforma e
+- [x] Impedir acesso direto de Pages a repositories, serviços de plataforma e
       singletons de negócio.
-- [ ] Atualizar testes unitários das fronteiras afetadas.
+- [x] Atualizar testes unitários das fronteiras afetadas.
 
 **Fronteiras das Pages:** `FlutterNativeSplash.remove()` foi transferido de
 `StopWatchPage` para o composition root. O acesso a `AppSettings.instance` foi
@@ -118,8 +118,41 @@ dependência. O novo comportamento possui cobertura unitária e de widget. A
 busca final não encontrou Pages acessando diretamente repository, service,
 plugin, injetor ou singleton de negócio.
 
+**Estado não visual:** a auditoria não encontrou `BuildContext`, widgets,
+focus, controllers visuais, dialogs, snackbars ou navegação em ViewModels e
+BLoCs. `SettingsViewModel`, `SettingsFormData` e `AppAppearanceState` deixaram
+de importar Material e passaram a depender somente de tipos de valor de
+`dart:ui` e de `ChangeNotifier` em `foundation`. Os testes focados e
+`flutter analyze` passaram após a alteração.
+
+**Intenções assíncronas:** Users, Trainings, History e Settings expõem Commands
+para operações assíncronas. `StopwatchSessionViewModel` mantém operação e
+`AppError` em `StopwatchSessionState`; `StopwatchPageViewModel` controla
+remoções concorrentes por identificador e retorna `Result` para apresentação.
+Operações síncronas de seleção e ciclo de vida não foram artificialmente
+convertidas em Commands. Não foram encontrados Futures de interação sem estado
+ou erro observável.
+
+**Acessos diretos:** buscas após a migração não encontraram imports de
+repositories, services de plataforma, injetor ou singletons de negócio nas
+Pages. Plugins permanecem no bootstrap ou em adapters/services concretos.
+Metadados estáticos de `AppInfo`, tema, localização, navegação e tipos de
+domínio usados para renderização permanecem responsabilidades válidas da
+apresentação.
+
 **Resultado esperado:** apresentação coordena interação visual nas Pages e
 estado/operações testáveis em ViewModels/BLoCs, sem dependências invertidas.
+
+**Entregue em 2026-08-26:** as Pages foram auditadas e deixaram de acessar
+plugins e singletons de negócio diretamente. A remoção do splash foi movida
+para `main.dart`, e o toggle de brilho de `StopWatchPage` passou a ser
+coordenado por `SettingsViewModel`, com persistência e sincronização da
+aparência. ViewModels e estados auxiliares não importam widgets Material nem
+possuem contexto, navegação, dialogs, snackbars, focus ou controllers visuais.
+As intenções assíncronas permanecem representadas por Commands, estados
+explícitos ou `Result`, conforme o fluxo. Testes de Settings, Stopwatch, rotas
+e aparência foram atualizados e passaram, assim como analyzer e verificação do
+diff.
 
 ### 3. Revisar e uniformizar navegação e argumentos
 
