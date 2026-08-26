@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026/08/26 - bkl010/task-05
+
+This change consolidates the About and Stopwatch pages under the UI page structure. Routing and test imports were updated to reflect the relocated files while preserving existing page behavior and coverage.
+
+1. **`lib/ui/pages/about`**
+
+   * Moved `AboutPage` from `lib/features/about_page` into the UI pages hierarchy.
+   * Updated relative imports for application information and shared font styles.
+
+2. **`lib/ui/pages/stopwatch`**
+
+   * Moved `StopwatchPage` and its `message_row`, `stopwatch_dismissible`, and `stopwatch_drawer` widgets from `lib/features/stopwatch_page` into the UI pages hierarchy.
+   * Updated relative imports for shared dialogs, dismissible backgrounds, precise stopwatch components, theme styles, and routing definitions.
+
+3. **`lib/core/routing/routes/main_routes.dart`**
+
+   * Updated the main route configuration to import the About and Stopwatch pages from their new UI locations.
+
+4. **`test/core/routing/routes_test.dart`**
+
+   * Updated routing test imports to reference the relocated About and Stopwatch pages.
+
+5. **`test/features/widgets/precise_stopwatch/stopwatch_state_widgets_test.dart`**
+
+   * Updated widget test imports for the relocated Stopwatch page and dismissible widget.
+
+### Conclusion
+
+The About and Stopwatch interfaces now follow the existing `lib/ui/pages` organization. Routing and tests remain aligned with the new module locations without changing the represented application behavior.
+
 ## 2026/08/26 - bkl010/task-04-a
 
 This change consolidates reusable interface widgets under `ui/components`, replacing the legacy shared-widget organization inside `features/widgets`. Consumer imports and tests were updated to follow the new component locations while preserving existing behavior.

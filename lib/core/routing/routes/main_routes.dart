@@ -1,8 +1,6 @@
 import 'package:go_router/go_router.dart';
 
 import '/domain/common/training/models/training.dart';
-import '/features/about_page/about_page.dart';
-import '/features/stopwatch_page/stopwatch_page.dart';
 import '/ui/pages/history/history_page.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/personal_training/personal_training_page.dart';
@@ -13,6 +11,8 @@ import '/ui/pages/trainings/trainings_page.dart';
 import '/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import '/ui/pages/users/users_page.dart';
 import '/ui/pages/users/viewmodel/users_view_model.dart';
+import '../../../ui/pages/about/about_page.dart';
+import '../../../ui/pages/stopwatch/stopwatch_page.dart';
 import '../animations_page/app_custom_transition_page.dart';
 import '../route_arguments.dart';
 import '../routes.dart';

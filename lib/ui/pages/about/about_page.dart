@@ -18,8 +18,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/app_info.dart';
-import '../../common/theme/app_font_style.dart';
+import '../../../common/app_info.dart';
+import '../../../common/theme/app_font_style.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
