@@ -265,42 +265,64 @@ A análise estática e a suíte completa de testes passaram após a migração.
 
 **Dependências:** tarefas 5 a 8.
 
-- [ ] Remover `BuildPdf`, `AppShare` e helpers substituídos quando todos os
+- [x] Remover `BuildPdf`, `AppShare` e helpers substituídos quando todos os
       consumidores estiverem migrados.
-- [ ] Migrar ou remover `TrainingReport` e `HistoryIndex`, mantendo somente
+- [x] Migrar ou remover `TrainingReport` e `HistoryIndex`, mantendo somente
       abstrações que representem o novo conteúdo.
-- [ ] Retirar do fluxo de relatório as conversões para `UserModel`,
+- [x] Retirar do fluxo de relatório as conversões para `UserModel`,
       `TrainingModel`, `HistoryModel` e `MessagesModel`.
-- [ ] Remover `training_domain_adapter.dart` e
+- [x] Remover `training_domain_adapter.dart` e
       `history_domain_adapter.dart` se a busca confirmar ausência de outros
       consumidores; caso contrário, documentar precisamente o consumidor
       restante para o backlog 010.
-- [ ] Confirmar por busca que renderer, serviços e ViewModel não consultam
+- [x] Confirmar por busca que renderer, serviços e ViewModel não consultam
       repository fora da coordenação prevista.
 
 **Resultado esperado:** relatório e compartilhamento não conservam uma
 arquitetura paralela baseada nos models legados.
 
+**Entregue em 2026-08-26:** `BuildPdf`, `AppShare`, `TrainingReport`,
+`HistoryIndex` e seus testes de caracterização foram removidos após a migração
+de todos os consumidores. `MessagesModel` e
+`TrainingEventMessageMapper`, que ficaram sem consumidores ativos, também
+foram excluídos. O fluxo novo de relatório utiliza somente entidades e modelos
+do domínio, sem conversões para `UserModel`, `TrainingModel`, `HistoryModel` ou
+`MessagesModel`. `history_domain_adapter.dart` foi removido por não possuir
+mais consumidores. `training_domain_adapter.dart` foi mantido exclusivamente
+porque `StopwatchFunctions.speedCalc` ainda converte `TrainingModel` para
+`Training`; essa migração fica registrada para o backlog 010. A busca final,
+a análise estática e a suíte completa de testes passaram após as remoções.
+
 ### 10. Testar conteúdo, coordenação e apresentação
 
 **Dependências:** tarefas 2 a 9.
 
-- [ ] Testar conteúdo com múltiplos treinos, unidades, comentários, parciais,
+- [x] Testar conteúdo com múltiplos treinos, unidades, comentários, parciais,
       voltas derivadas, lista vazia e treino sem parciais.
-- [ ] Testar que o UseCase carrega cada histórico, preserva ordem e propaga
+- [x] Testar que o UseCase carrega cada histórico, preserva ordem e propaga
       falhas sem renderizar ou compartilhar resultado parcial.
-- [ ] Testar renderer com dados prontos e comprovar que ele não consulta banco.
-- [ ] Testar sucesso e falhas de renderização, criação, gravação, e-mail,
+- [x] Testar renderer com dados prontos e comprovar que ele não consulta banco.
+- [x] Testar sucesso e falhas de renderização, criação, gravação, e-mail,
       compartilhamento e exclusão usando fakes.
-- [ ] Comprovar que o arquivo é excluído exatamente uma vez após sucesso ou
+- [x] Comprovar que o arquivo é excluído exatamente uma vez após sucesso ou
       falha e que falhas primária e de limpeza permanecem diagnosticáveis.
-- [ ] Testar Commands, bloqueio concorrente, estado de carregamento, sucesso e
+- [x] Testar Commands, bloqueio concorrente, estado de carregamento, sucesso e
       `AppError` no `TrainingsViewModel`.
-- [ ] Testar em widget habilitação dos menus, disparo dos Commands e feedback
+- [x] Testar em widget habilitação dos menus, disparo dos Commands e feedback
       visível, sem acessar plugins reais.
 
 **Resultado esperado:** comportamento e ownership ficam comprovados sem bundle,
 filesystem real ou plugins nos testes de coordenação.
+
+**Entregue em 2026-08-26:** os testes de conteúdo cobrem múltiplos treinos,
+unidades, comentários, parciais, voltas, entradas vazias e sessões sem
+parciais. Os testes dos UseCases comprovam carregamento ordenado, interrupção
+em falhas, entrega e limpeza do arquivo temporário. Renderer, armazenamento,
+e-mail e compartilhamento são exercitados com dados prontos e fronteiras
+controladas. Os Commands possuem cobertura de seleção, sucesso, falha,
+carregamento e bloqueio concorrente. A `TrainingsPage` possui testes de widget
+para habilitação do menu, disparo de compartilhamento e e-mail, progresso,
+bloqueio durante execução e feedback de erro, sem plugins ou filesystem reais.
 
 ### 11. Validar e documentar a entrega
 

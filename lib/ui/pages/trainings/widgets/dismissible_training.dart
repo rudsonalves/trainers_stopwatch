@@ -52,19 +52,22 @@ class DismissibleTraining extends StatelessWidget {
         }
         return false;
       },
-      child: Container(
-        margin: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          border: Border.all(color: colorScheme.secondaryContainer),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Material(
           color: selected
               ? colorScheme.tertiaryContainer.withValues(alpha: 0.5)
               : colorScheme.surfaceBright,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: ListTile(
-          title: Text(title),
-          subtitle: Text(subtitle),
-          onTap: () => onSelect(training),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: colorScheme.secondaryContainer),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            title: Text(title),
+            subtitle: Text(subtitle),
+            onTap: () => onSelect(training),
+          ),
         ),
       ),
     );

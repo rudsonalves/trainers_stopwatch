@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026/08/26 - bkl009/task-09
+
+This change completes the legacy report cleanup and expands widget-level verification for the training report workflow. It also refines the selectable training presentation so its Material styling and interaction effects follow the rounded card shape.
+
+1. **`doc/backlog/009-relatorios-e-compartilhamento-tasks.md`**
+
+   * Marked the legacy report cleanup and report testing tasks as completed.
+   * Documented the removal of `BuildPdf`, `AppShare`, `TrainingReport`, `HistoryIndex`, `MessagesModel`, `TrainingEventMessageMapper`, and the unused history domain adapter.
+   * Recorded that the new report flow operates on domain entities without conversions to legacy user, training, history, or message models.
+   * Documented the remaining `training_domain_adapter.dart` dependency in `StopwatchFunctions.speedCalc` for backlog 010.
+   * Summarized completed coverage for report content, ordered history loading, failure propagation, temporary-file cleanup, controlled service boundaries, Commands, concurrent execution blocking, and widget behavior.
+   * Recorded successful static analysis and full test-suite execution after the cleanup.
+
+2. **`lib/ui/pages/trainings/widgets/dismissible_training.dart`**
+
+   * Replaced the decorated `Container` with padded `Material` presentation.
+   * Preserved selected and default background colors while moving the border and rounded corners into a `RoundedRectangleBorder`.
+   * Enabled anti-aliased clipping so the `ListTile` and its interaction effects remain within the rounded training item boundary.
+
+3. **`test/ui/pages/trainings/trainings_page_test.dart`**
+
+   * Added widget-test infrastructure with localized test assets, repository fakes, report use-case fakes, and a mocked shared-preferences channel.
+   * Added coverage proving that the report menu remains disabled until a training is selected.
+   * Verified progress presentation and menu blocking while report sharing is running.
+   * Verified visible error feedback and ViewModel failure state when sharing fails.
+   * Confirmed that the report menu dispatches sharing and email Commands to their respective use cases without invoking the other operation.
+   * Asserted successful Command state after completed share and email actions without accessing real plugins or filesystem services.
+
+### Conclusion
+
+The training report workflow now has documented legacy cleanup and widget-level coverage for selection, dispatch, loading, concurrency blocking, success, and failure behavior. The training list item presentation also uses a clipped Material surface that correctly aligns styling and interactions with its rounded shape.
+
 ## 2026/08/26 - bkl009/task-08
 
 This change migrates training report sharing and email delivery from the legacy `AppShare` implementation to typed ViewModel commands backed by report use cases and domain service abstractions.
