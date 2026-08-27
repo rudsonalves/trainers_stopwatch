@@ -158,4 +158,5 @@ locale apenas como identificação interna quando necessário.
 **Tasks:**
 [011-ajustes-interface-e-interacao-tasks.md](011-ajustes-interface-e-interacao-tasks.md).
 
-**Próximo passo:** executar a tarefa 1 e registrar a linha de base.
+**Próximo passo:** executar a tarefa 3 e persistir a exibição da dica
+contextual das ações protegidas.

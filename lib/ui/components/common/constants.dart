@@ -48,7 +48,12 @@ class AppLanguage {
     required this.locale,
   });
 
-  String get localeCode => '${locale.languageCode}_${locale.countryCode}';
+  String get localeCode {
+    final countryCode = locale.countryCode;
+    return countryCode == null
+        ? locale.languageCode
+        : '${locale.languageCode}_$countryCode';
+  }
 }
 
 const Map<String, AppLanguage> appLanguages = {

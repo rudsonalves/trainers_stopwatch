@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026/08/27 - final/adj-05
+
+This change fixes the language-selection synchronization issue by establishing the localization context as the effective locale source for the application. It also improves language labels and refactors the settings page into focused, reusable widgets.
+
+The related backlog documentation now records the identified root cause, the completed localization work, and the remaining implementation sequence for protected stopwatch actions, contextual guidance, and layout spacing.
+
+1. **`lib/ui/app/my_material_app.dart`**
+
+   * Updated `MaterialApp` to consume `context.locale` instead of the desired locale stored in `AppAppearanceState`.
+   * Aligned application rendering with the same locale source used by translations, preventing the selector and translated content from advancing at different times.
+
+2. **`lib/ui/components/common/constants.dart`**
+
+   * Made `AppLanguage.localeCode` handle locales without a country code.
+   * Prevented generated identifiers such as `es_null` by returning only the language code when `countryCode` is absent.
+
+3. **Settings page module**
+
+   * Refactored `settings_page.dart` to retain page state, loading, failure, progress, and interaction-blocking responsibilities while delegating presentation to dedicated widgets.
+   * Extracted the settings controls into the new `widgets/settings_form.dart` component.
+   * Updated the language dropdown to display each language’s flag and readable name instead of its internal locale code.
+   * Extracted failure rendering into the new reusable `widgets/error_message.dart` component.
+   * Normalized shared component imports in `widgets/length_line_edit.dart` to use project-root paths.
+
+4. **`doc/backlog/011-ajustes-interface-e-interacao-tasks.md`**
+
+   * Reorganized the execution plan around the diagnosed locale synchronization cause and independent implementation areas.
+   * Marked the locale investigation and correction tasks as completed and documented the delivered behavior on August 27, 2026.
+   * Clarified the remaining work for contextual-hint persistence, protected actions, stopwatch spacing, translations, automated checks, and manual validation.
+   * Simplified dependencies, expected results, and completion requirements to reflect the current implementation state.
+
+5. **`doc/backlog/011-ajustes-interface-e-interacao.md`**
+
+   * Updated the next backlog action from locale characterization to persisting the protected-action contextual hint.
+
+### Conclusion
+
+The application now uses a single effective locale source, keeps translated content synchronized with the selected language, and presents readable language labels without null country codes.
+
+The settings UI is more modular, and the backlog accurately reflects the completed localization fix and the remaining interface work.
+
 ## 2026/08/27 - final/adj-04
 
 This change set expands the product backlog with approved interface, interaction, localization, and contextual-help requirements. It also closes the UI consolidation backlog and updates the backlog sequence accordingly.

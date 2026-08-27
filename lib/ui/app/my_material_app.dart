@@ -109,7 +109,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
       routerConfig: _router,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
-      locale: appearanceState.locale,
+      locale: context.locale,
       theme: appearanceState.brightness == Brightness.light
           ? _lightContrast(theme, appearanceState.contrast)
           : _darkContrast(theme, appearanceState.contrast),
