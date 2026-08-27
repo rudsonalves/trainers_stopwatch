@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026/08/27 - final/adj-02
+
+This change aligns the project documentation with the final source-code organization, clarifying that stopwatch-specific BLoCs and session objects belong to the presentation flow under `lib/ui`.
+
+It also updates the application package version to reflect the revised release state.
+
+1. **README.md**
+
+   * Updated the architecture summary to place stopwatch sessions and the stopwatch-specific BLoC under `lib/ui`.
+   * Removed the outdated reference to `lib/application`.
+
+2. **doc/arquitetura_atual.md**
+
+   * Advanced the documented architecture snapshot to August 27, 2026.
+   * Clarified that ViewModels, BLoCs, and UseCases receive dependencies through constructors.
+   * Updated the directory tree to remove `lib/application` and describe feature-local BLoCs and session objects under `lib/ui/pages`.
+   * Renamed the domain and application section to focus on domain and use cases.
+   * Documented the separation between stopwatch presentation implementations and cross-cutting `core` resources.
+
+3. **doc/backlog/closed/007-nucleo-cronometro-bloc-tasks.md**
+
+   * Corrected the recorded location of the delivered stopwatch temporal core from `lib/application/stopwatch/bloc` to `lib/ui/pages/stopwatch/bloc`.
+
+4. **doc/backlog/closed/008-sessoes-multiplos-cronometros-tasks.md**
+
+   * Updated completed task references to locate stopwatch session models and `StopwatchSessionViewModel` under `lib/ui/pages/stopwatch/session`.
+   * Reworded the session model task to reflect its presentation-flow ownership.
+
+5. **pubspec.yaml**
+
+   * Updated the package version from `1.0.8+42` to `1.9.00+0`.
+
+### Conclusion
+
+The documentation now consistently reflects the feature-oriented placement of stopwatch presentation logic under `lib/ui`, while preserving `core` for cross-cutting concerns. The package metadata has also been advanced to version `1.9.00+0`.
+
 ## 2026/08/27 - final/adj-01
 
 This change reorganizes stopwatch presentation logic and shared UI components under the `ui` layer. It consolidates reusable widgets by responsibility and updates application, service, routing, dependency injection, and test imports to reflect the new structure.
