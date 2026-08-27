@@ -1,5 +1,51 @@
 # Changelog
 
+## 2026/08/27 - report/task-1
+
+This change establishes the domain foundation and implementation roadmap for partial report generation when selected trainings cannot all be processed. It introduces immutable outcome models that preserve valid report content alongside training-specific failures and explicitly classify empty, complete, partial, and fully rejected results.
+
+The backlog documentation now defines the expected user experience, architectural boundaries, acceptance criteria, and phased delivery plan for applying the same partial-result behavior to sharing and email workflows.
+
+1. **`lib/domain/common/report/models`**
+
+   * Added `TrainingReportIssue` to associate a rejected `Training` with the `AppError` describing its failure.
+   * Implemented value equality and hashing based on the training and relevant error fields.
+   * Added `TrainingReportBuildOutcome` to hold valid `TrainingReportContent` and an immutable collection of training-specific issues.
+   * Exposed valid and rejected training counts, content and issue presence checks, and the derived `empty`, `complete`, `partial`, and `rejected` statuses.
+   * Added value equality and stable hashing for report build outcomes while protecting the supplied issue list from external mutation.
+
+2. **`test/domain/common/report/models/report_content_test.dart`**
+
+   * Added value-equality coverage for `TrainingReportIssue`.
+   * Added tests for every `TrainingReportBuildStatus` classification.
+   * Verified valid and rejected training counts and the derived content and issue flags.
+   * Confirmed that issue collections are defensively copied and exposed as unmodifiable.
+   * Added equality and hash-code coverage for `TrainingReportBuildOutcome`.
+
+3. **`doc/backlog/013-relatorios-parciais-treinos-invalidos.md`**
+
+   * Added the backlog specification for processing all selected trainings independently and continuing with valid report content.
+   * Documented rejection communication, selection reconciliation, confirmation and cancellation behavior, list-state indicators, and consistent handling across sharing and email.
+   * Defined the distinction between training-specific problems and global delivery failures.
+   * Recorded scope boundaries, implementation decisions, acceptance criteria, dependencies, and the next implementation step.
+
+4. **`doc/backlog/013-relatorios-parciais-treinos-invalidos-tasks.md`**
+
+   * Added the ordered implementation plan covering domain modeling, independent training processing, report preparation and delivery separation, ViewModel state, UI feedback, localization, and validation.
+   * Marked the partial-result domain modeling task as complete and documented its delivered models, derived states, immutability, test coverage, and static-analysis result.
+   * Defined dependencies and expected outcomes for each remaining delivery phase.
+
+5. **`doc/backlog/README.md`**
+
+   * Registered backlog 013 for partial reports with invalid trainings and linked it to the completed report-sharing foundation.
+   * Updated backlog 011 to reference its closed location and completed status.
+
+### Conclusion
+
+The report domain can now represent valid content and per-training failures in a single immutable, value-comparable outcome with explicit result states. Supporting tests validate its classification and collection-safety behavior.
+
+The accompanying backlog establishes the remaining application and UI work required to deliver partial reports consistently while keeping global failures distinct from individual training rejections.
+
 ## 2026/08/27 - final/adj-06
 
 This change set introduces protected stopwatch actions with confirmation dialogs for regular taps and direct execution with haptic feedback for long presses. It also adds a one-time contextual hint when a stopwatch is first paused, persists that hint state, and improves accessibility semantics.
