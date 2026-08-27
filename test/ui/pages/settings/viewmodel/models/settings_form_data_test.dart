@@ -23,6 +23,7 @@ void main() {
       contrast: ContrastPreference.high,
       language: const LanguagePreference('pt', 'BR'),
       refreshInterval: const Duration(milliseconds: 100),
+      protectedActionsHintSeen: true,
     ).value!;
 
     final form = SettingsFormData.fromDomain(settings);
@@ -36,6 +37,7 @@ void main() {
     expect(form.contrast, AppContrast.high);
     expect(form.locale, const Locale('pt', 'BR'));
     expect(form.refreshInterval, const Duration(milliseconds: 100));
+    expect(form.protectedActionsHintSeen, isTrue);
     expect(converted.value, settings);
   });
 

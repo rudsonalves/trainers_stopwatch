@@ -66,6 +66,7 @@ class SettingsService {
         splitDistance: settings.splitDistance,
         lapDistance: settings.lapDistance,
         brightness: settings.brightness,
+        protectedActionsHintSeen: settings.protectedActionsHintSeen,
         contrast: settings.contrast,
         language: settings.language,
         refreshInterval: settings.refreshInterval,

@@ -1,6 +1,7 @@
 // Copyright (C) 2024 Rudson Alves
 //
 // This file is part of trainers_stopwatch.
+import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -37,95 +38,12 @@ class _StopWatchPageState extends State<StopWatchPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   StopwatchPageViewModel get viewModel => widget.viewModel;
-
-  Future<void> _addStopwatches() =>
-      context.pushNamed(MainRoutes.users.routeName);
-
-  Future<bool> _removeStopwatch(StopwatchSessionId id) async {
-    var confirmed = true;
-    if (viewModel.requiresRemovalConfirmation(id)) {
-      confirmed = await GenericDialog.open(
-        context,
-        title: 'SPRemoveTraining'.tr(),
-        message: 'SPLongMsg'.tr(),
-        actions: DialogActions.yesNo,
-      );
-    }
-    if (!confirmed) return false;
-
-    final result = await viewModel.removeSession(id, confirmed: confirmed);
-    if (result.isFailure && mounted) {
-      await GenericDialog.open(
-        context,
-        title: 'SPRemoveTraining'.tr(),
-        message: 'TPError'.tr(),
-        actions: DialogActions.close,
-      );
-    }
-    return result.isSuccess;
-  }
-
-  Future<void> _manageStopwatch(StopwatchSessionViewModel session) async {
-    await context.pushNamed(
-      MainRoutes.personalTraining.routeName,
-      extra: PersonalTrainingRouteArguments(sessionId: session.id),
-    );
-  }
-
-  Widget _stopwatchListView() {
-    return SizedBox(
-      height: _sizedBoxHeight(),
-      child: viewModel.sessions.isEmpty
-          ? Center(child: Text('SPNoSessions'.tr()))
-          : ListView.builder(
-              itemCount: viewModel.sessions.length,
-              itemBuilder: (context, index) {
-                final session = viewModel.sessions[index];
-                return StopwatDismissible(
-                  key: ValueKey(session.id.userId),
-                  enabled: !viewModel.isRemoving(session.id),
-                  session: session,
-                  removeStopwatch: _removeStopwatch,
-                  managerStopwatch: _manageStopwatch,
-                );
-              },
-            ),
-    );
-  }
-
-  Widget _logTimes() {
-    final colorScheme = Theme.of(context).colorScheme;
-    final messages = viewModel.messages.reversed.toList(growable: false);
-    return Expanded(
-      child: Focus(
-        child: Container(
-          margin: EdgeInsets.zero,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: colorScheme.secondaryContainer),
-          ),
-          padding: const EdgeInsets.all(6),
-          child: messages.isEmpty
-              ? Center(child: Text('SPNoRecords'.tr()))
-              : ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) => MessageRow(
-                    message: messages[index],
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
-
-  double _sizedBoxHeight() {
-    var length = viewModel.sessions.length.clamp(1, 4);
-    return length * stopWatchHeight;
-  }
+  bool _protectedActionsHintHandled = false;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -173,5 +91,111 @@ class _StopWatchPageState extends State<StopWatchPage> {
         ),
       ),
     );
+  }
+
+  void _handleSessionPaused() {
+    if (_protectedActionsHintHandled) return;
+
+    final settings = widget.settingsViewModel.state;
+    if (settings == null || settings.protectedActionsHintSeen) {
+      return;
+    }
+
+    _protectedActionsHintHandled = true;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('PSProtectedActionsHint'.tr()),
+      ),
+    );
+
+    unawaited(widget.settingsViewModel.markProtectedActionsHintSeen());
+  }
+
+  Future<void> _addStopwatches() =>
+      context.pushNamed(MainRoutes.users.routeName);
+
+  Future<bool> _removeStopwatch(StopwatchSessionId id) async {
+    var confirmed = true;
+    if (viewModel.requiresRemovalConfirmation(id)) {
+      confirmed = await GenericDialog.open(
+        context,
+        title: 'SPRemoveTraining'.tr(),
+        message: 'SPLongMsg'.tr(),
+        actions: DialogActions.yesNo,
+      );
+    }
+    if (!confirmed) return false;
+
+    final result = await viewModel.removeSession(id, confirmed: confirmed);
+    if (result.isFailure && mounted) {
+      await GenericDialog.open(
+        context,
+        title: 'SPRemoveTraining'.tr(),
+        message: 'TPError'.tr(),
+        actions: DialogActions.close,
+      );
+    }
+    return result.isSuccess;
+  }
+
+  Future<void> _manageStopwatch(StopwatchSessionViewModel session) async {
+    await context.pushNamed(
+      MainRoutes.personalTraining.routeName,
+      extra: PersonalTrainingRouteArguments(sessionId: session.id),
+    );
+  }
+
+  Widget _stopwatchListView() {
+    return SizedBox(
+      height: _sizedBoxHeight(),
+      child: viewModel.sessions.isEmpty
+          ? Center(child: Text('SPNoSessions'.tr()))
+          : ListView.builder(
+              itemCount: viewModel.sessions.length,
+              itemBuilder: (context, index) {
+                final session = viewModel.sessions[index];
+
+                return StopwatDismissible(
+                  key: ValueKey(session.id.userId),
+                  enabled: !viewModel.isRemoving(session.id),
+                  session: session,
+                  onPaused: _handleSessionPaused,
+                  removeStopwatch: _removeStopwatch,
+                  managerStopwatch: _manageStopwatch,
+                );
+              },
+            ),
+    );
+  }
+
+  Widget _logTimes() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final messages = viewModel.messages.reversed.toList(growable: false);
+    return Expanded(
+      child: Focus(
+        child: Container(
+          margin: EdgeInsets.zero,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: colorScheme.secondaryContainer),
+          ),
+          padding: const EdgeInsets.all(6),
+          child: messages.isEmpty
+              ? Center(child: Text('SPNoRecords'.tr()))
+              : ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) => MessageRow(
+                    message: messages[index],
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  double _sizedBoxHeight() {
+    var length = viewModel.sessions.length.clamp(1, 4);
+    return length * stopWatchHeight;
   }
 }

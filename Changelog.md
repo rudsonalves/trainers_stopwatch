@@ -1,5 +1,103 @@
 # Changelog
 
+## 2026/08/27 - final/adj-06
+
+This change set introduces protected stopwatch actions with confirmation dialogs for regular taps and direct execution with haptic feedback for long presses. It also adds a one-time contextual hint when a stopwatch is first paused, persists that hint state, and improves accessibility semantics.
+
+The update extends the settings database schema and domain flow, adjusts stopwatch layout spacing, adds localized content in all supported languages, expands automated coverage, and documents the completed implementation and remaining manual validation.
+
+1. **assets/translations**
+
+   * Added English, Spanish, and Brazilian Portuguese text for reset and finish confirmation dialogs.
+   * Added localized instructions for protected actions, including the one-time pause hint and accessibility semantic hint.
+   * Documented that taps request confirmation while long presses execute actions directly.
+
+2. **Settings domain models**
+
+   * Extracted `LanguagePreference` into its own model file and re-exported it through the settings model.
+   * Added `protectedActionsHintSeen` to `Settings`, defaulting to `false` for backward compatibility.
+   * Included the new state in settings creation, equality comparison, and hash generation.
+
+3. **Database schema and migration**
+
+   * Increased the database version from 1007 to 1008.
+   * Added the `protectedActionsHintSeen` settings column as a non-null integer with a default value of `0`.
+   * Added conditional migration handling so databases at versions 1006 and 1007 can advance to version 1008 without replacement.
+   * Preserved the history snapshot migration for databases that have not yet reached version 1007.
+   * Refined migration validation to reject unsupported version ranges.
+
+4. **Database and settings services**
+
+   * Updated database compatibility checks to recognize versions 1006, 1007, and 1008 as recoverable or current states.
+   * Mapped the protected-actions hint flag between database integers and domain booleans.
+   * Included the new property when settings are inserted, updated, and reconstructed after persistence.
+
+5. **Settings form data and view model**
+
+   * Added `protectedActionsHintSeen` to `SettingsFormData` and its domain conversion and copy operations.
+   * Added an idempotent `markProtectedActionsHintSeen` operation that persists the state only when it has not already been recorded.
+   * Retained command cleanup during view-model disposal while reorganizing the implementation.
+
+6. **Precise stopwatch protected actions**
+
+   * Changed Reset and Finish taps to open action-specific confirmation dialogs.
+   * Kept long presses as direct reset and finish shortcuts using the same session operations as confirmed actions.
+   * Added medium-impact haptic feedback before direct long-press execution.
+   * Added pause transition listening and exposed an `onPaused` callback to the containing page.
+   * Added four pixels of spacing between the stopwatch display and button bar.
+
+7. **Stopwatch button bar and custom icon button**
+
+   * Added separate callbacks for confirmed and direct Reset and Finish operations.
+   * Preserved operation-running guards across tap and long-press interactions.
+   * Added explicit button semantics, enabled state, labels, tap actions, long-press actions, and localized hints for assistive technologies.
+   * Updated long-press callbacks to support asynchronous action completion.
+
+8. **Stopwatch page and dismissible integration**
+
+   * Propagated pause notifications from each dismissible stopwatch to the stopwatch page.
+   * Added a one-time `SnackBar` explaining protected actions when the first unseen pause occurs.
+   * Persisted dismissal through the settings view model without blocking the interface.
+   * Added an in-memory guard so the hint does not repeat during the same execution if persistence is delayed or fails.
+
+9. **Settings length editor**
+
+   * Reorganized the debounced length-change and submission helpers without changing their validation or persistence behavior.
+
+10. **Database and settings service tests**
+
+   * Updated database version expectations to 1008.
+   * Added coverage for upgrading version 1007 without replacing the database and retaining a database already at version 1008.
+   * Added settings read and write assertions for both integer representations of the protected-actions hint state.
+   * Verified the default unseen state for newly inserted settings.
+
+11. **Settings form and view-model tests**
+
+   * Added round-trip conversion coverage for the protected-actions hint flag.
+   * Verified that marking the hint as seen updates persisted settings exactly once across repeated calls.
+
+12. **Stopwatch widget tests**
+
+   * Added coverage for showing and persisting the protected-actions hint only on the first pause.
+   * Verified that canceling reset confirmation preserves the paused session.
+   * Verified confirmed reset and finish behavior.
+   * Verified that a reset long press executes directly without displaying a confirmation dialog.
+   * Added haptic platform-channel handling for direct-action widget tests.
+
+13. **Backlog documentation**
+
+   * Marked persistence, protected-action interaction, spacing, translation, documentation, and automated-validation tasks as completed.
+   * Recorded delivery details for the database field, migrations, confirmation flows, haptic feedback, one-time hint, layout spacing, and test coverage.
+   * Updated the backlog status to reflect completed implementation and automated validation.
+   * Documented successful formatting, 352 passing tests, static analysis, and diff checks.
+   * Retained Android and iOS manual validation as the remaining requirement before moving the backlog to `closed/`.
+
+### Conclusion
+
+The stopwatch now provides safer, discoverable Reset and Finish interactions while preserving efficient long-press shortcuts and accessible semantics. The contextual guidance is shown once and stored compatibly across supported database versions.
+
+Automated validation and documentation are complete, with manual Android and iOS interaction and layout checks remaining before final backlog closure.
+
 ## 2026/08/27 - final/adj-05
 
 This change fixes the language-selection synchronization issue by establishing the localization context as the effective locale source for the application. It also improves language labels and refactors the settings page into focused, reusable widgets.

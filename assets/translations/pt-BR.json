@@ -1,4 +1,10 @@
 {
+  "PSProtectedActionSemanticHint": "Toque para confirmar ou mantenha pressionado para executar diretamente.",
+  "PSProtectedActionsHint": "Toque em Reiniciar ou Finalizar para confirmar. Mantenha pressionado para executar diretamente.",
+  "PSResetConfirmTitle": "Reiniciar cronômetro",
+  "PSResetConfirmMessage": "O treino atual permanecerá salvo com os registros já realizados, mas não receberá um registro de finalização. Deseja reiniciar o cronômetro?",
+  "PSFinishConfirmTitle": "Finalizar treino",
+  "PSFinishConfirmMessage": "O tempo atual e os registros pendentes serão salvos. Deseja finalizar este treino?",
   "SPNoRecords": "Nenhum tempo registrado",
   "SPNoSessions": "Adicione usuários para iniciar os cronômetros",
   "TPNoTrainings": "Nenhum treinamento registrado",

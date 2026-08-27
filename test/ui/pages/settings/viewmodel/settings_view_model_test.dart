@@ -148,6 +148,15 @@ void main() {
     );
   });
 
+  test('marks the protected actions hint as seen only once', () async {
+    await viewModel.markProtectedActionsHintSeen();
+    await viewModel.markProtectedActionsHintSeen();
+
+    expect(viewModel.state!.protectedActionsHintSeen, isTrue);
+    expect(repository.stored!.protectedActionsHintSeen, isTrue);
+    expect(repository.updates, hasLength(1));
+  });
+
   test('queues the latest valid edit while persistence is running', () async {
     final blocker = Completer<void>();
     repository.blockNextUpdate = blocker;

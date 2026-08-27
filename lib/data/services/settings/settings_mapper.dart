@@ -32,6 +32,8 @@ class SettingsMapper {
         id: map[settingsId] as int?,
         splitDistance: splitResult.value!,
         lapDistance: lapResult.value!,
+        protectedActionsHintSeen:
+            (map[settingsProtectedActionsHintSeen] as int? ?? 0) != 0,
         brightness: map[settingsBrightness] == 'light'
             ? BrightnessPreference.light
             : BrightnessPreference.dark,
@@ -70,6 +72,8 @@ class SettingsMapper {
       settingsSplitLength: settings.splitDistance.value,
       settingsLapLength: settings.lapDistance.value,
       settingsLengthUnit: settings.splitDistance.unit.symbol,
+      settingsProtectedActionsHintSeen:
+          settings.protectedActionsHintSeen ? 1 : 0,
       settingsBrightness: settings.brightness.name,
       settingsContrast: settings.contrast.name,
       settingsLanguage: language,

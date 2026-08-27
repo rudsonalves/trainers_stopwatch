@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
@@ -12,6 +13,7 @@ import 'package:trainers_stopwatch/domain/usecases/trainings/persist_stopwatch_s
 import 'package:trainers_stopwatch/domain/usecases/trainings/training_initialization.dart';
 import 'package:trainers_stopwatch/ui/components/dialogs/generic_dialog.dart';
 import 'package:trainers_stopwatch/ui/components/precise_stopwatch/precise_stopwatch.dart';
+import 'package:trainers_stopwatch/ui/components/precise_stopwatch/widgets/custon_icon_button.dart';
 import 'package:trainers_stopwatch/ui/components/precise_stopwatch/widgets/lap_split_counters.dart';
 import 'package:trainers_stopwatch/ui/components/precise_stopwatch/widgets/stopwatch_display.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/models/settings_form_data.dart';
@@ -270,6 +272,183 @@ void main() {
 
     verify(settingsViewModel.toggleBrightness()).called(1);
   });
+
+  testWidgets('first pause shows and persists the protected actions hint once',
+      (tester) async {
+    const user = User(id: 19, name: 'Athlete', email: 'a@example.com');
+    final stopwatchViewModel = StopwatchPageViewModel(
+      sessionFactory: (_) => createPausedTestSession(userId: user.id!),
+    )..addUsers([user]);
+    final settingsViewModel = MockSettingsViewModel();
+
+    when(settingsViewModel.state).thenReturn(
+      SettingsFormData.fromDomain(Settings.create().value!),
+    );
+    when(settingsViewModel.markProtectedActionsHintSeen())
+        .thenAnswer((_) async {});
+    addTearDown(stopwatchViewModel.close);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StopWatchPage(
+          viewModel: stopwatchViewModel,
+          settingsViewModel: settingsViewModel,
+        ),
+      ),
+    );
+
+    final session = stopwatchViewModel.sessions.single;
+    await session.start();
+    await tester.pump();
+    await session.pause();
+    await tester.pump();
+
+    expect(find.text('PSProtectedActionsHint'), findsOneWidget);
+    verify(settingsViewModel.markProtectedActionsHintSeen()).called(1);
+
+    await session.resume();
+    await tester.pump();
+    await session.pause();
+    await tester.pump();
+
+    expect(find.text('PSProtectedActionsHint'), findsOneWidget);
+    verifyNever(settingsViewModel.markProtectedActionsHintSeen());
+  });
+
+  testWidgets('reset tap asks confirmation and cancel preserves paused session',
+      (tester) async {
+    final session = createPausedTestSession();
+    addTearDown(session.close);
+
+    await session.start();
+    await session.pause();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PreciseStopwatch(session: session),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('PSReset'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GenericDialog), findsOneWidget);
+
+    await tester.tap(find.text('GenericNo'));
+    await tester.pumpAndSettle();
+
+    expect(session.bloc.state.status, StopwatchStatus.paused);
+  });
+
+  testWidgets('reset confirmation resets the paused session', (tester) async {
+    final session = createPausedTestSession(userId: 21);
+    addTearDown(session.close);
+
+    await session.start();
+    await session.pause();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PreciseStopwatch(session: session),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('PSReset'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('GenericYes'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GenericDialog), findsNothing);
+    expect(session.bloc.state.status, StopwatchStatus.idle);
+  });
+
+  testWidgets('finish confirmation finishes the paused session',
+      (tester) async {
+    final session = createPausedTestSession(userId: 22);
+    addTearDown(session.close);
+
+    await session.start();
+    await session.pause();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PreciseStopwatch(session: session),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('PSFinish'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('GenericYes'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GenericDialog), findsNothing);
+    expect(session.bloc.state.status, StopwatchStatus.finished);
+  });
+
+  testWidgets('reset long press executes directly without confirmation',
+      (tester) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (_) async => null,
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    final session = createPausedTestSession(userId: 23);
+    addTearDown(session.close);
+
+    await session.start();
+    await session.pause();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PreciseStopwatch(session: session),
+        ),
+      ),
+    );
+
+    final resetButton = tester.widget<CustomIconButton>(
+      find.ancestor(
+        of: find.text('PSReset'),
+        matching: find.byType(CustomIconButton),
+      ),
+    );
+    await resetButton.onLongPressed!();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GenericDialog), findsNothing);
+    expect(session.bloc.state.status, StopwatchStatus.idle);
+  });
+}
+
+StopwatchSessionViewModel createPausedTestSession({int userId = 20}) {
+  return StopwatchSessionViewModel(
+    user: User(
+      id: userId,
+      name: 'Athlete',
+      email: 'athlete@example.com',
+    ),
+    training: Training.create(
+      userId: userId,
+      date: DateTime.utc(2026, 8, 27),
+    ).value!,
+    bloc: StopwatchBloc(
+      tickInterval: const Duration(days: 1),
+    ),
+    createTrainingUseCase: SuccessfulCreateTrainingUseCase(),
+    persistSnapshotUseCase: SuccessfulPersistSnapshotUseCase(),
+  );
 }
 
 class MockCreateTrainingUseCase extends Mock implements CreateTrainingUseCase {}
@@ -343,6 +522,12 @@ class MockSettingsViewModel extends Mock implements SettingsViewModel {
   @override
   Future<void> toggleBrightness() => super.noSuchMethod(
         Invocation.method(#toggleBrightness, []),
+        returnValue: Future<void>.value(),
+      ) as Future<void>;
+
+  @override
+  Future<void> markProtectedActionsHintSeen() => super.noSuchMethod(
+        Invocation.method(#markProtectedActionsHintSeen, []),
         returnValue: Future<void>.value(),
       ) as Future<void>;
 }

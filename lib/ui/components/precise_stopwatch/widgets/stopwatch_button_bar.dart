@@ -15,11 +15,19 @@ import 'custon_icon_button.dart';
 class StopwatchButtonBar extends StatelessWidget {
   final StopwatchSessionViewModel session;
   final Future<void> Function() setTraining;
+  final Future<void> Function() reset;
+  final Future<void> Function() finish;
+  final Future<void> Function() confirmReset;
+  final Future<void> Function() confirmFinish;
 
   const StopwatchButtonBar({
     super.key,
     required this.session,
     required this.setTraining,
+    required this.reset,
+    required this.finish,
+    required this.confirmReset,
+    required this.confirmFinish,
   });
 
   @override
@@ -79,18 +87,20 @@ class StopwatchButtonBar extends StatelessWidget {
             icon: Icon(StopwatchIcons.start, color: onSurfaceVariant),
           ),
           CustomIconButton(
-            onLongPressed:
-                session.isOperationRunning ? null : () => session.reset(),
+            onPressed: session.isOperationRunning ? null : confirmReset,
+            onLongPressed: session.isOperationRunning ? null : reset,
             label: 'PSReset'.tr(),
+            semanticHint: 'PSProtectedActionSemanticHint'.tr(),
             icon: Icon(
               StopwatchIcons.reset,
               color: onSurfaceVariant.withRed(130),
             ),
           ),
           CustomIconButton(
-            onLongPressed:
-                session.isOperationRunning ? null : () => session.finish(),
+            onPressed: session.isOperationRunning ? null : confirmFinish,
+            onLongPressed: session.isOperationRunning ? null : finish,
             label: 'PSFinish'.tr(),
+            semanticHint: 'PSProtectedActionSemanticHint'.tr(),
             icon: Icon(
               StopwatchIcons.stop,
               color: onSurfaceVariant.withRed(130),

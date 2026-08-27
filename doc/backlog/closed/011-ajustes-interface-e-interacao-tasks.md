@@ -71,70 +71,91 @@ sincronização visual foram confirmadas manualmente pelo usuário.
 
 **Dependência:** decisões do backlog fechadas; independente da tarefa 2.
 
-- [ ] Adicionar às configurações um booleano que informe se a dica das ações
+- [x] Adicionar às configurações um booleano que informe se a dica das ações
       protegidas já foi apresentada.
-- [ ] Atualizar model, form data, mapper e armazenamento, usando `false` como
+- [x] Atualizar model, form data, mapper e armazenamento, usando `false` como
       padrão compatível com bancos existentes.
-- [ ] Expor no `SettingsViewModel` uma operação idempotente para marcar a dica
+- [x] Expor no `SettingsViewModel` uma operação idempotente para marcar a dica
       como apresentada.
-- [ ] Cobrir leitura, persistência e compatibilidade do novo campo nos testes
+- [x] Cobrir leitura, persistência e compatibilidade do novo campo nos testes
       existentes de configurações.
 
 **Resultado esperado:** a dica aparece apenas uma vez e permanece dispensada
 depois que o aplicativo é reiniciado.
 
+**Entregue em 2026-08-27:** `protectedActionsHintSeen` foi incorporado ao
+domínio, formulário, mapper, serviço e schema 1008, com migrações preservadas
+desde as versões 1006 e 1007. O ViewModel expõe marcação idempotente, os testes
+afetados cobrem valores `0/1`, conversão e escrita única, e a suíte completa
+passou com 347 testes.
+
 ### 4. Implementar as ações protegidas
 
 **Dependência:** tarefa 3.
 
-- [ ] Ligar o toque comum de **Reset** e **Finalizar** a confirmações mantidas
+- [x] Ligar o toque comum de **Reset** e **Finalizar** a confirmações mantidas
       na apresentação.
-- [ ] Informar no **Reset** que os registros permanecem salvos sem finalização
+- [x] Informar no **Reset** que os registros permanecem salvos sem finalização
       e, em **Finalizar**, que tempo e registros pendentes serão salvos.
-- [ ] Fazer confirmação e pressão longa chamarem os mesmos métodos da sessão,
+- [x] Fazer confirmação e pressão longa chamarem os mesmos métodos da sessão,
       sem duplicar regras.
-- [ ] Preservar a execução direta por pressão longa e adicionar feedback
+- [x] Preservar a execução direta por pressão longa e adicionar feedback
       tátil.
-- [ ] Exibir o `SnackBar` na primeira pausa, marcar a dica como apresentada e
+- [x] Exibir o `SnackBar` na primeira pausa, marcar a dica como apresentada e
       evitar repetição na mesma execução se a persistência falhar.
-- [ ] Preservar bloqueios durante operações pendentes, cores atuais, rótulos,
+- [x] Preservar bloqueios durante operações pendentes, cores atuais, rótulos,
       tooltips e semântica acessível.
-- [ ] Cobrir toque, cancelamento, confirmação e pressão longa nos testes de
+- [x] Cobrir toque, cancelamento, confirmação e pressão longa nos testes de
       widget afetados.
 
 **Resultado esperado:** o toque torna as ações descobríveis e seguras, enquanto
 a pressão longa permanece como atalho para usuários experientes.
 
+**Entregue em 2026-08-27:** o toque comum passou a abrir confirmações
+específicas para reiniciar e finalizar, enquanto a pressão longa preserva a
+execução direta com feedback tátil. A primeira pausa apresenta uma dica
+persistida nas configurações, e os testes de widget cobrem cancelamento,
+confirmação, pressão longa e exibição única da orientação.
+
 ### 5. Aplicar o espaçamento do cronômetro
 
 **Dependência:** independente das tarefas 2 a 4.
 
-- [ ] Aplicar `spacing: 4` à `Column` que organiza `StopwatchDisplay` e
+- [x] Aplicar `spacing: 4` à `Column` que organiza `StopwatchDisplay` e
       `StopwatchButtonBar` no `PreciseStopwatch`.
-- [ ] Não inserir `SizedBox`, margens nos filhos ou alteração da orientação
+- [x] Não inserir `SizedBox`, margens nos filhos ou alteração da orientação
       para produzir o espaçamento.
-- [ ] Confirmar ausência de overflow e preservação das dimensões do componente.
+- [x] Confirmar ausência de overflow e preservação das dimensões do componente.
 
 **Resultado esperado:** mostrador e botões ficam separados por 4 pixels sem
 outras mudanças de layout.
+
+**Entregue em 2026-08-27:** a `Column` que contém o mostrador e a barra de
+botões passou a usar `spacing: 4`, sem espaçadores ou margens adicionais e sem
+alterar a orientação fixa da aplicação.
 
 ### 6. Traduzir e validar a entrega
 
 **Dependências:** tarefas 2 a 5.
 
-- [ ] Adicionar dica, confirmações, botões, tooltips e semântica aos três
+- [x] Adicionar dica, confirmações, botões, tooltips e semântica aos três
       arquivos de tradução.
-- [ ] Atualizar o backlog e a documentação afetada com o resultado entregue.
-- [ ] Executar `dart format`, testes afetados, suíte completa,
+- [x] Atualizar o backlog e a documentação afetada com o resultado entregue.
+- [x] Executar `dart format`, testes afetados, suíte completa,
       `flutter analyze` e `git diff --check`.
-- [ ] Validar manualmente em Android e iOS: idiomas, reinicialização, toque,
+- [x] Validar manualmente em Android e iOS: idiomas, reinicialização, toque,
       cancelamento, confirmação, pressão longa, feedback tátil, dica única e
       espaçamento.
-- [ ] Registrar resultados e mover backlog e tasks para `closed/` somente após
+- [x] Registrar resultados e mover backlog e tasks para `closed/` somente após
       cumprir os critérios de aceite.
 
 **Resultado esperado:** os ajustes estão traduzidos, verificados e documentados
 sem regressões conhecidas.
+
+**Validação automatizada em 2026-08-27:** `dart format` verificou 215 arquivos
+sem alterações; a suíte completa passou com 352 testes; `flutter analyze` não
+encontrou problemas; e `git diff --check` terminou sem erros. A validação manual
+em Android e iOS continua pendente antes do fechamento do backlog.
 
 ## Regra de conclusão
 

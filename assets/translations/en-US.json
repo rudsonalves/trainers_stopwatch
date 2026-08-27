@@ -1,4 +1,10 @@
 {
+  "PSProtectedActionSemanticHint": "Tap to confirm or press and hold to execute directly.",
+  "PSProtectedActionsHint": "Tap Reset or Finish to confirm. Press and hold to execute directly.",
+  "PSResetConfirmTitle": "Reset stopwatch",
+  "PSResetConfirmMessage": "The current training will remain saved with its existing records, but it will not receive a finish record. Do you want to reset the stopwatch?",
+  "PSFinishConfirmTitle": "Finish training",
+  "PSFinishConfirmMessage": "The current time and pending records will be saved. Do you want to finish this training?",
   "SPNoRecords": "No times recorded",
   "SPNoSessions": "Add users to start the stopwatches",
   "TPNoTrainings": "No training sessions recorded",

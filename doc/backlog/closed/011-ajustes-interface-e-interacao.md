@@ -153,10 +153,21 @@ locale apenas como identificação interna quando necessário.
 
 ## Acompanhamento
 
-**Estado:** Pronto para implementação — decisões fechadas e tasks definidas.
+**Estado:** Implementação e validação automatizada concluídas; validação manual
+em Android e iOS pendente.
 
 **Tasks:**
 [011-ajustes-interface-e-interacao-tasks.md](011-ajustes-interface-e-interacao-tasks.md).
 
-**Próximo passo:** executar a tarefa 3 e persistir a exibição da dica
-contextual das ações protegidas.
+**Resultado em 2026-08-27:** a seleção de idioma foi sincronizada com o locale
+efetivamente aplicado; os rótulos não expõem mais países nulos; toque e pressão
+longa oferecem caminhos confirmado e direto para as ações protegidas; a dica
+contextual é persistida; e o mostrador usa espaçamento vertical de 4 pixels.
+As traduções foram atualizadas nos três idiomas. A formatação não produziu
+mudanças, os 352 testes passaram, `flutter analyze` não encontrou problemas e
+`git diff --check` terminou sem erros.
+
+**Próximo passo:** validar manualmente em Android e iOS os idiomas após
+reinicialização, as confirmações, a pressão longa e o feedback tátil, a dica
+única e a ausência de overflow após o novo espaçamento. Depois dessa validação,
+registrar o resultado e mover backlog e tasks para `closed/`.

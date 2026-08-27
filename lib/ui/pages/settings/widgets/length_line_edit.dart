@@ -62,23 +62,6 @@ class _LengthLineEditState extends State<LengthLineEdit> {
     }
   }
 
-  void _scheduleLengthChange(String text) {
-    _lengthDebounce?.cancel();
-    final value = double.tryParse(text);
-    if (value == null || value <= 0 || value == widget.length) return;
-    _lengthDebounce = Timer(
-      const Duration(milliseconds: 400),
-      () => widget.onLengthChanged(value),
-    );
-  }
-
-  void _submitLength(String text) {
-    _lengthDebounce?.cancel();
-    final value = double.tryParse(text);
-    if (value == null || value <= 0 || value == widget.length) return;
-    widget.onLengthChanged(value);
-  }
-
   @override
   void dispose() {
     _lengthDebounce?.cancel();
@@ -133,5 +116,22 @@ class _LengthLineEditState extends State<LengthLineEdit> {
         ],
       ),
     );
+  }
+
+  void _scheduleLengthChange(String text) {
+    _lengthDebounce?.cancel();
+    final value = double.tryParse(text);
+    if (value == null || value <= 0 || value == widget.length) return;
+    _lengthDebounce = Timer(
+      const Duration(milliseconds: 400),
+      () => widget.onLengthChanged(value),
+    );
+  }
+
+  void _submitLength(String text) {
+    _lengthDebounce?.cancel();
+    final value = double.tryParse(text);
+    if (value == null || value <= 0 || value == widget.length) return;
+    widget.onLengthChanged(value);
   }
 }

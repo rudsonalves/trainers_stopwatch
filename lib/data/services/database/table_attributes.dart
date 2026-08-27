@@ -16,9 +16,11 @@
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
 const dbName = 'stopwatch.db';
-const dbVersion = 1007;
+const dbVersion = 1008;
+const protectedActionsHintMigrationVersion = 1007;
 const idempotentHistoryMigrationVersion = 1006;
 
+const settingsProtectedActionsHintSeen = 'protectedActionsHintSeen';
 const settingsTable = 'settingsTable';
 const settingsId = 'id';
 const settingsSplitLength = 'splitLength';

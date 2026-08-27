@@ -30,9 +30,13 @@ class DatabaseSchema {
   }
 
   Future<void> upgrade(
-      Database database, int oldVersion, int newVersion) async {
-    if (oldVersion != idempotentHistoryMigrationVersion ||
-        newVersion != dbVersion) {
+    Database database,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (newVersion != dbVersion ||
+        oldVersion < idempotentHistoryMigrationVersion ||
+        oldVersion >= newVersion) {
       throw AppError(
         code: AppErrorCode.migrationFailed,
         message: 'Unsupported application database migration.',
@@ -41,10 +45,19 @@ class DatabaseSchema {
     }
 
     try {
-      final batch = database.batch()
-        ..execute(addHistorySnapshotRevisionSQL)
-        ..execute(addHistorySnapshotTypeSQL)
-        ..execute(createHistorySnapshotIdentityIndexSQL);
+      final batch = database.batch();
+
+      if (oldVersion < protectedActionsHintMigrationVersion) {
+        batch
+          ..execute(addHistorySnapshotRevisionSQL)
+          ..execute(addHistorySnapshotTypeSQL)
+          ..execute(createHistorySnapshotIdentityIndexSQL);
+      }
+
+      if (oldVersion < dbVersion) {
+        batch.execute(addSettingsProtectedActionsHintSeenSQL);
+      }
+
       await batch.commit(noResult: true);
     } catch (error, stackTrace) {
       throw AppError(

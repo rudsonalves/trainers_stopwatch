@@ -34,6 +34,13 @@ class SettingsViewModel extends ChangeNotifier {
 
   SettingsFormData? get state => _state;
 
+  @override
+  void dispose() {
+    loadCommand.dispose();
+    saveCommand.dispose();
+    super.dispose();
+  }
+
   Future<void> load() => loadCommand.execute();
 
   Future<void> setSplitDistance(double value) =>
@@ -79,6 +86,18 @@ class SettingsViewModel extends ChangeNotifier {
     _appearanceState.synchronize(settings);
     notifyListeners();
     return Success(settings);
+  }
+
+  Future<void> markProtectedActionsHintSeen() {
+    final current = _state;
+
+    if (current == null || current.protectedActionsHintSeen) {
+      return Future.value();
+    }
+
+    return _apply(
+      (state) => state.copyWith(protectedActionsHintSeen: true),
+    );
   }
 
   Future<void> _apply(
@@ -146,12 +165,5 @@ class SettingsViewModel extends ChangeNotifier {
     _state = SettingsFormData.fromDomain(persisted);
     _appearanceState.synchronize(persisted);
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    loadCommand.dispose();
-    saveCommand.dispose();
-    super.dispose();
   }
 }
