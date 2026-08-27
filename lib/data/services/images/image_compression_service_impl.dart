@@ -4,10 +4,10 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-import '/common/constants.dart';
 import '/core/result/result.dart';
 import '/domain/models/image_selection.dart';
 import '/domain/models/prepared_user_image.dart';
+import '../../../ui/components/common/constants.dart';
 import 'image_compression_service.dart';
 
 typedef TemporaryDirectoryProvider = Future<Directory> Function();

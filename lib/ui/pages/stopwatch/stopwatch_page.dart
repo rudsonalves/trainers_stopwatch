@@ -6,13 +6,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '/application/stopwatch/session/stopwatch_session_id.dart';
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 import '/core/routing/route_arguments.dart';
 import '/core/routing/routes.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
-import '../../components/generic_dialog.dart';
+import '../../components/dialogs/generic_dialog.dart';
+import 'session/stopwatch_session_id.dart';
+import 'session/stopwatch_session_view_model.dart';
 import 'widgets/message_row.dart';
 import 'widgets/stopwatch_dismissible.dart';
 import 'widgets/stopwatch_drawer.dart';

@@ -5,10 +5,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '/application/stopwatch/session/stopwatch_session_id.dart';
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '../../../components/dismissible_backgrounds.dart';
+import '../../../components/dismissibles/dismissible_backgrounds.dart';
 import '../../../components/precise_stopwatch/precise_stopwatch.dart';
+import '../session/stopwatch_session_id.dart';
+import '../session/stopwatch_session_view_model.dart';
 
 class StopwatDismissible extends StatelessWidget {
   final StopwatchSessionViewModel session;

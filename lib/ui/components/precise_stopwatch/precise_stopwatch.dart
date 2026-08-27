@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '/common/constants.dart';
+import '../../pages/stopwatch/session/stopwatch_session_view_model.dart';
+import '../common/constants.dart';
 import '../edit_training_dialog/edit_training_dialog.dart';
 import 'widgets/lap_split_counters.dart';
 import 'widgets/stopwatch_button_bar.dart';

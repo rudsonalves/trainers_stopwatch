@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_id.dart';
 import 'package:trainers_stopwatch/core/config/dependencies.dart';
 import 'package:trainers_stopwatch/core/routing/animations_page/app_custom_transition_page.dart';
 import 'package:trainers_stopwatch/core/routing/route_arguments.dart';
@@ -19,6 +18,7 @@ import 'package:trainers_stopwatch/ui/pages/about/about_page.dart';
 import 'package:trainers_stopwatch/ui/pages/history/viewmodel/history_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/settings_page.dart';
 import 'package:trainers_stopwatch/ui/pages/settings/viewmodel/settings_view_model.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_id.dart';
 import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page.dart';
 import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/trainings_page.dart';

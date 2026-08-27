@@ -18,9 +18,9 @@
 import 'package:flutter/material.dart';
 
 import '/domain/common/user/models/user.dart';
-import '../../../components/dismissible_backgrounds.dart';
-import '../../../components/generic_dialog.dart';
-import '../../../components/user_card.dart';
+import '../../../components/cards/user_card.dart';
+import '../../../components/dialogs/generic_dialog.dart';
+import '../../../components/dismissibles/dismissible_backgrounds.dart';
 
 class DismissibleUserTile extends StatelessWidget {
   final User user;

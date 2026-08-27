@@ -17,9 +17,9 @@
 
 import 'package:flutter/material.dart';
 
-import '/application/stopwatch/session/stopwatch_session_message.dart';
-import '/common/icons/stopwatch_icons_icons.dart';
-import '/common/presentation/training_value_formatter.dart';
+import '../../../components/icons/stopwatch_icons_icons.dart';
+import '../../../components/presentation/training_value_formatter.dart';
+import '../session/stopwatch_session_message.dart';
 
 class MessageRow extends StatelessWidget {
   final StopwatchSessionMessage message;

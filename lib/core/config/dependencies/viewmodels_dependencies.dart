@@ -1,8 +1,5 @@
 import 'package:auto_injector/auto_injector.dart';
 
-import '/application/stopwatch/bloc/stopwatch_bloc.dart';
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '/common/constants.dart';
 import '/data/repositories/settings/settings_repository.dart';
 import '/domain/common/settings/models/settings.dart';
 import '/domain/common/training/models/training.dart';
@@ -11,6 +8,9 @@ import '/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart';
 import '/ui/app/app_appearance_state.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
+import '../../../ui/components/common/constants.dart';
+import '../../../ui/pages/stopwatch/bloc/stopwatch_bloc.dart';
+import '../../../ui/pages/stopwatch/session/stopwatch_session_view_model.dart';
 
 void registerViewModelsDependencies(AutoInjector injector) {
   injector

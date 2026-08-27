@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants.dart';
+import '../../common/constants.dart';
 
 class DistanceUnitRow extends StatefulWidget {
   final String label;

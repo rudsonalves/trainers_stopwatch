@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '/domain/common/training/models/training.dart';
-import '../../../components/dismissible_backgrounds.dart';
+import '../../../components/dismissibles/dismissible_backgrounds.dart';
 
 class DismissibleTraining extends StatelessWidget {
   final Training training;

@@ -19,9 +19,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '/application/stopwatch/bloc/stopwatch_bloc.dart';
-import '/application/stopwatch/bloc/stopwatch_state.dart';
 import '/ui/components/theme/app_font_style.dart';
+import '../../../pages/stopwatch/bloc/stopwatch_bloc.dart';
+import '../../../pages/stopwatch/bloc/stopwatch_state.dart';
 import 'counter_row.dart';
 
 class LapSplitCouters extends StatelessWidget {

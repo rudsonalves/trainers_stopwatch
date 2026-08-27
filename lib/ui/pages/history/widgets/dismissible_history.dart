@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '/common/icons/stopwatch_icons_icons.dart';
-import '/common/presentation/training_value_formatter.dart';
 import '/domain/common/training/events/training_event.dart';
-import '../../../components/dismissible_backgrounds.dart';
+import '../../../components/dismissibles/dismissible_backgrounds.dart';
+import '../../../components/icons/stopwatch_icons_icons.dart';
+import '../../../components/presentation/training_value_formatter.dart';
 
 class DismissibleHistory extends StatelessWidget {
   final TrainingEvent event;

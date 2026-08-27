@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/common/presentation/training_value_formatter.dart';
 import 'package:trainers_stopwatch/domain/common/training/units/speed_unit.dart';
 import 'package:trainers_stopwatch/domain/common/training/values/speed.dart';
+import 'package:trainers_stopwatch/ui/components/presentation/training_value_formatter.dart';
 
 void main() {
   group('TrainingValueFormatter', () {

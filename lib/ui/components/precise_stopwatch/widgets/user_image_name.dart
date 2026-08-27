@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../show_athlete_image.dart';
+import '../../cards/show_athlete_image.dart';
 
 class UserImageName extends StatelessWidget {
   const UserImageName({

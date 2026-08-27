@@ -2,9 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import '/application/stopwatch/bloc/stopwatch_bloc.dart';
-import '/application/stopwatch/bloc/stopwatch_event.dart';
-import '/application/stopwatch/bloc/stopwatch_state.dart';
 import '/core/result/result.dart';
 import '/domain/common/history/models/history_entry.dart';
 import '/domain/common/stopwatch/models/stopwatch_snapshot.dart';
@@ -15,6 +12,9 @@ import '/domain/common/training/values/speed.dart';
 import '/domain/common/user/models/user.dart';
 import '/domain/usecases/trainings/create_training_use_case.dart';
 import '/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart';
+import '../bloc/stopwatch_bloc.dart';
+import '../bloc/stopwatch_event.dart';
+import '../bloc/stopwatch_state.dart';
 import 'stopwatch_session_id.dart';
 import 'stopwatch_session_message.dart';
 import 'stopwatch_session_state.dart';

@@ -1,4 +1,4 @@
-import '../../domain/common/training/values/speed.dart';
+import '../../../domain/common/training/values/speed.dart';
 
 class TrainingValueFormatter {
   const TrainingValueFormatter._();

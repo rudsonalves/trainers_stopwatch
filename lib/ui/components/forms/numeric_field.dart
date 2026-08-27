@@ -55,6 +55,25 @@ class _NumericFieldState extends State<NumericField> {
     widget.controller.addListener(_validadeNumber);
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: TextField(
+        controller: widget.controller,
+        keyboardType: TextInputType.number,
+        focusNode: widget.focusNode,
+        decoration: InputDecoration(
+          label: Text(widget.label ?? ''),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          enabled: widget.enable,
+        ),
+        onSubmitted: widget.onSubmitted,
+        onChanged: widget.onChanged,
+      ),
+    );
+  }
+
   void _validadeNumber() {
     String newValue = widget.controller.text;
 
@@ -92,25 +111,6 @@ class _NumericFieldState extends State<NumericField> {
     widget.controller.text = oldValue;
     widget.controller.selection = TextSelection.fromPosition(
       TextPosition(offset: oldValue.length),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: TextField(
-        controller: widget.controller,
-        keyboardType: TextInputType.number,
-        focusNode: widget.focusNode,
-        decoration: InputDecoration(
-          label: Text(widget.label ?? ''),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          enabled: widget.enable,
-        ),
-        onSubmitted: widget.onSubmitted,
-        onChanged: widget.onChanged,
-      ),
     );
   }
 }

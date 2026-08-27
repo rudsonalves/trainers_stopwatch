@@ -6,10 +6,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '/application/stopwatch/bloc/stopwatch_bloc.dart';
-import '/application/stopwatch/bloc/stopwatch_state.dart';
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
-import '/common/icons/stopwatch_icons_icons.dart';
+import '../../../pages/stopwatch/bloc/stopwatch_bloc.dart';
+import '../../../pages/stopwatch/bloc/stopwatch_state.dart';
+import '../../../pages/stopwatch/session/stopwatch_session_view_model.dart';
+import '../../icons/stopwatch_icons_icons.dart';
 import 'custon_icon_button.dart';
 
 class StopwatchButtonBar extends StatelessWidget {

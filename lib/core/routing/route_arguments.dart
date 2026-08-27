@@ -1,6 +1,6 @@
-import '/application/stopwatch/session/stopwatch_session_id.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
+import '../../ui/pages/stopwatch/session/stopwatch_session_id.dart';
 
 class PersonalTrainingRouteArguments {
   final StopwatchSessionId sessionId;

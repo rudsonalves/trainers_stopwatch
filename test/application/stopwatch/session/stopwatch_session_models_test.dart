@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_id.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_message.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_state.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_write.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/domain/common/stopwatch/models/stopwatch_snapshot.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_id.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_message.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_state.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_write.dart';
 
 const _user = User(id: 7, name: 'Ana', email: 'ana@example.com');
 

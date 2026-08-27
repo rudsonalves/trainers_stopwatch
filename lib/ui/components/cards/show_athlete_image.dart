@@ -19,7 +19,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../common/constants.dart';
+import '../common/constants.dart';
 
 class ShowUserImage extends StatelessWidget {
   final String image;

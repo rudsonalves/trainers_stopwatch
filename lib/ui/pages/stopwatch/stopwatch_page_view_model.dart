@@ -3,12 +3,12 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 
-import '/application/stopwatch/bloc/stopwatch_state.dart';
-import '/application/stopwatch/session/stopwatch_session_id.dart';
-import '/application/stopwatch/session/stopwatch_session_message.dart';
-import '/application/stopwatch/session/stopwatch_session_view_model.dart';
 import '/core/result/result.dart';
 import '/domain/common/user/models/user.dart';
+import 'bloc/stopwatch_state.dart';
+import 'session/stopwatch_session_id.dart';
+import 'session/stopwatch_session_message.dart';
+import 'session/stopwatch_session_view_model.dart';
 
 typedef StopwatchSessionFactory = StopwatchSessionViewModel Function(User user);
 

@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026/08/27 - final/adj-01
+
+This change reorganizes stopwatch presentation logic and shared UI components under the `ui` layer. It consolidates reusable widgets by responsibility and updates application, service, routing, dependency injection, and test imports to reflect the new structure.
+
+The refactor preserves existing behavior while clarifying module ownership and reducing the use of broadly scoped `common` and `application` directories for presentation-specific code.
+
+1. **`lib/ui/pages/stopwatch`**
+
+   * Moved the stopwatch BLoC, events, and states from `lib/application/stopwatch/bloc` into the stopwatch page module.
+   * Moved session identifiers, messages, state, write results, and the session view model from `lib/application/stopwatch/session` into the stopwatch page module.
+   * Updated the stopwatch page, page view model, widgets, personal training page, route arguments, and dependency registration to use the relocated stopwatch modules.
+   * Adjusted internal session view-model imports to reference the colocated BLoC classes.
+
+2. **`lib/ui/components`**
+
+   * Organized user card components under `cards`, generic dialogs under `dialogs`, dismissible backgrounds under `dismissibles`, and numeric inputs under `forms`.
+   * Moved application information and shared constants from `lib/common` into `ui/components/common`.
+   * Moved the custom stopwatch icon definitions into `ui/components/icons` and removed the generated font usage documentation block.
+   * Moved `TrainingValueFormatter` into `ui/components/presentation` and updated its domain model import.
+   * Repositioned `NumericField.build` within the state class without changing the rendered field behavior.
+   * Updated component and page imports across stopwatch, history, training, settings, user, and editing flows.
+
+3. **`lib/core`, `lib/data`, and `lib/main.dart`**
+
+   * Updated dependency injection and routing modules to reference the stopwatch presentation modules in their new locations.
+   * Updated image compression, user image storage, and application bootstrap imports to use the relocated UI constants.
+   * Updated the training report PDF renderer to use the relocated presentation formatter.
+
+4. **`test`**
+
+   * Updated stopwatch BLoC, session model, session view-model, routing, formatter, and widget test imports to match the reorganized production modules.
+   * Preserved the existing test coverage while aligning tests with the new UI-layer package paths.
+
+### Conclusion
+
+The change set consolidates presentation-specific stopwatch logic and shared widgets within the UI layer. The resulting structure groups components by responsibility and keeps application integrations and tests aligned with the reorganized modules without introducing behavioral changes.
+
 ## 2026/08/26 - bkl010/task-08
 
 This change consolidates the project documentation around the completed MVVM migration and legacy UI cleanup. It replaces the former transitional architecture description with the current application structure, boundaries, state-management model, persistence flow, integrations, and validation practices.

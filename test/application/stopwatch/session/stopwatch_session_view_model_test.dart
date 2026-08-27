@@ -1,9 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_bloc.dart';
-import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_state.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_message.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_state.dart';
-import 'package:trainers_stopwatch/application/stopwatch/session/stopwatch_session_view_model.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/repositories/histories/history_repository.dart';
 import 'package:trainers_stopwatch/data/repositories/trainings/training_repository.dart';
@@ -12,6 +7,11 @@ import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/create_training_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/trainings/persist_stopwatch_snapshot_use_case.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/bloc/stopwatch_bloc.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/bloc/stopwatch_state.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_message.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_state.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/session/stopwatch_session_view_model.dart';
 import 'package:trainers_stopwatch/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 
 const _writeFailure = AppError(

@@ -3,13 +3,13 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '/common/presentation/training_value_formatter.dart';
 import '/core/result/result.dart';
 import '/domain/common/report/models/training_report_content.dart';
 import '/domain/common/report/models/training_report_row.dart';
 import '/domain/common/report/models/training_report_section.dart';
 import '/domain/common/report/services/training_report_pdf_renderer.dart';
 import '/domain/common/training/events/training_event.dart';
+import '../../../ui/components/presentation/training_value_formatter.dart';
 
 class TrainingReportPdfRendererImpl implements TrainingReportPdfRenderer {
   final AssetBundle _assetBundle;

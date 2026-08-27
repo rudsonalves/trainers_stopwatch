@@ -1,9 +1,9 @@
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_bloc.dart';
-import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_event.dart';
-import 'package:trainers_stopwatch/application/stopwatch/bloc/stopwatch_state.dart';
 import 'package:trainers_stopwatch/domain/common/stopwatch/models/stopwatch_snapshot.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/bloc/stopwatch_bloc.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/bloc/stopwatch_event.dart';
+import 'package:trainers_stopwatch/ui/pages/stopwatch/bloc/stopwatch_state.dart';
 
 void main() {
   group('StopwatchBloc', () {

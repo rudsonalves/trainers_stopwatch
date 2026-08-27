@@ -17,9 +17,9 @@
 
 import 'package:flutter/material.dart';
 
-import '/common/constants.dart';
 import '/domain/common/user/models/user.dart';
 import '/domain/models/prepared_user_image.dart';
+import '../../../../components/common/constants.dart';
 import '../../viewmodel/models/user_form_result.dart';
 
 class UserController {

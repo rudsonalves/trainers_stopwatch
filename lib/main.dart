@@ -19,7 +19,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-import 'common/constants.dart';
 import 'core/bootstrap/bootstrap.dart';
 import 'core/config/dependencies.dart';
 import 'data/repositories/histories/history_repository.dart';
@@ -31,6 +30,7 @@ import 'domain/usecases/users/users_use_case.dart';
 import 'ui/app/app_appearance_state.dart';
 import 'ui/app/bootstrap_error_app.dart';
 import 'ui/app/my_material_app.dart';
+import 'ui/components/common/constants.dart';
 import 'ui/pages/history/viewmodel/history_view_model.dart';
 import 'ui/pages/settings/viewmodel/settings_view_model.dart';
 import 'ui/pages/stopwatch/stopwatch_page_view_model.dart';
