@@ -246,8 +246,8 @@ esperas reais ou dependência do relógio da máquina.
 **Resultado esperado:** o novo núcleo temporal está integrado ao fluxo atual,
 sem regressões conhecidas, e oferece uma fronteira estável para o backlog 008.
 
-**Entregue em 2026-08-24:** o núcleo temporal foi movido para
-`lib/application/stopwatch/bloc` e passou a usar uma instância de
+**Entregue em 2026-08-24:** o núcleo temporal, atualmente localizado em
+`lib/ui/pages/stopwatch/bloc`, passou a usar uma instância de
 `dart:core Stopwatch` como fonte exclusiva de duração. O estado imutável expõe
 status, elapsed, contadores, datas civis, configuração e snapshots revisionados.
 O ticker padrão de 50 ms apenas despacha atualizações internas e é cancelado em

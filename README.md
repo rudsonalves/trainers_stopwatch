@@ -20,8 +20,8 @@ sharing PDF reports.
 
 - MVVM structures the presentation layer, while BLoC is limited to the
   stopwatch's temporal state machine.
-- Pages, ViewModels, reusable components, and application sessions live under
-  `lib/ui` and `lib/application`.
+- Pages, ViewModels, reusable components, stopwatch sessions, and the
+  stopwatch-specific BLoC live under `lib/ui`.
 - Domain rules and UseCases are independent of Flutter, SQLite, and plugins.
 - Repositories and services isolate persistence and native integrations.
 - `go_router` centralizes route names, paths, and typed arguments.

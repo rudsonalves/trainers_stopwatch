@@ -1,6 +1,7 @@
 # Arquitetura atual do Trainer's Stopwatch
 
-> Estado consolidado em 26 de agosto de 2026, após os backlogs 001 a 010.
+> Estado consolidado em 27 de agosto de 2026, após os backlogs 001 a 010 e os
+> ajustes finais de organização do código.
 
 ## Visão geral
 
@@ -25,22 +26,21 @@ Repositories
 Services (SQLite e plugins)
 ```
 
-As dependências são montadas no composition root em `lib/core/config`. Objetos
-de aplicação recebem colaboradores por construtor; Pages não consultam o
-injetor, repositories, serviços de plataforma ou singletons.
+As dependências são montadas no composition root em `lib/core/config`.
+ViewModels, BLoCs e UseCases recebem colaboradores por construtor; Pages não
+consultam o injetor, repositories, serviços de plataforma ou singletons.
 
 ## Organização do código
 
 ```text
 lib/
-├── application/         sessões e coordenação dos cronômetros
 ├── core/                bootstrap, configuração, resultado, Commands e rotas
 ├── data/                repositories e serviços concretos
 ├── domain/              entidades, valores, regras, contratos e UseCases
 ├── ui/
 │   ├── app/             MaterialApp e estado global de aparência
 │   ├── components/      componentes reutilizados por múltiplos fluxos
-│   └── pages/           Pages, ViewModels e widgets locais
+│   └── pages/           fluxos com Pages, ViewModels, BLoCs e widgets locais
 └── main.dart            inicialização e composition root
 ```
 
@@ -87,7 +87,7 @@ rota são transportados por classes de argumentos tipadas. A rota de treino
 individual recebe um identificador estável de sessão e resolve a instância no
 composition root, sem transportar ViewModels como argumento.
 
-## Domínio e aplicação
+## Domínio e casos de uso
 
 O domínio usa Dart puro e `core/result`. Ele não depende de Flutter, SQLite,
 plugins, localização ou widgets. Seus principais grupos são:
@@ -108,6 +108,11 @@ seus consumidores.
 parcial, volta e término. `StopwatchSessionViewModel` coordena uma sessão,
 persiste treino e histórico por UseCases e publica um estado imutável com
 operação pendente e erro apresentável.
+
+O BLoC, seus eventos e estados, e os objetos de sessão são implementações
+específicas desse fluxo de apresentação e ficam em
+`lib/ui/pages/stopwatch`. O diretório `core` permanece reservado a recursos
+transversais que não conhecem funcionalidades do aplicativo.
 
 `StopwatchPageViewModel` mantém as sessões ativas indexadas por identificador,
 agrega mensagens e controla remoções concorrentes. A UI constrói os widgets a

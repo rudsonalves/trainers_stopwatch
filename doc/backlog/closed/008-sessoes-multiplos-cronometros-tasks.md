@@ -31,8 +31,8 @@ explícitas da sessão.
 
 **Dependência:** backlog 007 concluído.
 
-- [x] Criar os models de aplicação da sessão próximos ao consumidor em
-      `lib/application/stopwatch/session/`, sem dependências de widgets ou
+- [x] Criar os models da sessão próximos ao consumidor em
+      `lib/ui/pages/stopwatch/session/`, sem dependências de widgets ou
       `BuildContext`.
 - [x] Definir uma identidade estável de sessão baseada no ID persistido do
       atleta, adequada para `ValueKey` e para localizar, editar e remover a
@@ -81,7 +81,7 @@ recuperável nunca duplica uma parcial.
 **Dependências:** tarefas 1 e 2.
 
 - [x] Criar `StopwatchSessionViewModel` em
-      `lib/application/stopwatch/session/stopwatch_session_view_model.dart` com
+      `lib/ui/pages/stopwatch/session/stopwatch_session_view_model.dart` com
       um `StopwatchBloc` exclusivo e dependências recebidas por construtor.
 - [x] Inicializar a sessão com o model de domínio `User`, configurações do treino
       e callbacks/factories necessários, sem `UserModel`, managers ou singletons.
