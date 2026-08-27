@@ -1,5 +1,56 @@
 # Changelog
 
+## 2026/08/27 - final/adj-03
+
+This change set prepares the project for repeatable validation and signed Android releases, restores the iOS CocoaPods configuration, and advances the application build number for publication.
+
+It also improves action spacing across dialogs and the stopwatch controls, refactors stopwatch button construction, and refreshes the resolved dependency graph.
+
+1. **Makefile**
+
+   * Added commands for dependency retrieval, cleanup, formatting, static analysis, tests, and Flutter environment diagnostics.
+   * Added a consolidated `check` workflow covering dependency resolution, formatting verification, analysis, and tests.
+   * Added validation for the `pubspec.yaml` build number and required Android signing properties.
+   * Added signed release targets for APK and Android App Bundle generation.
+   * Added a `release` workflow that validates the project before generating the publication AAB.
+   * Added configurable Flutter executable and build arguments, documented output paths, and self-describing command help.
+
+2. **README.md**
+
+   * Documented the new Makefile-based development, validation, and Android release commands.
+   * Documented the required Android signing properties.
+   * Clarified the Google Play requirement for a positive, incrementing build number.
+
+3. **iOS CocoaPods configuration**
+
+   * Added `ios/Podfile` with Flutter pod setup, Runner and RunnerTests integration, framework usage, CocoaPods analytics disabling, and Flutter-specific post-install build settings.
+   * Updated the Debug and Release Xcode configurations to optionally include the corresponding CocoaPods-generated Runner settings before Flutter-generated settings.
+
+4. **Dialog action layouts**
+
+   * Added consistent spacing between action buttons in the training edit, history edit, and user dialogs.
+
+5. **Stopwatch button bar**
+
+   * Refactored status-specific button creation into a dedicated helper while preserving idle, running, paused, and finished actions.
+   * Extracted the action row and operation-state indicators into a separate builder.
+   * Added spacing between stopwatch action buttons.
+   * Updated stopwatch module imports to use project-root paths.
+
+6. **pubspec.yaml**
+
+   * Increased the application build number from `0` to `43` while retaining version `1.9.00`.
+
+7. **pubspec.lock**
+
+   * Refreshed resolved transitive package versions and integrity hashes.
+   * Removed transitive entries no longer present in the resolved graph, including code assets, hooks, JNI, Objective-C, record-use, and split platform-specific SQLite packages.
+   * Added the transitive `sprintf` dependency and aligned the SQLite resolution with `sqflite` `2.3.3+1` and `sqflite_common` `2.5.4+2`.
+
+### Conclusion
+
+The project now has a documented, repeatable release workflow with preflight validation for code quality, versioning, and Android signing. iOS dependency integration is restored, UI action layouts are more consistent, and the resolved package set is aligned with the current Flutter environment.
+
 ## 2026/08/27 - final/adj-02
 
 This change aligns the project documentation with the final source-code organization, clarifying that stopwatch-specific BLoCs and session objects belong to the presentation flow under `lib/ui`.

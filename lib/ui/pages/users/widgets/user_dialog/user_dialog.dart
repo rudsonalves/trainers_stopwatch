@@ -149,6 +149,7 @@ class _UserDialogState extends State<UserDialog> {
                   ),
                   const SizedBox(height: 12),
                   OverflowBar(
+                    spacing: 6,
                     children: [
                       FilledButton.tonal(
                         onPressed: _addButton,
