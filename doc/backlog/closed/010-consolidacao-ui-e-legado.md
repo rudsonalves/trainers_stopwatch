@@ -73,7 +73,8 @@ Depende da conclusão dos backlogs 004 a 009.
 **Estado:** Em validação final — implementação e verificações automatizadas
 concluídas; validação manual em Android e iOS pendente.
 
-**Próximo backlog:** a definir conforme prioridades funcionais do produto.
+**Próximo backlog:**
+[011 — Ajustes de interface e interação](../011-ajustes-interface-e-interacao.md).
 
 ## Validação da entrega
 

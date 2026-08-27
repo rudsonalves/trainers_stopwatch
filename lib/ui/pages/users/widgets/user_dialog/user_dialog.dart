@@ -22,6 +22,7 @@ import '/domain/common/user/models/user.dart';
 import '/domain/models/prepared_user_image.dart';
 import '/ui/components/theme/app_font_style.dart';
 import '../../../../components/cards/show_athlete_image.dart';
+import '../../../../components/formatters/phone_input_formatter.dart';
 import '../../viewmodel/models/user_form_result.dart';
 import 'user_controller.dart';
 import 'validator.dart';
@@ -134,18 +135,25 @@ class _UserDialogState extends State<UserDialog> {
                   ),
                   CustomTextField(
                     controller: _controller.name,
+                    textCapitalization: TextCapitalization.words,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.text,
                     validator: Validador.name,
                     label: 'ADName'.tr(),
                   ),
                   CustomTextField(
                     controller: _controller.email,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
                     validator: Validador.email,
                     label: 'ADEmail'.tr(),
                   ),
                   CustomTextField(
                     controller: _controller.phone,
-                    label: 'ADPhone'.tr(),
+                    textInputAction: TextInputAction.done,
                     keyboardType: TextInputType.phone,
+                    inputFormatters: [PhoneInputFormatter()],
+                    label: 'ADPhone'.tr(),
                   ),
                   const SizedBox(height: 12),
                   OverflowBar(

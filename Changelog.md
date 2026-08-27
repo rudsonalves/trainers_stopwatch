@@ -1,5 +1,67 @@
 # Changelog
 
+## 2026/08/27 - final/adj-04
+
+This change set expands the product backlog with approved interface, interaction, localization, and contextual-help requirements. It also closes the UI consolidation backlog and updates the backlog sequence accordingly.
+
+The implementation changes improve user form input behavior, introduce Brazilian phone-number formatting utilities, normalize stopwatch imports, and configure the iOS project for CocoaPods with a higher deployment target.
+
+1. **`doc/backlog/011-ajustes-interface-e-interacao.md`**
+
+   * Added the interface and interaction backlog covering discoverable protected stopwatch actions, confirmation flows, long-press shortcuts, tactile feedback, and contextual guidance.
+   * Defined the required four-pixel spacing between the stopwatch display and controls.
+   * Documented the locale synchronization defect, readable language labels, persistence expectations, scope boundaries, decisions, and acceptance criteria.
+
+2. **`doc/backlog/011-ajustes-interface-e-interacao-tasks.md`**
+
+   * Added the ordered implementation plan for characterizing current behavior, correcting locale application, persisting contextual-tip discovery, and implementing protected-action interactions.
+   * Defined testing and validation work for stopwatch layout, translations, persistence, accessibility, failure handling, and Android and iOS behavior.
+   * Established the conditions required before the backlog can be closed.
+
+3. **`doc/backlog/012-ajuda-contextual.md`**
+
+   * Added a planned backlog for page-specific help accessed through translated and accessible AppBar actions.
+   * Defined the proposed help content for stopwatches, users, training sessions, history, and settings.
+   * Documented navigation, responsive presentation, local image assets, translation, testing, implementation questions, exclusions, and acceptance criteria.
+
+4. **`doc/backlog/README.md` and `doc/backlog/closed/010-consolidacao-ui-e-legado*`**
+
+   * Moved backlog 010 and its task document into the closed backlog folder.
+   * Updated the backlog index to mark backlog 010 as completed and register backlogs 011 and 012.
+   * Corrected backlog 008’s affected area to UI and linked the closed backlog 010 to backlog 011 as the next planned work.
+
+5. **iOS CocoaPods integration**
+
+   * Added `ios/Podfile.lock` with locked Flutter and `sqflite` pod dependencies.
+   * Added the Pods project to the Xcode workspace.
+   * Integrated Runner and RunnerTests pod frameworks, build configurations, manifest checks, and framework embedding phases into the Xcode project.
+   * Raised the iOS deployment target from 13.0 to 15.0.
+
+6. **`lib/core/extensions/strings.dart`**
+
+   * Added a string extension for removing non-numeric characters.
+   * Added trimming behavior that converts blank strings to `null`.
+
+7. **`lib/ui/components/formatters/phone_input_formatter.dart`**
+
+   * Added a `TextInputFormatter` that extracts digits and formats Brazilian area codes with mobile or landline number patterns.
+   * Limited formatted phone input to the supported digit lengths and maintained the cursor at the end of the formatted value.
+
+8. **User dialog text input components**
+
+   * Extended `CustomTextField` to support capitalization, keyboard actions, and input formatters.
+   * Configured the athlete name field for word capitalization and next-field navigation.
+   * Configured the email field with the email keyboard and next-field navigation.
+   * Configured the phone field with the phone keyboard, completion action, and Brazilian phone formatter.
+
+9. **Precise stopwatch widgets**
+
+   * Normalized stopwatch BLoC and state imports in the lap/split counters and stopwatch display widgets to use project-root paths.
+
+### Conclusion
+
+The change set establishes the next interface-focused backlog phases while formally closing the preceding UI consolidation effort. It also improves athlete data entry, adds reusable string and phone-formatting support, and completes CocoaPods integration for the iOS targets with iOS 15 as the minimum deployment version.
+
 ## 2026/08/27 - final/adj-03
 
 This change set prepares the project for repeatable validation and signed Android releases, restores the iOS CocoaPods configuration, and advances the application build number for publication.
