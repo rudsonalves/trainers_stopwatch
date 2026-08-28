@@ -107,18 +107,18 @@ arquivo ou chamada de plugin, e cancelamento não precisa iniciar a entrega. Os
 
 **Dependência:** tarefa 3.
 
-- [ ] Armazenar no `TrainingsViewModel` os problemas atuais indexados pela
+- [x] Armazenar no `TrainingsViewModel` os problemas atuais indexados pela
       identidade persistida do treino.
-- [ ] Expor consultas para o estado visual e o motivo de cada treino sem
+- [x] Expor consultas para o estado visual e o motivo de cada treino sem
       entregar coleções mutáveis à página.
-- [ ] Remover de `_selectedTrainingIds` todos os rejeitados assim que a
+- [x] Remover de `_selectedTrainingIds` todos os rejeitados assim que a
       validação terminar, preservando os selecionados válidos.
-- [ ] Manter os problemas visíveis quando o usuário cancelar o diálogo.
-- [ ] Limpar problemas ao trocar usuário, recarregar treinos, excluir um treino
+- [x] Manter os problemas visíveis quando o usuário cancelar o diálogo.
+- [x] Limpar problemas ao trocar usuário, recarregar treinos, excluir um treino
       ou retornar da edição de seu histórico, permitindo nova validação.
-- [ ] Coordenar preparação, confirmação e entrega sem permitir Share e Email
+- [x] Coordenar preparação, confirmação e entrega sem permitir Share e Email
       concorrentes ou depender de `BuildContext`.
-- [ ] Cobrir atualização da seleção, persistência visual do erro, limpeza e
+- [x] Cobrir atualização da seleção, persistência visual do erro, limpeza e
       ausência de entrega quando não houver conteúdo válido.
 
 **Resultado esperado:** o ViewModel oferece todo o estado necessário para a

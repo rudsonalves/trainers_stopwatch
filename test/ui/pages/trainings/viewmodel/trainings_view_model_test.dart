@@ -17,6 +17,8 @@ import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/build_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_email_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
+import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/email_prepared_training_report_command_input.dart';
+import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/share_prepared_training_report_command_input.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/training_report_command_inputs.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/training_selection_state.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/trainings_view_model.dart';
@@ -116,6 +118,8 @@ class _ShareTrainingReportFake implements ShareTrainingReportUseCase {
   TrainingReportPdfTexts? receivedTexts;
   String? receivedSubject;
   AsyncResult<Unit> result = Future.value(const Success(unit));
+  int preparedCalls = 0;
+  TrainingReportContent? receivedContent;
 
   @override
   AsyncResult<Unit> execute({
@@ -140,8 +144,14 @@ class _ShareTrainingReportFake implements ShareTrainingReportUseCase {
     required TrainingReportPdfTexts texts,
     required String subject,
     String suggestedName = 'training_logs.pdf',
-  }) =>
-      result;
+  }) {
+    preparedCalls++;
+    receivedContent = content;
+    receivedTexts = texts;
+    receivedSubject = subject;
+
+    return result;
+  }
 }
 
 class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
@@ -153,6 +163,8 @@ class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
   String? receivedSubject;
   String? receivedHtmlBody;
   AsyncResult<Unit> result = Future.value(const Success(unit));
+  int preparedCalls = 0;
+  TrainingReportContent? receivedContent;
 
   @override
   AsyncResult<Unit> execute({
@@ -183,14 +195,23 @@ class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
     required String subject,
     required String htmlBody,
     String suggestedName = 'training_logs.pdf',
-  }) =>
-      result;
+  }) {
+    preparedCalls++;
+    receivedContent = content;
+    receivedTexts = texts;
+    receivedRecipients = List.unmodifiable(recipients);
+    receivedSubject = subject;
+    receivedHtmlBody = htmlBody;
+
+    return result;
+  }
 }
 
 class _BuildTrainingReportFake implements BuildTrainingReportUseCase {
   User? receivedUser;
   List<Training>? receivedTrainings;
   Result<TrainingReportBuildOutcome>? outcome;
+  AsyncResult<TrainingReportBuildOutcome>? pendingResult;
 
   @override
   AsyncResult<TrainingReportContent> execute({
@@ -208,6 +229,12 @@ class _BuildTrainingReportFake implements BuildTrainingReportUseCase {
   }) async {
     receivedUser = user;
     receivedTrainings = List.unmodifiable(trainings);
+
+    final pending = pendingResult;
+    if (pending != null) {
+      return pending;
+    }
+
     return outcome ??
         Success(
           TrainingReportBuildOutcome(
@@ -502,6 +529,507 @@ void main() {
     );
     expect(viewModel.hasReportIssues, isTrue);
     expect(() => viewModel.reportIssues.clear(), throwsUnsupportedError);
+  });
+
+  test('shares prepared content without rebuilding the report', () async {
+    final content = TrainingReportContent(
+      user: ana,
+      sections: const [],
+    );
+
+    await viewModel.sharePreparedReport(
+      SharePreparedTrainingReportCommandInput(
+        content: content,
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.sharePreparedReportCommand.isSuccess, isTrue);
+    expect(shareTrainingReport.preparedCalls, 1);
+    expect(shareTrainingReport.calls, 0);
+    expect(shareTrainingReport.receivedContent, same(content));
+    expect(shareTrainingReport.receivedTexts, pdfTexts);
+    expect(
+      shareTrainingReport.receivedSubject,
+      'Relatório de treinos',
+    );
+    expect(buildTrainingReport.receivedUser, isNull);
+    expect(buildTrainingReport.receivedTrainings, isNull);
+  });
+
+  test('emails prepared content without rebuilding the report', () async {
+    final content = TrainingReportContent(
+      user: ana,
+      sections: const [],
+    );
+
+    await viewModel.sendPreparedReportEmail(
+      EmailPreparedTrainingReportCommandInput(
+        content: content,
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendPreparedReportEmailCommand.isSuccess, isTrue);
+    expect(sendTrainingReportEmail.preparedCalls, 1);
+    expect(sendTrainingReportEmail.calls, 0);
+    expect(sendTrainingReportEmail.receivedContent, same(content));
+    expect(sendTrainingReportEmail.receivedTexts, pdfTexts);
+    expect(
+      sendTrainingReportEmail.receivedRecipients,
+      ['coach@example.com'],
+    );
+    expect(
+      sendTrainingReportEmail.receivedSubject,
+      'Relatório de treinos',
+    );
+    expect(
+      sendTrainingReportEmail.receivedHtmlBody,
+      '<p>Relatório em anexo.</p>',
+    );
+    expect(buildTrainingReport.receivedUser, isNull);
+    expect(buildTrainingReport.receivedTrainings, isNull);
+  });
+
+  test('reload clears report issues and allows a new validation', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final rejected = viewModel.trainings.first;
+    viewModel.setSelected(rejected, selected: true);
+
+    final issue = TrainingReportIssue(
+      training: rejected,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: const [],
+        ),
+        issues: [issue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.reportIssueFor(rejected), issue);
+    expect(
+      viewModel.selectionStateFor(rejected),
+      TrainingSelectionState.rejected,
+    );
+    expect(viewModel.selectedTrainingIds, isEmpty);
+
+    await viewModel.reloadTrainings();
+
+    final reloaded = viewModel.trainings.first;
+
+    expect(viewModel.reportIssueFor(reloaded), isNull);
+    expect(viewModel.hasReportIssues, isFalse);
+    expect(
+      viewModel.selectionStateFor(reloaded),
+      TrainingSelectionState.unselected,
+    );
+
+    viewModel.setSelected(reloaded, selected: true);
+
+    expect(
+      viewModel.selectionStateFor(reloaded),
+      TrainingSelectionState.selected,
+    );
+  });
+
+  test('successful update clears the report issue for that training', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final rejected = viewModel.trainings.first;
+    viewModel.setSelected(rejected, selected: true);
+
+    final issue = TrainingReportIssue(
+      training: rejected,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: const [],
+        ),
+        issues: [issue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.reportIssueFor(rejected), issue);
+
+    final updated = training(
+      rejected.id!,
+      rejected.userId,
+      comments: 'Histórico corrigido',
+    );
+
+    await viewModel.update(updated);
+
+    expect(viewModel.updateCommand.isSuccess, isTrue);
+    expect(viewModel.reportIssueFor(updated), isNull);
+    expect(viewModel.hasReportIssues, isFalse);
+    expect(
+      viewModel.selectionStateFor(updated),
+      TrainingSelectionState.unselected,
+    );
+  });
+
+  test('failed update preserves the report issue', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final rejected = viewModel.trainings.first;
+    viewModel.setSelected(rejected, selected: true);
+
+    final issue = TrainingReportIssue(
+      training: rejected,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: const [],
+        ),
+        issues: [issue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.reportIssueFor(rejected), issue);
+
+    trainingRepository.failUpdate = true;
+
+    final changed = training(
+      rejected.id!,
+      rejected.userId,
+      comments: 'Alteração não persistida',
+    );
+
+    await viewModel.update(changed);
+
+    expect(viewModel.updateCommand.isFailure, isTrue);
+    expect(viewModel.lastError, writeFailure);
+    expect(viewModel.reportIssueFor(rejected), issue);
+    expect(viewModel.hasReportIssues, isTrue);
+    expect(
+      viewModel.selectionStateFor(rejected),
+      TrainingSelectionState.rejected,
+    );
+  });
+
+  test('successful deletion removes the training report issue', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final rejected = viewModel.trainings.first;
+    viewModel.setSelected(rejected, selected: true);
+
+    final issue = TrainingReportIssue(
+      training: rejected,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: const [],
+        ),
+        issues: [issue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.reportIssueFor(rejected), issue);
+
+    await viewModel.delete(rejected);
+
+    expect(viewModel.deleteCommand.isSuccess, isTrue);
+    expect(viewModel.trainings.map((item) => item.id),
+        isNot(contains(rejected.id)));
+    expect(viewModel.reportIssueFor(rejected), isNull);
+    expect(viewModel.hasReportIssues, isFalse);
+  });
+
+  test('changing the selected user clears previous report issues', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final rejected = viewModel.trainings.first;
+    viewModel.setSelected(rejected, selected: true);
+
+    final issue = TrainingReportIssue(
+      training: rejected,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: const [],
+        ),
+        issues: [issue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.reportIssueFor(rejected), issue);
+    expect(viewModel.hasReportIssues, isTrue);
+
+    await viewModel.selectUser(2);
+
+    expect(viewModel.selectedUser, bia);
+    expect(viewModel.trainings.single.id, 21);
+    expect(viewModel.selectedTrainingIds, isEmpty);
+    expect(viewModel.hasReportIssues, isFalse);
+    expect(viewModel.reportIssues, isEmpty);
+  });
+
+  test('rejects prepared email while prepared sharing is running', () async {
+    final content = TrainingReportContent(
+      user: ana,
+      sections: const [],
+    );
+
+    final shareCompleter = Completer<Result<Unit>>();
+    shareTrainingReport.result = shareCompleter.future;
+
+    final sharing = viewModel.sharePreparedReport(
+      SharePreparedTrainingReportCommandInput(
+        content: content,
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.sharePreparedReportCommand.isRunning, isTrue);
+    expect(viewModel.isReportOperationRunning, isTrue);
+
+    await viewModel.sendPreparedReportEmail(
+      EmailPreparedTrainingReportCommandInput(
+        content: content,
+        pdfTexts: pdfTexts,
+        recipients: const ['coach@example.com'],
+        subject: 'Relatório de treinos',
+        htmlBody: '<p>Relatório em anexo.</p>',
+      ),
+    );
+
+    expect(viewModel.sendPreparedReportEmailCommand.isFailure, isTrue);
+    expect(
+      viewModel.sendPreparedReportEmailCommand.error?.code,
+      AppErrorCode.invalidData,
+    );
+    expect(sendTrainingReportEmail.preparedCalls, 0);
+
+    shareCompleter.complete(const Success(unit));
+    await sharing;
+
+    expect(viewModel.sharePreparedReportCommand.isSuccess, isTrue);
+    expect(viewModel.isReportOperationRunning, isFalse);
+  });
+
+  test('rejects report preparation while prepared sharing is running',
+      () async {
+    final content = TrainingReportContent(
+      user: ana,
+      sections: const [],
+    );
+
+    final shareCompleter = Completer<Result<Unit>>();
+    shareTrainingReport.result = shareCompleter.future;
+
+    final sharing = viewModel.sharePreparedReport(
+      SharePreparedTrainingReportCommandInput(
+        content: content,
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.sharePreparedReportCommand.isRunning, isTrue);
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.prepareReportCommand.isFailure, isTrue);
+    expect(
+      viewModel.prepareReportCommand.error?.code,
+      AppErrorCode.invalidData,
+    );
+    expect(buildTrainingReport.receivedUser, isNull);
+    expect(buildTrainingReport.receivedTrainings, isNull);
+
+    shareCompleter.complete(const Success(unit));
+    await sharing;
+
+    expect(viewModel.sharePreparedReportCommand.isSuccess, isTrue);
+    expect(viewModel.isReportOperationRunning, isFalse);
+  });
+
+  test('rejects prepared sharing while report preparation is running',
+      () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+
+    final selected = viewModel.trainings.first;
+    viewModel.setSelected(selected, selected: true);
+
+    final prepareCompleter = Completer<Result<TrainingReportBuildOutcome>>();
+    buildTrainingReport.pendingResult = prepareCompleter.future;
+
+    final preparing = viewModel.prepareReport();
+
+    expect(viewModel.prepareReportCommand.isRunning, isTrue);
+    expect(viewModel.isReportOperationRunning, isTrue);
+
+    final content = TrainingReportContent(
+      user: ana,
+      sections: const [],
+    );
+
+    await viewModel.sharePreparedReport(
+      SharePreparedTrainingReportCommandInput(
+        content: content,
+        pdfTexts: pdfTexts,
+        subject: 'Relatório de treinos',
+      ),
+    );
+
+    expect(viewModel.sharePreparedReportCommand.isFailure, isTrue);
+    expect(
+      viewModel.sharePreparedReportCommand.error?.code,
+      AppErrorCode.invalidData,
+    );
+    expect(shareTrainingReport.preparedCalls, 0);
+
+    prepareCompleter.complete(
+      Success(
+        TrainingReportBuildOutcome(
+          content: content,
+          issues: const [],
+        ),
+      ),
+    );
+    await preparing;
+
+    expect(viewModel.prepareReportCommand.isSuccess, isTrue);
+    expect(viewModel.isReportOperationRunning, isFalse);
+  });
+
+  test('global preparation failure preserves selection and report issues',
+      () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.selectAll();
+
+    final selectedBefore = viewModel.selectedTrainingIds.toSet();
+
+    buildTrainingReport.outcome = const Failure(reportFailure);
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.prepareReportCommand.isFailure, isTrue);
+    expect(viewModel.prepareReportCommand.error, reportFailure);
+    expect(viewModel.lastError, reportFailure);
+    expect(viewModel.selectedTrainingIds, selectedBefore);
+    expect(viewModel.hasReportIssues, isFalse);
+    expect(viewModel.reportIssues, isEmpty);
+  });
+
+  test('fully rejected preparation deselects every invalid training', () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.selectAll();
+
+    final first = viewModel.trainings.first;
+    final second = viewModel.trainings.last;
+
+    final firstIssue = TrainingReportIssue(
+      training: first,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+
+    final secondIssue = TrainingReportIssue(
+      training: second,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training history is inconsistent.',
+      ),
+    );
+
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: const [],
+        ),
+        issues: [firstIssue, secondIssue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    final outcome = viewModel.prepareReportCommand.value!;
+
+    expect(viewModel.prepareReportCommand.isSuccess, isTrue);
+    expect(outcome.status, TrainingReportBuildStatus.rejected);
+    expect(outcome.hasContent, isFalse);
+    expect(outcome.issues, [firstIssue, secondIssue]);
+
+    expect(viewModel.selectedTrainingIds, isEmpty);
+    expect(viewModel.reportIssueFor(first), firstIssue);
+    expect(viewModel.reportIssueFor(second), secondIssue);
+    expect(
+      viewModel.selectionStateFor(first),
+      TrainingSelectionState.rejected,
+    );
+    expect(
+      viewModel.selectionStateFor(second),
+      TrainingSelectionState.rejected,
+    );
+
+    expect(shareTrainingReport.calls, 0);
+    expect(shareTrainingReport.preparedCalls, 0);
+    expect(sendTrainingReportEmail.calls, 0);
+    expect(sendTrainingReportEmail.preparedCalls, 0);
   });
 
   test('emails a report containing only the selected trainings', () async {

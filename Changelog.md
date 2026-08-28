@@ -1,5 +1,67 @@
 # Changelog
 
+## 2026/08/28 - report/task-3
+
+This change introduces user-facing handling for trainings rejected during report preparation. Report sharing and email flows now prepare content first, present validation issues, and require confirmation before delivering a partial report.
+
+The trainings interface now preserves and displays rejected states, provides localized issue details, and prevents report delivery when no valid content remains. Automated coverage was expanded for preparation, delivery coordination, state cleanup, and partial-report interactions.
+
+1. **`assets/translations`**
+
+   * Added English, Spanish, and Brazilian Portuguese messages for partial and fully rejected reports.
+   * Added localized descriptions for missing measurements, unavailable histories, inconsistent histories, and unknown validation failures.
+   * Added labels for unselected, selected, and rejected training states.
+   * Added the localized Continue action used to confirm partial report delivery.
+
+2. **`lib/ui/pages/trainings/trainings_page.dart`**
+
+   * Refactored share and email actions into separate report preparation and prepared-content delivery stages.
+   * Added confirmation handling when preparation returns a partial report and prevented delivery when the prepared outcome has no valid content.
+   * Mapped report error codes to localized, user-facing issue descriptions.
+   * Added a detail dialog for inspecting the rejection reason of an individual training.
+   * Integrated the ViewModel’s training selection state and report issue queries into the training list.
+   * Updated command inputs to pass already prepared report content to share and email operations.
+
+3. **`lib/ui/pages/trainings/widgets/dismissible_training.dart`**
+
+   * Replaced the boolean selection flag with explicit unselected, selected, and rejected states.
+   * Added distinct icons, colors, tooltips, and semantic labels for each state.
+   * Changed rejected training interactions to open issue details instead of toggling selection.
+   * Preserved selection highlighting for valid selected trainings while presenting rejected entries with an error indicator.
+
+4. **`lib/ui/pages/trainings/widgets/training_report_issues_dialog.dart`**
+
+   * Added a dialog for listing trainings excluded during report preparation and their localized rejection reasons.
+   * Added separate presentations for partial and fully rejected outcomes.
+   * Included the valid training count for partial reports.
+   * Added Cancel and Continue actions for partial delivery while limiting fully rejected reports to a Close action.
+
+5. **`test/ui/pages/trainings/trainings_page_test.dart`**
+
+   * Expanded repository and report-building fakes to support multiple trainings, configurable outcomes, prepared content, and delivery call tracking.
+   * Updated existing assertions to use the prepared share and email commands.
+   * Added widget coverage for selection indicators, rejected-state details, fully rejected reports, and global preparation failures.
+   * Added partial-report tests verifying that share and email delivery occur only after confirmation.
+   * Verified that cancellation preserves rejection details, removes rejected trainings from selection, and does not initiate delivery.
+
+6. **`test/ui/pages/trainings/viewmodel/trainings_view_model_test.dart`**
+
+   * Added coverage for sharing and emailing prepared report content without rebuilding it.
+   * Verified report issue cleanup after reloads, successful history updates, deletions, and user changes.
+   * Verified that failed updates and global preparation failures preserve applicable issue and selection state.
+   * Added concurrency coverage preventing preparation, sharing, and email operations from overlapping.
+   * Added fully rejected report coverage ensuring all invalid trainings are deselected and no delivery operation starts.
+
+7. **`doc/backlog/013-relatorios-parciais-treinos-invalidos-tasks.md`**
+
+   * Marked the ViewModel state, issue visibility, rejected-selection cleanup, lifecycle cleanup, operation coordination, and test coverage tasks as completed.
+
+### Conclusion
+
+The report workflow now distinguishes preparation from delivery, allowing invalid trainings to be surfaced without discarding valid report content. Users can inspect rejection reasons, confirm partial reports, or safely stop when no valid content is available.
+
+The expanded tests validate the new UI behavior, persistent rejection state, cleanup rules, prepared-content delivery, and protection against concurrent report operations.
+
 ## 2026/08/28 - report/task-2
 
 This change introduces partial training report preparation, allowing valid trainings to proceed while invalid selections are collected as ordered, training-specific issues. Report construction, rendering, file generation, and external delivery are now separated so prepared content can be reviewed and reused without rebuilding it.
