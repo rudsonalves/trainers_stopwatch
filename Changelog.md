@@ -1,5 +1,63 @@
 # Changelog
 
+## 2026/08/28 - report/task-2
+
+This change introduces partial training report preparation, allowing valid trainings to proceed while invalid selections are collected as ordered, training-specific issues. Report construction, rendering, file generation, and external delivery are now separated so prepared content can be reviewed and reused without rebuilding it.
+
+The trainings ViewModel now coordinates report preparation, reconciles rejected selections, exposes issue state, and supports sharing or emailing validated content. Documentation and tests were expanded to cover the new pipeline and a future dependency-composition refactor.
+
+1. **Report content construction and outcome handling**
+
+   * Exposed `TrainingReportContentBuilder.buildSection()` so each training can be transformed and validated independently.
+   * Added `BuildTrainingReportUseCase.buildOutcome()` to process the complete selection while preserving the order of valid sections and rejected issues.
+   * Classified trainings without measurements, invalid identities, ownership mismatches, history-loading failures, and inconsistent histories as training-specific issues.
+   * Preserved a missing persisted user identity as a global report failure.
+   * Retained the existing all-or-nothing `execute()` flow for compatibility during the pipeline migration.
+
+2. **Report generation and delivery use cases**
+
+   * Added `GenerateTrainingReportFileUseCase.generateFromContent()` to render and persist already prepared report content without reloading histories.
+   * Added `DeliverTrainingReportUseCase.executeFromContent()` and centralized file delivery and cleanup in a shared internal path.
+   * Prevented rendering, temporary-file creation, and external delivery when prepared content contains no valid sections.
+   * Added prepared-content entry points to the share and email use cases.
+   * Preserved recipient validation and the existing propagation of rendering, storage, delivery, and cleanup failures.
+
+3. **Trainings ViewModel and report command models**
+
+   * Injected `BuildTrainingReportUseCase` into `TrainingsViewModel` and registered it at the application and route-test composition points.
+   * Added report preparation, prepared sharing, and prepared email commands.
+   * Introduced immutable command inputs carrying prepared content, PDF texts, delivery metadata, and email recipients.
+   * Added `TrainingSelectionState` to distinguish unselected, selected, and rejected trainings.
+   * Stored report issues by training, exposed read-only issue lookup and status APIs, and deselected only trainings rejected during preparation.
+   * Cleared stale issues when users or training lists change and when affected trainings are updated or deleted.
+   * Extended concurrency guards and running-state reporting across preparation, legacy delivery, and prepared-content delivery operations.
+
+4. **Report use-case tests**
+
+   * Added coverage for complete, partial, and fully rejected report outcomes.
+   * Verified stable ordering of valid sections and issues, continuation after history inconsistencies, identity validation, load failures, missing measurements, and global user validation.
+   * Verified prepared content is rendered without loading histories again.
+   * Verified prepared delivery uses the common generate-deliver-cleanup sequence and rejects empty content before side effects.
+   * Added share and email coverage confirming that prepared content is forwarded without invoking the legacy rebuild path.
+
+5. **Trainings UI and routing tests**
+
+   * Updated route and page test composition for the new report builder dependency.
+   * Extended report use-case fakes with prepared-content operations.
+   * Added ViewModel coverage for partial preparation, issue exposure, rejected-selection reconciliation, and immutable issue state.
+
+6. **Backlog documentation**
+
+   * Marked tasks 2 and 3 of the partial-report backlog as delivered and documented their compatibility strategy, validation behavior, delivery pipeline, and verification status.
+   * Added backlog item 014 for moving page dependency composition out of `main.dart`, including scope, exclusions, acceptance criteria, architectural questions, and follow-up status.
+   * Registered the new dependency-composition backlog item in the backlog index.
+
+### Conclusion
+
+The report pipeline can now evaluate every selected training, retain valid report content, and expose precise rejection details without allowing one invalid training to block the rest.
+
+Prepared content can be delivered through sharing or email using a single rendering, temporary-file, cleanup, and error-handling path, while the legacy APIs remain available during the UI migration.
+
 ## 2026/08/27 - report/task-1
 
 This change establishes the domain foundation and implementation roadmap for partial report generation when selected trainings cannot all be processed. It introduces immutable outcome models that preserve valid report content alongside training-specific failures and explicitly classify empty, complete, partial, and fully rejected results.

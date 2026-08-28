@@ -24,6 +24,7 @@ import 'core/config/dependencies.dart';
 import 'data/repositories/histories/history_repository.dart';
 import 'data/repositories/trainings/training_repository.dart';
 import 'data/repositories/users/user_repository.dart';
+import 'domain/usecases/reports/build_training_report_use_case.dart';
 import 'domain/usecases/reports/send_training_report_email_use_case.dart';
 import 'domain/usecases/reports/share_training_report_use_case.dart';
 import 'domain/usecases/users/users_use_case.dart';
@@ -70,6 +71,7 @@ void main() async {
           shareTrainingReport: injector.get<ShareTrainingReportUseCase>(),
           sendTrainingReportEmail:
               injector.get<SendTrainingReportEmailUseCase>(),
+          buildTrainingReport: injector.get<BuildTrainingReportUseCase>(),
         ),
         historyViewModelFactory: (training) => HistoryViewModel(
           training: training,

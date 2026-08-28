@@ -26,7 +26,7 @@ class TrainingReportContentBuilder {
     final sections = <TrainingReportSection>[];
 
     for (final input in inputs) {
-      final sectionResult = _buildSection(input);
+      final sectionResult = buildSection(input);
 
       if (sectionResult.isFailure) {
         return Failure(sectionResult.error!);
@@ -43,7 +43,7 @@ class TrainingReportContentBuilder {
     );
   }
 
-  Result<TrainingReportSection> _buildSection(
+  Result<TrainingReportSection> buildSection(
     TrainingReportInput input,
   ) {
     final training = input.training;

@@ -11,6 +11,7 @@ import 'package:trainers_stopwatch/data/repositories/trainings/training_reposito
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/build_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_email_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/users/users_use_case.dart';
@@ -81,6 +82,7 @@ void main() {
           shareTrainingReport: injector.get<ShareTrainingReportUseCase>(),
           sendTrainingReportEmail:
               injector.get<SendTrainingReportEmailUseCase>(),
+          buildTrainingReport: injector.get<BuildTrainingReportUseCase>(),
         );
       },
       historyViewModelFactory: (training) => HistoryViewModel(

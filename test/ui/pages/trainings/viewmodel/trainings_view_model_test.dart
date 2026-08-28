@@ -4,12 +4,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/repositories/trainings/training_repository.dart';
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_build_outcome.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_content.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_issue.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_section.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_totals.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/training_report_pdf_renderer.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
+import 'package:trainers_stopwatch/domain/common/training/values/distance.dart';
+import 'package:trainers_stopwatch/domain/common/training/values/speed.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/build_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_email_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/training_report_command_inputs.dart';
+import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/models/training_selection_state.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 
 const readFailure = AppError(
@@ -124,6 +133,15 @@ class _ShareTrainingReportFake implements ShareTrainingReportUseCase {
 
     return result;
   }
+
+  @override
+  AsyncResult<Unit> executeFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required String subject,
+    String suggestedName = 'training_logs.pdf',
+  }) =>
+      result;
 }
 
 class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
@@ -156,6 +174,48 @@ class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
 
     return result;
   }
+
+  @override
+  AsyncResult<Unit> executeFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required List<String> recipients,
+    required String subject,
+    required String htmlBody,
+    String suggestedName = 'training_logs.pdf',
+  }) =>
+      result;
+}
+
+class _BuildTrainingReportFake implements BuildTrainingReportUseCase {
+  User? receivedUser;
+  List<Training>? receivedTrainings;
+  Result<TrainingReportBuildOutcome>? outcome;
+
+  @override
+  AsyncResult<TrainingReportContent> execute({
+    required User user,
+    required List<Training> trainings,
+  }) async =>
+      Success(
+        TrainingReportContent(user: user, sections: const []),
+      );
+
+  @override
+  AsyncResult<TrainingReportBuildOutcome> buildOutcome({
+    required User user,
+    required List<Training> trainings,
+  }) async {
+    receivedUser = user;
+    receivedTrainings = List.unmodifiable(trainings);
+    return outcome ??
+        Success(
+          TrainingReportBuildOutcome(
+            content: TrainingReportContent(user: user, sections: const []),
+            issues: const [],
+          ),
+        );
+  }
 }
 
 void main() {
@@ -165,6 +225,7 @@ void main() {
 
   late _ShareTrainingReportFake shareTrainingReport;
   late _SendTrainingReportEmailFake sendTrainingReportEmail;
+  late _BuildTrainingReportFake buildTrainingReport;
 
   const ana = User(id: 1, name: 'Ana', email: 'ana@example.com');
   const bia = User(id: 2, name: 'Bia', email: 'bia@example.com');
@@ -199,6 +260,7 @@ void main() {
   setUp(() {
     shareTrainingReport = _ShareTrainingReportFake();
     sendTrainingReportEmail = _SendTrainingReportEmailFake();
+    buildTrainingReport = _BuildTrainingReportFake();
     userRepository = _UserRepositoryFake()..stored = const [ana, bia];
     trainingRepository = _TrainingRepositoryFake()
       ..stored[1] = [training(11, 1), training(12, 1)]
@@ -208,6 +270,7 @@ void main() {
       trainingRepository: trainingRepository,
       shareTrainingReport: shareTrainingReport,
       sendTrainingReportEmail: sendTrainingReportEmail,
+      buildTrainingReport: buildTrainingReport,
     );
     addTearDown(viewModel.dispose);
   });
@@ -385,6 +448,60 @@ void main() {
     expect(viewModel.shareReportCommand.isFailure, isTrue);
     expect(viewModel.lastError?.code, AppErrorCode.invalidData);
     expect(shareTrainingReport.calls, 0);
+  });
+
+  test('prepares a partial report and deselects only rejected trainings',
+      () async {
+    await viewModel.loadUsers();
+    await viewModel.selectUser(1);
+    viewModel.selectAll();
+    final valid = viewModel.trainings.first;
+    final rejected = viewModel.trainings.last;
+    final issue = TrainingReportIssue(
+      training: rejected,
+      error: const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Training has no measurements.',
+      ),
+    );
+    buildTrainingReport.outcome = Success(
+      TrainingReportBuildOutcome(
+        content: TrainingReportContent(
+          user: ana,
+          sections: [
+            TrainingReportSection(
+              training: valid,
+              rows: const [],
+              totals: TrainingReportTotals(
+                distance: Distance.create(value: 0).value!,
+                duration: Duration.zero,
+                lapCount: 0,
+                averageSpeed: Speed.create(value: 0).value!,
+              ),
+            ),
+          ],
+        ),
+        issues: [issue],
+      ),
+    );
+
+    await viewModel.prepareReport();
+
+    expect(viewModel.prepareReportCommand.isSuccess, isTrue);
+    expect(buildTrainingReport.receivedUser, ana);
+    expect(buildTrainingReport.receivedTrainings, [valid, rejected]);
+    expect(viewModel.selectedTrainingIds, {valid.id});
+    expect(viewModel.reportIssueFor(rejected), issue);
+    expect(
+      viewModel.selectionStateFor(valid),
+      TrainingSelectionState.selected,
+    );
+    expect(
+      viewModel.selectionStateFor(rejected),
+      TrainingSelectionState.rejected,
+    );
+    expect(viewModel.hasReportIssues, isTrue);
+    expect(() => viewModel.reportIssues.clear(), throwsUnsupportedError);
   });
 
   test('emails a report containing only the selected trainings', () async {

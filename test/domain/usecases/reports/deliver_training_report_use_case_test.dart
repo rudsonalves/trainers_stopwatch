@@ -2,9 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_content.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_section.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_totals.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/temporary_report_file_storage.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/training_report_pdf_renderer.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
+import 'package:trainers_stopwatch/domain/common/training/values/distance.dart';
+import 'package:trainers_stopwatch/domain/common/training/values/speed.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/deliver_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/generate_training_report_file_use_case.dart';
@@ -26,6 +31,31 @@ void main() {
     );
   });
 
+  test('does not generate or deliver prepared content without sections',
+      () async {
+    final content = TrainingReportContent(
+      user: _user,
+      sections: const [],
+    );
+    var deliveryCalled = false;
+
+    final result = await useCase.executeFromContent(
+      content: content,
+      texts: _texts,
+      suggestedName: 'training_logs.pdf',
+      deliver: (_) async {
+        deliveryCalled = true;
+        return const Success(unit);
+      },
+    );
+
+    expect(result.isFailure, isTrue);
+    expect(result.error!.code, AppErrorCode.invalidData);
+    expect(deliveryCalled, isFalse);
+    expect(events, isEmpty);
+    expect(storage.deletedFiles, isEmpty);
+  });
+
   test('generates, delivers and deletes in order', () async {
     final result = await useCase.execute(
       user: _user,
@@ -41,6 +71,39 @@ void main() {
 
     expect(result.isSuccess, isTrue);
     expect(events, ['generate', 'deliver', 'delete']);
+    expect(storage.deletedFiles, [generateFile.file]);
+  });
+
+  test('delivers prepared content without rebuilding the report', () async {
+    final content = TrainingReportContent(
+      user: _user,
+      sections: [
+        TrainingReportSection(
+          training: _training,
+          rows: const [],
+          totals: TrainingReportTotals(
+            distance: Distance.create(value: 200).value!,
+            duration: const Duration(seconds: 20),
+            lapCount: 0,
+            averageSpeed: Speed.create(value: 10).value!,
+          ),
+        ),
+      ],
+    );
+
+    final result = await useCase.executeFromContent(
+      content: content,
+      texts: _texts,
+      suggestedName: 'training_logs.pdf',
+      deliver: (file) async {
+        events.add('deliver');
+        expect(file, generateFile.file);
+        return const Success(unit);
+      },
+    );
+
+    expect(result.isSuccess, isTrue);
+    expect(events, ['generate-content', 'deliver', 'delete']);
     expect(storage.deletedFiles, [generateFile.file]);
   });
 
@@ -243,6 +306,17 @@ final class _FakeGenerateFile implements GenerateTrainingReportFileUseCase {
     required String suggestedName,
   }) async {
     events.add('generate');
+    final currentError = error;
+    return currentError == null ? Success(file) : Failure(currentError);
+  }
+
+  @override
+  AsyncResult<TemporaryReportFile> generateFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required String suggestedName,
+  }) async {
+    events.add('generate-content');
     final currentError = error;
     return currentError == null ? Success(file) : Failure(currentError);
   }

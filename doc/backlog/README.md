@@ -25,6 +25,7 @@ migrado estiver funcional.
 | 011 | [Ajustes de interface e interação](closed/011-ajustes-interface-e-interacao.md) | ui | concluído |
 | 012 | [Ajuda contextual por página](012-ajuda-contextual.md) | ui | 010 concluído |
 | 013 | [Relatórios parciais com treinos inválidos](013-relatorios-parciais-treinos-invalidos.md) | domain + ui | 009 concluído |
+| 014 | [Composição de dependências fora do `main`](014-composicao-dependencias-fora-do-main.md) | core + ui | independente |
 
 ## Regras de execução
 

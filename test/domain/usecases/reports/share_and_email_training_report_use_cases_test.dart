@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_content.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/report_email_service.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/report_share_service.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/temporary_report_file_storage.dart';
@@ -60,6 +61,28 @@ void main() {
 
       expect(result.isFailure, isTrue);
       expect(result.error, shareService.error);
+    });
+
+    test('shares previously prepared content', () async {
+      final delivery = _FakeDeliverReport();
+      final shareService = _FakeShareService();
+      final useCase = ShareTrainingReportUseCase(
+        deliverReport: delivery,
+        shareService: shareService,
+      );
+
+      final result = await useCase.executeFromContent(
+        content: _content,
+        texts: _texts,
+        subject: 'Training',
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(delivery.preparedCallCount, 1);
+      expect(delivery.callCount, 0);
+      expect(delivery.receivedContent, same(_content));
+      expect(shareService.receivedFile, delivery.file);
+      expect(shareService.receivedSubject, 'Training');
     });
   });
 
@@ -161,6 +184,32 @@ void main() {
       expect(result.isFailure, isTrue);
       expect(result.error, emailService.error);
     });
+
+    test('emails previously prepared content', () async {
+      final delivery = _FakeDeliverReport();
+      final emailService = _FakeEmailService();
+      final useCase = SendTrainingReportEmailUseCase(
+        deliverReport: delivery,
+        emailService: emailService,
+      );
+
+      final result = await useCase.executeFromContent(
+        content: _content,
+        texts: _texts,
+        recipients: const ['ana@example.com'],
+        subject: 'Training logs',
+        htmlBody: '<p>Training</p>',
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(delivery.preparedCallCount, 1);
+      expect(delivery.callCount, 0);
+      expect(delivery.receivedContent, same(_content));
+
+      final message = emailService.receivedMessage!;
+      expect(message.recipients, ['ana@example.com']);
+      expect(message.attachments, [delivery.file]);
+    });
   });
 }
 
@@ -175,6 +224,11 @@ final _training = Training.create(
   userId: 1,
   date: DateTime(2026, 8, 26),
 ).value!;
+
+final _content = TrainingReportContent(
+  user: _user,
+  sections: const [],
+);
 
 const _texts = TrainingReportPdfTexts(
   locale: 'pt-BR',
@@ -208,6 +262,22 @@ final class _FakeDeliverReport implements DeliverTrainingReportUseCase {
   List<Training>? receivedTrainings;
   TrainingReportPdfTexts? receivedTexts;
   String? receivedName;
+  int preparedCallCount = 0;
+  TrainingReportContent? receivedContent;
+
+  @override
+  AsyncResult<Unit> executeFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required String suggestedName,
+    required TrainingReportDelivery deliver,
+  }) {
+    preparedCallCount++;
+    receivedContent = content;
+    receivedTexts = texts;
+    receivedName = suggestedName;
+    return deliver(file);
+  }
 
   @override
   AsyncResult<Unit> execute({

@@ -39,6 +39,32 @@ void main() {
     );
   });
 
+  test('renders prepared content without loading histories again', () async {
+    final content = TrainingReportContent(
+      user: user,
+      sections: const [],
+    );
+
+    final result = await useCase.generateFromContent(
+      content: content,
+      texts: _texts,
+      suggestedName: 'prepared_report.pdf',
+    );
+
+    expect(result.isSuccess, isTrue);
+    expect(result.value, storage.file);
+
+    expect(repository.loadedTrainingIds, isEmpty);
+    expect(renderer.callCount, 1);
+    expect(renderer.receivedContent, same(content));
+    expect(renderer.receivedTexts, _texts);
+
+    expect(storage.writeCount, 1);
+    expect(storage.receivedName, 'prepared_report.pdf');
+    expect(storage.receivedMimeType, 'application/pdf');
+    expect(storage.receivedBytes, renderer.bytes);
+  });
+
   test('builds, renders and writes the report in order', () async {
     final result = await useCase.execute(
       user: user,

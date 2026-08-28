@@ -51,41 +51,57 @@ afetados não encontrou problemas.
 
 **Dependência:** tarefa 1.
 
-- [ ] Refatorar a construção de seções para que cada treino possa ser
+- [x] Refatorar a construção de seções para que cada treino possa ser
       transformado e validado independentemente.
-- [ ] Fazer o `BuildTrainingReportUseCase` percorrer toda a seleção, carregando
+- [x] Fazer o `BuildTrainingReportUseCase` percorrer toda a seleção, carregando
       os históricos e acumulando problemas por treino.
-- [ ] Classificar treino contendo somente o marco inicial como **treino sem
+- [x] Classificar treino contendo somente o marco inicial como **treino sem
       medições**, preservando o `AppError` técnico para diagnóstico.
-- [ ] Preservar a ordem original entre os treinos válidos e entre os problemas
+- [x] Preservar a ordem original entre os treinos válidos e entre os problemas
       apresentados.
-- [ ] Manter como falhas globais as validações que impedem interpretar toda a
+- [x] Manter como falhas globais as validações que impedem interpretar toda a
       solicitação, sem convertê-las em rejeição arbitrária de um treino.
-- [ ] Cobrir seleção totalmente válida, parcialmente válida e totalmente
+- [x] Cobrir seleção totalmente válida, parcialmente válida e totalmente
       inválida, incluindo falha de carga e histórico inconsistente.
 
 **Resultado esperado:** uma falha específica não impede a avaliação dos
 demais treinos e o resultado identifica precisamente cada rejeição.
 
+**Entregue em 2026-08-27:** o builder passou a expor a construção individual
+de seções e o `BuildTrainingReportUseCase` ganhou `buildOutcome()`, que percorre
+toda a seleção, preserva a ordem, acumula problemas de identidade, carga,
+ausência de medições e histórico inconsistente e mantém usuário sem identidade
+como falha global. O `execute()` legado permanece temporariamente preservado
+até a migração do pipeline na tarefa 3. Os 21 testes focados passaram e a
+análise estática não encontrou problemas.
+
 ### 3. Separar preparação e entrega do relatório
 
 **Dependência:** tarefa 2.
 
-- [ ] Ajustar a coordenação para preparar o conteúdo e os problemas antes de
+- [x] Ajustar a coordenação para preparar o conteúdo e os problemas antes de
       renderizar, gravar ou chamar plugins externos.
-- [ ] Permitir que Share e Email recebam conteúdo já validado, evitando montar
+- [x] Permitir que Share e Email recebam conteúdo já validado, evitando montar
       o mesmo relatório novamente depois da confirmação da UI.
-- [ ] Preservar uma única implementação para renderização, arquivo temporário,
+- [x] Preservar uma única implementação para renderização, arquivo temporário,
       entrega e limpeza nos dois canais.
-- [ ] Não criar PDF nem arquivo temporário quando nenhum treino for válido ou
+- [x] Não criar PDF nem arquivo temporário quando nenhum treino for válido ou
       quando o usuário cancelar o resultado parcial.
-- [ ] Preservar como falhas globais os erros de PDF, bundle, filesystem,
+- [x] Preservar como falhas globais os erros de PDF, bundle, filesystem,
       compartilhamento, e-mail e limpeza.
-- [ ] Atualizar os tipos de retorno para que os problemas não sejam perdidos em
+- [x] Atualizar os tipos de retorno para que os problemas não sejam perdidos em
       um `Unit` antes de alcançar a apresentação.
 
 **Resultado esperado:** a aplicação conhece as rejeições antes da entrega e
 continua usando um pipeline único para os treinos aprovados.
+
+**Entregue em 2026-08-27:** a geração ganhou uma entrada para
+`TrainingReportContent` já preparado; a entrega centraliza canal externo e
+limpeza em um único método; e Share e Email expõem operações equivalentes para
+conteúdo validado. O fluxo legado permanece disponível durante a migração do
+ViewModel. Conteúdo sem seções é rejeitado antes da renderização, criação do
+arquivo ou chamada de plugin, e cancelamento não precisa iniciar a entrega. Os
+50 testes de relatórios passaram e a análise estática não encontrou problemas.
 
 ### 4. Representar problemas e reconciliar a seleção no ViewModel
 

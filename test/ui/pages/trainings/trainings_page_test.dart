@@ -7,9 +7,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trainers_stopwatch/core/result/result.dart';
 import 'package:trainers_stopwatch/data/repositories/trainings/training_repository.dart';
 import 'package:trainers_stopwatch/data/repositories/users/user_repository.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_build_outcome.dart';
+import 'package:trainers_stopwatch/domain/common/report/models/training_report_content.dart';
 import 'package:trainers_stopwatch/domain/common/report/services/training_report_pdf_renderer.dart';
 import 'package:trainers_stopwatch/domain/common/training/models/training.dart';
 import 'package:trainers_stopwatch/domain/common/user/models/user.dart';
+import 'package:trainers_stopwatch/domain/usecases/reports/build_training_report_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/send_training_report_email_use_case.dart';
 import 'package:trainers_stopwatch/domain/usecases/reports/share_training_report_use_case.dart';
 import 'package:trainers_stopwatch/ui/pages/trainings/trainings_page.dart';
@@ -115,6 +118,15 @@ class _ShareTrainingReportFake implements ShareTrainingReportUseCase {
     calls++;
     return result;
   }
+
+  @override
+  AsyncResult<Unit> executeFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required String subject,
+    String suggestedName = 'training_logs.pdf',
+  }) =>
+      result;
 }
 
 class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
@@ -134,6 +146,40 @@ class _SendTrainingReportEmailFake implements SendTrainingReportEmailUseCase {
     calls++;
     return result;
   }
+
+  @override
+  AsyncResult<Unit> executeFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required List<String> recipients,
+    required String subject,
+    required String htmlBody,
+    String suggestedName = 'training_logs.pdf',
+  }) =>
+      result;
+}
+
+class _BuildTrainingReportFake implements BuildTrainingReportUseCase {
+  @override
+  AsyncResult<TrainingReportContent> execute({
+    required User user,
+    required List<Training> trainings,
+  }) async =>
+      Success(
+        TrainingReportContent(user: user, sections: const []),
+      );
+
+  @override
+  AsyncResult<TrainingReportBuildOutcome> buildOutcome({
+    required User user,
+    required List<Training> trainings,
+  }) async =>
+      Success(
+        TrainingReportBuildOutcome(
+          content: TrainingReportContent(user: user, sections: const []),
+          issues: const [],
+        ),
+      );
 }
 
 Future<
@@ -168,6 +214,7 @@ Future<
     ),
     shareTrainingReport: share,
     sendTrainingReportEmail: email,
+    buildTrainingReport: _BuildTrainingReportFake(),
   );
 
   await viewModel.selectUser(user.id!);
