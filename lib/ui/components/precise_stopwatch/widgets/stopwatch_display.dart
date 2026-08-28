@@ -18,8 +18,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../pages/stopwatch/bloc/stopwatch_bloc.dart';
-import '../../../pages/stopwatch/bloc/stopwatch_state.dart';
+import '/ui/pages/stopwatch/bloc/stopwatch_bloc.dart';
+import '/ui/pages/stopwatch/bloc/stopwatch_state.dart';
 import '../../theme/app_font_style.dart';
 
 class StopwatchDisplay extends StatelessWidget {

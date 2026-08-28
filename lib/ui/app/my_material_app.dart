@@ -20,36 +20,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '/core/routing/router.dart';
-import '/core/routing/routes/main_routes.dart';
-import '/domain/common/training/models/training.dart';
 import '/ui/components/theme/theme.dart';
 import '/ui/components/theme/util.dart';
-import '/ui/pages/history/viewmodel/history_view_model.dart';
-import '/ui/pages/settings/viewmodel/settings_view_model.dart';
-import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
-import '/ui/pages/trainings/viewmodel/trainings_view_model.dart';
-import '/ui/pages/users/viewmodel/users_view_model.dart';
 import 'app_appearance_state.dart';
 
 class MyMaterialApp extends StatefulWidget {
-  final StopwatchPageViewModel stopwatchViewModel;
-  final SettingsViewModel stopwatchSettingsViewModel;
-  final UsersViewModel Function(Iterable<int> activeUserIds)
-      usersViewModelFactory;
-  final TrainingsViewModel Function() trainingsViewModelFactory;
-  final HistoryViewModel Function(Training training) historyViewModelFactory;
   final AppAppearanceState appearanceState;
-  final SettingsViewModel Function() settingsViewModelFactory;
 
   const MyMaterialApp({
     super.key,
-    required this.stopwatchViewModel,
-    required this.stopwatchSettingsViewModel,
-    required this.usersViewModelFactory,
-    required this.trainingsViewModelFactory,
-    required this.historyViewModelFactory,
     required this.appearanceState,
-    required this.settingsViewModelFactory,
   });
 
   @override
@@ -65,16 +45,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
   @override
   void initState() {
     super.initState();
-    _router = createRouter(
-      MainRouteDependencies(
-        stopwatchViewModel: widget.stopwatchViewModel,
-        stopwatchSettingsViewModel: widget.stopwatchSettingsViewModel,
-        usersViewModelFactory: widget.usersViewModelFactory,
-        trainingsViewModelFactory: widget.trainingsViewModelFactory,
-        historyViewModelFactory: widget.historyViewModelFactory,
-        settingsViewModelFactory: widget.settingsViewModelFactory,
-      ),
-    );
+    _router = createRouter();
     appearanceState.addListener(_onAppearanceChanged);
   }
 
@@ -109,7 +80,7 @@ class _MyMaterialAppState extends State<MyMaterialApp> {
       routerConfig: _router,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
-      locale: appearanceState.locale,
+      locale: context.locale,
       theme: appearanceState.brightness == Brightness.light
           ? _lightContrast(theme, appearanceState.contrast)
           : _darkContrast(theme, appearanceState.contrast),

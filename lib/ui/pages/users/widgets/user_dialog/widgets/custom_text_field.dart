@@ -16,12 +16,16 @@
 // along with trainers_stopwatch.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final String label;
   final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
+  final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -29,6 +33,9 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.validator,
     this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
+    this.textInputAction,
+    this.inputFormatters,
   });
 
   @override
@@ -37,6 +44,9 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       validator: validator,
       keyboardType: keyboardType,
+      textCapitalization: textCapitalization,
+      textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         label: Text(label),
       ),

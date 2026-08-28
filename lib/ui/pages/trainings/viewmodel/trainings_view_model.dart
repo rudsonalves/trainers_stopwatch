@@ -5,11 +5,16 @@ import 'package:flutter/foundation.dart';
 import '/core/result/command.dart';
 import '/data/repositories/trainings/training_repository.dart';
 import '/data/repositories/users/user_repository.dart';
+import '/domain/common/report/models/training_report_build_outcome.dart';
+import '/domain/common/report/models/training_report_issue.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
+import '/domain/usecases/reports/build_training_report_use_case.dart';
 import '/domain/usecases/reports/send_training_report_email_use_case.dart';
 import '/domain/usecases/reports/share_training_report_use_case.dart';
-import 'models/training_report_command_inputs.dart';
+import 'models/email_prepared_training_report_command_input.dart';
+import 'models/share_prepared_training_report_command_input.dart';
+import 'models/training_selection_state.dart';
 
 class TrainingsViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
@@ -18,43 +23,81 @@ class TrainingsViewModel extends ChangeNotifier {
   final SendTrainingReportEmailUseCase _sendTrainingReportEmail;
   final Set<int> _selectedTrainingIds = {};
   final Map<Command<Object>, VoidCallback> _commandListeners = {};
-
-  late final Command0<List<User>> loadUsersCommand;
-  late final Command1<List<Training>, int> loadTrainingsCommand;
-  late final Command1<Unit, Training> updateCommand;
-  late final Command1<Unit, Training> deleteCommand;
-  late final Command0<Unit> deleteSelectedCommand;
-  late final Command1<Unit, ShareTrainingReportCommandInput> shareReportCommand;
-  late final Command1<Unit, EmailTrainingReportCommandInput>
-      sendReportEmailCommand;
-
-  User? _selectedUser;
-  AppError? _lastError;
+  final BuildTrainingReportUseCase _buildTrainingReport;
 
   TrainingsViewModel({
     required UserRepository userRepository,
     required TrainingRepository trainingRepository,
     required ShareTrainingReportUseCase shareTrainingReport,
     required SendTrainingReportEmailUseCase sendTrainingReportEmail,
+    required BuildTrainingReportUseCase buildTrainingReport,
   })  : _userRepository = userRepository,
         _trainingRepository = trainingRepository,
         _shareTrainingReport = shareTrainingReport,
-        _sendTrainingReportEmail = sendTrainingReportEmail {
+        _sendTrainingReportEmail = sendTrainingReportEmail,
+        _buildTrainingReport = buildTrainingReport {
     loadUsersCommand = Command0<List<User>>(_loadUsers);
     loadTrainingsCommand = Command1<List<Training>, int>(_loadTrainings);
     updateCommand = Command1<Unit, Training>(_update);
     deleteCommand = Command1<Unit, Training>(_delete);
     deleteSelectedCommand = Command0<Unit>(_deleteSelected);
-    shareReportCommand =
-        Command1<Unit, ShareTrainingReportCommandInput>(_shareReport);
-    sendReportEmailCommand =
-        Command1<Unit, EmailTrainingReportCommandInput>(_sendReportEmail);
+    sharePreparedReportCommand =
+        Command1<Unit, SharePreparedTrainingReportCommandInput>(
+      _sharePreparedReport,
+    );
+
+    sendPreparedReportEmailCommand =
+        Command1<Unit, EmailPreparedTrainingReportCommandInput>(
+      _sendPreparedReportEmail,
+    );
+    prepareReportCommand = Command0<TrainingReportBuildOutcome>(_prepareReport);
 
     for (final command in _commands) {
       void listener() => _onCommandChanged(command);
       _commandListeners[command] = listener;
       command.addListener(listener);
     }
+  }
+
+  late final Command0<List<User>> loadUsersCommand;
+  late final Command1<List<Training>, int> loadTrainingsCommand;
+  late final Command1<Unit, Training> updateCommand;
+  late final Command1<Unit, Training> deleteCommand;
+  late final Command0<Unit> deleteSelectedCommand;
+  late final Command1<Unit, SharePreparedTrainingReportCommandInput>
+      sharePreparedReportCommand;
+
+  late final Command1<Unit, EmailPreparedTrainingReportCommandInput>
+      sendPreparedReportEmailCommand;
+  late final Command0<TrainingReportBuildOutcome> prepareReportCommand;
+
+  User? _selectedUser;
+  AppError? _lastError;
+  final Map<int, TrainingReportIssue> _reportIssuesByTrainingId = {};
+
+  Map<int, TrainingReportIssue> get reportIssues =>
+      UnmodifiableMapView(_reportIssuesByTrainingId);
+
+  bool get hasReportIssues => _reportIssuesByTrainingId.isNotEmpty;
+
+  bool get isReportOperationRunning =>
+      prepareReportCommand.isRunning ||
+      sharePreparedReportCommand.isRunning ||
+      sendPreparedReportEmailCommand.isRunning;
+
+  TrainingReportIssue? reportIssueFor(Training training) {
+    final id = training.id;
+    return id == null ? null : _reportIssuesByTrainingId[id];
+  }
+
+  TrainingSelectionState selectionStateFor(Training training) {
+    if (reportIssueFor(training) != null) {
+      return TrainingSelectionState.rejected;
+    }
+
+    return isSelected(training)
+        ? TrainingSelectionState.selected
+        : TrainingSelectionState.unselected;
   }
 
   @override
@@ -99,28 +142,33 @@ class TrainingsViewModel extends ChangeNotifier {
 
   bool get isLoading => _commands.any((command) => command.isRunning);
 
+  AppError get _concurrentReportOperationError => const AppError(
+        code: AppErrorCode.invalidData,
+        message: 'Another report operation is already running.',
+      );
+
   Iterable<Command<Object>> get _commands => [
         loadUsersCommand,
         loadTrainingsCommand,
         updateCommand,
         deleteCommand,
         deleteSelectedCommand,
-        shareReportCommand,
-        sendReportEmailCommand,
+        sharePreparedReportCommand,
+        sendPreparedReportEmailCommand,
+        prepareReportCommand,
       ];
 
-  bool get isReportOperationRunning =>
-      shareReportCommand.isRunning || sendReportEmailCommand.isRunning;
-
-  Future<void> shareReport(
-    ShareTrainingReportCommandInput input,
+  Future<void> sharePreparedReport(
+    SharePreparedTrainingReportCommandInput input,
   ) =>
-      shareReportCommand.execute(input);
+      sharePreparedReportCommand.execute(input);
 
-  Future<void> sendReportEmail(
-    EmailTrainingReportCommandInput input,
+  Future<void> sendPreparedReportEmail(
+    EmailPreparedTrainingReportCommandInput input,
   ) =>
-      sendReportEmailCommand.execute(input);
+      sendPreparedReportEmailCommand.execute(input);
+
+  Future<void> prepareReport() => prepareReportCommand.execute();
 
   Future<void> loadUsers() => loadUsersCommand.execute();
 
@@ -175,6 +223,33 @@ class TrainingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  AsyncResult<TrainingReportBuildOutcome> _prepareReport() async {
+    if (sharePreparedReportCommand.isRunning ||
+        sendPreparedReportEmailCommand.isRunning) {
+      return Failure(_concurrentReportOperationError);
+    }
+
+    final reportData = _selectedReportData();
+    if (reportData.isFailure) {
+      return Failure(reportData.error!);
+    }
+
+    final data = reportData.value!;
+    final result = await _buildTrainingReport.buildOutcome(
+      user: data.user,
+      trainings: data.trainings,
+    );
+
+    if (result.isFailure) {
+      return Failure(result.error!);
+    }
+
+    final outcome = result.value!;
+    _applyReportOutcome(outcome);
+
+    return Success(outcome);
+  }
+
   AsyncResult<List<User>> _loadUsers() async {
     final result = await _userRepository.loadAll();
     if (result.isFailure) return Failure(result.error!);
@@ -183,6 +258,7 @@ class TrainingsViewModel extends ChangeNotifier {
     if (selectedId != null && !users.any((user) => user.id == selectedId)) {
       _selectedUser = null;
       _selectedTrainingIds.clear();
+      _reportIssuesByTrainingId.clear();
     }
     return Success(result.value!);
   }
@@ -204,18 +280,33 @@ class TrainingsViewModel extends ChangeNotifier {
 
     final result = await _trainingRepository.loadForUser(userId);
     if (result.isFailure) return Failure(result.error!);
+
+    _reportIssuesByTrainingId.clear();
     _reconcileSelection();
+
     return Success(result.value!);
   }
 
-  AsyncResult<Unit> _update(Training training) =>
-      _trainingRepository.update(training);
+  AsyncResult<Unit> _update(Training training) async {
+    final result = await _trainingRepository.update(training);
+    if (result.isFailure) {
+      return Failure(result.error!);
+    }
+
+    _clearReportIssue(training);
+    return const Success(unit);
+  }
 
   AsyncResult<Unit> _delete(Training training) async {
     final result = await _trainingRepository.delete(training);
     if (result.isFailure) return Failure(result.error!);
+
     final id = training.id;
-    if (id != null) _selectedTrainingIds.remove(id);
+    if (id != null) {
+      _selectedTrainingIds.remove(id);
+      _reportIssuesByTrainingId.remove(id);
+    }
+
     _reconcileSelection();
     return const Success(unit);
   }
@@ -229,56 +320,13 @@ class TrainingsViewModel extends ChangeNotifier {
         return Failure(result.error!);
       }
       final id = training.id;
-      if (id != null) _selectedTrainingIds.remove(id);
+      if (id != null) {
+        _selectedTrainingIds.remove(id);
+        _reportIssuesByTrainingId.remove(id);
+      }
     }
     _reconcileSelection();
     return const Success(unit);
-  }
-
-  AsyncResult<Unit> _shareReport(
-    ShareTrainingReportCommandInput input,
-  ) {
-    if (sendReportEmailCommand.isRunning) {
-      return Future.value(Failure(_concurrentReportOperationError));
-    }
-
-    final reportData = _selectedReportData();
-    if (reportData.isFailure) {
-      return Future.value(Failure(reportData.error!));
-    }
-
-    final data = reportData.value!;
-
-    return _shareTrainingReport.execute(
-      user: data.user,
-      trainings: data.trainings,
-      texts: input.pdfTexts,
-      subject: input.subject,
-    );
-  }
-
-  AsyncResult<Unit> _sendReportEmail(
-    EmailTrainingReportCommandInput input,
-  ) {
-    if (shareReportCommand.isRunning) {
-      return Future.value(Failure(_concurrentReportOperationError));
-    }
-
-    final reportData = _selectedReportData();
-    if (reportData.isFailure) {
-      return Future.value(Failure(reportData.error!));
-    }
-
-    final data = reportData.value!;
-
-    return _sendTrainingReportEmail.execute(
-      user: data.user,
-      trainings: data.trainings,
-      texts: input.pdfTexts,
-      recipients: input.recipients,
-      subject: input.subject,
-      htmlBody: input.htmlBody,
-    );
   }
 
   Result<({User user, List<Training> trainings})> _selectedReportData() {
@@ -308,14 +356,52 @@ class TrainingsViewModel extends ChangeNotifier {
     ));
   }
 
-  AppError get _concurrentReportOperationError => const AppError(
-        code: AppErrorCode.invalidData,
-        message: 'Another report operation is already running.',
+  AsyncResult<Unit> _sharePreparedReport(
+    SharePreparedTrainingReportCommandInput input,
+  ) {
+    if (prepareReportCommand.isRunning ||
+        sendPreparedReportEmailCommand.isRunning) {
+      return Future.value(
+        Failure(_concurrentReportOperationError),
       );
+    }
+
+    return _shareTrainingReport.executeFromContent(
+      content: input.content,
+      texts: input.pdfTexts,
+      subject: input.subject,
+    );
+  }
+
+  AsyncResult<Unit> _sendPreparedReportEmail(
+    EmailPreparedTrainingReportCommandInput input,
+  ) {
+    if (prepareReportCommand.isRunning ||
+        sharePreparedReportCommand.isRunning) {
+      return Future.value(
+        Failure(_concurrentReportOperationError),
+      );
+    }
+
+    return _sendTrainingReportEmail.executeFromContent(
+      content: input.content,
+      texts: input.pdfTexts,
+      recipients: input.recipients,
+      subject: input.subject,
+      htmlBody: input.htmlBody,
+    );
+  }
 
   void _reconcileSelection() {
     final availableIds = trainings.map((training) => training.id).nonNulls;
     _selectedTrainingIds.retainAll(availableIds);
+  }
+
+  void _clearReportIssue(Training training) {
+    final id = training.id;
+    if (id != null) {
+      _reportIssuesByTrainingId.remove(id);
+    }
   }
 
   void _onCommandChanged(Command<Object> command) {
@@ -324,6 +410,25 @@ class TrainingsViewModel extends ChangeNotifier {
     } else if (command.isFailure) {
       _lastError = command.error;
     }
+    notifyListeners();
+  }
+
+  void _applyReportOutcome(TrainingReportBuildOutcome outcome) {
+    for (final section in outcome.content.sections) {
+      final id = section.training.id;
+      if (id != null) {
+        _reportIssuesByTrainingId.remove(id);
+      }
+    }
+
+    for (final issue in outcome.issues) {
+      final id = issue.training.id;
+      if (id == null) continue;
+
+      _reportIssuesByTrainingId[id] = issue;
+      _selectedTrainingIds.remove(id);
+    }
+
     notifyListeners();
   }
 }

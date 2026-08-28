@@ -72,6 +72,7 @@ class _EditHistoryDialogState extends State<EditHistoryDialog> {
           ),
           const SizedBox(height: 12),
           OverflowBar(
+            spacing: 6,
             children: [
               FilledButton.tonal(
                 onPressed: () => Navigator.pop(

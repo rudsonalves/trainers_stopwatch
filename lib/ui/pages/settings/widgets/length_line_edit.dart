@@ -19,9 +19,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '/ui/components/common/constants.dart';
+import '/ui/components/forms/numeric_field.dart';
 import '/ui/components/theme/app_font_style.dart';
-import '../../../components/common/constants.dart';
-import '../../../components/forms/numeric_field.dart';
 
 class LengthLineEdit extends StatefulWidget {
   final String lengthLabel;
@@ -60,23 +60,6 @@ class _LengthLineEditState extends State<LengthLineEdit> {
     if (current != widget.length) {
       lengthController.text = widget.length.toString();
     }
-  }
-
-  void _scheduleLengthChange(String text) {
-    _lengthDebounce?.cancel();
-    final value = double.tryParse(text);
-    if (value == null || value <= 0 || value == widget.length) return;
-    _lengthDebounce = Timer(
-      const Duration(milliseconds: 400),
-      () => widget.onLengthChanged(value),
-    );
-  }
-
-  void _submitLength(String text) {
-    _lengthDebounce?.cancel();
-    final value = double.tryParse(text);
-    if (value == null || value <= 0 || value == widget.length) return;
-    widget.onLengthChanged(value);
   }
 
   @override
@@ -133,5 +116,22 @@ class _LengthLineEditState extends State<LengthLineEdit> {
         ],
       ),
     );
+  }
+
+  void _scheduleLengthChange(String text) {
+    _lengthDebounce?.cancel();
+    final value = double.tryParse(text);
+    if (value == null || value <= 0 || value == widget.length) return;
+    _lengthDebounce = Timer(
+      const Duration(milliseconds: 400),
+      () => widget.onLengthChanged(value),
+    );
+  }
+
+  void _submitLength(String text) {
+    _lengthDebounce?.cancel();
+    final value = double.tryParse(text);
+    if (value == null || value <= 0 || value == widget.length) return;
+    widget.onLengthChanged(value);
   }
 }

@@ -2,18 +2,21 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '/core/result/errors/app_error_code.dart';
 import '/core/routing/route_arguments.dart';
 import '/core/routing/routes.dart';
 import '/domain/common/report/services/training_report_pdf_renderer.dart';
 import '/domain/common/training/models/training.dart';
+import '/ui/components/cards/user_card.dart';
+import '/ui/components/dialogs/generic_dialog.dart';
+import '/ui/components/icons/stopwatch_icons_icons.dart';
 import '/ui/components/theme/app_font_style.dart';
-import '../../components/cards/user_card.dart';
-import '../../components/dialogs/generic_dialog.dart';
-import '../../components/icons/stopwatch_icons_icons.dart';
-import 'viewmodel/models/training_report_command_inputs.dart';
+import 'viewmodel/models/email_prepared_training_report_command_input.dart';
+import 'viewmodel/models/share_prepared_training_report_command_input.dart';
 import 'viewmodel/trainings_view_model.dart';
 import 'widgets/dismissible_training.dart';
 import 'widgets/select_user_popup_menu.dart';
+import 'widgets/training_report_issues_dialog.dart';
 
 class TrainingsPage extends StatefulWidget {
   final TrainingsViewModel viewModel;
@@ -61,6 +64,46 @@ class _TrainingsPageState extends State<TrainingsPage> {
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('TPTitle'.tr()), elevation: 5),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, _) => _buildBody(Theme.of(context).colorScheme),
+        ),
+      ),
+    );
+  }
+
+  String _reportIssueMessage(Training training) {
+    final issue = viewModel.reportIssueFor(training);
+
+    if (issue == null) {
+      return 'TPReportIssueUnknown'.tr();
+    }
+
+    return switch (issue.error.code) {
+      AppErrorCode.zeroElapsedTime => 'TPReportIssueNoMeasurements'.tr(),
+      AppErrorCode.storageReadFailed ||
+      AppErrorCode.storageNotFound =>
+        'TPReportIssueHistoryUnavailable'.tr(),
+      AppErrorCode.invalidData => 'TPReportIssueInconsistentHistory'.tr(),
+      _ => 'TPReportIssueUnknown'.tr(),
+    };
+  }
+
+  Future<void> _showReportIssue(Training training) async {
+    await GenericDialog.open(
+      context,
+      title: 'TPReportIssueTitle'.tr(),
+      message: _reportIssueMessage(training),
+      actions: DialogActions.close,
+    );
+  }
+
   Future<void> _openHistory(Training training) => context.pushNamed(
         MainRoutes.history.routeName,
         extra: HistoryRouteArguments(
@@ -93,10 +136,37 @@ class _TrainingsPageState extends State<TrainingsPage> {
 
   Future<void> _sendEmail() async {
     final user = viewModel.selectedUser;
-    if (user == null) return;
+    if (user == null) {
+      return;
+    }
 
-    await viewModel.sendReportEmail(
-      EmailTrainingReportCommandInput(
+    await viewModel.prepareReport();
+
+    if (!mounted || !viewModel.prepareReportCommand.isSuccess) {
+      return;
+    }
+
+    final outcome = viewModel.prepareReportCommand.value!;
+
+    if (outcome.hasIssues) {
+      final shouldContinue = await TrainingReportIssuesDialog.open(
+        context,
+        outcome: outcome,
+        issueMessage: (issue) => _reportIssueMessage(issue.training),
+      );
+
+      if (!mounted || !shouldContinue) {
+        return;
+      }
+    }
+
+    if (!outcome.hasContent) {
+      return;
+    }
+
+    await viewModel.sendPreparedReportEmail(
+      EmailPreparedTrainingReportCommandInput(
+        content: outcome.content,
         pdfTexts: _reportPdfTexts(),
         recipients: [user.email],
         subject: 'TPReportSubject'.tr(),
@@ -106,8 +176,33 @@ class _TrainingsPageState extends State<TrainingsPage> {
   }
 
   Future<void> _shareReport() async {
-    await viewModel.shareReport(
-      ShareTrainingReportCommandInput(
+    await viewModel.prepareReport();
+
+    if (!mounted || !viewModel.prepareReportCommand.isSuccess) {
+      return;
+    }
+
+    final outcome = viewModel.prepareReportCommand.value!;
+
+    if (outcome.hasIssues) {
+      final shouldContinue = await TrainingReportIssuesDialog.open(
+        context,
+        outcome: outcome,
+        issueMessage: (issue) => _reportIssueMessage(issue.training),
+      );
+
+      if (!mounted || !shouldContinue) {
+        return;
+      }
+    }
+
+    if (!outcome.hasContent) {
+      return;
+    }
+
+    await viewModel.sharePreparedReport(
+      SharePreparedTrainingReportCommandInput(
+        content: outcome.content,
         pdfTexts: _reportPdfTexts(),
         subject: 'TPReportSubject'.tr(),
       ),
@@ -236,13 +331,15 @@ class _TrainingsPageState extends State<TrainingsPage> {
                               return DismissibleTraining(
                                 training: training,
                                 enabled: !viewModel.isLoading,
+                                onRejectedTap: _showReportIssue,
                                 openHistory: _openHistory,
                                 removeTraining: _removeTraining,
                                 onSelect: (training) => viewModel.setSelected(
                                   training,
                                   selected: !viewModel.isSelected(training),
                                 ),
-                                selected: viewModel.isSelected(training),
+                                selectionState:
+                                    viewModel.selectionStateFor(training),
                               );
                             },
                           ),
@@ -255,16 +352,4 @@ class _TrainingsPageState extends State<TrainingsPage> {
       ],
     );
   }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text('TPTitle'.tr()), elevation: 5),
-        body: Padding(
-          padding: const EdgeInsets.all(8),
-          child: ListenableBuilder(
-            listenable: viewModel,
-            builder: (context, _) => _buildBody(Theme.of(context).colorScheme),
-          ),
-        ),
-      );
 }

@@ -15,6 +15,7 @@ class SettingsFormData {
   final AppContrast contrast;
   final Locale locale;
   final Duration refreshInterval;
+  final bool protectedActionsHintSeen;
 
   const SettingsFormData({
     required this.id,
@@ -25,6 +26,7 @@ class SettingsFormData {
     required this.contrast,
     required this.locale,
     required this.refreshInterval,
+    required this.protectedActionsHintSeen,
   });
 
   factory SettingsFormData.fromDomain(Settings settings) => SettingsFormData(
@@ -32,6 +34,7 @@ class SettingsFormData {
         splitDistance: settings.splitDistance.value,
         lapDistance: settings.lapDistance.value,
         distanceUnit: settings.splitDistance.unit,
+        protectedActionsHintSeen: settings.protectedActionsHintSeen,
         brightness: switch (settings.brightness) {
           BrightnessPreference.light => Brightness.light,
           BrightnessPreference.dark => Brightness.dark,
@@ -59,6 +62,7 @@ class SettingsFormData {
       id: id,
       splitDistance: split.value!,
       lapDistance: lap.value!,
+      protectedActionsHintSeen: protectedActionsHintSeen,
       brightness: switch (brightness) {
         Brightness.light => BrightnessPreference.light,
         Brightness.dark => BrightnessPreference.dark,
@@ -77,6 +81,7 @@ class SettingsFormData {
     double? splitDistance,
     double? lapDistance,
     DistanceUnit? distanceUnit,
+    bool? protectedActionsHintSeen,
     Brightness? brightness,
     AppContrast? contrast,
     Locale? locale,
@@ -87,6 +92,8 @@ class SettingsFormData {
         splitDistance: splitDistance ?? this.splitDistance,
         lapDistance: lapDistance ?? this.lapDistance,
         distanceUnit: distanceUnit ?? this.distanceUnit,
+        protectedActionsHintSeen:
+            protectedActionsHintSeen ?? this.protectedActionsHintSeen,
         brightness: brightness ?? this.brightness,
         contrast: contrast ?? this.contrast,
         locale: locale ?? this.locale,

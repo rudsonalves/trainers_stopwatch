@@ -311,6 +311,7 @@ class _EditTrainingDialogState extends State<EditTrainingDialog> {
           controller: maxLapController,
         ),
         OverflowBar(
+          spacing: 6,
           children: [
             FilledButton.tonal(
               onPressed: _applyButton,

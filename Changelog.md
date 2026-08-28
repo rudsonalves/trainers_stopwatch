@@ -1,5 +1,504 @@
 # Changelog
 
+## 2026/08/28 - dependences/di-remove-from-main
+
+This change moves production dependency composition out of the application entry point and into the routing layer. `MyMaterialApp` now receives only the appearance state it directly consumes, while route-specific view models and factories are resolved through a production route dependency composition.
+
+The optional `MainRouteDependencies` boundary remains available for isolated tests, preserving testability without requiring application widgets to transport page dependencies.
+
+1. **`lib/core/routing/router.dart`**
+
+   * Made route dependencies optional in `createRouter`.
+   * Added automatic fallback to `MainRouteDependencies.production()` when no dependency override is provided.
+   * Preserved support for explicitly supplied route dependencies in tests and other controlled environments.
+
+2. **`lib/core/routing/routes/main_routes.dart`**
+
+   * Added the production factory for `MainRouteDependencies`.
+   * Centralized resolution of the stopwatch and settings view models through the application injector.
+   * Added factories for users, trainings, history, and settings view models using their required repositories and use cases.
+   * Kept stopwatch settings and settings-page view models as independently resolved instances while sharing their registered infrastructure dependencies.
+   * Standardized page imports to use project-root paths.
+
+3. **`lib/main.dart`**
+
+   * Removed route-specific repository, use-case, and view-model imports.
+   * Removed construction and injection of page-level view models and factories from the application entry point.
+   * Retained explicit resolution of `AppAppearanceState`, which is directly consumed by the application widget.
+
+4. **`lib/ui/app/my_material_app.dart`**
+
+   * Simplified `MyMaterialApp` to require only `AppAppearanceState`.
+   * Removed route-specific view-model properties, factory callbacks, constructor parameters, and imports.
+   * Updated router initialization to use the routing layer's default production dependency composition.
+
+5. **`doc/backlog/014-composicao-dependencias-fora-do-main.md`**
+
+   * Replaced the open architectural questions with the finalized dependency-composition decisions.
+   * Documented the retained test boundary, explicit appearance-state dependency, and independent settings view-model lifecycles.
+   * Marked the work as completed and recorded successful analysis, test-suite, and diff validation results.
+   * Updated the next step to archive the completed backlog document and refresh the backlog index.
+
+### Conclusion
+
+Production dependency composition is now owned by the routing layer, reducing the responsibilities of `main.dart` and `MyMaterialApp` while preserving explicit global appearance state and injectable route dependencies for tests.
+
+The implementation has been documented as complete and validated through static analysis, the full test suite, and diff checks.
+
+## 2026/08/28 - report/task-4
+
+This change completes the backlog work for partial training reports and invalid-training feedback. It also consolidates report delivery around the prepared-report workflow, removing the obsolete direct share and email command paths.
+
+The affected areas include backlog tracking, training report command orchestration, command input models, and page and ViewModel tests.
+
+1. **`doc/backlog/013-relatorios-parciais-treinos-invalidos-tasks.md`**
+
+   * Marked all task items for report-state indicators, translated semantics, rejection details, confirmation dialogs, partial delivery, actionable errors, and localization as completed.
+
+2. **`lib/ui/pages/trainings/viewmodel/models/training_report_command_inputs.dart`**
+
+   * Removed the legacy input models for directly sharing and emailing training reports.
+   * Eliminated the former PDF text, recipient, subject, and HTML body payloads used by the superseded command flow.
+
+3. **`lib/ui/pages/trainings/viewmodel/trainings_view_model.dart`**
+
+   * Removed the legacy share and email commands, their public execution methods, and their private handlers.
+   * Simplified report operation tracking, command registration, and concurrency guards to cover report preparation and prepared-report delivery exclusively.
+   * Retained sharing and email delivery through the prepared-report commands, ensuring delivery follows the report preparation workflow.
+
+4. **`test/ui/pages/trainings/trainings_page_test.dart`**
+
+   * Extended the rejected-report dialog test to verify that issue details are rendered in a shrink-wrapped `ListView`.
+   * Preserved validation of the specific rejection reason displayed to the user.
+
+5. **`test/ui/pages/trainings/viewmodel/trainings_view_model_test.dart`**
+
+   * Removed imports and tests associated with the deleted direct report command inputs.
+   * Removed coverage for legacy direct share and email selection handling, failure propagation, and mutual concurrency blocking.
+   * Kept the test suite aligned with the prepared-report command architecture.
+
+### Conclusion
+
+The training report workflow is now centered on preparation followed by confirmed delivery through prepared-report commands. Legacy direct delivery paths and their associated models and tests have been removed, while backlog status and dialog coverage reflect the completed partial-report experience.
+
+## 2026/08/28 - report/task-3
+
+This change introduces user-facing handling for trainings rejected during report preparation. Report sharing and email flows now prepare content first, present validation issues, and require confirmation before delivering a partial report.
+
+The trainings interface now preserves and displays rejected states, provides localized issue details, and prevents report delivery when no valid content remains. Automated coverage was expanded for preparation, delivery coordination, state cleanup, and partial-report interactions.
+
+1. **`assets/translations`**
+
+   * Added English, Spanish, and Brazilian Portuguese messages for partial and fully rejected reports.
+   * Added localized descriptions for missing measurements, unavailable histories, inconsistent histories, and unknown validation failures.
+   * Added labels for unselected, selected, and rejected training states.
+   * Added the localized Continue action used to confirm partial report delivery.
+
+2. **`lib/ui/pages/trainings/trainings_page.dart`**
+
+   * Refactored share and email actions into separate report preparation and prepared-content delivery stages.
+   * Added confirmation handling when preparation returns a partial report and prevented delivery when the prepared outcome has no valid content.
+   * Mapped report error codes to localized, user-facing issue descriptions.
+   * Added a detail dialog for inspecting the rejection reason of an individual training.
+   * Integrated the ViewModel’s training selection state and report issue queries into the training list.
+   * Updated command inputs to pass already prepared report content to share and email operations.
+
+3. **`lib/ui/pages/trainings/widgets/dismissible_training.dart`**
+
+   * Replaced the boolean selection flag with explicit unselected, selected, and rejected states.
+   * Added distinct icons, colors, tooltips, and semantic labels for each state.
+   * Changed rejected training interactions to open issue details instead of toggling selection.
+   * Preserved selection highlighting for valid selected trainings while presenting rejected entries with an error indicator.
+
+4. **`lib/ui/pages/trainings/widgets/training_report_issues_dialog.dart`**
+
+   * Added a dialog for listing trainings excluded during report preparation and their localized rejection reasons.
+   * Added separate presentations for partial and fully rejected outcomes.
+   * Included the valid training count for partial reports.
+   * Added Cancel and Continue actions for partial delivery while limiting fully rejected reports to a Close action.
+
+5. **`test/ui/pages/trainings/trainings_page_test.dart`**
+
+   * Expanded repository and report-building fakes to support multiple trainings, configurable outcomes, prepared content, and delivery call tracking.
+   * Updated existing assertions to use the prepared share and email commands.
+   * Added widget coverage for selection indicators, rejected-state details, fully rejected reports, and global preparation failures.
+   * Added partial-report tests verifying that share and email delivery occur only after confirmation.
+   * Verified that cancellation preserves rejection details, removes rejected trainings from selection, and does not initiate delivery.
+
+6. **`test/ui/pages/trainings/viewmodel/trainings_view_model_test.dart`**
+
+   * Added coverage for sharing and emailing prepared report content without rebuilding it.
+   * Verified report issue cleanup after reloads, successful history updates, deletions, and user changes.
+   * Verified that failed updates and global preparation failures preserve applicable issue and selection state.
+   * Added concurrency coverage preventing preparation, sharing, and email operations from overlapping.
+   * Added fully rejected report coverage ensuring all invalid trainings are deselected and no delivery operation starts.
+
+7. **`doc/backlog/013-relatorios-parciais-treinos-invalidos-tasks.md`**
+
+   * Marked the ViewModel state, issue visibility, rejected-selection cleanup, lifecycle cleanup, operation coordination, and test coverage tasks as completed.
+
+### Conclusion
+
+The report workflow now distinguishes preparation from delivery, allowing invalid trainings to be surfaced without discarding valid report content. Users can inspect rejection reasons, confirm partial reports, or safely stop when no valid content is available.
+
+The expanded tests validate the new UI behavior, persistent rejection state, cleanup rules, prepared-content delivery, and protection against concurrent report operations.
+
+## 2026/08/28 - report/task-2
+
+This change introduces partial training report preparation, allowing valid trainings to proceed while invalid selections are collected as ordered, training-specific issues. Report construction, rendering, file generation, and external delivery are now separated so prepared content can be reviewed and reused without rebuilding it.
+
+The trainings ViewModel now coordinates report preparation, reconciles rejected selections, exposes issue state, and supports sharing or emailing validated content. Documentation and tests were expanded to cover the new pipeline and a future dependency-composition refactor.
+
+1. **Report content construction and outcome handling**
+
+   * Exposed `TrainingReportContentBuilder.buildSection()` so each training can be transformed and validated independently.
+   * Added `BuildTrainingReportUseCase.buildOutcome()` to process the complete selection while preserving the order of valid sections and rejected issues.
+   * Classified trainings without measurements, invalid identities, ownership mismatches, history-loading failures, and inconsistent histories as training-specific issues.
+   * Preserved a missing persisted user identity as a global report failure.
+   * Retained the existing all-or-nothing `execute()` flow for compatibility during the pipeline migration.
+
+2. **Report generation and delivery use cases**
+
+   * Added `GenerateTrainingReportFileUseCase.generateFromContent()` to render and persist already prepared report content without reloading histories.
+   * Added `DeliverTrainingReportUseCase.executeFromContent()` and centralized file delivery and cleanup in a shared internal path.
+   * Prevented rendering, temporary-file creation, and external delivery when prepared content contains no valid sections.
+   * Added prepared-content entry points to the share and email use cases.
+   * Preserved recipient validation and the existing propagation of rendering, storage, delivery, and cleanup failures.
+
+3. **Trainings ViewModel and report command models**
+
+   * Injected `BuildTrainingReportUseCase` into `TrainingsViewModel` and registered it at the application and route-test composition points.
+   * Added report preparation, prepared sharing, and prepared email commands.
+   * Introduced immutable command inputs carrying prepared content, PDF texts, delivery metadata, and email recipients.
+   * Added `TrainingSelectionState` to distinguish unselected, selected, and rejected trainings.
+   * Stored report issues by training, exposed read-only issue lookup and status APIs, and deselected only trainings rejected during preparation.
+   * Cleared stale issues when users or training lists change and when affected trainings are updated or deleted.
+   * Extended concurrency guards and running-state reporting across preparation, legacy delivery, and prepared-content delivery operations.
+
+4. **Report use-case tests**
+
+   * Added coverage for complete, partial, and fully rejected report outcomes.
+   * Verified stable ordering of valid sections and issues, continuation after history inconsistencies, identity validation, load failures, missing measurements, and global user validation.
+   * Verified prepared content is rendered without loading histories again.
+   * Verified prepared delivery uses the common generate-deliver-cleanup sequence and rejects empty content before side effects.
+   * Added share and email coverage confirming that prepared content is forwarded without invoking the legacy rebuild path.
+
+5. **Trainings UI and routing tests**
+
+   * Updated route and page test composition for the new report builder dependency.
+   * Extended report use-case fakes with prepared-content operations.
+   * Added ViewModel coverage for partial preparation, issue exposure, rejected-selection reconciliation, and immutable issue state.
+
+6. **Backlog documentation**
+
+   * Marked tasks 2 and 3 of the partial-report backlog as delivered and documented their compatibility strategy, validation behavior, delivery pipeline, and verification status.
+   * Added backlog item 014 for moving page dependency composition out of `main.dart`, including scope, exclusions, acceptance criteria, architectural questions, and follow-up status.
+   * Registered the new dependency-composition backlog item in the backlog index.
+
+### Conclusion
+
+The report pipeline can now evaluate every selected training, retain valid report content, and expose precise rejection details without allowing one invalid training to block the rest.
+
+Prepared content can be delivered through sharing or email using a single rendering, temporary-file, cleanup, and error-handling path, while the legacy APIs remain available during the UI migration.
+
+## 2026/08/27 - report/task-1
+
+This change establishes the domain foundation and implementation roadmap for partial report generation when selected trainings cannot all be processed. It introduces immutable outcome models that preserve valid report content alongside training-specific failures and explicitly classify empty, complete, partial, and fully rejected results.
+
+The backlog documentation now defines the expected user experience, architectural boundaries, acceptance criteria, and phased delivery plan for applying the same partial-result behavior to sharing and email workflows.
+
+1. **`lib/domain/common/report/models`**
+
+   * Added `TrainingReportIssue` to associate a rejected `Training` with the `AppError` describing its failure.
+   * Implemented value equality and hashing based on the training and relevant error fields.
+   * Added `TrainingReportBuildOutcome` to hold valid `TrainingReportContent` and an immutable collection of training-specific issues.
+   * Exposed valid and rejected training counts, content and issue presence checks, and the derived `empty`, `complete`, `partial`, and `rejected` statuses.
+   * Added value equality and stable hashing for report build outcomes while protecting the supplied issue list from external mutation.
+
+2. **`test/domain/common/report/models/report_content_test.dart`**
+
+   * Added value-equality coverage for `TrainingReportIssue`.
+   * Added tests for every `TrainingReportBuildStatus` classification.
+   * Verified valid and rejected training counts and the derived content and issue flags.
+   * Confirmed that issue collections are defensively copied and exposed as unmodifiable.
+   * Added equality and hash-code coverage for `TrainingReportBuildOutcome`.
+
+3. **`doc/backlog/013-relatorios-parciais-treinos-invalidos.md`**
+
+   * Added the backlog specification for processing all selected trainings independently and continuing with valid report content.
+   * Documented rejection communication, selection reconciliation, confirmation and cancellation behavior, list-state indicators, and consistent handling across sharing and email.
+   * Defined the distinction between training-specific problems and global delivery failures.
+   * Recorded scope boundaries, implementation decisions, acceptance criteria, dependencies, and the next implementation step.
+
+4. **`doc/backlog/013-relatorios-parciais-treinos-invalidos-tasks.md`**
+
+   * Added the ordered implementation plan covering domain modeling, independent training processing, report preparation and delivery separation, ViewModel state, UI feedback, localization, and validation.
+   * Marked the partial-result domain modeling task as complete and documented its delivered models, derived states, immutability, test coverage, and static-analysis result.
+   * Defined dependencies and expected outcomes for each remaining delivery phase.
+
+5. **`doc/backlog/README.md`**
+
+   * Registered backlog 013 for partial reports with invalid trainings and linked it to the completed report-sharing foundation.
+   * Updated backlog 011 to reference its closed location and completed status.
+
+### Conclusion
+
+The report domain can now represent valid content and per-training failures in a single immutable, value-comparable outcome with explicit result states. Supporting tests validate its classification and collection-safety behavior.
+
+The accompanying backlog establishes the remaining application and UI work required to deliver partial reports consistently while keeping global failures distinct from individual training rejections.
+
+## 2026/08/27 - final/adj-06
+
+This change set introduces protected stopwatch actions with confirmation dialogs for regular taps and direct execution with haptic feedback for long presses. It also adds a one-time contextual hint when a stopwatch is first paused, persists that hint state, and improves accessibility semantics.
+
+The update extends the settings database schema and domain flow, adjusts stopwatch layout spacing, adds localized content in all supported languages, expands automated coverage, and documents the completed implementation and remaining manual validation.
+
+1. **assets/translations**
+
+   * Added English, Spanish, and Brazilian Portuguese text for reset and finish confirmation dialogs.
+   * Added localized instructions for protected actions, including the one-time pause hint and accessibility semantic hint.
+   * Documented that taps request confirmation while long presses execute actions directly.
+
+2. **Settings domain models**
+
+   * Extracted `LanguagePreference` into its own model file and re-exported it through the settings model.
+   * Added `protectedActionsHintSeen` to `Settings`, defaulting to `false` for backward compatibility.
+   * Included the new state in settings creation, equality comparison, and hash generation.
+
+3. **Database schema and migration**
+
+   * Increased the database version from 1007 to 1008.
+   * Added the `protectedActionsHintSeen` settings column as a non-null integer with a default value of `0`.
+   * Added conditional migration handling so databases at versions 1006 and 1007 can advance to version 1008 without replacement.
+   * Preserved the history snapshot migration for databases that have not yet reached version 1007.
+   * Refined migration validation to reject unsupported version ranges.
+
+4. **Database and settings services**
+
+   * Updated database compatibility checks to recognize versions 1006, 1007, and 1008 as recoverable or current states.
+   * Mapped the protected-actions hint flag between database integers and domain booleans.
+   * Included the new property when settings are inserted, updated, and reconstructed after persistence.
+
+5. **Settings form data and view model**
+
+   * Added `protectedActionsHintSeen` to `SettingsFormData` and its domain conversion and copy operations.
+   * Added an idempotent `markProtectedActionsHintSeen` operation that persists the state only when it has not already been recorded.
+   * Retained command cleanup during view-model disposal while reorganizing the implementation.
+
+6. **Precise stopwatch protected actions**
+
+   * Changed Reset and Finish taps to open action-specific confirmation dialogs.
+   * Kept long presses as direct reset and finish shortcuts using the same session operations as confirmed actions.
+   * Added medium-impact haptic feedback before direct long-press execution.
+   * Added pause transition listening and exposed an `onPaused` callback to the containing page.
+   * Added four pixels of spacing between the stopwatch display and button bar.
+
+7. **Stopwatch button bar and custom icon button**
+
+   * Added separate callbacks for confirmed and direct Reset and Finish operations.
+   * Preserved operation-running guards across tap and long-press interactions.
+   * Added explicit button semantics, enabled state, labels, tap actions, long-press actions, and localized hints for assistive technologies.
+   * Updated long-press callbacks to support asynchronous action completion.
+
+8. **Stopwatch page and dismissible integration**
+
+   * Propagated pause notifications from each dismissible stopwatch to the stopwatch page.
+   * Added a one-time `SnackBar` explaining protected actions when the first unseen pause occurs.
+   * Persisted dismissal through the settings view model without blocking the interface.
+   * Added an in-memory guard so the hint does not repeat during the same execution if persistence is delayed or fails.
+
+9. **Settings length editor**
+
+   * Reorganized the debounced length-change and submission helpers without changing their validation or persistence behavior.
+
+10. **Database and settings service tests**
+
+   * Updated database version expectations to 1008.
+   * Added coverage for upgrading version 1007 without replacing the database and retaining a database already at version 1008.
+   * Added settings read and write assertions for both integer representations of the protected-actions hint state.
+   * Verified the default unseen state for newly inserted settings.
+
+11. **Settings form and view-model tests**
+
+   * Added round-trip conversion coverage for the protected-actions hint flag.
+   * Verified that marking the hint as seen updates persisted settings exactly once across repeated calls.
+
+12. **Stopwatch widget tests**
+
+   * Added coverage for showing and persisting the protected-actions hint only on the first pause.
+   * Verified that canceling reset confirmation preserves the paused session.
+   * Verified confirmed reset and finish behavior.
+   * Verified that a reset long press executes directly without displaying a confirmation dialog.
+   * Added haptic platform-channel handling for direct-action widget tests.
+
+13. **Backlog documentation**
+
+   * Marked persistence, protected-action interaction, spacing, translation, documentation, and automated-validation tasks as completed.
+   * Recorded delivery details for the database field, migrations, confirmation flows, haptic feedback, one-time hint, layout spacing, and test coverage.
+   * Updated the backlog status to reflect completed implementation and automated validation.
+   * Documented successful formatting, 352 passing tests, static analysis, and diff checks.
+   * Retained Android and iOS manual validation as the remaining requirement before moving the backlog to `closed/`.
+
+### Conclusion
+
+The stopwatch now provides safer, discoverable Reset and Finish interactions while preserving efficient long-press shortcuts and accessible semantics. The contextual guidance is shown once and stored compatibly across supported database versions.
+
+Automated validation and documentation are complete, with manual Android and iOS interaction and layout checks remaining before final backlog closure.
+
+## 2026/08/27 - final/adj-05
+
+This change fixes the language-selection synchronization issue by establishing the localization context as the effective locale source for the application. It also improves language labels and refactors the settings page into focused, reusable widgets.
+
+The related backlog documentation now records the identified root cause, the completed localization work, and the remaining implementation sequence for protected stopwatch actions, contextual guidance, and layout spacing.
+
+1. **`lib/ui/app/my_material_app.dart`**
+
+   * Updated `MaterialApp` to consume `context.locale` instead of the desired locale stored in `AppAppearanceState`.
+   * Aligned application rendering with the same locale source used by translations, preventing the selector and translated content from advancing at different times.
+
+2. **`lib/ui/components/common/constants.dart`**
+
+   * Made `AppLanguage.localeCode` handle locales without a country code.
+   * Prevented generated identifiers such as `es_null` by returning only the language code when `countryCode` is absent.
+
+3. **Settings page module**
+
+   * Refactored `settings_page.dart` to retain page state, loading, failure, progress, and interaction-blocking responsibilities while delegating presentation to dedicated widgets.
+   * Extracted the settings controls into the new `widgets/settings_form.dart` component.
+   * Updated the language dropdown to display each language’s flag and readable name instead of its internal locale code.
+   * Extracted failure rendering into the new reusable `widgets/error_message.dart` component.
+   * Normalized shared component imports in `widgets/length_line_edit.dart` to use project-root paths.
+
+4. **`doc/backlog/011-ajustes-interface-e-interacao-tasks.md`**
+
+   * Reorganized the execution plan around the diagnosed locale synchronization cause and independent implementation areas.
+   * Marked the locale investigation and correction tasks as completed and documented the delivered behavior on August 27, 2026.
+   * Clarified the remaining work for contextual-hint persistence, protected actions, stopwatch spacing, translations, automated checks, and manual validation.
+   * Simplified dependencies, expected results, and completion requirements to reflect the current implementation state.
+
+5. **`doc/backlog/011-ajustes-interface-e-interacao.md`**
+
+   * Updated the next backlog action from locale characterization to persisting the protected-action contextual hint.
+
+### Conclusion
+
+The application now uses a single effective locale source, keeps translated content synchronized with the selected language, and presents readable language labels without null country codes.
+
+The settings UI is more modular, and the backlog accurately reflects the completed localization fix and the remaining interface work.
+
+## 2026/08/27 - final/adj-04
+
+This change set expands the product backlog with approved interface, interaction, localization, and contextual-help requirements. It also closes the UI consolidation backlog and updates the backlog sequence accordingly.
+
+The implementation changes improve user form input behavior, introduce Brazilian phone-number formatting utilities, normalize stopwatch imports, and configure the iOS project for CocoaPods with a higher deployment target.
+
+1. **`doc/backlog/011-ajustes-interface-e-interacao.md`**
+
+   * Added the interface and interaction backlog covering discoverable protected stopwatch actions, confirmation flows, long-press shortcuts, tactile feedback, and contextual guidance.
+   * Defined the required four-pixel spacing between the stopwatch display and controls.
+   * Documented the locale synchronization defect, readable language labels, persistence expectations, scope boundaries, decisions, and acceptance criteria.
+
+2. **`doc/backlog/011-ajustes-interface-e-interacao-tasks.md`**
+
+   * Added the ordered implementation plan for characterizing current behavior, correcting locale application, persisting contextual-tip discovery, and implementing protected-action interactions.
+   * Defined testing and validation work for stopwatch layout, translations, persistence, accessibility, failure handling, and Android and iOS behavior.
+   * Established the conditions required before the backlog can be closed.
+
+3. **`doc/backlog/012-ajuda-contextual.md`**
+
+   * Added a planned backlog for page-specific help accessed through translated and accessible AppBar actions.
+   * Defined the proposed help content for stopwatches, users, training sessions, history, and settings.
+   * Documented navigation, responsive presentation, local image assets, translation, testing, implementation questions, exclusions, and acceptance criteria.
+
+4. **`doc/backlog/README.md` and `doc/backlog/closed/010-consolidacao-ui-e-legado*`**
+
+   * Moved backlog 010 and its task document into the closed backlog folder.
+   * Updated the backlog index to mark backlog 010 as completed and register backlogs 011 and 012.
+   * Corrected backlog 008’s affected area to UI and linked the closed backlog 010 to backlog 011 as the next planned work.
+
+5. **iOS CocoaPods integration**
+
+   * Added `ios/Podfile.lock` with locked Flutter and `sqflite` pod dependencies.
+   * Added the Pods project to the Xcode workspace.
+   * Integrated Runner and RunnerTests pod frameworks, build configurations, manifest checks, and framework embedding phases into the Xcode project.
+   * Raised the iOS deployment target from 13.0 to 15.0.
+
+6. **`lib/core/extensions/strings.dart`**
+
+   * Added a string extension for removing non-numeric characters.
+   * Added trimming behavior that converts blank strings to `null`.
+
+7. **`lib/ui/components/formatters/phone_input_formatter.dart`**
+
+   * Added a `TextInputFormatter` that extracts digits and formats Brazilian area codes with mobile or landline number patterns.
+   * Limited formatted phone input to the supported digit lengths and maintained the cursor at the end of the formatted value.
+
+8. **User dialog text input components**
+
+   * Extended `CustomTextField` to support capitalization, keyboard actions, and input formatters.
+   * Configured the athlete name field for word capitalization and next-field navigation.
+   * Configured the email field with the email keyboard and next-field navigation.
+   * Configured the phone field with the phone keyboard, completion action, and Brazilian phone formatter.
+
+9. **Precise stopwatch widgets**
+
+   * Normalized stopwatch BLoC and state imports in the lap/split counters and stopwatch display widgets to use project-root paths.
+
+### Conclusion
+
+The change set establishes the next interface-focused backlog phases while formally closing the preceding UI consolidation effort. It also improves athlete data entry, adds reusable string and phone-formatting support, and completes CocoaPods integration for the iOS targets with iOS 15 as the minimum deployment version.
+
+## 2026/08/27 - final/adj-03
+
+This change set prepares the project for repeatable validation and signed Android releases, restores the iOS CocoaPods configuration, and advances the application build number for publication.
+
+It also improves action spacing across dialogs and the stopwatch controls, refactors stopwatch button construction, and refreshes the resolved dependency graph.
+
+1. **Makefile**
+
+   * Added commands for dependency retrieval, cleanup, formatting, static analysis, tests, and Flutter environment diagnostics.
+   * Added a consolidated `check` workflow covering dependency resolution, formatting verification, analysis, and tests.
+   * Added validation for the `pubspec.yaml` build number and required Android signing properties.
+   * Added signed release targets for APK and Android App Bundle generation.
+   * Added a `release` workflow that validates the project before generating the publication AAB.
+   * Added configurable Flutter executable and build arguments, documented output paths, and self-describing command help.
+
+2. **README.md**
+
+   * Documented the new Makefile-based development, validation, and Android release commands.
+   * Documented the required Android signing properties.
+   * Clarified the Google Play requirement for a positive, incrementing build number.
+
+3. **iOS CocoaPods configuration**
+
+   * Added `ios/Podfile` with Flutter pod setup, Runner and RunnerTests integration, framework usage, CocoaPods analytics disabling, and Flutter-specific post-install build settings.
+   * Updated the Debug and Release Xcode configurations to optionally include the corresponding CocoaPods-generated Runner settings before Flutter-generated settings.
+
+4. **Dialog action layouts**
+
+   * Added consistent spacing between action buttons in the training edit, history edit, and user dialogs.
+
+5. **Stopwatch button bar**
+
+   * Refactored status-specific button creation into a dedicated helper while preserving idle, running, paused, and finished actions.
+   * Extracted the action row and operation-state indicators into a separate builder.
+   * Added spacing between stopwatch action buttons.
+   * Updated stopwatch module imports to use project-root paths.
+
+6. **pubspec.yaml**
+
+   * Increased the application build number from `0` to `43` while retaining version `1.9.00`.
+
+7. **pubspec.lock**
+
+   * Refreshed resolved transitive package versions and integrity hashes.
+   * Removed transitive entries no longer present in the resolved graph, including code assets, hooks, JNI, Objective-C, record-use, and split platform-specific SQLite packages.
+   * Added the transitive `sprintf` dependency and aligned the SQLite resolution with `sqflite` `2.3.3+1` and `sqflite_common` `2.5.4+2`.
+
+### Conclusion
+
+The project now has a documented, repeatable release workflow with preflight validation for code quality, versioning, and Android signing. iOS dependency integration is restored, UI action layouts are more consistent, and the resolved package set is aligned with the current Flutter environment.
+
 ## 2026/08/27 - final/adj-02
 
 This change aligns the project documentation with the final source-code organization, clarifying that stopwatch-specific BLoCs and session objects belong to the presentation flow under `lib/ui`.

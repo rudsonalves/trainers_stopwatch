@@ -94,7 +94,7 @@ void main() {
     await capturedOptions.onCreate!(database, 1);
 
     expect(schema.createCalls, 1);
-    expect(capturedOptions.version, 1007);
+    expect(capturedOptions.version, 1008);
   });
 
   test('upgrades version 1006 without replacing the database', () async {
@@ -115,7 +115,7 @@ void main() {
     );
 
     final result = await service.open();
-    await capturedOptions.onUpgrade!(database, 1006, 1007);
+    await capturedOptions.onUpgrade!(database, 1006, 1008);
 
     expect(result.isSuccess, isTrue);
     expect(deleted, isFalse);
@@ -180,13 +180,33 @@ void main() {
     expect(await File(files.single).readAsString(), 'legacy-data');
   });
 
-  test('does not replace a database already at the current version', () async {
+  test('upgrades version 1007 without replacing the database', () async {
     var deleted = false;
     final service = DatabaseService(
       databaseDirectoryPath: () async => '/tmp/trainers-stopwatch-test',
       openDatabase: (path, options) async => database,
       databaseExists: (_) async => true,
       readDatabaseVersion: (_) async => 1007,
+      deleteDatabase: (_) async => deleted = true,
+      backupService: DatabaseBackupService(
+        clock: () => DateTime.utc(2026, 8, 13),
+      ),
+      schema: schema,
+    );
+
+    final result = await service.open();
+
+    expect(result.isSuccess, isTrue);
+    expect(deleted, isFalse);
+  });
+
+  test('does not replace a database already at the current version', () async {
+    var deleted = false;
+    final service = DatabaseService(
+      databaseDirectoryPath: () async => '/tmp/trainers-stopwatch-test',
+      openDatabase: (path, options) async => database,
+      databaseExists: (_) async => true,
+      readDatabaseVersion: (_) async => 1008,
       deleteDatabase: (_) async => deleted = true,
       backupService: DatabaseBackupService(
         clock: () => DateTime.utc(2026, 8, 13),

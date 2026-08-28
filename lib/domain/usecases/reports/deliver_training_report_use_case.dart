@@ -3,6 +3,7 @@ import '/domain/common/report/services/temporary_report_file_storage.dart';
 import '/domain/common/report/services/training_report_pdf_renderer.dart';
 import '/domain/common/training/models/training.dart';
 import '/domain/common/user/models/user.dart';
+import '../../common/report/models/training_report_content.dart';
 import 'generate_training_report_file_use_case.dart';
 
 typedef TrainingReportDelivery = AsyncResult<Unit> Function(
@@ -36,7 +37,46 @@ class DeliverTrainingReportUseCase {
       return Failure(fileResult.error!);
     }
 
-    final file = fileResult.value!;
+    return _deliverFile(
+      file: fileResult.value!,
+      deliver: deliver,
+    );
+  }
+
+  AsyncResult<Unit> executeFromContent({
+    required TrainingReportContent content,
+    required TrainingReportPdfTexts texts,
+    required String suggestedName,
+    required TrainingReportDelivery deliver,
+  }) async {
+    if (content.sections.isEmpty) {
+      return const Failure(
+        AppError(
+          code: AppErrorCode.invalidData,
+          message: 'A training report requires at least one valid training.',
+        ),
+      );
+    }
+
+    final fileResult = await _generateFile.generateFromContent(
+      content: content,
+      texts: texts,
+      suggestedName: suggestedName,
+    );
+    if (fileResult.isFailure) {
+      return Failure(fileResult.error!);
+    }
+
+    return _deliverFile(
+      file: fileResult.value!,
+      deliver: deliver,
+    );
+  }
+
+  AsyncResult<Unit> _deliverFile({
+    required TemporaryReportFile file,
+    required TrainingReportDelivery deliver,
+  }) async {
     Result<Unit>? deliveryResult;
     Result<Unit>? cleanupResult;
 

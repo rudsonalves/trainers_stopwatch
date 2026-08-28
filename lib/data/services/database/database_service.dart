@@ -118,8 +118,9 @@ class DatabaseService {
     var mustReplace = false;
     try {
       final version = await _readDatabaseVersion(databasePath);
-      mustReplace =
-          version != dbVersion && version != idempotentHistoryMigrationVersion;
+      mustReplace = version != dbVersion &&
+          version != idempotentHistoryMigrationVersion &&
+          version != protectedActionsHintMigrationVersion;
     } catch (_) {
       mustReplace = true;
     }

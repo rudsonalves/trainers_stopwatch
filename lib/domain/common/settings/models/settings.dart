@@ -1,28 +1,12 @@
 import '/core/result/result.dart';
 import '../../training/values/distance.dart';
+import 'language_preference.dart';
+
+export 'language_preference.dart';
 
 enum BrightnessPreference { light, dark }
 
 enum ContrastPreference { standard, medium, high }
-
-class LanguagePreference {
-  final String languageCode;
-  final String? countryCode;
-
-  const LanguagePreference(this.languageCode, [this.countryCode]);
-
-  static const englishUnitedStates = LanguagePreference('en', 'US');
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LanguagePreference &&
-          languageCode == other.languageCode &&
-          countryCode == other.countryCode;
-
-  @override
-  int get hashCode => Object.hash(languageCode, countryCode);
-}
 
 class Settings {
   static final defaultSplitDistance = Distance.create(value: 200).value!;
@@ -31,6 +15,7 @@ class Settings {
   final int? id;
   final Distance splitDistance;
   final Distance lapDistance;
+  final bool protectedActionsHintSeen;
   final BrightnessPreference brightness;
   final ContrastPreference contrast;
   final LanguagePreference language;
@@ -40,6 +25,7 @@ class Settings {
     this.id,
     required this.splitDistance,
     required this.lapDistance,
+    this.protectedActionsHintSeen = false,
     this.brightness = BrightnessPreference.dark,
     this.contrast = ContrastPreference.standard,
     this.language = LanguagePreference.englishUnitedStates,
@@ -50,6 +36,7 @@ class Settings {
     int? id,
     Distance? splitDistance,
     Distance? lapDistance,
+    bool protectedActionsHintSeen = false,
     BrightnessPreference brightness = BrightnessPreference.dark,
     ContrastPreference contrast = ContrastPreference.standard,
     LanguagePreference language = LanguagePreference.englishUnitedStates,
@@ -91,6 +78,7 @@ class Settings {
         id: id,
         splitDistance: resolvedSplitDistance,
         lapDistance: resolvedLapDistance,
+        protectedActionsHintSeen: protectedActionsHintSeen,
         brightness: brightness,
         contrast: contrast,
         language: language,
@@ -106,6 +94,7 @@ class Settings {
           id == other.id &&
           splitDistance == other.splitDistance &&
           lapDistance == other.lapDistance &&
+          protectedActionsHintSeen == other.protectedActionsHintSeen &&
           brightness == other.brightness &&
           contrast == other.contrast &&
           language == other.language &&
@@ -116,6 +105,7 @@ class Settings {
         id,
         splitDistance,
         lapDistance,
+        protectedActionsHintSeen,
         brightness,
         contrast,
         language,

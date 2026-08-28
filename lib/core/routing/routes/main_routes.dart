@@ -1,18 +1,26 @@
 import 'package:go_router/go_router.dart';
 
+import '/core/config/dependencies.dart';
+import '/data/repositories/histories/history_repository.dart';
+import '/data/repositories/trainings/training_repository.dart';
+import '/data/repositories/users/user_repository.dart';
 import '/domain/common/training/models/training.dart';
+import '/domain/usecases/reports/build_training_report_use_case.dart';
+import '/domain/usecases/reports/send_training_report_email_use_case.dart';
+import '/domain/usecases/reports/share_training_report_use_case.dart';
+import '/domain/usecases/users/users_use_case.dart';
+import '/ui/pages/about/about_page.dart';
 import '/ui/pages/history/history_page.dart';
 import '/ui/pages/history/viewmodel/history_view_model.dart';
 import '/ui/pages/personal_training/personal_training_page.dart';
 import '/ui/pages/settings/settings_page.dart';
 import '/ui/pages/settings/viewmodel/settings_view_model.dart';
+import '/ui/pages/stopwatch/stopwatch_page.dart';
 import '/ui/pages/stopwatch/stopwatch_page_view_model.dart';
 import '/ui/pages/trainings/trainings_page.dart';
 import '/ui/pages/trainings/viewmodel/trainings_view_model.dart';
 import '/ui/pages/users/users_page.dart';
 import '/ui/pages/users/viewmodel/users_view_model.dart';
-import '../../../ui/pages/about/about_page.dart';
-import '../../../ui/pages/stopwatch/stopwatch_page.dart';
 import '../animations_page/app_custom_transition_page.dart';
 import '../route_arguments.dart';
 import '../routes.dart';
@@ -34,6 +42,31 @@ class MainRouteDependencies {
     required this.historyViewModelFactory,
     required this.settingsViewModelFactory,
   });
+
+  factory MainRouteDependencies.production() {
+    final stopwatchViewModel = injector.get<StopwatchPageViewModel>();
+
+    return MainRouteDependencies(
+      stopwatchViewModel: stopwatchViewModel,
+      stopwatchSettingsViewModel: injector.get<SettingsViewModel>(),
+      usersViewModelFactory: (activeUserIds) => UsersViewModel(
+        useCase: injector.get<UsersUseCase>(),
+        initiallySelectedUserIds: activeUserIds,
+      ),
+      trainingsViewModelFactory: () => TrainingsViewModel(
+        userRepository: injector.get<UserRepository>(),
+        trainingRepository: injector.get<TrainingRepository>(),
+        shareTrainingReport: injector.get<ShareTrainingReportUseCase>(),
+        sendTrainingReportEmail: injector.get<SendTrainingReportEmailUseCase>(),
+        buildTrainingReport: injector.get<BuildTrainingReportUseCase>(),
+      ),
+      historyViewModelFactory: (training) => HistoryViewModel(
+        training: training,
+        historyRepository: injector.get<HistoryRepository>(),
+      ),
+      settingsViewModelFactory: () => injector.get<SettingsViewModel>(),
+    );
+  }
 }
 
 List<RouteBase> mainRoutes(MainRouteDependencies dependencies) => [

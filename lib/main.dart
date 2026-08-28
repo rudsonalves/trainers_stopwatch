@@ -21,21 +21,10 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'core/bootstrap/bootstrap.dart';
 import 'core/config/dependencies.dart';
-import 'data/repositories/histories/history_repository.dart';
-import 'data/repositories/trainings/training_repository.dart';
-import 'data/repositories/users/user_repository.dart';
-import 'domain/usecases/reports/send_training_report_email_use_case.dart';
-import 'domain/usecases/reports/share_training_report_use_case.dart';
-import 'domain/usecases/users/users_use_case.dart';
 import 'ui/app/app_appearance_state.dart';
 import 'ui/app/bootstrap_error_app.dart';
 import 'ui/app/my_material_app.dart';
 import 'ui/components/common/constants.dart';
-import 'ui/pages/history/viewmodel/history_view_model.dart';
-import 'ui/pages/settings/viewmodel/settings_view_model.dart';
-import 'ui/pages/stopwatch/stopwatch_page_view_model.dart';
-import 'ui/pages/trainings/viewmodel/trainings_view_model.dart';
-import 'ui/pages/users/viewmodel/users_view_model.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -58,25 +47,7 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
       child: MyMaterialApp(
-        stopwatchViewModel: injector.get<StopwatchPageViewModel>(),
-        stopwatchSettingsViewModel: injector.get<SettingsViewModel>(),
-        usersViewModelFactory: (activeUserIds) => UsersViewModel(
-          useCase: injector.get<UsersUseCase>(),
-          initiallySelectedUserIds: activeUserIds,
-        ),
-        trainingsViewModelFactory: () => TrainingsViewModel(
-          userRepository: injector.get<UserRepository>(),
-          trainingRepository: injector.get<TrainingRepository>(),
-          shareTrainingReport: injector.get<ShareTrainingReportUseCase>(),
-          sendTrainingReportEmail:
-              injector.get<SendTrainingReportEmailUseCase>(),
-        ),
-        historyViewModelFactory: (training) => HistoryViewModel(
-          training: training,
-          historyRepository: injector.get<HistoryRepository>(),
-        ),
         appearanceState: injector.get<AppAppearanceState>(),
-        settingsViewModelFactory: () => injector.get<SettingsViewModel>(),
       ),
     ),
   );

@@ -26,8 +26,13 @@ const createSettingsSQL = 'CREATE TABLE IF NOT EXISTS $settingsTable ('
     ' $settingsContrast CHAR(6) DEFAULT "standard",'
     ' $settingsLanguage CHAR(5) DEFAULT "en_US",'
     ' $settingsMSecondRefresh INTEGER DEFAULT 66,'
+    ' $settingsProtectedActionsHintSeen INTEGER NOT NULL DEFAULT 0,'
     ' $settingsShowTutorial INTEGER DEFAULT 1'
     ')';
+
+const addSettingsProtectedActionsHintSeenSQL = 'ALTER TABLE $settingsTable'
+    ' ADD COLUMN $settingsProtectedActionsHintSeen'
+    ' INTEGER NOT NULL DEFAULT 0';
 
 const createUserTableSQL = 'CREATE TABLE IF NOT EXISTS $userTable ('
     ' $userId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'

@@ -21,9 +21,10 @@ import '../../theme/app_font_style.dart';
 
 class CustomIconButton extends StatelessWidget {
   final void Function()? onPressed;
-  final void Function()? onLongPressed;
+  final Future<void> Function()? onLongPressed;
   final FocusNode? focusNode;
   final String? label;
+  final String? semanticHint;
   final Widget icon;
 
   const CustomIconButton({
@@ -32,6 +33,7 @@ class CustomIconButton extends StatelessWidget {
     this.onLongPressed,
     required this.icon,
     this.label,
+    this.semanticHint,
     this.focusNode,
   });
 
@@ -39,44 +41,54 @@ class CustomIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
+    final enabled = onPressed != null || onLongPressed != null;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-      child: Focus(
-        focusNode: focusNode,
-        child: Card(
-          elevation: 2,
-          margin: EdgeInsets.zero,
-          color: brightness == Brightness.light
-              ? colorScheme.onPrimary.withValues(alpha: 0.3)
-              : colorScheme.primary.withValues(alpha: 0.2),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(5),
-            child: InkWell(
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: label,
+      hint: semanticHint,
+      onTap: onPressed,
+      onLongPress: onLongPressed,
+      excludeSemantics: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+        child: Focus(
+          focusNode: focusNode,
+          child: Card(
+            elevation: 2,
+            margin: EdgeInsets.zero,
+            color: brightness == Brightness.light
+                ? colorScheme.onPrimary.withValues(alpha: 0.3)
+                : colorScheme.primary.withValues(alpha: 0.2),
+            child: Material(
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(5),
-              onLongPress: onLongPressed,
-              onTap: onPressed,
-              child: SizedBox(
-                width: 48,
-                height: label == null ? 48 : 54,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 3),
-                  child: label != null
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            icon,
-                            const SizedBox(height: 2),
-                            Text(
-                              label!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppFontStyle.roboto12,
-                            ),
-                          ],
-                        )
-                      : icon,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(5),
+                onLongPress: onLongPressed,
+                onTap: onPressed,
+                child: SizedBox(
+                  width: 48,
+                  height: label == null ? 48 : 54,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: label != null
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              icon,
+                              const SizedBox(height: 2),
+                              Text(
+                                label!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppFontStyle.roboto12,
+                              ),
+                            ],
+                          )
+                        : icon,
+                  ),
                 ),
               ),
             ),

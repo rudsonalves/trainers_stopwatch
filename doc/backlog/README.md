@@ -19,9 +19,13 @@ migrado estiver funcional.
 | 005 | [Usuários e imagens](closed/005-usuarios-e-imagens.md) | data + ui | concluído |
 | 006 | [Treinos e históricos](closed/006-treinos-e-historicos.md) | domain + data + ui | concluído |
 | 007 | [Núcleo temporal do cronômetro](closed/007-nucleo-cronometro-bloc.md) | BLoC | concluído |
-| 008 | [Sessões e múltiplos cronômetros](closed/008-sessoes-multiplos-cronometros.md) | application + ui | concluído |
+| 008 | [Sessões e múltiplos cronômetros](closed/008-sessoes-multiplos-cronometros.md) | ui | concluído |
 | 009 | [Relatórios e compartilhamento](closed/009-relatorios-e-compartilhamento.md) | domain + data + ui | concluído |
-| 010 | [Consolidação da UI e legado](010-consolidacao-ui-e-legado.md) | ui | 004 a 009 |
+| 010 | [Consolidação da UI e legado](closed/010-consolidacao-ui-e-legado.md) | ui | concluído |
+| 011 | [Ajustes de interface e interação](closed/011-ajustes-interface-e-interacao.md) | ui | concluído |
+| 012 | [Ajuda contextual por página](012-ajuda-contextual.md) | ui | 010 concluído |
+| 013 | [Relatórios parciais com treinos inválidos](013-relatorios-parciais-treinos-invalidos.md) | domain + ui | 009 concluído |
+| 014 | [Composição de dependências fora do `main`](014-composicao-dependencias-fora-do-main.md) | core + ui | independente |
 
 ## Regras de execução
 

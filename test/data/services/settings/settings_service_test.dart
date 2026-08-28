@@ -103,6 +103,7 @@ void main() {
         'contrast': 'high',
         'language': 'pt_BR',
         'mSecondRefresh': 100,
+        'protectedActionsHintSeen': 1,
         'showTutorial': 0,
       },
     ];
@@ -113,6 +114,7 @@ void main() {
     expect(settings.splitDistance.value, 100);
     expect(settings.splitDistance.unit.symbol, 'yd');
     expect(settings.brightness, BrightnessPreference.light);
+    expect(settings.protectedActionsHintSeen, isTrue);
   });
 
   test('inserts defaults and returns the generated id', () async {
@@ -123,7 +125,9 @@ void main() {
 
     expect(result.isSuccess, isTrue);
     expect(result.value!.id, 7);
+    expect(result.value!.protectedActionsHintSeen, isFalse);
     expect(database.writtenValues!['lengthUnit'], 'm');
+    expect(database.writtenValues!['protectedActionsHintSeen'], 0);
     expect(database.writtenValues!.containsKey('dbSchemeVersion'), isFalse);
   });
 
@@ -137,10 +141,13 @@ void main() {
   });
 
   test('updates persisted settings without schema metadata', () async {
-    final result = await service.update(Settings.create(id: 1).value!);
+    final result = await service.update(
+      Settings.create(id: 1, protectedActionsHintSeen: true).value!,
+    );
 
     expect(result.isSuccess, isTrue);
     expect(database.writtenValues!['id'], 1);
+    expect(database.writtenValues!['protectedActionsHintSeen'], 1);
     expect(database.writtenValues!.containsKey('dbSchemeVersion'), isFalse);
   });
 

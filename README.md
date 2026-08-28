@@ -31,6 +31,23 @@ sharing PDF reports.
 The application currently supports Android and iOS. See the architecture
 document linked above for the complete structure and validation rules.
 
+## Development commands
+
+The project provides a `Makefile` for its common validation and Android release
+tasks. Run `make help` to see every available target.
+
+```sh
+make check       # formatting, static analysis, and tests
+make build-apk   # signed release APK for direct distribution
+make build-aab   # signed Android App Bundle for Google Play
+make release     # complete validation followed by the release AAB
+```
+
+Android release builds require `android/key.properties` with `storeFile`,
+`storePassword`, `keyAlias`, and `keyPassword`. Before publishing, the build
+number after `+` in the `pubspec.yaml` version must be greater than zero and
+must increase for each version uploaded to Google Play.
+
 # ChangeLog
 
 ## 2024_08_27 - version: 1.0.8+42
