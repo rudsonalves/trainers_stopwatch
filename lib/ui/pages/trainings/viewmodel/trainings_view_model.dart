@@ -14,7 +14,6 @@ import '/domain/usecases/reports/send_training_report_email_use_case.dart';
 import '/domain/usecases/reports/share_training_report_use_case.dart';
 import 'models/email_prepared_training_report_command_input.dart';
 import 'models/share_prepared_training_report_command_input.dart';
-import 'models/training_report_command_inputs.dart';
 import 'models/training_selection_state.dart';
 
 class TrainingsViewModel extends ChangeNotifier {
@@ -42,10 +41,6 @@ class TrainingsViewModel extends ChangeNotifier {
     updateCommand = Command1<Unit, Training>(_update);
     deleteCommand = Command1<Unit, Training>(_delete);
     deleteSelectedCommand = Command0<Unit>(_deleteSelected);
-    shareReportCommand =
-        Command1<Unit, ShareTrainingReportCommandInput>(_shareReport);
-    sendReportEmailCommand =
-        Command1<Unit, EmailTrainingReportCommandInput>(_sendReportEmail);
     sharePreparedReportCommand =
         Command1<Unit, SharePreparedTrainingReportCommandInput>(
       _sharePreparedReport,
@@ -69,9 +64,6 @@ class TrainingsViewModel extends ChangeNotifier {
   late final Command1<Unit, Training> updateCommand;
   late final Command1<Unit, Training> deleteCommand;
   late final Command0<Unit> deleteSelectedCommand;
-  late final Command1<Unit, ShareTrainingReportCommandInput> shareReportCommand;
-  late final Command1<Unit, EmailTrainingReportCommandInput>
-      sendReportEmailCommand;
   late final Command1<Unit, SharePreparedTrainingReportCommandInput>
       sharePreparedReportCommand;
 
@@ -90,8 +82,6 @@ class TrainingsViewModel extends ChangeNotifier {
 
   bool get isReportOperationRunning =>
       prepareReportCommand.isRunning ||
-      shareReportCommand.isRunning ||
-      sendReportEmailCommand.isRunning ||
       sharePreparedReportCommand.isRunning ||
       sendPreparedReportEmailCommand.isRunning;
 
@@ -163,18 +153,10 @@ class TrainingsViewModel extends ChangeNotifier {
         updateCommand,
         deleteCommand,
         deleteSelectedCommand,
-        shareReportCommand,
-        sendReportEmailCommand,
         sharePreparedReportCommand,
         sendPreparedReportEmailCommand,
         prepareReportCommand,
       ];
-
-  Future<void> shareReport(ShareTrainingReportCommandInput input) =>
-      shareReportCommand.execute(input);
-
-  Future<void> sendReportEmail(EmailTrainingReportCommandInput input) =>
-      sendReportEmailCommand.execute(input);
 
   Future<void> sharePreparedReport(
     SharePreparedTrainingReportCommandInput input,
@@ -242,9 +224,7 @@ class TrainingsViewModel extends ChangeNotifier {
   }
 
   AsyncResult<TrainingReportBuildOutcome> _prepareReport() async {
-    if (shareReportCommand.isRunning ||
-        sendReportEmailCommand.isRunning ||
-        sharePreparedReportCommand.isRunning ||
+    if (sharePreparedReportCommand.isRunning ||
         sendPreparedReportEmailCommand.isRunning) {
       return Failure(_concurrentReportOperationError);
     }
@@ -349,56 +329,6 @@ class TrainingsViewModel extends ChangeNotifier {
     return const Success(unit);
   }
 
-  AsyncResult<Unit> _shareReport(
-    ShareTrainingReportCommandInput input,
-  ) {
-    if (prepareReportCommand.isRunning ||
-        sendReportEmailCommand.isRunning ||
-        sendPreparedReportEmailCommand.isRunning) {
-      return Future.value(Failure(_concurrentReportOperationError));
-    }
-
-    final reportData = _selectedReportData();
-    if (reportData.isFailure) {
-      return Future.value(Failure(reportData.error!));
-    }
-
-    final data = reportData.value!;
-
-    return _shareTrainingReport.execute(
-      user: data.user,
-      trainings: data.trainings,
-      texts: input.pdfTexts,
-      subject: input.subject,
-    );
-  }
-
-  AsyncResult<Unit> _sendReportEmail(
-    EmailTrainingReportCommandInput input,
-  ) {
-    if (prepareReportCommand.isRunning ||
-        shareReportCommand.isRunning ||
-        sharePreparedReportCommand.isRunning) {
-      return Future.value(Failure(_concurrentReportOperationError));
-    }
-
-    final reportData = _selectedReportData();
-    if (reportData.isFailure) {
-      return Future.value(Failure(reportData.error!));
-    }
-
-    final data = reportData.value!;
-
-    return _sendTrainingReportEmail.execute(
-      user: data.user,
-      trainings: data.trainings,
-      texts: input.pdfTexts,
-      recipients: input.recipients,
-      subject: input.subject,
-      htmlBody: input.htmlBody,
-    );
-  }
-
   Result<({User user, List<Training> trainings})> _selectedReportData() {
     final user = selectedUser;
     if (user == null) {
@@ -430,7 +360,6 @@ class TrainingsViewModel extends ChangeNotifier {
     SharePreparedTrainingReportCommandInput input,
   ) {
     if (prepareReportCommand.isRunning ||
-        sendReportEmailCommand.isRunning ||
         sendPreparedReportEmailCommand.isRunning) {
       return Future.value(
         Failure(_concurrentReportOperationError),
@@ -448,7 +377,6 @@ class TrainingsViewModel extends ChangeNotifier {
     EmailPreparedTrainingReportCommandInput input,
   ) {
     if (prepareReportCommand.isRunning ||
-        shareReportCommand.isRunning ||
         sharePreparedReportCommand.isRunning) {
       return Future.value(
         Failure(_concurrentReportOperationError),

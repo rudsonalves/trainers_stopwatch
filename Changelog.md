@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026/08/28 - report/task-4
+
+This change completes the backlog work for partial training reports and invalid-training feedback. It also consolidates report delivery around the prepared-report workflow, removing the obsolete direct share and email command paths.
+
+The affected areas include backlog tracking, training report command orchestration, command input models, and page and ViewModel tests.
+
+1. **`doc/backlog/013-relatorios-parciais-treinos-invalidos-tasks.md`**
+
+   * Marked all task items for report-state indicators, translated semantics, rejection details, confirmation dialogs, partial delivery, actionable errors, and localization as completed.
+
+2. **`lib/ui/pages/trainings/viewmodel/models/training_report_command_inputs.dart`**
+
+   * Removed the legacy input models for directly sharing and emailing training reports.
+   * Eliminated the former PDF text, recipient, subject, and HTML body payloads used by the superseded command flow.
+
+3. **`lib/ui/pages/trainings/viewmodel/trainings_view_model.dart`**
+
+   * Removed the legacy share and email commands, their public execution methods, and their private handlers.
+   * Simplified report operation tracking, command registration, and concurrency guards to cover report preparation and prepared-report delivery exclusively.
+   * Retained sharing and email delivery through the prepared-report commands, ensuring delivery follows the report preparation workflow.
+
+4. **`test/ui/pages/trainings/trainings_page_test.dart`**
+
+   * Extended the rejected-report dialog test to verify that issue details are rendered in a shrink-wrapped `ListView`.
+   * Preserved validation of the specific rejection reason displayed to the user.
+
+5. **`test/ui/pages/trainings/viewmodel/trainings_view_model_test.dart`**
+
+   * Removed imports and tests associated with the deleted direct report command inputs.
+   * Removed coverage for legacy direct share and email selection handling, failure propagation, and mutual concurrency blocking.
+   * Kept the test suite aligned with the prepared-report command architecture.
+
+### Conclusion
+
+The training report workflow is now centered on preparation followed by confirmed delivery through prepared-report commands. Legacy direct delivery paths and their associated models and tests have been removed, while backlog status and dialog coverage reflect the completed partial-report experience.
+
 ## 2026/08/28 - report/task-3
 
 This change introduces user-facing handling for trainings rejected during report preparation. Report sharing and email flows now prepare content first, present validation issues, and require confirmation before delivering a partial report.

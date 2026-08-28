@@ -572,6 +572,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Relatório não gerado'), findsOneWidget);
+
+    final issuesList = find.descendant(
+      of: find.byType(TrainingReportIssuesDialog),
+      matching: find.byType(ListView),
+    );
+
+    expect(issuesList, findsOneWidget);
+    expect(
+      tester.widget<ListView>(issuesList).shrinkWrap,
+      isTrue,
+    );
+
     expect(
       find.textContaining('Este treino não possui medições.'),
       findsOneWidget,

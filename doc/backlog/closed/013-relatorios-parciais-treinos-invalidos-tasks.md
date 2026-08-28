@@ -128,22 +128,22 @@ interação, sem incorporar diálogo, tradução ou detalhes de plataforma.
 
 **Dependência:** tarefa 4.
 
-- [ ] Adicionar ao `DismissibleTraining` um `trailing` com
+- [x] Adicionar ao `DismissibleTraining` um `trailing` com
       `Icons.radio_button_unchecked`, `Icons.check_circle` ou `Icons.error`, de
       acordo com o estado fornecido pelo ViewModel.
-- [ ] Usar cores do `ColorScheme` apenas como indicação complementar e
+- [x] Usar cores do `ColorScheme` apenas como indicação complementar e
       fornecer tooltip e semântica traduzidos para os três estados.
-- [ ] Fazer o indicador de erro abrir uma mensagem com o motivo específico do
+- [x] Fazer o indicador de erro abrir uma mensagem com o motivo específico do
       treino, sem selecioná-lo novamente.
-- [ ] Criar um diálogo com altura limitada e lista rolável contendo data, hora
+- [x] Criar um diálogo com altura limitada e lista rolável contendo data, hora
       e motivo de cada treino rejeitado.
-- [ ] Exibir **Cancelar** e **Continuar** quando houver conteúdo válido; exibir
+- [x] Exibir **Cancelar** e **Continuar** quando houver conteúdo válido; exibir
       somente **Fechar** quando todos os treinos forem rejeitados.
-- [ ] Fazer Share e Email reutilizarem o mesmo diálogo e continuarem apenas
+- [x] Fazer Share e Email reutilizarem o mesmo diálogo e continuarem apenas
       após confirmação.
-- [ ] Substituir o `TPError` genérico desse fluxo por mensagens acionáveis,
+- [x] Substituir o `TPError` genérico desse fluxo por mensagens acionáveis,
       mantendo tratamento próprio para falhas globais.
-- [ ] Adicionar todos os textos aos arquivos `pt-BR`, `en-US` e `es`.
+- [x] Adicionar todos os textos aos arquivos `pt-BR`, `en-US` e `es`.
 
 **Resultado esperado:** a lista mantém cada problema visível e o usuário sabe
 exatamente o que será entregue antes de confirmar a operação parcial.
