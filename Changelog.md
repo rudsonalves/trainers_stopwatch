@@ -1,5 +1,50 @@
 # Changelog
 
+## 2026/08/28 - dependences/di-remove-from-main
+
+This change moves production dependency composition out of the application entry point and into the routing layer. `MyMaterialApp` now receives only the appearance state it directly consumes, while route-specific view models and factories are resolved through a production route dependency composition.
+
+The optional `MainRouteDependencies` boundary remains available for isolated tests, preserving testability without requiring application widgets to transport page dependencies.
+
+1. **`lib/core/routing/router.dart`**
+
+   * Made route dependencies optional in `createRouter`.
+   * Added automatic fallback to `MainRouteDependencies.production()` when no dependency override is provided.
+   * Preserved support for explicitly supplied route dependencies in tests and other controlled environments.
+
+2. **`lib/core/routing/routes/main_routes.dart`**
+
+   * Added the production factory for `MainRouteDependencies`.
+   * Centralized resolution of the stopwatch and settings view models through the application injector.
+   * Added factories for users, trainings, history, and settings view models using their required repositories and use cases.
+   * Kept stopwatch settings and settings-page view models as independently resolved instances while sharing their registered infrastructure dependencies.
+   * Standardized page imports to use project-root paths.
+
+3. **`lib/main.dart`**
+
+   * Removed route-specific repository, use-case, and view-model imports.
+   * Removed construction and injection of page-level view models and factories from the application entry point.
+   * Retained explicit resolution of `AppAppearanceState`, which is directly consumed by the application widget.
+
+4. **`lib/ui/app/my_material_app.dart`**
+
+   * Simplified `MyMaterialApp` to require only `AppAppearanceState`.
+   * Removed route-specific view-model properties, factory callbacks, constructor parameters, and imports.
+   * Updated router initialization to use the routing layer's default production dependency composition.
+
+5. **`doc/backlog/014-composicao-dependencias-fora-do-main.md`**
+
+   * Replaced the open architectural questions with the finalized dependency-composition decisions.
+   * Documented the retained test boundary, explicit appearance-state dependency, and independent settings view-model lifecycles.
+   * Marked the work as completed and recorded successful analysis, test-suite, and diff validation results.
+   * Updated the next step to archive the completed backlog document and refresh the backlog index.
+
+### Conclusion
+
+Production dependency composition is now owned by the routing layer, reducing the responsibilities of `main.dart` and `MyMaterialApp` while preserving explicit global appearance state and injectable route dependencies for tests.
+
+The implementation has been documented as complete and validated through static analysis, the full test suite, and diff checks.
+
 ## 2026/08/28 - report/task-4
 
 This change completes the backlog work for partial training reports and invalid-training feedback. It also consolidates report delivery around the prepared-report workflow, removing the obsolete direct share and email command paths.

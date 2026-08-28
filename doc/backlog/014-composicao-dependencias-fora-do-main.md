@@ -65,19 +65,28 @@ a infraestrutura real.
 - não há mudança observável nos fluxos de navegação;
 - `flutter analyze`, testes afetados e `git diff --check` passam.
 
-## Questões para fechar antes da execução
+## Decisões
 
-1. Manter `MainRouteDependencies` como fronteira opcional de testes, com uma
-   composição de produção interna às rotas, ou fazer cada rota consultar o
-   injector diretamente?
-2. O `AppAppearanceState` deve continuar sendo resolvido pelo
-   `MyMaterialApp`, por ser estado global efetivamente consumido pelo widget?
-3. O `SettingsViewModel` usado pelo cronômetro deve ter instância dedicada ou
-   compartilhar algum estado com a página de configurações?
+1. `MainRouteDependencies` permanece como fronteira opcional para testes. A
+   composição de produção fica interna à camada de rotas e é usada
+   automaticamente por `createRouter()` quando nenhuma substituição é
+   fornecida. Assim, `main.dart` e `MyMaterialApp` não transportam dependências
+   das páginas, enquanto os testes continuam independentes do injector global.
+2. `AppAppearanceState` permanece como dependência explícita do
+   `MyMaterialApp`, pois o widget consome diretamente esse estado para tema,
+   contraste e idioma. A injeção explícita preserva a testabilidade sem
+   acoplar o widget ao injector global.
+3. O cronômetro mantém uma instância dedicada de `SettingsViewModel`. Cada
+   abertura da página de configurações recebe uma instância própria, com ciclo
+   de vida independente. As instâncias compartilham `SettingsRepository` e
+   `AppAppearanceState`, sem compartilhar comandos ou objetos descartáveis.
 
 ## Acompanhamento
 
-**Estado:** Backlog criado — aguardando discussão das questões em aberto.
+**Estado:** Concluído — decisões fechadas e implementação validada.
 
-**Próximo passo:** fechar as decisões arquiteturais e somente então criar o
-arquivo de tasks para a implementação.
+**Validação em 2026-08-28:** `flutter analyze` terminou sem problemas, os 381
+testes da suíte passaram e `git diff --check` não encontrou erros.
+
+**Próximo passo:** mover este documento para `doc/backlog/closed/` e atualizar
+o índice do backlog.
